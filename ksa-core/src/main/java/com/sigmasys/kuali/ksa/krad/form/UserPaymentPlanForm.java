@@ -1,7 +1,9 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,15 +15,19 @@ import java.util.List;
  */
 public class UserPaymentPlanForm extends AbstractViewModel {
 
-    private String addThirdPartyPlanName;
+    private String addPlanName;
+    private BigDecimal maxRequestedAmount;
+
     private List<ThirdPartyMemberModel> thirdPartyMembers;
 
-    public String getAddThirdPartyPlanName() {
-        return addThirdPartyPlanName;
+    private List<PaymentBillingPlan> paymentBillingPlans;
+
+    public String getAddPlanName() {
+        return addPlanName;
     }
 
-    public void setAddThirdPartyPlanName(String addThirdPartyPlanName) {
-        this.addThirdPartyPlanName = addThirdPartyPlanName;
+    public void setAddPlanName(String addPlanName) {
+        this.addPlanName = addPlanName;
     }
 
     public List<ThirdPartyMemberModel> getThirdPartyMembers() {
@@ -33,5 +39,21 @@ public class UserPaymentPlanForm extends AbstractViewModel {
 
     public void setThirdPartyMembers(List<ThirdPartyMemberModel> thirdPartyMembers) {
         this.thirdPartyMembers = thirdPartyMembers;
+    }
+
+    public BigDecimal getMaxRequestedAmount() {
+        return maxRequestedAmount;
+    }
+
+    public void setMaxRequestedAmount(BigDecimal maxRequestedAmount) {
+        this.maxRequestedAmount = maxRequestedAmount;
+    }
+
+    public List<PaymentBillingPlan> getPaymentBillingPlans() {
+        return paymentBillingPlans;
+    }
+
+    public void setPaymentBillingPlans(List<PaymentBillingPlan> paymentBillingPlans) {
+        this.paymentBillingPlans = paymentBillingPlans;
     }
 }

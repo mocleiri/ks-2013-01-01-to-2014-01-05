@@ -4,11 +4,13 @@ import com.sigmasys.kuali.ksa.krad.form.UserPaymentPlanForm;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
+import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,6 +50,9 @@ public class UserPaymentPlanController extends GenericSearchController {
 
     @Autowired
     private TransactionTransferService transactionTransferService;
+
+    @Autowired
+    private PaymentBillingService paymentBillingService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -79,7 +85,9 @@ public class UserPaymentPlanController extends GenericSearchController {
         String pageId = request.getParameter("pageId");
 
         if ("ThirdPartyPaymentPlans".equals(pageId)) {
-            populateForm(form);
+            populateFormForThirdParty(form);
+        } else if("PaymentPlans".equals(pageId)) {
+            populateFormForPaymentBilling(form);
         }
 
         return getUIFModelAndView(form);
@@ -87,7 +95,7 @@ public class UserPaymentPlanController extends GenericSearchController {
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=addThirdPartyPlan")
     public ModelAndView addThirdPartyPlan(@ModelAttribute("KualiForm") UserPaymentPlanForm form) {
-        String planString = form.getAddThirdPartyPlanName();
+        String planString = form.getAddPlanName();
         Long planId = Long.parseLong(planString);
 
         String userId = form.getAccount().getId();
@@ -105,7 +113,31 @@ public class UserPaymentPlanController extends GenericSearchController {
             }
         }
 
-        populateForm(form);
+        populateFormForThirdParty(form);
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=addPaymentBillingPlan")
+    public ModelAndView addPaymentBillingPlan(@ModelAttribute("KualiForm") UserPaymentPlanForm form) {
+        String planString = form.getAddPlanName();
+        Long planId = Long.parseLong(planString);
+
+        BigDecimal maxRequested = form.getMaxRequestedAmount();
+
+        String userId = form.getAccount().getId();
+
+        PaymentBillingPlan plan = paymentBillingService.getPaymentBillingPlan(planId);
+
+        if (plan != null) {
+            try {
+                paymentBillingService.executePaymentBilling(planId, userId, maxRequested, new Date());
+            } catch(RuntimeException e) {
+                GlobalVariables.getMessageMap().putError(ADD_THIRD_PARTY_FIELD, RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+            }
+        }
+
+        populateFormForPaymentBilling(form);
 
         return getUIFModelAndView(form);
     }
@@ -130,7 +162,36 @@ public class UserPaymentPlanController extends GenericSearchController {
         thirdPartyTransferService.generateThirdPartyTransfer (planId, userId, new Date());
         GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan re-executed");
 
-        populateForm(form);
+        populateFormForThirdParty(form);
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=reexecutePaymentBillingPlan")
+    public ModelAndView reexecutePaymentBillingPlan(@ModelAttribute("KualiForm") UserPaymentPlanForm form, BindingResult result,
+                                                HttpServletRequest request, HttpServletResponse response) {
+
+        String planIdString = request.getParameter("actionParameters[planId]");
+        Long planId;
+
+        try {
+            planId = Long.parseLong(planIdString);
+        } catch(NumberFormatException e) {
+            String errorMessage = planIdString + " is not a valid Payment Billing Plan";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        PaymentBillingPlan plan = paymentBillingService.getPaymentBillingPlan(planId);
+
+        String userId = form.getAccount().getId();
+
+        paymentBillingService.executePaymentBilling(planId, userId, plan.getMaxAmount(), new Date());
+
+
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan re-executed");
+
+        populateFormForPaymentBilling(form);
 
         return getUIFModelAndView(form);
     }
@@ -178,12 +239,12 @@ public class UserPaymentPlanController extends GenericSearchController {
 
         GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan reversed");
 
-        populateForm(form);
+        populateFormForThirdParty(form);
 
         return getUIFModelAndView(form);
     }
 
-    private void populateForm(UserPaymentPlanForm form) {
+    private void populateFormForThirdParty(UserPaymentPlanForm form) {
         String userId = form.getAccount().getId();
 
         form.setAlertObjects(informationService.getAlerts(userId));
@@ -211,6 +272,18 @@ public class UserPaymentPlanController extends GenericSearchController {
 
         form.setThirdPartyMembers(memberModels);
 
+    }
+
+    private void populateFormForPaymentBilling(UserPaymentPlanForm form) {
+        String userId = form.getAccount().getId();
+
+        form.setAlertObjects(informationService.getAlerts(userId));
+        form.setFlagObjects(informationService.getFlags(userId));
+        form.setHolds(AccountUtils.getHolds(userId));
+
+        List<PaymentBillingPlan> paymentPlans = paymentBillingService.getPaymentBillingPlansByAccountId(userId);
+
+        form.setPaymentBillingPlans(paymentPlans);
     }
 
 }
