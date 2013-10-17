@@ -822,7 +822,7 @@ end
 And /^actual delivery logistics for the activity offering are still shown$/ do
   on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
   on ActivityOfferingInquiry do |page|
-    page.actual_delivery_logistics.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_true
     page.close
   end
 end
@@ -919,7 +919,7 @@ end
 And /^actual delivery logistics for the Suspended activity offering are no longer shown$/ do
   on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
   on ActivityOfferingInquiry do |page|
-    page.actual_delivery_logistics.present?.should be_false
+    page.actual_delivery_logistics_days.present?.should be_false
     page.close
   end
 end
@@ -927,7 +927,7 @@ end
 And /^actual delivery logistics for the activity offering are no longer shown$/ do
   on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
   on ActivityOfferingInquiry do |page|
-    page.actual_delivery_logistics.present?.should be_false
+    page.actual_delivery_logistics_days.present?.should be_false
     page.close
   end
 end
@@ -935,7 +935,7 @@ end
 And /^actual delivery logistics for the first Suspended activity offering are still shown$/ do
   on(ManageCourseOfferings).view_activity_offering(@suspended_ao.code)
   on ActivityOfferingInquiry do |page|
-    page.actual_delivery_logistics.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_true
     page.close
   end
 end
@@ -943,7 +943,7 @@ end
 And /^actual delivery logistics for the Suspended activity offering are still shown$/ do
   on(ManageCourseOfferings).view_activity_offering(@suspended_ao.code)
   on ActivityOfferingInquiry do |page|
-    page.actual_delivery_logistics.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_true
     page.close
   end
 end
@@ -951,7 +951,7 @@ end
 And /^actual delivery logistics for the Offered activity offering are still shown$/ do
   on(ManageCourseOfferings).view_activity_offering(@offered_ao.code)
   on ActivityOfferingInquiry do |page|
-    page.actual_delivery_logistics.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_true
     page.close
   end
 end
@@ -959,7 +959,7 @@ end
 And /^actual delivery logistics for the second Suspended activity offering are still shown$/ do
   on(ManageCourseOfferings).view_activity_offering(@suspended_ao2.code)
   on ActivityOfferingInquiry do |page|
-    page.actual_delivery_logistics.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_true
     page.close
   end
 end
@@ -967,7 +967,7 @@ end
 And /^actual delivery logistics for the Approved activity offering are still shown$/ do
   on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
   on ActivityOfferingInquiry do |page|
-    page.actual_delivery_logistics.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_true
     page.close
   end
 end
@@ -975,8 +975,8 @@ end
 And /^requested delivery logistics are still shown and actual delivery logistics are not shown for the activity offering$/ do
   on(ManageCourseOfferings).view_activity_offering(@activity_offering.code)
   on ActivityOfferingInquiry do |page|
-    page.requested_delivery_logistics.present?.should be_true
-    page.actual_delivery_logistics.present?.should be_false
+    page.requested_delivery_logistics_days.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_false
     page.close
   end
 end
@@ -984,8 +984,8 @@ end
 And /^requested delivery logistics are still shown and actual delivery logistics are not shown for the second activity offering$/ do
   on(ManageCourseOfferings).view_activity_offering(@suspended_ao.code)
   on ActivityOfferingInquiry do |page|
-    page.requested_delivery_logistics.present?.should be_true
-    page.actual_delivery_logistics.present?.should be_false
+    page.requested_delivery_logistics_days.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_false
     page.close
   end
 end
@@ -993,8 +993,8 @@ end
 And /^requested delivery logistics are still shown and actual delivery logistics are not shown for the third activity offering$/ do
   on(ManageCourseOfferings).view_activity_offering(@suspended_ao2.code)
   on ActivityOfferingInquiry do |page|
-    page.requested_delivery_logistics.present?.should be_true
-    page.actual_delivery_logistics.present?.should be_false
+    page.requested_delivery_logistics_days.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_false
     page.close
   end
 end
@@ -1002,15 +1002,15 @@ end
 And /^requested delivery logistics are still shown and actual delivery logistics are not shown for both activity offerings$/ do
   on(ManageCourseOfferings).view_activity_offering(@canceled_ao1.code)
   on ActivityOfferingInquiry do |page|
-    page.requested_delivery_logistics.present?.should be_true
-    page.actual_delivery_logistics.present?.should be_false
+    page.requested_delivery_logistics_days.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_false
     page.close
   end
   @course_offering.manage
   on(ManageCourseOfferings).view_activity_offering(@canceled_ao2.code)
   on ActivityOfferingInquiry do |page|
-    page.requested_delivery_logistics.present?.should be_true
-    page.actual_delivery_logistics.present?.should be_false
+    page.requested_delivery_logistics_days.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_false
     page.close
   end
 end
@@ -1018,8 +1018,8 @@ end
 And /^requested delivery logistics are still shown and actual delivery logistics are not shown for the Canceled activity offering$/ do
   on(ManageCourseOfferings).view_activity_offering(@canceled_ao.code)
   on ActivityOfferingInquiry do |page|
-    page.requested_delivery_logistics.present?.should be_true
-    page.actual_delivery_logistics.present?.should be_false
+    page.requested_delivery_logistics_days.present?.should be_true
+    page.actual_delivery_logistics_days.present?.should be_false
     page.close
   end
 end
