@@ -310,7 +310,7 @@ function openMenu(id, getId, atpId, e, selector, popupClasses, popupOptions, clo
 
     var popupOptionsDefault = {
         innerHtml:popupHtml,
-        themePath:'../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/',
+        themePath:getConfigParam("kradUrl")+"/../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/",
         manageMouseEvents:false,
         selectable:true,
         tail:{align:'middle', hidden:false},
@@ -383,7 +383,7 @@ function openPopUpForm(id, getId, methodToCall, action, retrieveOptions, e, sele
 
     var popupOptionsDefault = {
         innerHtml:popupHtml.wrap("<div>").parent().clone().html(),
-        themePath:'../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/',
+        themePath:getConfigParam("kradUrl")+"/../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/",
         manageMouseEvents:false,
         selectable:true,
         tail:{align:'middle', hidden:false},
@@ -477,7 +477,7 @@ function openPlanItemPopUp(xid, getId, retrieveOptions, e, selector, popupOption
 
     var popupOptionsDefault = {
         innerHtml:popupHtml.wrap("<div>").parent().clone().html(),
-        themePath:'../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/',
+        themePath:getConfigParam("kradUrl")+"/../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/",
         manageMouseEvents:true,
         selectable:true,
         tail:{align:'middle', hidden:false},
@@ -601,7 +601,7 @@ function openDialog(sText, e, close) {
 
     var popupSettings = {
         innerHtml:dialogHtml.wrap("<div>").parent().clone().html(),
-        themePath:'../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/',
+        themePath:getConfigParam("kradUrl")+"/../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/",
         manageMouseEvents:false,
         selectable:true,
         tail:{hidden:true},
@@ -1135,7 +1135,7 @@ function myplanLightBoxLink(href, options, e) {
 function myplanCreateTooltip(id, text, options, onMouseHoverFlag, onFocusFlag) {
     var elementInfo = getHoverElement(id);
     var element = elementInfo.element;
-    options['themePath'] = "../krad/plugins/tooltip/jquerybubblepopup-theme/";
+    options['themePath'] = getConfigParam("kradUrl")+"/../krad/plugins/tooltip/jquerybubblepopup-theme/";
 
     // Check to see if a data attribute help is defined. Use that if defined.
     // This is built so that SpringEL can be used for generating the html. But it
@@ -1496,7 +1496,7 @@ function openQuickAddPopUp(id, getId, retrieveOptions, e, selector, popupOptions
 
     var popupOptionsDefault = {
         innerHtml:popupHtml.wrap("<div>").parent().clone().html(),
-        themePath:'../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/',
+        themePath:getConfigParam("kradUrl")+"/../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/",
         manageMouseEvents:false,
         selectable:true,
         tail:{align:'middle', hidden:false},
