@@ -410,10 +410,6 @@ class AcademicTerm
     go_to_calendar_search
     term_criteria = "Academic Term"
     term_criteria = "Sub Term" if @subterm
-    if @term_type == "Winter Term" or @term_type == "Summer 1"
-      term_year = @term_year.to_i
-      @term_year = "#{term_year + 1}"
-    end
     on CalendarSearch do |page|
       page.search_for term_criteria, @term_name, @term_year
     end
