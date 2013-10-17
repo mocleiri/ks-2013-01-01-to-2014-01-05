@@ -80,24 +80,59 @@ class TimeSlots
     add_new_time_slot_without_validation(time_slot)
   end
 
-  # adds a specified number of time-slots, generating a pseudo-unique set of start/end-times
+  # adds a specified number of time-slots, generating a quasi-unique set of start/end-times
   #
-  # note: current impl does not actually verify that the start/end times used are unique; it merely takes the start
-  # time of the last row in the table and then calculates a new time based off of this.  To facilitate uniqueness, this
-  # will use a day that isn't used widely by ref-data.  Thus, it *might* collide if existing time-slots higher in the
-  # table just happen to use these values, but it's not likely unless ref-data changes.
+  # note: refer to the singular add method (below) for more details
   def add_unused_time_slots(termType = "Fall - Full", nbr)
     (1..nbr).each do
-      on TimeSlotMaintenance do |page|
-        startTime = increment_time( page.get_start_time_of_last_row, 1 )
-        sTime, sAmPm = startTime.split(" ")
-        eTime, eAmPm = increment_time( startTime, 5 ).split(" ")
-        add_new_time_slot(make TimeSlots::TimeSlot, :term_type => termType, :start_time => sTime, :start_time_am_pm => sAmPm, :end_time => eTime, :end_time_am_pm => eAmPm)
-      end
+      add_unused_time_slot( termType )
     end
   end
 
-  def increment_time(full_time_with_am_pm, x_minutes_to_increment_by)
+  # adds a time-slot, generating a quasi-unique set of start/end-times
+  #
+  # To facilitate uniqueness, this will use a day-combination that isn't widely used by ref-data and will then generate
+  # a new set of start/end-times based on a random number of minutes later than the last start-time currently in the
+  # table.
+  #
+  # note: current impl detects if there is a failure to add a new timeslot (for example, if there is a collision with
+  # an already existing timeslot) and will attempt to add the timeslot again (using a newly-generated set of
+  # start/end-times).  However, if collisions recur multiple times, then an exception will be raised.
+  def add_unused_time_slot(termType = "Fall - Full")
+
+    startTime = increment_time( on(TimeSlotMaintenance).get_start_time_of_last_row )
+
+    i = 0
+    max_attempts_to_create_unique_timeslots = 5
+    done_creating_unique_timeslot = false
+    until i > max_attempts_to_create_unique_timeslots || done_creating_unique_timeslot
+      i += 1
+
+      sTime, sAmPm = startTime.split(" ")
+      eTime, eAmPm = increment_time( startTime ).split(" ")
+
+      begin
+        add_new_time_slot(make TimeSlots::TimeSlot, :term_type => termType, :start_time => sTime, :start_time_am_pm => sAmPm, :end_time => eTime, :end_time_am_pm => eAmPm)
+        done_creating_unique_timeslot = true
+      rescue Exception => e
+        if i < max_attempts_to_create_unique_timeslots
+          puts "Error generating unused time-slot (using start-time of #{startTime}); attempt #{i} of #{max_attempts_to_create_unique_timeslots}; will try again."
+          startTime = increment_time( startTime )
+        else
+          puts "Error generating unused time-slot, abandoning after #{max_attempts_to_create_unique_timeslots} attempts; error was: #{e.message}"
+          throw e
+        end
+      end
+
+    end
+
+  end
+
+  # increments the time-string by some number of minutes
+  # if the 'number of minutes to increment by' is not provided, it will be incremented by a random-value between 1-5
+  #
+  # note: the time-string provided must be of format: '02:35 AM', and will be returned in the same format
+  def increment_time(full_time_with_am_pm, x_minutes_to_increment_by = rand(1..5))
     ( DateTime.strptime(full_time_with_am_pm, '%I:%M %p') + (x_minutes_to_increment_by.to_f/1440) ).strftime( '%I:%M %p' )
   end
 
