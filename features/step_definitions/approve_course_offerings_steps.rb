@@ -226,24 +226,26 @@ Given /^a new academic term has course and activity offerings in canceled and su
   @manage_soc.set_up_soc
   @manage_soc.perform_manual_soc_state_change
 
-  delivery_format_list = []
-  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture")
+
+  delivery_format = make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture"
 
   @course_offering_canceled = create CourseOffering, :term=> @term.term_code,
                                      :course => "ENGL211",
-                                     :delivery_format_list => delivery_format_list
+                                     :delivery_format_list => [delivery_format]
 
   @activity_offering_canceled = create ActivityOffering, :parent_course_offering => @course_offering_canceled,
-                                       :format => "Lecture Only", :activity_type => "Lecture"
+                                       :activity_type => "Lecture"
   @activity_offering_canceled.save
   @activity_offering_canceled.cancel
 
+  delivery_format = make DeliveryFormat, :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture"
+
   @course_offering_suspended = create CourseOffering, :term=> @term.term_code,
                                       :course => "ENGL211",
-                                      :delivery_format_list => delivery_format_list
+                                      :delivery_format_list => [delivery_format]
 
   @activity_offering_suspended = create ActivityOffering, :parent_course_offering => @course_offering_suspended,
-                                        :format => "Lecture Only", :activity_type => "Lecture"
+                                        :activity_type => "Lecture"
 
   @activity_offering_suspended.save
   @activity_offering_suspended.approve
