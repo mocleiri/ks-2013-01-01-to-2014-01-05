@@ -69,7 +69,7 @@ public abstract class AbstractViewModel extends UifFormBase {
     };
 
     /*
-      This is a modification. The issue is to remove the dropdown searchType control in UifWidgetDefinitions
+      This is a modification. The issue is to remove the drop-down searchType control in UifWidgetDefinitions
       Should we decide to reuse then this constructor and the setting of the searchType should be removed
      */
     public AbstractViewModel() {
@@ -230,12 +230,12 @@ public abstract class AbstractViewModel extends UifFormBase {
     }
 
     public String getAlertTooltip() {
-        return this.getInformationTooltip("Alerts", alerts);
+        return getInformationTooltip("Alerts", alerts);
     }
 
     public void setAlertObjects(List<Alert> alerts) {
         List<InformationModel> models = new ArrayList<InformationModel>(alerts.size());
-        for(Alert alert : alerts){
+        for (Alert alert : alerts) {
             models.add(new InformationModel(alert));
         }
         setAlerts(models);
@@ -253,12 +253,12 @@ public abstract class AbstractViewModel extends UifFormBase {
     }
 
     public String getFlagTooltip() {
-        return this.getInformationTooltip("Flags", flags);
+        return getInformationTooltip("Flags", flags);
     }
 
     public void setFlagObjects(List<Flag> flags) {
         List<InformationModel> models = new ArrayList<InformationModel>(flags.size());
-        for(Flag flag : flags){
+        for (Flag flag : flags) {
             models.add(new InformationModel(flag));
         }
         setFlags(models);
@@ -269,14 +269,14 @@ public abstract class AbstractViewModel extends UifFormBase {
     }
 
     public List<Memo> getMemos() {
-        if(memos == null) {
+        if (memos == null) {
             memos = new ArrayList<Memo>();
         }
         return memos;
     }
 
     public String getMemoTooltip() {
-        return this.getInformationTooltip("Memos", alerts);
+        return getInformationTooltip("Memos", alerts);
     }
 
     public void setMemos(List<Memo> memos) {
@@ -284,7 +284,7 @@ public abstract class AbstractViewModel extends UifFormBase {
     }
 
     public List<InformationModel> getHolds() {
-        if(holds == null) {
+        if (holds == null) {
             holds = new ArrayList<InformationModel>();
         }
         return holds;
@@ -295,7 +295,7 @@ public abstract class AbstractViewModel extends UifFormBase {
     }
 
     public String getHoldTooltip() {
-        return this.getInformationTooltip("Holds", holds);
+        return getInformationTooltip("Holds", holds);
     }
 
     private static int getItemsPerPage() {
@@ -329,8 +329,6 @@ public abstract class AbstractViewModel extends UifFormBase {
 
         return html;
     }
-
-
 
 
 }

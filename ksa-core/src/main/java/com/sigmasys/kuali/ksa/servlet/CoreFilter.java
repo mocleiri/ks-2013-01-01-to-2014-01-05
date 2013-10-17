@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.servlet;
 
 import com.sigmasys.kuali.ksa.config.ConfigService;
+import com.sigmasys.kuali.ksa.krad.controller.LogoutController;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
@@ -36,11 +37,13 @@ public class CoreFilter implements Filter {
 
     private static final Log logger = LogFactory.getLog(CoreFilter.class);
 
-    // Error messages
-    private static final String COMMON_ERROR_MSG = "Error occurred.";
-    private static final String INVALID_CREDENTIALS_MSG = "Invalid user name or password.";
-
+    public static final String REDIRECT_URL_PARAM_NAME = "redirectUrl";
     public static final String TRUSTED_URLS_PARAM_NAME = "trustedUrls";
+    public static final String LOGIN_URL_SESSION_KEY = "_loginUrl";
+
+    // Error messages
+    private static final String COMMON_ERROR_MSG = "Error occurred";
+    private static final String INVALID_CREDENTIALS_MSG = "Invalid user name or password";
 
     // Used for trusted URLs
     private static final String DEFAULT_USER_ID = "admin";
@@ -142,14 +145,17 @@ public class CoreFilter implements Filter {
             }
         }
 
-        if (kradSession == null || !sessionManager.isSessionValid(request, response)) {
+        request.setAttribute("showPasswordField", true);
 
-            request.setAttribute("showPasswordField", true);
+        if (kradSession == null || !sessionManager.isSessionValid(request)) {
 
             String queryString = request.getQueryString();
 
             final String redirectUrl = request.getRequestURI() + (queryString != null ? "?" + queryString : "");
-            request.setAttribute("redirectUrl", redirectUrl);
+
+            if (!redirectUrl.contains(LogoutController.LOGOUT_SERVICE_URL)) {
+                request.setAttribute(REDIRECT_URL_PARAM_NAME, redirectUrl);
+            }
 
             final String userId = request.getParameter("ksa_userId");
             final String password = request.getParameter("ksa_password");
@@ -213,7 +219,8 @@ public class CoreFilter implements Filter {
                         }
                     };
 
-                    request.getSession(false).setAttribute(KRADConstants.USER_SESSION_KEY, userSession);
+                    session.setAttribute(KRADConstants.USER_SESSION_KEY, userSession);
+                    session.setAttribute(LOGIN_URL_SESSION_KEY, loginUrl);
 
                     // If the KSA account does not exist the following method is supposed to create it
                     // from the corresponding KIM Person object
@@ -221,7 +228,7 @@ public class CoreFilter implements Filter {
 
                     // If the request has redirectUrl parameter ->
                     // redirect to the location specified by redirectUrl
-                    String targetUrl = request.getParameter("redirectUrl");
+                    String targetUrl = request.getParameter(REDIRECT_URL_PARAM_NAME);
                     if (targetUrl != null && !targetUrl.trim().isEmpty()) {
                         response.sendRedirect(targetUrl);
                         return false;
@@ -278,18 +285,19 @@ public class CoreFilter implements Filter {
      * @throws IOException      if unable to handle the invalid login
      */
     private void invalidateSession(HttpServletRequest request, HttpServletResponse response, String errorMessage) throws ServletException, IOException {
+
         final UserSessionManager sessionManager = ContextUtils.getBean(UserSessionManager.class);
+
         if (sessionManager != null) {
             sessionManager.destroySession(request);
         }
+
         if (StringUtils.isNotBlank(errorMessage)) {
             errorMessage = errorMessage.substring(0, 1).toUpperCase() + (errorMessage.length() > 1 ? errorMessage.substring(1) : "");
         } else {
             errorMessage = COMMON_ERROR_MSG;
         }
-        if (!errorMessage.endsWith(".")) {
-            errorMessage += ".";
-        }
+
         request.setAttribute("errorMessage", errorMessage);
         request.getRequestDispatcher(loginUrl).forward(request, response);
     }

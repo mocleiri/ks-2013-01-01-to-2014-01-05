@@ -11,7 +11,6 @@ import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -85,7 +84,7 @@ public abstract class GenericSearchController extends UifControllerBase {
     }
 
     protected ModelAndView handleError(AbstractViewModel viewModel, Throwable t) {
-       return handleError(viewModel, ErrorUtils.getMessage(t));
+        return handleError(viewModel, ErrorUtils.getMessage(t));
     }
 
     protected void setMessage(AbstractViewModel viewModel, String message) {

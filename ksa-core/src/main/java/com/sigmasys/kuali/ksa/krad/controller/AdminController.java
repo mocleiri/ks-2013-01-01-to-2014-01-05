@@ -31,48 +31,43 @@ public class AdminController extends GenericSearchController {
     private static final Log logger = LogFactory.getLog(AdminController.class);
 
     @Autowired
-   private ActivityService activityService;
+    private ActivityService activityService;
 
     @Autowired
     private GeneralLedgerService glService;
 
-   /**
-    * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
-    */
-   @Override
-   protected AdminForm createInitialForm(HttpServletRequest request) {
-      return new AdminForm();
-   }
 
-   /**
-    *
-    * @param form
-    * @param request
-    * @return
-    */
-   @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
-   public ModelAndView get(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
+    /**
+     * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
+     */
+    @Override
+    protected AdminForm createInitialForm(HttpServletRequest request) {
+        return new AdminForm();
+    }
 
-      // do get stuff...
+    /**
+     * @param form    AdminForm
+     * @param request HttpServletRequest
+     * @return ModelAndView
+     */
+    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
+    public ModelAndView get(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
 
-       String pageId = request.getParameter("pageId");
-       logger.info("Admin Controller: Page '" + pageId + "'");
+        String pageId = request.getParameter("pageId");
+        logger.info("Admin Controller: Page '" + pageId + "'");
 
-       if ("SystemActivity".equals(pageId)) {
-           List<Activity> activities = activityService.getActivities();
-           activities = this.filterActivities(form, activities);
-         form.setActivities(activities);
-         return getUIFModelAndView(form);
-      } else if("TransactionsExport".equals(pageId)){
-           List<GlTransaction> transactions = glService.getGlTransactionsByStatus(GlTransactionStatus.QUEUED);
-           form.setGlTransactions(transactions);
-       }
+        if ("SystemActivity".equals(pageId)) {
+            List<Activity> activities = activityService.getActivities();
+            activities = this.filterActivities(form, activities);
+            form.setActivities(activities);
+            return getUIFModelAndView(form);
+        } else if ("TransactionsExport".equals(pageId)) {
+            List<GlTransaction> transactions = glService.getGlTransactionsByStatus(GlTransactionStatus.QUEUED);
+            form.setGlTransactions(transactions);
+        }
 
-
-      /*throw new IllegalArgumentException("'pageId' request parameter must be specified");*/
-       return getUIFModelAndView(form);
-
-   }
+        return getUIFModelAndView(form);
+    }
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filter")
     public ModelAndView filter(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
@@ -87,31 +82,31 @@ public class AdminController extends GenericSearchController {
         }
 
         return getUIFModelAndView(form);
-
     }
 
-        private List<Activity> filterActivities(AdminForm form, List<Activity> activities) {
-        List<Activity> good = new ArrayList<Activity>();
+    private List<Activity> filterActivities(AdminForm form, List<Activity> activities) {
+
+        List<Activity> filteredActivities = new ArrayList<Activity>();
 
         Date start = form.getStartingDate();
         Date end = form.getEndingDate();
 
-        for(Activity a : activities){
+        for (Activity a : activities) {
+
             Date timestamp = a.getTimestamp();
-            if(start != null && (DateTimeComparator.getDateOnlyInstance().compare(start, timestamp) > 0)) {
+
+            if (start != null && (DateTimeComparator.getDateOnlyInstance().compare(start, timestamp) > 0)) {
                 continue;
             }
 
-            if(end != null && (DateTimeComparator.getDateOnlyInstance().compare(end, timestamp) < 0)) {
+            if (end != null && (DateTimeComparator.getDateOnlyInstance().compare(end, timestamp) < 0)) {
                 continue;
             }
 
-
-
-            good.add(a);
+            filteredActivities.add(a);
         }
 
-        return good;
+        return filteredActivities;
     }
 
 

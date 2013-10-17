@@ -39,12 +39,10 @@
 			<list>
 				<!-- Make All Transactions Effective action -->
 				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Make Transactions Effective" p:ajaxSubmit="true" p:methodToCall="makeTransactionsEffective"
-						p:successCallback="alert('Transactions were made effective successfully.'); window.location.href='generalLedger?methodToCall=displayGeneralLedger&amp;viewId=ReportReconciliationView&amp;pageId=GeneralLedgerMainPage';"
 						p:errorCallback="alert('There were errors making transactions effective. See log for details.');"/>
 			
 				<!-- Export Pending Transaction action -->
 				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Export All Pending Transactions" p:ajaxSubmit="true" p:methodToCall="exportAllPendingTransactions"
-						p:successCallback="alert('Transactions were exported successfully.');"
 						p:errorCallback="alert('There were errors exporting transactions. See log for details.');"/>
 				
 				<!-- The "Refresh" link that will actually display the contents since we don't want to load the contents immediately -->
@@ -205,9 +203,8 @@
 		<property name="layoutManager.expandDetailsActionPrototype">
 			<bean parent="Uif-ExpandDetailsImageAction"/>
 		</property>
-		<property name="layoutManager.rowDetailsGroup">
-			<ref bean="generalLedgerTransactionSublist"/>
-		</property>
+
+		<property name="layoutManager.rowDetailsGroup" ref="generalLedgerTransactionSublist"/>
 
 	</bean>
 
@@ -318,9 +315,8 @@
 		<property name="layoutManager.expandDetailsActionPrototype">
 			<bean parent="Uif-ExpandDetailsImageAction"/>
 		</property>
-		<property name="layoutManager.rowDetailsGroup">
-			<ref bean="generalLedgerTransactionSublist"/>
-		</property>
+
+		<property name="layoutManager.rowDetailsGroup" ref="generalLedgerTransactionSublist"/>
 
 	</bean>
 
@@ -349,9 +345,8 @@
 		<property name="layoutManager.expandDetailsActionPrototype">
 			<bean parent="Uif-ExpandDetailsImageAction"/>
 		</property>
-		<property name="layoutManager.rowDetailsGroup">
-			<ref bean="generalLedgerTransactionSublist"/>
-		</property>
+
+		<property name="layoutManager.rowDetailsGroup" ref="generalLedgerTransactionSublist"/>
 
 	</bean>
 	

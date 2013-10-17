@@ -19,7 +19,7 @@
 
 <html>
 <head>
-    <title>Login</title>
+    <title>Kuali Student Accounts</title>
     <link rel="shortcut icon" href="${ConfigProperties.application.url}/favicon.ico" type="image/x-icon">
     <link rel="icon" href="${ConfigProperties.application.url}/favicon.ico" type="image/x-icon">
     <c:forEach items="${fn:split(ConfigProperties.portal.css.files, ',')}" var="cssFile">
@@ -87,8 +87,6 @@
 
 <body OnLoad="document.loginForm.ksa_userId.focus();">
 
-<div class="build">${ConfigProperties.version} (${ConfigProperties.datasource.ojb.platform})</div>
-
 <!-- The redirect is performed by CoreFilter upon successful logon so the form action is empty -->
 <form name="loginForm" action="" method="POST">
 
@@ -96,7 +94,7 @@
         <table id="login" cellspacing="0" cellpadding="0" align="center">
             <tbody>
             <tr>
-                <th colspan="2">Login</th>
+                <th colspan="2">KSA Login</th>
             </tr>
             <tr>
                 <td class="leftTd" align="right" width="Infinity%">
@@ -116,11 +114,17 @@
                     </td>
                 </tr>
             </c:if>
+            <tr>
+                <td align="center" colspan="2">&nbsp;</td>
+            </tr>
             <c:if test="${requestScope.errorMessage != null}">
                 <tr>
                     <td align="center" colspan="2"><strong>${requestScope.errorMessage}</strong></td>
                 </tr>
             </c:if>
+            <tr>
+                <td align="center" colspan="2">&nbsp;</td>
+            </tr>
             <tr>
                 <td id="buttonRow" height="30" colspan="2" align="center"><input type="submit" value="Login"/>
                 </td>

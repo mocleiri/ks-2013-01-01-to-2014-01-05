@@ -68,6 +68,7 @@ public class UserSessionManagerImpl implements UserSessionManager {
         HttpSession session = request.getSession(false);
         if (session != null) {
             // Invalidating HTTP session
+            session.removeAttribute(USER_ID);
             session.invalidate();
         }
     }
@@ -75,13 +76,11 @@ public class UserSessionManagerImpl implements UserSessionManager {
     /**
      * Checks if the HTTP session is valid.
      *
-     * @param request  the HTTP request
-     * @param response the HTTP response
+     * @param request the HTTP request
      * @return true if the session is valid.
      */
     @Override
-    public boolean isSessionValid(HttpServletRequest request,
-                                  HttpServletResponse response) {
+    public boolean isSessionValid(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         return session != null && session.getAttribute(USER_ID) != null;
     }

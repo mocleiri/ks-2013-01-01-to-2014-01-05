@@ -39,30 +39,39 @@
         </property>
         <property name="items">
             <list>
-                <bean id="accountsTab" parent="Uif-Link" p:linkText="Accounts" p:href="searchView?methodToCall=get&amp;viewId=SearchView">
+                <bean id="accountsTab" parent="Uif-Link" p:linkText="Accounts"
+                      p:href="searchView?methodToCall=get&amp;viewId=SearchView">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
-                <bean id="administrationTab" parent="Uif-Link" p:linkText="Administration" p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=AccountManagement">
+                <bean id="administrationTab" parent="Uif-Link" p:linkText="Administration"
+                      p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=AccountManagement">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
-                <bean id="reportingTab" parent="Uif-Link" p:linkText="Reporting &amp; Reconciliation" p:href="reportReconciliationView?methodToCall=get&amp;viewId=ReportReconciliationView">
+                <bean id="reportingTab" parent="Uif-Link" p:linkText="Reporting &amp; Reconciliation"
+                      p:href="reportReconciliationView?methodToCall=get&amp;viewId=ReportReconciliationView">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
-                <bean id="collectionsTab" parent="Uif-Link" p:linkText="Collections" p:href="collectionsView?methodToCall=get&amp;viewId=CollectionsView">
+                <bean id="collectionsTab" parent="Uif-Link" p:linkText="Collections"
+                      p:href="collectionsView?methodToCall=get&amp;viewId=CollectionsView">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
-                <bean id="batchTab" parent="Uif-Link" p:linkText="Batch" p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView">
+                <bean id="batchTab" parent="Uif-Link" p:linkText="Batch"
+                      p:href="batchTransactionsView?methodToCall=get&amp;viewId=BatchTransactionsView">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
-                <bean id="thirdPartyTab" parent="Uif-Link" p:linkText="Third Party &amp; Payment Plans" p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=CreatePaymentPlanPage">
+                <bean id="thirdPartyTab" parent="Uif-Link" p:linkText="Third Party &amp; Payment Plans"
+                      p:href="paymentPlanView?methodToCall=get&amp;viewId=PaymentPlanView&amp;pageId=CreatePaymentPlanPage">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
-                <bean id="feeManagementTab" parent="Uif-Link" p:linkText="Fee Management" p:href="feeManagementView?methodToCall=get&amp;viewId=FeeManagementView&amp;pageId=RateTypesPage">
+                <bean id="feeManagementTab" parent="Uif-Link" p:linkText="Fee Management"
+                      p:href="feeManagementView?methodToCall=get&amp;viewId=FeeManagementView&amp;pageId=RateTypesPage">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
-                <bean id="settingsTab" parent="Uif-Link" p:linkText="Settings" p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage">
+                <bean id="settingsTab" parent="Uif-Link" p:linkText="Settings"
+                      p:href="settingsView?methodToCall=get&amp;viewId=SettingsView&amp;pageId=CurrencyPage">
                     <property name="componentSecurity.viewAuthz" value="true"/>
                 </bean>
+                <bean parent="Uif-Link" p:linkText="Logout" p:href="logout.service"/>
             </list>
         </property>
     </bean>
@@ -172,7 +181,8 @@
                 <bean parent="Uif-HeaderTwo" p:headerText="REPORTING &amp; RECONCILIATION"/>
                 <bean parent="Uif-Link" p:linkText="Aged Trial Balance"
                       p:href="reportReconciliationView?methodToCall=get&amp;viewId=ReportReconciliationView&amp;pageId=AgedBalanceView"/>
-                <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerMainPage" p:actionLabel="General Ledger"/>
+                <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerMainPage"
+                      p:actionLabel="General Ledger"/>
             </list>
         </property>
     </bean>
@@ -242,7 +252,6 @@
                                         </list>
                                     </property>
                                 </bean>
-
                                 <bean parent="Uif-InputField" p:label="Account Lookup" p:propertyName="searchValue"
                                       p:labelPlacement="TOP"
                                       p:fieldLabel.renderColon="false">

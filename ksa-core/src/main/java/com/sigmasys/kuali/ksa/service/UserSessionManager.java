@@ -28,11 +28,10 @@ public interface UserSessionManager {
     /**
      * Checks if the user session is valid.
      *
-     * @param request  the HTTP request
-     * @param response the HTTP response
+     * @param request the HTTP request
      * @return true if the session is valid.
      */
-    boolean isSessionValid(HttpServletRequest request, HttpServletResponse response);
+    boolean isSessionValid(HttpServletRequest request);
 
     /**
      * Returns the user ID. This method should be called after session creation and validation.
