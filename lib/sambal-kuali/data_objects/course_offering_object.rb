@@ -1221,6 +1221,7 @@ class CourseOffering
     end
     on CourseOfferingEdit do |page|
       page.submit
+      page.loading.wait_while_present
     end
   end
 

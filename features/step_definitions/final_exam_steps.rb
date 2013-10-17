@@ -461,6 +461,63 @@ When /^I edit the Fall Term Exam Period to have less days than the Final Exam Ma
              :exam_start_date => "12/05/#{@calendar.year}"
 end
 
+When /^I cancel an Activity Offering for a CO with a standard final exam driven by Course Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Course Offering"
+  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.cancel :navigate_to_page => false
+end
+
+When /^I cancel an Activity Offering for a CO with a standard final exam driven by Activity Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.cancel :navigate_to_page => false
+end
+
+When /^I cancel a discussion Activity Offering for a CO with a standard final exam driven by Activity Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+  @activity_offering = make ActivityOffering, :code => "C", :parent_course_offering => @course_offering
+  @activity_offering.cancel :navigate_to_page => false
+end
+
+When /^I cancel all Activity Offerings for a CO with a standard final exam driven by Course Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Course Offering"
+  on ManageCourseOfferings do |page|
+    page.codes_list.each do |code|
+      ao_cancel = make ActivityOffering, :code => code, :parent_course_offering => @course_offering
+      ao_cancel.cancel :navigate_to_page => false
+    end
+  end
+end
+
+When /^I cancel all Activity Offerings for a CO with a standard final exam driven by Activity Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+  on ManageCourseOfferings do |page|
+    page.codes_list.each do |code|
+      ao_cancel = make ActivityOffering, :code => code, :parent_course_offering => @course_offering
+      ao_cancel.cancel :navigate_to_page => false
+    end
+  end
+end
+
+When /^I view the Exam Offerings for the Course Offering$/ do
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
@@ -823,8 +880,16 @@ end
 
 Then /^the Exam Offering table should be in a ([^"]*) state$/ do |exp_msg|
   on ViewExamOfferings do |page|
-    #page.canceled_table_header_text.should match /Canceled Exam Offering/
     page.canceled_eo_table.rows[1].cells[0].text.should == exp_msg
+  end
+end
+
+Then /^the Exam Offering table for all Activity Offerings should be in a ([^"]*) state$/ do |exp_msg|
+  on ViewExamOfferings do |page|
+    array = page.return_array_of_ao_codes
+    array.each do |code|
+      page.canceled_eo_table.row(text: /#{Regexp.escape(code)}/).cells[0].text.should == exp_msg
+    end
   end
 end
 
@@ -843,5 +908,11 @@ end
 Then /^there should be no Activity Offering table present$/ do
   on ViewExamOfferings do |page|
     page.ao_table_header.exists?.should == false
+  end
+end
+
+Then /^the Exam Offering table for the canceled AO should also be in the same state$/ do
+  on ViewExamOfferings do |page|
+    page.canceled_eo_table.rows[1].text.should match /Canceled.*#{@activity_offering.code}/m
   end
 end
