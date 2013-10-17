@@ -111,9 +111,9 @@ And /^I add a delivery format option$/ do
     page.delivery_format_add
     delivery_format = make DeliveryFormat,
                            :format => "Lecture",
-                           :grade_format => "Lecture"
+                           :grade_format => "Lecture",
                            #:grade_format => "Lecture",
-                           #:final_exam_activity => "Lecture"
+                           :final_exam_activity => "Lecture"
     page.select_delivery_format(2,delivery_format)
   end
 end

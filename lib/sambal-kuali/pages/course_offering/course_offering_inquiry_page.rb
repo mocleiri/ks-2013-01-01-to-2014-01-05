@@ -25,6 +25,7 @@ class CourseOfferingInquiry < BasePage
   FORMAT_COLUMN = 0
   GRADE_ROSTER_LEVEL_COLUMN = 1
   FINAL_EXAM_COLUMN = 2
+  FINAL_EXAM_ACTIVITY_COLUMN = 3
 
   def get_delivery_format  format
     delivery_format_row(format).cells[FORMAT_COLUMN].text
@@ -35,7 +36,7 @@ class CourseOfferingInquiry < BasePage
   end
 
   def get_final_exam_activity  format
-    delivery_format_row(format).cells[FINAL_EXAM_COLUMN].text
+    delivery_format_row(format).cells[FINAL_EXAM_ACTIVITY_COLUMN].text
   end
 
   def delivery_format_row(format)
