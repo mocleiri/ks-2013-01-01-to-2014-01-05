@@ -63,7 +63,7 @@ Given /^all activity offerings are assigned to the ARG cluster$/ do
 end
 
 Given /^there are default registration groups for a course offering$/ do
-  @course_offering = make CourseOffering, :course=>"BSCI215", :term=>Rollover::OPEN_SOC_TERM
+  @course_offering = make CourseOffering, :course=>"CHEM277", :term=>Rollover::OPEN_SOC_TERM
   @course_offering.manage_and_init
 end
 
@@ -80,7 +80,7 @@ Given /^I have created an additional activity offering cluster for a course offe
 end
 
 Given /^there are default registration groups for a catalog course offering$/ do
-  @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"BSCI425"
+  @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"CHEM277"
   @course_offering.manage_and_init
 end
 
