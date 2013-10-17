@@ -29,7 +29,6 @@ import org.kuali.student.r1.common.assembly.data.Metadata;
 import org.kuali.student.r1.common.assembly.dictionary.MetadataServiceImpl;
 import org.kuali.student.r1.common.assembly.transform.AbstractDataFilter;
 import org.kuali.student.r1.common.assembly.transform.DataBeanMapper;
-import org.kuali.student.r1.common.assembly.transform.DefaultDataBeanMapper;
 import org.kuali.student.r1.common.assembly.transform.DocumentTypeConfiguration;
 import org.kuali.student.r1.common.assembly.transform.FilterException;
 import org.kuali.student.r1.common.assembly.transform.IdTranslatorFilter;
@@ -70,9 +69,9 @@ public class ProposalWorkflowFilter extends AbstractDataFilter implements Metada
     //Services used by this filter
     private WorkflowDocumentService workflowDocumentService;
     private WorkflowDocumentActionsService workflowDocumentActionsService;
-    private ProposalService proposalService;
+    protected ProposalService proposalService;
     private MetadataServiceImpl metadataService;
-    private final DataBeanMapper mapper = DefaultDataBeanMapper.INSTANCE;
+    protected DataBeanMapper mapper;
         
     private Metadata proposalMetadata = null;
     private String proposalReferenceType;
@@ -372,7 +371,7 @@ public class ProposalWorkflowFilter extends AbstractDataFilter implements Metada
      * 
      * @return
      */
-    private Metadata getProposalMetadata(){
+    protected Metadata getProposalMetadata() {
         if (proposalMetadata == null){
             proposalMetadata = metadataService.getMetadata(getProposalObjectType());
         }
@@ -473,4 +472,7 @@ public class ProposalWorkflowFilter extends AbstractDataFilter implements Metada
         this.idTranslator = idTranslator;
     }
     
+    public void setMapper(DataBeanMapper dataBeanMapper) {
+        this.mapper = dataBeanMapper;
+    }
 }

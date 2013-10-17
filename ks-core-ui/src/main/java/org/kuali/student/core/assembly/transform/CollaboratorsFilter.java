@@ -3,15 +3,14 @@ package org.kuali.student.core.assembly.transform;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.student.core.rice.authorization.CollaboratorHelper;
 import org.kuali.student.r1.common.assembly.data.Data;
-import org.kuali.student.r1.common.assembly.data.Metadata;
 import org.kuali.student.r1.common.assembly.data.Data.StringKey;
+import org.kuali.student.r1.common.assembly.data.Metadata;
 import org.kuali.student.r1.common.assembly.dictionary.MetadataServiceImpl;
 import org.kuali.student.r1.common.assembly.transform.AbstractDataFilter;
 import org.kuali.student.r1.common.assembly.transform.DataBeanMapper;
-import org.kuali.student.r1.common.assembly.transform.DefaultDataBeanMapper;
 import org.kuali.student.r1.common.assembly.transform.MetadataFilter;
-import org.kuali.student.core.rice.authorization.CollaboratorHelper;
 import org.kuali.student.r1.core.workflow.dto.CollaboratorInfo;
 import org.kuali.student.r1.core.workflow.dto.WorkflowPersonInfo;
 import org.kuali.student.r2.common.util.ContextUtils;
@@ -31,7 +30,7 @@ public class CollaboratorsFilter extends AbstractDataFilter implements MetadataF
 	private ProposalService proposalService;
 	
 	private MetadataServiceImpl metadataService;
-	private DataBeanMapper mapper = DefaultDataBeanMapper.INSTANCE;	
+    private DataBeanMapper mapper;
 	
 	private Metadata collaboratorMetadata = null;
 	private Metadata proposalMetadata = null;
@@ -186,5 +185,7 @@ public class CollaboratorsFilter extends AbstractDataFilter implements MetadataF
 		this.proposalObjectType = proposalObjectType;
 	}
 
-	
+    public void setMapper(DataBeanMapper dataBeanMapper) {
+        this.mapper = dataBeanMapper;
+    }
 }

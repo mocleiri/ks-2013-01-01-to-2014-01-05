@@ -9,14 +9,14 @@ import org.apache.log4j.Logger;
 import org.kuali.student.r1.common.assembly.data.Data;
 import org.kuali.student.r1.common.assembly.data.Metadata;
 import org.kuali.student.r1.common.assembly.dictionary.MetadataServiceImpl;
-import org.kuali.student.r2.common.dto.DtoConstants;
 import org.kuali.student.r1.common.rice.StudentWorkflowConstants;
+import org.kuali.student.r2.common.dto.DtoConstants;
 
 public class TransformationManager {
 	final Logger LOG = Logger.getLogger(TransformationManager.class);
 
 	private MetadataServiceImpl metadataService;
-	private DataBeanMapper mapper = new DefaultDataBeanMapper();
+    private DataBeanMapper mapper;
 	private List<TransformFilter> inboundFilterList = new ArrayList<TransformFilter>();
 	private List<TransformFilter> outboundFilterList = new ArrayList<TransformFilter>();	
 

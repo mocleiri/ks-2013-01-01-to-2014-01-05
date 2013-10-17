@@ -8,6 +8,12 @@
 
 package org.kuali.student.r1.common.assembly.dictionary;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.kuali.student.r1.common.assembly.data.ConstraintMetadata;
 import org.kuali.student.r1.common.assembly.data.Data;
@@ -34,12 +40,6 @@ import org.kuali.student.r2.common.util.date.DateFormatters;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -232,8 +232,17 @@ public class MetadataServiceImpl {
                 //FIXME/TODO: documentTypeName is only passed here, because it is eventually used in ProgramMetadataServiceImpl's getConstraints() method
                 metadata.setConstraints(getConstraints(fd, type, state, nextState, workflowNode, documentTypeName));
                 metadata.setCanEdit(!fd.isReadOnly());
-                metadata.setCanUnmask(!fd.isMask());
                 metadata.setCanView(!fd.isHide());
+
+                for (ConstraintMetadata constraintMeta : metadata.getConstraints()) {
+                    if (constraintMeta.isReadOnly()) {
+                        metadata.setCanEdit(!constraintMeta.isReadOnly());
+                    }
+
+                    metadata.setCanView(!constraintMeta.isHide());
+                }
+
+                metadata.setCanUnmask(!fd.isMask());
                 metadata.setDynamic(fd.isDynamic());
                 metadata.setLabelKey(fd.getLabelKey());
                 metadata.setDefaultValue(convertDefaultValue(metadata.getDataType(), fd.getDefaultValue()));
@@ -402,6 +411,12 @@ public class MetadataServiceImpl {
             constraintMetadata.setValidCharsMessageId(constraint.getValidChars().getLabelKey());
         }
 
+        // Readonly
+        constraintMetadata.setReadOnly(constraint.isReadOnly());
+
+        // Hide
+        constraintMetadata.setHide(constraint.isHide());
+
         // Case constraints
         if (constraint.getCaseConstraint() != null) {
             processCaseConstraint(constraintMetadata, constraint.getCaseConstraint(), type, state, nextState, workflowNode);
@@ -409,16 +424,19 @@ public class MetadataServiceImpl {
     }
 
     /**
-     * Currently this only handles requiredness indicators for case constraints with the following field paths:
+     * Currently this only handles requiredness and readonly and visible indicators for
+     * case constraints with the following field paths:
      * 
-     *  type, state, and proposal/workflowNode
+     * type, state, and proposal/workflowNode
      */
     protected void processCaseConstraint(ConstraintMetadata constraintMetadata, CaseConstraint caseConstraint, String type, String state, String nextState, String workflowNode) {
         String fieldPath = caseConstraint.getFieldPath();
         fieldPath = (fieldPath != null ? fieldPath.toUpperCase() : fieldPath);
         
         if (workflowNode != null && fieldPath != null && fieldPath.startsWith("PROPOSAL/WORKFLOWNODE")){
+            processHideCaseConstraint(constraintMetadata, caseConstraint, type, state, nextState, workflowNode);
         	processRequiredByNodeCaseConstraint(constraintMetadata, caseConstraint, workflowNode);
+            processReadOnlyByNodeCaseConstraint(constraintMetadata, caseConstraint, workflowNode);
           //Both 'stateKey' and 'state' needs to be checked until R1 code is phased out
         } else if ("STATEKEY".equals(fieldPath) || "STATE".equals(fieldPath)) {
         	processStateCaseConstraint(constraintMetadata, caseConstraint, type, state, nextState, workflowNode);
@@ -472,6 +490,56 @@ public class MetadataServiceImpl {
         }
     }
     
+    /**
+     * Modifies the constraintMetadata to add readonly constraints based on the workflow
+     * route node the proposal is currently in.
+     * 
+     * @param constraintMetadata The fields constraintMetadata to be modified
+     * @param caseConstraint The caseConstraint defined in dictionary for field
+     * @param workflowNode The current node in workflow process
+     */
+    private void processReadOnlyByNodeCaseConstraint(ConstraintMetadata constraintMetadata,
+            CaseConstraint caseConstraint, String workflowNode) {
+        List<WhenConstraint> whenConstraints = caseConstraint.getWhenConstraint();
+
+        if ("EQUALS".equals(caseConstraint.getOperator()) && whenConstraints != null) {
+            for (WhenConstraint whenConstraint : whenConstraints) {
+                List<Object> values = whenConstraint.getValues();
+                Constraint constraint = whenConstraint.getConstraint();
+
+                if (constraint.getErrorLevel() == ErrorLevel.ERROR && constraint.isReadOnly()) {
+                    if (values.contains(workflowNode)) {
+                        constraintMetadata.setReadOnly(constraint.isReadOnly());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Modifies the constraintMetadata to add hide constraints based on the workflow route
+     * node the proposal is currently in.
+     * 
+     * @param constraintMetadata The fields constraintMetadata to be modified
+     * @param caseConstraint The caseConstraint defined in dictionary for field
+     * @param workflowNode The current node in workflow process
+     */
+    private void processHideCaseConstraint(ConstraintMetadata constraintMetadata, CaseConstraint caseConstraint,
+            String type, String state, String nextState, String workflowNode) {
+        List<WhenConstraint> whenConstraints = caseConstraint.getWhenConstraint();
+
+        if ("EQUALS".equals(caseConstraint.getOperator()) && whenConstraints != null) {
+            for (WhenConstraint whenConstraint : whenConstraints) {
+                List<Object> values = whenConstraint.getValues();
+                Constraint constraint = whenConstraint.getConstraint();
+
+                if (constraint.getErrorLevel() == ErrorLevel.ERROR && values.contains(workflowNode)) {
+                    updateConstraintMetadata(constraintMetadata, constraint, type, state, nextState, workflowNode);
+                }
+            }
+        }
+    }
+
     /** 
      * @param values
      * @param workflowNode
