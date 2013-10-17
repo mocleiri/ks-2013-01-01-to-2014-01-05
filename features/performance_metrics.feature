@@ -119,3 +119,9 @@ Feature: Performance.Metrics
     Then the transaction takes less than "3" seconds
     And I revert the new rule change
     Then the transaction takes less than "3" seconds
+
+  Scenario: Display Schedule of Classes
+    When I search for a scheduled class
+    Then the transaction takes less than "3" seconds
+    When I view the detailed schedule of classes
+    Then the transaction takes less than "3" seconds

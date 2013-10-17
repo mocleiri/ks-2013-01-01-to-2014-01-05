@@ -504,3 +504,23 @@ When /^I revert the new rule change$/ do
     end
   end
 end
+
+
+When /^I search for a scheduled class$/ do
+  go_to_display_schedule_of_classes
+  @performance_test = make PerformanceTest
+  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "ENGL206", :exp_course_list => ["ENGL206"], :exp_cluster_list => ["CL 101","CL Leftovers"], :exp_reg_group_list => ["1001","1002","1003","1004"]
+  @performance_test.start
+  @schedule_of_classes.display
+  @performance_test.end
+end
+
+When /^I view the detailed schedule of classes$/ do
+
+  on DisplayScheduleOfClasses do |page|
+    @performance_test.start
+    page.course_expand("ENGL206")
+    @performance_test.end
+  end
+end
+
