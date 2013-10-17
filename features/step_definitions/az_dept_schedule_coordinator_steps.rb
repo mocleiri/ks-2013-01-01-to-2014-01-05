@@ -128,7 +128,7 @@ end
 
 When /^I manage course offerings for a subject code in my admin org$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :course=>"ENGL206", :term=>@term_for_test
+  @course_offering = make CourseOffering, :course=>"ENGL222", :term=>@term_for_test
   @course_offering.search_by_subjectcode
 end
 
@@ -410,7 +410,7 @@ end
 
 When /^there is an? "([^"]*)" course offering in my admin org/ do |co_status|
   step "I am logged in as a Schedule Coordinator"
-  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
+  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL222"
   @course_offering.check_course_in_status(:co_status => co_status)
   step "I am logged in as a Department Schedule Coordinator"
 end
@@ -425,7 +425,7 @@ end
 
 When /^there is an? "([^"]*)" course offering present/ do |co_status|
   step "I am logged in as a Schedule Coordinator"
-  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL206"
+  @course_offering = make CourseOffering, :term=> @term_for_test, :course => "ENGL222"
   @course_offering.check_course_in_status(:co_status => co_status)
 end
 
@@ -481,7 +481,7 @@ end
 
 When /^I edit a course offering in my admin org$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL206"
+  @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL222"
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering
@@ -499,7 +499,7 @@ end
 
 When /^I attempt to edit a course offering in my admin org$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL206"
+  @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL222"
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering_link.present?.should be_false
