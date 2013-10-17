@@ -12,8 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "KSPL_LRNG_PLAN")
-public class LearningPlanEntity extends MetaEntity
-        implements AttributeOwner<LearningPlanAttributeEntity>, Comparable<LearningPlanEntity> {
+public class LearningPlanEntity extends MetaEntity implements Comparable<LearningPlanEntity> {
 
     @Column(name="STUDENT_ID")
 	private String studentId;
@@ -39,12 +38,10 @@ public class LearningPlanEntity extends MetaEntity
         super();
     }
 
-    @Override
     public void setAttributes(Set<LearningPlanAttributeEntity> attributes) {
         this.attributes = attributes;
     }
 
-    @Override
     public Set<LearningPlanAttributeEntity> getAttributes() {
         return attributes;
     }

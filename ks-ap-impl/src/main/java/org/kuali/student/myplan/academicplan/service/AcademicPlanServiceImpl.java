@@ -21,6 +21,7 @@ import org.kuali.student.myplan.academicplan.dao.PlanItemTypeDao;
 import org.kuali.student.myplan.academicplan.dto.LearningPlanInfo;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.dto.PlanItemSetInfo;
+import org.kuali.student.myplan.academicplan.model.AttributeEntity;
 import org.kuali.student.myplan.academicplan.model.LearningPlanAttributeEntity;
 import org.kuali.student.myplan.academicplan.model.LearningPlanEntity;
 import org.kuali.student.myplan.academicplan.model.LearningPlanRichTextEntity;
@@ -29,12 +30,10 @@ import org.kuali.student.myplan.academicplan.model.PlanItemAttributeEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemRichTextEntity;
 import org.kuali.student.myplan.academicplan.model.PlanItemTypeEntity;
-import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
-import org.kuali.student.r2.common.entity.BaseAttributeEntity;
 import org.kuali.student.r2.common.exceptions.AlreadyExistsException;
 import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
@@ -346,7 +345,7 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 	 * @return
 	 */
 	private List<Attribute> mergeAttributes(boolean createNewPlanItem, HasAttributes attrSource,
-			Set<? extends BaseAttributeEntity<?>> attributeEntities) {
+			Set<? extends AttributeEntity> attributeEntities) {
 		if (attrSource.getAttributes() == null)
 			return null;
 
@@ -363,9 +362,9 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
 			if (createNewPlanItem) {
 				attributeEntities.clear();
 			} else {
-				Iterator<? extends BaseAttributeEntity<?>> ai = attributeEntities.iterator();
+				Iterator<? extends AttributeEntity> ai = attributeEntities.iterator();
 				while (ai.hasNext()) {
-					BaseAttributeEntity<?> attrEntity = ai.next();
+					AttributeEntity attrEntity = ai.next();
 					String key = attrEntity.getKey();
 					if (attributeMap.containsKey(key)) {
 						List<Attribute> attl = attributeMap.get(key);
