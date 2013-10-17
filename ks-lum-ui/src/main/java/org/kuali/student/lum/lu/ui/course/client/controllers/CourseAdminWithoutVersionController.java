@@ -47,11 +47,16 @@ public class CourseAdminWithoutVersionController extends CourseAdminController{
    		super.addStyleName("ks-course-admin");  	   		   		
     }
 	
+    @Override
+    protected void progressiveEnableFields() {
+        super.progressiveEnableFields();
+        progressiveEnableRetirementFields();
+    }
+
 	/**
 	 * Override the progressive enable fields to only allow edit of end term and retire fields when pilot box checked and course is not active
 	 */
-	@Override
-	protected void progressiveEnableFields() {
+    protected void progressiveEnableRetirementFields() {
 		super.progressiveEnableFields();
         final FieldDescriptor retireRationale = Application.getApplicationContext().getPathToFieldMapping(null,CreditCourseConstants.RETIREMENT_RATIONALE); 
         final FieldDescriptor lastTermOffered = Application.getApplicationContext().getPathToFieldMapping(null,CreditCourseConstants.LAST_TERM_OFFERED);

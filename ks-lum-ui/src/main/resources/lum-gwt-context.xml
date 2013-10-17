@@ -491,9 +491,13 @@
         <property name="programService" ref="programClient"/>       
     </bean>
 
+	<!-- Define the DefaultDataBeanMapper bean: -->
+	<bean id="defaultDataBeanMapper" class="org.kuali.student.r1.common.assembly.transform.DefaultDataBeanMapper" />
+
 	<!--  Transformation Managers -->
     <bean id="courseTransformationManager" class="org.kuali.student.r1.common.assembly.transform.TransformationManager">
         <property name="metadataService" ref="metadataServiceImpl"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
         <property name="filters">
             <list>
                 <!-- <ref bean="authzFilter"/> -->
@@ -504,6 +508,7 @@
 
     <bean id="courseProposalTransformationManager" class="org.kuali.student.r1.common.assembly.transform.TransformationManager">
         <property name="metadataService" ref="metadataServiceImpl"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
         <property name="filters">
             <list>
                 <!-- Order of filters is important -->
@@ -518,6 +523,7 @@
     
     <bean id="courseRetireProposalTransformationManager" class="org.kuali.student.r1.common.assembly.transform.TransformationManager">
         <property name="metadataService" ref="metadataServiceImpl"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
         <property name="filters">
             <list>
                 <!-- Order of filters is important -->
@@ -531,6 +537,7 @@
 
     <bean id="majorDisciplineTransformationManager" class="org.kuali.student.r1.common.assembly.transform.TransformationManager">
         <property name="metadataService" ref="programMetadataServiceImpl"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
         <property name="filters">
             <list>
                 <!-- Order of filters is important -->
@@ -544,6 +551,7 @@
 
     <bean id="majorDisciplineProposalTransformationManager" class="org.kuali.student.r1.common.assembly.transform.TransformationManager">
         <property name="metadataService" ref="programMetadataServiceImpl"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
         <property name="inboundFilters">
             <list>
                 <!-- Order of filters is important -->
@@ -568,6 +576,7 @@
 
     <bean id="loCategoryTransformationManager" class="org.kuali.student.r1.common.assembly.transform.TransformationManager">
         <property name="metadataService" ref="metadataServiceImpl"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
         <property name="filters">
             <list>
                 <!-- Order of filters is important -->
@@ -579,6 +588,7 @@
     
     <bean id="credentialProgramTransformationManager" class="org.kuali.student.r1.common.assembly.transform.TransformationManager">
         <property name="metadataService" ref="programMetadataServiceImpl"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
         <property name="filters">
             <list>
                 <!-- Order of filters is important -->
@@ -591,6 +601,7 @@
     
     <bean id="coreProgramTransformationManager" class="org.kuali.student.r1.common.assembly.transform.TransformationManager">
         <property name="metadataService" ref="programMetadataServiceImpl"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
         <property name="filters">
             <list>
                 <!-- Order of filters is important -->
@@ -621,18 +632,21 @@
         <property name="documentTypeService" ref="documentTypeServiceClient"/>
 	</bean>
 	
-	<bean id="collaboratorFilter" class = "org.kuali.student.core.assembly.transform.CollaboratorsFilter">
+	<bean id="collaboratorFilter-parent" class = "org.kuali.student.core.assembly.transform.CollaboratorsFilter">
 		<property name="metadataService" ref="metadataServiceImpl"/>
 		<property name="collaboratorHelper" ref="collaboratorHelper"/>		
 		<property name="proposalService" ref="proposalClient"/>
 		<property name="proposalObjectType" value="org.kuali.student.core.proposal.definition.CourseProposalInfo"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
 	</bean>
+	<bean id="collaboratorFilter" parent="collaboratorFilter-parent" />
 
 	<bean id="programCollaboratorFilter" class = "org.kuali.student.core.assembly.transform.CollaboratorsFilter">
 		<property name="metadataService" ref="metadataServiceImpl"/>
 		<property name="collaboratorHelper" ref="collaboratorHelper"/>		
 		<property name="proposalService" ref="proposalClient"/>
         <property name="proposalObjectType" value="org.kuali.student.core.proposal.definition.ProgramProposalInfo"/>	
+        <property name="mapper" ref="defaultDataBeanMapper"/>
 	</bean>
 	
     <bean id="parentProposalWorkflowFilter" class="org.kuali.student.core.assembly.transform.ProposalWorkflowFilter" abstract="true">
@@ -640,9 +654,10 @@
         <property name="workflowDocumentActionsService" ref="workflowDocumentActionsClient"/>
         <property name="proposalService" ref="proposalClient"/>
         <property name="metadataService" ref="metadataServiceImpl"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
     </bean>
 
-    <bean id="courseProposalWorkflowFilter" parent="parentProposalWorkflowFilter">
+    <bean id="courseProposalWorkflowFilter-parent" parent="parentProposalWorkflowFilter">
         <property name="proposalReferenceType" value="kuali.proposal.referenceType.clu"/>
         <property name="defaultDocType" value="kuali.proposal.type.course.create"/>
         <property name="proposalObjectType" value="org.kuali.student.core.proposal.definition.CourseProposalInfo"/>
@@ -701,6 +716,7 @@
  			</list>
 		</property>			
     </bean>
+    <bean id="courseProposalWorkflowFilter" parent="courseProposalWorkflowFilter-parent" />
     
     <bean id="courseRetireProposalWorkflowFilter" parent="parentProposalWorkflowFilter">
         <property name="proposalReferenceType" value="kuali.proposal.referenceType.clu"/>
@@ -746,6 +762,7 @@
     <bean id="majorCredentialProgramFilter" class="org.kuali.student.lum.program.server.transform.MajorCredentialProgramFilter">
         <property name="metadataService" ref="metadataServiceImpl"/>
         <property name="programService" ref="programClient"/>
+        <property name="mapper" ref="defaultDataBeanMapper"/>
     </bean>
 
     <bean id="coreCredentialProgramFilter" class="org.kuali.student.lum.program.server.transform.CoreCredentialProgramFilter">

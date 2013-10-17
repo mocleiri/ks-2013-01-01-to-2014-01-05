@@ -2,15 +2,14 @@ package org.kuali.student.lum.program.server.transform;
 
 import java.util.Map;
 
+import org.kuali.student.lum.program.client.ProgramConstants;
 import org.kuali.student.r1.common.assembly.data.Data;
 import org.kuali.student.r1.common.assembly.data.Metadata;
 import org.kuali.student.r1.common.assembly.dictionary.MetadataServiceImpl;
 import org.kuali.student.r1.common.assembly.transform.AbstractDataFilter;
 import org.kuali.student.r1.common.assembly.transform.DataBeanMapper;
-import org.kuali.student.r1.common.assembly.transform.DefaultDataBeanMapper;
 import org.kuali.student.r1.common.assembly.transform.MetadataFilter;
 import org.kuali.student.r2.common.util.ContextUtils;
-import org.kuali.student.lum.program.client.ProgramConstants;
 import org.kuali.student.r2.lum.program.dto.CredentialProgramInfo;
 import org.kuali.student.r2.lum.program.service.ProgramService;
 
@@ -25,7 +24,7 @@ public class MajorCredentialProgramFilter extends AbstractDataFilter implements 
 
     private MetadataServiceImpl metadataService;
     private ProgramService programService;
-    private final DataBeanMapper mapper = new DefaultDataBeanMapper();
+    private DataBeanMapper mapper;
     private Metadata credPgmMetadata = null;
 
     /**
@@ -81,4 +80,7 @@ public class MajorCredentialProgramFilter extends AbstractDataFilter implements 
         return credPgmMetadata;
     }
 
+    public void setMapper(DataBeanMapper dataBeanMapper) {
+        this.mapper = dataBeanMapper;
+    }
 }
