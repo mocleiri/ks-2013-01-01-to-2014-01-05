@@ -1,5 +1,8 @@
 <config>
 
-	<param name="rice.ksap.additionalSpringFiles">classpath:META-INF/ks-ap/ks-ap-ui-context.xml</param>
+	<param name="resourceBundleNames">${rice.struts.message.resources},org.kuali.student.myplan.KSMyPlan-ApplicationResources,org.kuali.student.ap.KSAP-ApplicationResources</param>
+	<param name="validationPatternRegex.time12ap">(1[0-2]|0?[1-9]):([0-5][0-9])\\s?([apAP][mM]?)?</param>
+
+	<param name="rice.ksap.additionalSpringFiles">classpath:META-INF/ks-ap/ks-ap-ui-context.xml,classpath:META-INF/ks-ap/ks-ap-plan-review-context.xml</param>
 
 </config>
