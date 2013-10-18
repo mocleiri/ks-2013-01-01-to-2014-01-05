@@ -24,11 +24,6 @@
 				<ref bean="sb_cart_remove_page" />
 			</list>
 		</property>
-		<property name="additionalScriptFiles">
-			<list>
-				<value>arm-ks/scripts/arm-sb-ks.js</value>
-			</list>
-		</property>
 		<property name="header.render" value="false" />
 		<property name="footer.render" value="false" />
 	</bean>
@@ -50,13 +45,13 @@
 	</bean>
 
 	<bean abstract="true" id="sb_cart_radio" parent="Uif-ContentElementBase" scope="prototype"
-			p:template="/WEB-INF/krad/arm/sb_cart_radio.ftl" p:templateName="sb_cart_radio"
+			p:template="/WEB-INF/ftl/sb/sb_cart_radio.ftl" p:templateName="sb_cart_radio"
 			class="org.kuali.student.ap.sb.ui.ShoppingCartRadioComponent" />
 
 	<bean id="sb_cart_course_options" parent="Uif-StackedCollectionGroup" p:id="sb_cart_course_options"
 			p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false">
 		<property name="propertyName" value="courseOptions" />
-		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.CourseOption" />
+		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.CourseOption" />
     	<property name="layoutManager">
 			<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
 				<property name="lineGroupPrototype">
@@ -137,7 +132,7 @@
  			p:id="sb_cart_activity_classtimes_@{#line.uniqueId}" p:renderAddLine="false"
 			p:renderSaveLineActions="false" p:renderLineActions="false">
 		<property name="propertyName" value="classMeetingTimes" />
-		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.ClassMeetingTime" />
+		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.ClassMeetingTime" />
 		<property name="cssClasses">
 			<list merge="true">
 				<value>ksap-sb-cart-classtimes-group</value>
@@ -169,7 +164,7 @@
 	<bean id="sb_cart_activity_options" parent="Uif-StackedCollectionGroup" p:id="sb_cart_activity_options"
 			p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false" abstract="true">
 		<property name="propertyName" value="activityOptions" />
-		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.ActivityOption" />
+		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.ActivityOption" />
     <property name="layoutManager">
 			<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
 				<property name="lineGroupPrototype">
@@ -188,7 +183,7 @@
 	<bean id="sb_cart_secondary_options" parent="Uif-StackedCollectionGroup" p:id="sb_cart_secondary_options"
 			p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false">
 		<property name="propertyName" value="secondaryOptions" />
-		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.SecondaryActivityOptions" />
+		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.SecondaryActivityOptions" />
     <property name="layoutManager">
 			<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
 				<property name="lineGroupPrototype">

@@ -13,6 +13,8 @@ import org.kuali.student.ap.framework.context.TermHelper;
 import org.kuali.student.ap.framework.context.TextHelper;
 import org.kuali.student.ap.framework.context.UserSessionHelper;
 import org.kuali.student.ap.framework.course.CourseSearchStrategy;
+import org.kuali.student.ap.sb.ScheduleBuildStrategy;
+import org.kuali.student.ap.sb.ShoppingCartStrategy;
 import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
@@ -290,14 +292,32 @@ public final class KsapFrameworkServiceLocator {
 		return getInstance().ksapTextHelper;
 	}
 
-    /**
-     * Get the plan helper implementation.
-     *
-     * @return The plan helper.
-     */
-    public static PlanHelper getPlanHelper() {
-        return getInstance().planHelper;
-    }
+	/**
+	 * Get the plan helper implementation.
+	 * 
+	 * @return The plan helper.
+	 */
+	public static PlanHelper getPlanHelper() {
+		return getInstance().planHelper;
+	}
+
+	/**
+	 * Get the schedule build strategy.
+	 * 
+	 * @return The schedule build strategy.
+	 */
+	public static ScheduleBuildStrategy getScheduleBuildStrategy() {
+		return getInstance().scheduleBuildStrategy;
+	}
+
+	/**
+	 * Get the shopping cart strategy.
+	 * 
+	 * @return The shopping cart strategy.
+	 */
+	public static ShoppingCartStrategy getShoppingCartStrategy() {
+		return getInstance().shoppingCartStrategy;
+	}
 
 	@EJB
 	private transient AtpService ksCoreAtpService;
@@ -347,12 +367,19 @@ public final class KsapFrameworkServiceLocator {
 	private transient EnrollmentStatusHelper enrollmentStatusHelper;
 	@EJB
 	private transient ShoppingCartHelper shoppingCartHelper;
-    @EJB
-    private transient PlanHelper planHelper;
+	@EJB
+	private transient PlanHelper planHelper;
+	
+	// provided by ks-ap-ui or institution override
 	@EJB
 	@OptionalResource
-	// provided by ks-ap-ui or institution override
 	private transient CourseSearchStrategy courseSearchStrategy;
+	@OptionalResource
+	@EJB
+	private transient ScheduleBuildStrategy scheduleBuildStrategy;
+	@OptionalResource
+	@EJB
+	private transient ShoppingCartStrategy shoppingCartStrategy;
 
 	private KsapFrameworkServiceLocator() {
 	}

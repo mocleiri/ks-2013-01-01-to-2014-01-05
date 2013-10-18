@@ -26,16 +26,16 @@
 		</property>
 		<property name="additionalCssFiles">
 			<list>
-				<value>arm-ks/scripts/sb/fullcalendar/fullcalendar.css</value>
-				<value>arm-ks/css/sb/calendar.css</value>
-				<value>arm-ks/css/arm-sb-ks.css</value>
+				<value>ks-ap/scripts/sb/fullcalendar/fullcalendar.css</value>
+				<value>ks-ap/css/sb.calendar.css</value>
+				<value>ks-ap/css/sb.base.css</value>
 			</list>
 		</property>
 		<property name="additionalScriptFiles">
 			<list>
-				<value>arm-ks/scripts/sb/fullcalendar/fullcalendar.min.js</value>
-				<value>arm-ks/scripts/sb/calendar.js</value>
-				<value>arm-ks/scripts/arm-sb-ks.js</value>
+				<value>ks-ap/scripts/sb/fullcalendar/fullcalendar.min.js</value>
+				<value>ks-ap/scripts/sb/calendar.js</value>
+				<value>ks-ap/scripts/sb/sb.js</value>
 			</list>
 		</property>
 		<property name="items">
@@ -305,7 +305,7 @@
 	<bean id="sb_course_options" parent="Uif-StackedCollectionGroup" p:id="sb_course_options"
 			p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false">
 		<property name="propertyName" value="courseOptions" />
-		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.CourseOption" />
+		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.CourseOption" />
     <property name="layoutManager">
 			<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
 				<property name="lineGroupPrototype">
@@ -383,7 +383,7 @@
 	<bean id="sb_activity_options" parent="Uif-StackedCollectionGroup" p:id="sb_activity_options"
 			p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false" abstract="true">
 		<property name="propertyName" value="activityOptions" />
-		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.ActivityOption" />
+		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.ActivityOption" />
     <property name="layoutManager">
 			<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
 				<property name="lineGroupPrototype">
@@ -433,7 +433,7 @@
 							<bean parent="Uif-StackedCollectionGroup" p:id="sb_activity_classtimes_@{#line.uniqueId}"
 									p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false" p:render="@{!#line.enrollmentGroup}">
 								<property name="propertyName" value="classMeetingTimes" />
-								<property name="collectionObjectClass" value="org.kuali.student.ap.sb.ClassMeetingTime" />
+								<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.ClassMeetingTime" />
 								<property name="layoutManager">
 									<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
 										<property name="lineGroupPrototype">
@@ -466,7 +466,7 @@
 	<bean id="sb_secondary_options" parent="Uif-StackedCollectionGroup" p:id="sb_secondary_options"
 			p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false">
 		<property name="propertyName" value="secondaryOptions" />
-		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.SecondaryActivityOptions" />
+		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.SecondaryActivityOptions" />
     <property name="layoutManager">
 			<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
 				<property name="lineGroupPrototype">
@@ -581,7 +581,7 @@
 				</bean>
 				<bean parent="Uif-ContentElementBase" p:id="sb_calendar" scope="prototype"
 						class="org.kuali.student.ap.sb.ui.ScheduleBuildCalendarComponent" p:cssClasses="ksap-sb-calendar"
-						p:template="/WEB-INF/krad/arm/sb_calendar.ftl" p:templateName="sb_calendar" />
+						p:template="/WEB-INF/ftl/sb/sb_calendar.ftl" p:templateName="sb_calendar" />
 			</list>
 		</property>
 	</bean>

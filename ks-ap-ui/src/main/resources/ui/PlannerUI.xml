@@ -16,7 +16,7 @@
 		<property name="additionalScriptFiles">
 			<list>
 				<value>ks-myplan/plugins/jcarousellite.js</value>
-				<value>arm-ks/scripts/arm-planner-ks.js</value>
+				<value>ks-ap/scripts/plan/planner.js</value>
 			</list>
 		</property>
 		<property name="items">
@@ -400,7 +400,7 @@
 	<bean id="planner_courses_detail_list-parent" parent="Uif-ListCollectionSection">
 		<property name="validationMessages.render" value="false" />
 		<property name="propertyName" value="terms" />
-		<property name="collectionObjectClass" value="org.kuali.student.ap.plan.ui.PlannerTerm" />
+		<property name="collectionObjectClass" value="org.kuali.student.ap.plan.PlannerTerm" />
 		<property name="layoutManager.lineGroupPrototype.header.render"
 			value="true" />
 		<property
@@ -586,7 +586,7 @@
 		<property name="renderLineActions" value="false" />
 		<property name="bindingInfo.bindToForm" value="true" />
 		<property name="disclosure.render" value="false" />
-		<property name="collectionObjectClass" value="org.kuali.student.ap.plan.ui.PlannerItem" />
+		<property name="collectionObjectClass" value="org.kuali.student.ap.plan.PlannerItem" />
 		<property name="items">
 			<list>
 				<bean p:id="@{#line.uniqueId}" parent="Uif-HorizontalFieldGroup"

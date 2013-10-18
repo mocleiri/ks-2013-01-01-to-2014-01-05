@@ -1,4 +1,4 @@
-package org.kuali.student.myplan.course.util;
+package org.kuali.student.ap.framework.course;
 
 import java.math.BigDecimal;
 import java.util.Collections;
