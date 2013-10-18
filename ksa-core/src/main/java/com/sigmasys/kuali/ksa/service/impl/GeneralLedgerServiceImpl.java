@@ -1197,10 +1197,10 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     }
 
     /**
-     * Retrieves a list of failed GL transactions for the given date range.
+     * Retrieves a list of failed GL transactions for the given Transaction's effective start and end dates.
      *
-     * @param startDate Start date
-     * @param endDate   End date
+     * @param startDate Transaction effective start date
+     * @param endDate   Transaction effective end date
      * @return list of FailedGlTransaction instances
      */
     @Override
@@ -1212,6 +1212,9 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
             throw new IllegalArgumentException(errMsg);
         }
 
+        startDate = CalendarUtils.removeTime(startDate);
+        endDate = CalendarUtils.removeTime(endDate);
+
         if (startDate.after(endDate)) {
             String errMsg = "Start date cannot be greater than End date";
             logger.error(errMsg);
@@ -1219,10 +1222,10 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         }
 
         Query query = em.createQuery(SELECT_FAILED_GL_TRANSACTION +
-                " where f.creationDate between :startDate and :endDate order by f.id desc");
+                " where t.effectiveDate between :startDate and :endDate order by f.id desc");
 
-        query.setParameter("startDate", CalendarUtils.removeTime(startDate), TemporalType.DATE);
-        query.setParameter("endDate", CalendarUtils.removeTime(endDate), TemporalType.DATE);
+        query.setParameter("startDate", startDate, TemporalType.DATE);
+        query.setParameter("endDate", endDate, TemporalType.DATE);
 
         return query.getResultList();
     }

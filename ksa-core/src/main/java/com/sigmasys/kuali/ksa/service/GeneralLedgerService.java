@@ -300,10 +300,10 @@ public interface GeneralLedgerService {
     List<FailedGlTransaction> getFailedGlTransactionsForAccount(String accountId);
 
     /**
-     * Retrieves a list of failed GL transactions for the given date range.
+     * Retrieves a list of failed GL transactions for the given Transaction's effective start and end dates.
      *
-     * @param startDate Start date
-     * @param endDate   End date
+     * @param startDate Transaction effective start date
+     * @param endDate   Transaction effective end date
      * @return list of FailedGlTransaction instances
      */
     List<FailedGlTransaction> getFailedGlTransactionsForDates(Date startDate, Date endDate);

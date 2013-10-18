@@ -810,7 +810,6 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         Assert.isTrue(!success);
 
-        // TODO: Retrieve FailedGlTransaction objects by Transaction ID and check them
     }
 
     @Test
@@ -919,6 +918,83 @@ public class TransactionServiceTest extends AbstractServiceTest {
         }
 
         Assert.isTrue(transactionService.makeAllTransactionsEffective(false) > 0);
+
+        Assert.isTrue(transactionService.makeFailedTransactionsEffective() == 0);
+    }
+
+    @Test
+    public void makeFailedTransactionsEffective() throws Exception {
+
+        TransactionType transactionType = transactionService.createTransactionType("TT_77", 0, "TT_77",
+                new Date(), 1, "Credit Type 77", CreditType.class, true);
+
+        Assert.notNull(transactionType);
+        Assert.notNull(transactionType.getId());
+
+        Transaction transaction1 =
+                transactionService.createTransaction(transactionType.getId().getId(), TEST_USER_ID, new Date(), new BigDecimal(0.01));
+
+        Assert.notNull(transaction1);
+        Assert.notNull(transaction1.getId());
+
+        Transaction transaction2 =
+                transactionService.createTransaction(transactionType.getId().getId(), TEST_USER_ID, new Date(), new BigDecimal(-600));
+
+        Assert.notNull(transaction2);
+        Assert.notNull(transaction2.getId());
+
+        Transaction transaction3 =
+                transactionService.createTransaction(transactionType.getId().getId(), TEST_USER_ID, new Date(), new BigDecimal(10e3));
+
+        Assert.notNull(transaction3);
+        Assert.notNull(transaction3.getId());
+
+        transactionService.makeAllTransactionsEffective(true);
+
+        List<FailedGlTransaction> failedGlTransactions = glService.getFailedGlTransactions();
+
+        Assert.notNull(failedGlTransactions);
+        Assert.notEmpty(failedGlTransactions);
+        Assert.isTrue(failedGlTransactions.size() >= 3);
+
+        failedGlTransactions = glService.getFailedGlTransactionsForAccount(TEST_USER_ID);
+
+        Assert.notNull(failedGlTransactions);
+        Assert.notEmpty(failedGlTransactions);
+        Assert.isTrue(failedGlTransactions.size() >= 3);
+
+        failedGlTransactions = glService.getFailedGlTransactionsForDates(new Date(), new Date());
+
+        Assert.notNull(failedGlTransactions);
+        Assert.notEmpty(failedGlTransactions);
+        Assert.isTrue(failedGlTransactions.size() >= 3);
+
+        boolean transaction1Exists = false;
+        boolean transaction2Exists = false;
+        boolean transaction3Exists = false;
+
+        for (FailedGlTransaction failedGlTransaction : failedGlTransactions) {
+
+            Assert.notNull(failedGlTransaction);
+            Assert.notNull(failedGlTransaction.getId());
+            Assert.notNull(failedGlTransaction.getTransaction());
+            Assert.notNull(failedGlTransaction.getTransaction().getId());
+
+            if (transaction1.getId().equals(failedGlTransaction.getTransaction().getId())) {
+                Assert.isTrue(!failedGlTransaction.isFixed());
+                transaction1Exists = true;
+            } else if (transaction2.getId().equals(failedGlTransaction.getTransaction().getId())) {
+                Assert.isTrue(!failedGlTransaction.isFixed());
+                transaction2Exists = true;
+            } else if (transaction3.getId().equals(failedGlTransaction.getTransaction().getId())) {
+                Assert.isTrue(!failedGlTransaction.isFixed());
+                transaction3Exists = true;
+            }
+        }
+
+        Assert.isTrue(transaction1Exists);
+        Assert.isTrue(transaction2Exists);
+        Assert.isTrue(transaction3Exists);
 
         Assert.isTrue(transactionService.makeFailedTransactionsEffective() == 0);
     }

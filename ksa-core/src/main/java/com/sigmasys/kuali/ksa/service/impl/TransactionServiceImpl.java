@@ -73,13 +73,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
     private void logFailedGlTransaction(Long sourceTransactionId, Exception exception) {
 
-        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
-        transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-        org.springframework.transaction.TransactionStatus userTransaction = getTransaction(transactionDefinition);
-
-        try {
-
             Transaction sourceTransaction = getEntity(sourceTransactionId, Transaction.class);
 
             FailedGlTransaction failedGlTransaction = new FailedGlTransaction();
@@ -90,14 +83,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             failedGlTransaction.setCreatorId(userSessionManager.getUserId());
 
             persistEntity(failedGlTransaction);
-
-            commit(userTransaction);
-
-        } catch (Throwable t) {
-            logger.error(t.getMessage(), t);
-            rollback(userTransaction);
-        }
-
     }
 
 
@@ -1740,7 +1725,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
                 try {
                     result = makeEffective(transactionId, forceEffective);
-                } catch (Exception e) {
+                } catch (GlTransactionFailedException e) {
                     logFailedGlTransaction(transactionId, e);
                 }
 
@@ -1775,13 +1760,13 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     public synchronized int makeFailedTransactionsEffective() {
 
         Query query = em.createQuery("select distinct f.transaction.id from FailedGlTransaction f " +
-                " where fixed <> true ");
+                " where f.fixed <> true and f.transaction.id <> null");
 
         List<Long> transactionIds = query.getResultList();
 
         if (CollectionUtils.isNotEmpty(transactionIds)) {
 
-            List<Long> effectiveTransactionIds = makeTransactionsEffective(transactionIds, true);
+            List<Long> effectiveTransactionIds = makeTransactionsEffective(new ArrayList<Long>(transactionIds), true);
 
             if (CollectionUtils.isNotEmpty(effectiveTransactionIds)) {
                 query = em.createQuery("update FailedGlTransaction set fixed = true where transaction.id in (:ids)");
@@ -1841,7 +1826,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         if (transaction == null) {
             String errMsg = "Transaction with ID = " + transactionId + " does not exist";
             logger.error(errMsg);
-            throw new TransactionNotFoundException(errMsg);
+            throw new GlTransactionFailedException(transactionId, errMsg);
         }
 
         if (transaction.isGlEntryGenerated()) {

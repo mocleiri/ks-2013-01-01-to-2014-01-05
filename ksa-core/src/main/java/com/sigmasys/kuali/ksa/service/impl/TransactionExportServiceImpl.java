@@ -33,7 +33,7 @@ import static com.sigmasys.kuali.ksa.util.TransactionUtils.*;
  * @author Michael Ivanov
  */
 @Service("transactionExportService")
-@Transactional(timeout = 1200)
+@Transactional(timeout = 3600)
 @WebService(serviceName = TransactionExportService.SERVICE_NAME, portName = TransactionExportService.PORT_NAME,
         targetNamespace = Constants.WS_NAMESPACE)
 @SuppressWarnings("unchecked")
