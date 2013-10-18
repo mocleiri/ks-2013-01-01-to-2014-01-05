@@ -14,7 +14,6 @@ import org.kuali.student.r2.lum.course.infc.Course;
  * @author Mark Fyffe <mwfyffe@iu.edu>
  * @version 1.1
  */
-@SuppressWarnings("deprecation")
 public interface PlanItemForm extends HasUniqueId {
 
 	/**

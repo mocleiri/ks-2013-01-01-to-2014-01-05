@@ -14,7 +14,6 @@ import org.kuali.student.r2.common.infc.Attribute;
 import org.kuali.student.r2.common.infc.RichText;
 import org.kuali.student.r2.lum.course.infc.Course;
 
-@SuppressWarnings("deprecation")
 public class PlannerItem implements
 		org.kuali.student.ap.common.infc.HasUniqueId, Serializable {
 

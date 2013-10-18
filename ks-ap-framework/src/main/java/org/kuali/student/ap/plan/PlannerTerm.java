@@ -5,15 +5,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.kuali.student.ap.common.infc.HasUniqueId;
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
 import org.kuali.student.ap.framework.context.TermHelper;
 import org.kuali.student.ap.framework.course.CreditsFormatter;
 import org.kuali.student.enrollment.acal.infc.Term;
 import org.springframework.web.util.HtmlUtils;
 
-@SuppressWarnings("deprecation")
-public class PlannerTerm implements
-		org.kuali.student.ap.common.infc.HasUniqueId, Serializable {
+public class PlannerTerm implements HasUniqueId, Serializable {
 
 	private static final long serialVersionUID = 5885238483581189013L;
 

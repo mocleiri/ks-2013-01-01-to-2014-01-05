@@ -3,8 +3,9 @@ package org.kuali.student.ap.plan;
 import java.io.Serializable;
 import java.util.Date;
 
-@SuppressWarnings("deprecation")
-public class PlannerTermNote implements org.kuali.student.ap.common.infc.HasUniqueId, Serializable {
+import org.kuali.student.ap.common.infc.HasUniqueId;
+
+public class PlannerTermNote implements HasUniqueId, Serializable {
 
 	private static final long serialVersionUID = 5885238483581189013L;
 
