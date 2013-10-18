@@ -3,7 +3,6 @@ Feature: SA.FE3-9 View Exam Offerings
 
   Background:
     Given I am logged in as admin
-    And I have ensured that the Fall Term of the Calender is setup with a Final Exam Period
 
   #FE3.9.EB1 (KSENROLL-9788)
   @pending
