@@ -605,7 +605,6 @@ end
 
 When /^I add another activity offering to the colocated set$/ do
     course_offering = create CourseOffering, :course => "WMST400", :waitlists => true, :term => @term.term_code
-    puts "+ co code #{course_offering.course}"
     activity_offering = create ActivityOffering, :parent_course_offering => course_offering
     activity_offering.save
     @ao_list << activity_offering

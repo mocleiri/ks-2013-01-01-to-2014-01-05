@@ -4,7 +4,7 @@ module Workflows
 
   # Site Navigation helpers...
   def go_to_create_soc
-    visit PortalMenu do |page|
+    visit KSMaintenancePortal do |page|
       page.create_soc_for_term
     end
   end
@@ -37,9 +37,8 @@ module Workflows
   end
 
   def go_to_manage_reg_windows
-    visit Enrollment do |page|
-      page.manage_registration_windows
-    end
+    visit KSMaintenancePortal
+    on(KSMaintenancePortal).manage_reg_windows
   end
 
   def go_to_manage_course_offerings
@@ -91,26 +90,31 @@ module Workflows
     end
   end
 
+  def go_to_manual_soc_change
+    visit KSMaintenancePortal
+    on(KSMaintenancePortal).test_soc_state_change
+  end
+
   def go_to_krms_components
-    visit PortalMenu do |page|
+    visit KSMaintenancePortal do |page|
       page.krms_components
     end
   end
 
   def go_to_manage_co_agendas
-    visit PortalMenu do |page|
+    visit KSMaintenancePortal do |page|
       page.krms_manage_co_agendas
     end
   end
 
   def go_to_krms_manage_course_offerings
-    visit PortalMenu do |page|
+    visit KSMaintenancePortal do |page|
       page.manage_course_offerings
     end
   end
 
   def go_to_state_propagation
-    visit PortalMenu do |page|
+    visit KSMaintenancePortal do |page|
       page.test_state_propagation
     end
   end
@@ -124,7 +128,7 @@ module Workflows
   def log_in(user, pwd)
     current_user = ""
     if !$distributed_env then
-      visit PortalMenu do |page|
+      visit KSFunctionalHome do |page|
         current_user = page.current_logged_in_user_id
         if current_user == :no_user
           page.login_with user, pwd

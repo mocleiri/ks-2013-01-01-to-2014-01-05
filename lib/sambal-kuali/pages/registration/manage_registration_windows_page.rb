@@ -1,8 +1,9 @@
 class ManageRegistrationWindows < BasePage
 
   wrapper_elements
-  frame_element
+#  frame_element
   validation_elements
+  element(:frm) { |b| b.frame(id: /easyXDM/).frame(id: "iframeportlet") }
 
   element(:term_type) { |b| b.frm.select(name: "termType") }
   element(:year) { |b| b.frm.text_field(name: "termYear") }

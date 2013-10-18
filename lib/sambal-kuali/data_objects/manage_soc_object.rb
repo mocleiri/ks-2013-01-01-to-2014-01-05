@@ -195,7 +195,7 @@ class ManageSoc
         soc_state = ManageSoc::OPEN_STATE_KEY
     end
 
-    visit ManualSocStateChangePage
+    go_to_manual_soc_change
     on ManualSocStateChangePage do |page|
       page.change_soc_state_termCode.value = @term_code
       page.change_soc_state_newSocState.value = soc_state

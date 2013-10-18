@@ -3,24 +3,17 @@ class BasePage < PageFactory
   class << self
 
     def wrapper_elements
-      element(:main_menu_el) { |b| b.link(title: "Main Menu") }
-      element(:logout_el) { |b| b.button(value: "Logout") }
-      action(:logout) { |b| b.logout_el.click }
-      element(:administration_el) { |b| b.link(title: "Administration") }
+      element(:logout_el) { |b| b.link(text: "Logout") }
+      action(:logout) { |b| b.logged_in_link.click; b.logout_el.click }
 
       action(:enrollment_via_breadcrumb) { |b| b.link(id: "KS-HomewardPathBreadcrumbs-Enrollment").click }
       action(:home) { |b| b.link(text: "Home").click }
-      action(:main_menu) { |p| p.main_menu_el.click }
-      action(:provide_feedback) { |b| b.link(title: "Provide Feedback").click }
-      action(:administration) { |p| p.administration_el.click }
+
       action(:action_list) { |b| b.link(title: "Action List").click }
-      action(:doc_search) { |b| b.link(title: "Document Search").click }
 
-      value(:build) { |b| b.div(id: "build").text }
-      value(:logged_in_user) { |b| b.div(id: "login-info").text[/(?<=:.).*$/] }
 
-      value(:copyright) { |b| b.div(id: "footer-copyright").text }
-      action(:acknowledgements) { |b| b.link(href: "acknowledgments.jsp").click }
+      element(:logged_in_link) { |b| b.div(class: "ks-uif-viewHeader-container navbar-inverse navbar").link(class: "dropdown-toggle") }
+      value(:logged_in_user) { |b| b.div(class: "ks-uif-viewHeader-container navbar-inverse navbar").link(class: "dropdown-toggle").text }
 
       element(:loading) { |b| b.image(alt: "Loading...") }
       element(:adding) { |b| b.frm.image(alt: "Adding Line...") }
