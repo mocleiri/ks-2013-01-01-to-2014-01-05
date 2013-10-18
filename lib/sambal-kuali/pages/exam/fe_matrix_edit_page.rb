@@ -13,6 +13,8 @@ class FEMatrixEdit < BasePage
   element(:delivery_logistics_section) { |b| b.frm.div( id: "FinalExam-DeliveryLogistic-New-Section")}
   element(:proposition_section) { |b| b.frm.div( id: "KRMS-PropositionEdit-BoxSection")}
 
+  value(:validation_message_text) { |b| b.frm.li( class: "uif-errorMessageItem").text}
+
   element(:add_statement_btn) { |b| b.toolbar_section.button( text: "Add Statement")}
   action(:add_statement) { |b| b.add_statement_btn.click; b.loading.wait_while_present}
   element(:edit_btn) { |b| b.toolbar_section.button( text: "Edit")}
@@ -25,11 +27,11 @@ class FEMatrixEdit < BasePage
   action(:delete) { |b| b.delete_btn.click; b.loading.wait_while_present}
 
   element(:rule_dropdown) { |b| b.proposition_section.select( name: /editTree.*proposition\.typeId/)}
-  element(:rule_days) { |b| b.proposition_section.text_field( id: "KSFE_days_control")}
-  element(:rule_starttime) { |b| b.proposition_section.text_field( id: "KSFE_starttime_control")}
-  element(:rule_starttime_ampm) { |b| b.proposition_section.select( id: "KSFE_starttime_ampm_control")}
-  element(:rule_endtime) { |b| b.proposition_section.text_field( id: "KSFE_endtime_control")}
-  element(:rule_endtime_ampm) { |b| b.proposition_section.select( id: "KSFE_endtime_ampm_control")}
+  element(:rule_days) { |b| b.proposition_section.text_field( name: /editTree.*proposition\.weekdays/)}
+  element(:rule_starttime) { |b| b.proposition_section.text_field( name: /editTree.*proposition\.startTime/)}
+  element(:rule_starttime_ampm) { |b| b.proposition_section.select( name: /editTree.*proposition\.startTimeAMPM/)}
+  element(:rule_endtime) { |b| b.proposition_section.text_field( name: /editTree.*proposition\.endTime/)}
+  element(:rule_endtime_ampm) { |b| b.proposition_section.select( name: /editTree.*proposition\.endTimeAMPM/)}
   element(:rule_freeformtext) { |b| b.proposition_section.text_field( name: /editTree.*proposition\.termParameter/)}
   element(:courses_type_dropdown) { |b| b.proposition_section.select( id: "KRMS-MultiCourse-Type-Field_control")}
 

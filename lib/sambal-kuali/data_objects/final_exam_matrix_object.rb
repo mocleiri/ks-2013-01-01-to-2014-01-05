@@ -6,7 +6,9 @@ class FinalExamMatrix
   include StringFactory
   include Workflows
 
-  attr_accessor :term_type, :courses
+  attr_accessor :term_type, :courses, :days, :start_time,
+                :end_time, :time_ampm, :free_text, :rdl_days,
+                :rule_requirements
 
   def initialize(browser,opts = {})
     @browser = browser
@@ -26,6 +28,7 @@ class FinalExamMatrix
       :room => "0304",
       :rdl_days => "Day 1",
       :courses_type => "Approved Courses",
+      :add_more_statements => false,
       :defer_save => false
     }
 
@@ -44,13 +47,22 @@ class FinalExamMatrix
 
     on FEMatrixEdit do |page|
       page.add_statement
-      sleep 10
       page.rule_dropdown.select @rule
 
       if @exam_type == "Standard"
-        set_standard_rule @rule
+        opts = {:rule => @rule,
+                :days => @days,
+                :start_time => @start_time,
+                :end_time => @end_time,
+                :time_ampm => @time_ampm,
+                :free_text => @free_text}
+        set_standard_rule opts
       else
-        set_common_rule @rule
+        opts = {:rule => @rule,
+                :courses => @courses,
+                :courses_type => @courses_type,
+                :free_text => @free_text}
+        set_common_rule opts
       end
 
       page.rdl_days.select @rdl_days
@@ -66,6 +78,10 @@ class FinalExamMatrix
       page.preview_change
       page.loading.wait_while_present
 
+      if @add_more_statements == true
+        add_multiple_statements
+      end
+
       page.update_rule unless @defer_save == true
       page.loading.wait_while_present
     end
@@ -78,7 +94,75 @@ class FinalExamMatrix
         :add_statement => false,
         :edit_statement => false,
         :rule => @rule,
-        :standard_days => @standard_days,
+        :days => @days,
+        :start_time => @start_time,
+        :end_time => @end_time,
+        :time_ampm => @time_ampm,
+        :free_text => @free_text,
+        :defer_save => @defer_save,
+        :navigate_to_page => true
+    }
+    options = defaults.merge(opts)
+
+    manage unless options[:navigate_to_page] == false
+    on(FEMatrixView).edit options[:rule_requirements], options[:exam_type]
+
+    if options[:add_statement] == true
+      add_statement options
+    end
+
+    if options[:edit_statement] == true
+      edit_statement options
+    end
+
+    on(FEMatrixEdit).update_rule unless options[:defer_save] == true
+
+    set_options(options)
+  end
+
+  def add_statement options
+    on FEMatrixEdit do |page|
+      page.add_statement
+      page.loading.wait_while_present
+      page.rule_dropdown.select options[:rule]
+
+      if options[:exam_type] == "Standard"
+        set_standard_rule options
+      else
+        set_common_rule options
+      end
+
+      page.preview_change
+      page.loading.wait_while_present
+    end
+  end
+
+  def edit_statement options
+    on FEMatrixEdit do |page|
+      select_statement options[:rule_requirements]
+      page.edit
+      page.loading.wait_while_present
+      page.rule_dropdown.select options[:rule]
+
+      if options[:exam_type] == "Standard"
+        set_standard_rule options
+      else
+        set_common_rule options
+      end
+
+      page.preview_change
+      page.loading.wait_while_present
+    end
+  end
+
+  def delete_statement opts = {}
+    defaults = {
+        :exam_type => @exam_type,
+        :rule_requirements => @rule_requirements,
+        :add_statement => false,
+        :edit_statement => false,
+        :rule => @rule,
+        :days => @days,
         :start_time => @start_time,
         :end_time => @end_time,
         :time_ampm => @time_ampm,
@@ -90,39 +174,10 @@ class FinalExamMatrix
     manage
     on(FEMatrixView).edit options[:rule_requirements], options[:exam_type]
 
-    if options[:add_statement] == true
-      on FEMatrixEdit do |page|
-        page.add_statement
-        page.loading.wait_while_present
-        page.rule_dropdown.select options[:rule]
-
-        if options[:exam_type] == "Standard"
-          set_standard_rule options[:rule]
-        else
-          set_common_rule options[:rule]
-        end
-
-        page.preview_change
-        page.loading.wait_while_present
-      end
-    end
-
-    if options[:edit_statement] == true
-      on FEMatrixEdit do |page|
-        select_statement options[:rule_requirements]
-        page.edit
-        page.loading.wait_while_present
-        page.rule_dropdown.select options[:rule]
-
-        if options[:exam_type] == "Standard"
-          set_standard_rule options[:rule]
-        else
-          set_common_rule options[:rule]
-        end
-
-        page.preview_change
-        page.loading.wait_while_present
-      end
+    on FEMatrixEdit do |page|
+      select_statement options[:rule_requirements]
+      page.delete
+      page.loading.wait_while_present
     end
 
     on(FEMatrixEdit).update_rule unless options[:defer_save] == true
@@ -151,30 +206,30 @@ class FinalExamMatrix
     end
   end
 
-  def set_standard_rule rule
+  def set_standard_rule options
     on FEMatrixEdit do |page|
-      if rule =~ /<timeslot>/
-        page.rule_days.set @days
-        page.rule_starttime.set @start_time
-        page.rule_starttime_ampm.select @time_ampm
-        page.rule_endtime.set @end_time
-        page.rule_endtime_ampm.select @time_ampm
+      if options[:rule] =~ /<timeslot>/
+        page.rule_days.set options[:days]
+        page.rule_starttime.set options[:start_time]
+        page.rule_starttime_ampm.select options[:time_ampm]
+        page.rule_endtime.set options[:end_time]
+        page.rule_endtime_ampm.select options[:time_ampm]
       else
-        page.rule_freeformtext.set @free_text
+        page.rule_freeformtext.set options[:free_text]
       end
     end
   end
 
-  def set_common_rule rule
+  def set_common_rule options
     on FEMatrixEdit do |page|
-      if rule =~ /<Course>/
+      if options[:rule] =~ /<Course>/
         page.proposition_section.a( text: /Advanced Search/).click
-        page.lookup_course_code.when_present.set @courses
+        page.lookup_course_code.when_present.set options[:courses]
         page.lookup_search
-        page.return_course_code(@courses).a( text: /Select/).click
-      elsif rule =~ /<Courses>/
-        page.courses_type_dropdown @courses_type
-        courses_array = @courses.split(/,/)
+        page.return_course_code(options[:courses]).a( text: /Select/).click
+      elsif options[:rule] =~ /<Courses>/
+        page.courses_type_dropdown options[:courses_type]
+        courses_array = options[:courses].split(/,/)
         courses_array.each do |course|
           page.proposition_section.a( text: /Advanced Search/).click
           page.lookup_course_code.when_present.set course
@@ -183,8 +238,24 @@ class FinalExamMatrix
           page.add_line
         end
       else
-        page.rule_freeformtext.set @free_text
+        page.rule_freeformtext.set options[:free_text]
       end
+    end
+  end
+
+  def add_more_statements
+    if @exam_type == "Standard"
+      opts = {:rule => "Free Form Text",
+              :free_text => "Standard FE free text"}
+      set_standard_rule opts
+    elsif @add_more_statements == true
+      opts = {:rule => "Course must be part of <Courses>",
+              :courses => "HIST110,ENGL304,BSCI202",
+              :courses_type => "Approved Courses"}
+      set_common_rule opts
+      opts = {:rule => "Free Form Text",
+              :free_text => "Common FE free text"}
+      set_common_rule opts
     end
   end
 end
