@@ -9,7 +9,7 @@ Feature: SA.FE3-9 View Exam Offerings
   @pending
   Scenario: Test that the CO table is shown when viewing the exam offerings and that it's state is draft
     When I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Course Offering
-    Then there should be a Course Offering table that is in the Draft state
+    Then the Exam Offerings for Course Offering should be in a Draft state
 
   #FE3.9.EB2 (KSENROLL-9788)
   @pending

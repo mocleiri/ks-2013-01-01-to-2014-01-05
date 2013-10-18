@@ -761,14 +761,14 @@ Then /^every CO's Exam Offerings should be copied to the new term by the rollove
   end
 end
 
-Then /^there should be a Course Offering table that is in the ([^"]*) state$/ do |exp_state|
-  on ViewExamOfferings do |page|
-    page.co_table_header_text.should match /for Course Offering/
-    page.eo_by_co_status.should match /#{exp_state}/
-  end
-end
+#Then /^there should be a Course Offering table that is in the ([^"]*) state$/ do |exp_state|
+#  on ViewExamOfferings do |page|
+#    page.co_table_header_text.should match /for Course Offering/
+#    page.eo_by_co_status.should match /#{exp_state}/
+#  end
+#end
 
-Then /^the Course Offering table should only show that it is in the ([^"]*) state$/ do |exp_state|
+Then /^the Exam Offerings for Course Offering should be in a ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
     page.co_table_header_text.should match /for Course Offering/
     page.eo_by_co_status.should match /#{exp_state}/
@@ -781,7 +781,7 @@ Then /^the Course Offering table should only show that it is in the ([^"]*) stat
   end
 end
 
-Then /^there should be an Activity Offering table that is in the ([^"]*) state$/ do |exp_state|
+Then /^the Exam Offerings for Activity Offering should be in a ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
     page.ao_table_header_text.should match /for Activity Offering/
     page.eo_by_ao_status("A").should match /#{exp_state}/

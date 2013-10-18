@@ -11,6 +11,6 @@ Feature: SA.FE3-5 Update Exam Offerings based on Final Exam Driver
     When I view the Exam Offerings for a CO with a standard final exam driven by Activity Offering for a term that is open
     Then the default cluster's Activity Offering table should for all 2 Exam Offering only show that it is in the Draft state
     And I view the Exam Offerings after changing the Final Exam Driver to Course Offering
-    And the Course Offering table should only show that it is in the Draft state
+    And the Exam Offerings for Course Offering should be in a Draft state
     And I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
     And the default cluster's Activity Offering table should for all 2 Exam Offering only show that it is in the Draft state

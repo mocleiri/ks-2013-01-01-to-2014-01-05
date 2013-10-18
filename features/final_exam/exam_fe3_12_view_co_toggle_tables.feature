@@ -10,8 +10,8 @@ Feature: SA.FE3-12 View Exam Offerings table rendered depending on FE Driver
   @pending
   Scenario: Test whether the View EO table is by Course Offering and that there is only one Exam Offering
     When I view the Exam Offerings for a CO with a standard final exam driven by Course Offering
-    Then the Course Offering table should only show that it is in the Draft state
+    Then the Exam Offerings for Course Offering should be in a Draft state
     And I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
     Then the default cluster's Activity Offering table should for all 1 Exam Offering only show that it is in the Draft state
     And I view the Exam Offerings after changing the Final Exam Driver to Course Offering
-    Then the Course Offering table should only show that it is in the Draft state
+    Then the Exam Offerings for Course Offering should be in a Draft state
