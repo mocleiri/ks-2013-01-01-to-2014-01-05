@@ -132,7 +132,7 @@ class TimeSlots
   # if the 'number of minutes to increment by' is not provided, it will be incremented by a random-value between 1-5
   #
   # note: the time-string provided must be of format: '02:35 AM', and will be returned in the same format
-  def increment_time(full_time_with_am_pm, x_minutes_to_increment_by = rand(1..5))
+  def increment_time(full_time_with_am_pm, x_minutes_to_increment_by = 1+ rand(5))
     ( DateTime.strptime(full_time_with_am_pm, '%I:%M %p') + (x_minutes_to_increment_by.to_f/1440) ).strftime( '%I:%M %p' )
   end
 
