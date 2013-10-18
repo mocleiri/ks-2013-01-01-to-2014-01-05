@@ -108,4 +108,3 @@ public class OrgPersonRelationInfoAdminLookupableImpl extends LookupableImpl
         return matchingOrgs;
     }
 }
-

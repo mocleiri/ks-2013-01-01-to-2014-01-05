@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="KS-OrgPersonRelationInfoDetail-View" parent="Uif-Page" p:headerText="Organization Detail">
+		<property name="items">
+			<list>
+				<ref bean="KS-OrgPersonRelationInfoDetail-Section" />
+			</list>
+		</property>
+	</bean>
+	<bean id="KS-OrgPersonRelationInfoDetail-Section" parent="Uif-VerticalBoxSection">
+		<property name="items">
+			<list>
+				<bean parent="Uif-VerticalFieldGroup">
+					<property name="items">
+						<list>
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="selectedOrgPersonRelation.personName" p:label="Person" />
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="selectedOrgPersonRelation.typeInfo.name" p:label="Type" />
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="selectedOrgPersonRelation.stateInfo.name" p:label="State" />
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="selectedOrgPersonRelation.effectiveDate" p:label="Effective Date" />
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="selectedOrgPersonRelation.expirationDate" p:label="Expiration Date" />
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="selectedOrgPersonRelation.meta.createId" p:label="Created By" />
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="selectedOrgPersonRelation.meta.createTime" p:label="Date Created" />
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="selectedOrgPersonRelation.meta.updateId" p:label="Last Updated By" />
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="selectedOrgPersonRelation.meta.updateTime" p:label="Last Update" />
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="selectedOrgPersonRelation.id" p:label="Identifier" />
+						</list>
+					</property>
+				</bean>				
+				<bean parent="Uif-HorizontalFieldGroup">
+					<property name="items">
+						<list>
+							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="edit" p:actionLabel="Edit" p:actionParameters=""/>
+							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="copy" p:actionLabel="Copy" p:actionParameters=""/>
+							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="delete" p:actionLabel="Delete" p:actionParameters=""/>
+						</list>
+					</property>
+				</bean>	
+			</list>
+		</property>
+	</bean>
+</beans>
