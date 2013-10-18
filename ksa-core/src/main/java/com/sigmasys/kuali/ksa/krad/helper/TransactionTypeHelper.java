@@ -6,8 +6,6 @@ import com.sigmasys.kuali.ksa.model.Tag;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.krad.uif.service.impl.ViewHelperServiceImpl;
 
 import java.text.DateFormat;
@@ -23,8 +21,6 @@ import java.util.Locale;
  * Time: 5:25 PM
  */
 public class TransactionTypeHelper extends ViewHelperServiceImpl {
-
-    private Log logger = LogFactory.getLog(TransactionTypeHelper.class);
 
     private AuditableEntityService auditableEntityService;
 
@@ -53,7 +49,8 @@ public class TransactionTypeHelper extends ViewHelperServiceImpl {
         try {
             effective = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()).parse(effectiveDate);
         } catch(ParseException e) {
-            logger.error("Error parsing date: " + effectiveDate);
+            // Something went wrong but KRAD doesn't allow loggers here so there's nobody to tell about it.
+            //logger.error("Error parsing date: " + effectiveDate);
         }
         return getTransactionService().getTransactionTypesByNamePattern(suggest, CreditType.class, effective);
     }
@@ -67,7 +64,8 @@ public class TransactionTypeHelper extends ViewHelperServiceImpl {
         try {
             effective = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()).parse(effectiveDate);
         } catch(ParseException e) {
-            logger.error("Error parsing date: " + effectiveDate);
+            // Can't use loggers in helper classes because KRAD tries to clone them.
+            //logger.error("Error parsing date: " + effectiveDate);
         }
         return getTransactionService().getTransactionTypesByNamePattern(suggest, DebitType.class, effective);
     }
