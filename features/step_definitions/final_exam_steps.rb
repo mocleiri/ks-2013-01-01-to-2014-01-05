@@ -330,17 +330,6 @@ When /^I view the Exam Offerings for a CO with a standard final exam driven by A
   end
 end
 
-When /^I view the Exam Offerings for a CO with a standard final exam driven by Activity Offering for a term that is open$/ do
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course => "ENGL304")
-  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
-                                        :final_exam_driver => "Final Exam Per Activity Offering",
-                                        :final_exam_activity => "Lecture"
-
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
-end
-
 When /^I view the Exam Offerings for an open CO with a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201301", :course => "ENGL304")
   @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",

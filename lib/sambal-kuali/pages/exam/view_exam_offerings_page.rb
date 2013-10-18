@@ -83,7 +83,11 @@ class ViewExamOfferings < BasePage
       return cluster_div_list[0].table unless !cluster_div_list[0].table.exists?
     else
       cluster = target_cluster(cluster_private_name)
-      return cluster.table unless !cluster.table.exists?
+      if cluster != nil
+        return cluster.table unless !cluster.table.exists?
+      else
+        return nil
+      end
     end
     raise "error in activity_offering_results_table - no AOs for #{cluster_private_name}"
   end
@@ -143,9 +147,12 @@ class ViewExamOfferings < BasePage
 
   def return_array_of_ao_codes(cluster_private_name = :default_cluster)
     array = []
-    eo_by_ao_results_table(cluster_private_name).rows.each do |row|
-      if row.cells[AO_CODE].text =~ /^[A-Z]$/
-        array << row.cells[AO_CODE].text
+    results = eo_by_ao_results_table(cluster_private_name)
+    if results != nil
+      results.rows.each do |row|
+        if row.cells[AO_CODE].text =~ /^[A-Z]$/
+          array << row.cells[AO_CODE].text
+        end
       end
     end
     if !array.empty?
@@ -172,7 +179,7 @@ class ViewExamOfferings < BasePage
         return div_element
       end
     end
-    raise "Error: No cluster found: #{private_name}"
+    return nil
   end
 
   def cluster_div_private_name(cluster_div_element)
