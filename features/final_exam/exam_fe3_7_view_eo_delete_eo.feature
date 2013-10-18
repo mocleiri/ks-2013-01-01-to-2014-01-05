@@ -11,6 +11,6 @@ Feature: SA.FE3-7 View Exam Offerings only when the Exam Period is set to Standa
   #FE3.7.EB1 (KSENROLL-9791)
   Scenario: Test whether the View EO table is by Course Offering and that there is only one Exam Offering
     When I view the Exam Offerings for an open CO with a standard final exam driven by Activity Offering
-    Then the default cluster's Activity Offering table should for all 2 Exam Offerings only show that it is in the Draft state
+    Then the 2 Exam Offerings for Activity Offering should be in a Draft state
     And I view the Exam Offerings after updating the Final Exam to none
     And there should be no Standard Exam tables present

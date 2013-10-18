@@ -791,9 +791,9 @@ Then /^the Exam Offerings for Activity Offering should be in a ([^"]*) state$/ d
   end
 end
 
-Then /^the default cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
+Then /^the ([^"]*) Exam Offerings? for Activity Offering should be in a ([^"]*) state$/ do |no_of_aos,exp_state|
   on ViewExamOfferings do |page|
-    #page.ao_table_header_text.should match /for Activity Offering/
+    page.ao_table_header_text.should match /for Activity Offering/
     array = page.return_array_of_ao_codes
     array.each do |code|
       page.eo_by_ao_status(code).should match /#{exp_state}/
@@ -803,25 +803,54 @@ Then /^the default cluster's Activity Offering table should for all ([^"]*) Exam
       page.eo_by_ao_bldg(code).should == ""
       page.eo_by_ao_room(code).should == ""
     end
-    array.length.should == no_of_aos.to_i
+    no_of_eos = array.length
+    array = page.return_array_of_ao_codes("CL Leftovers")
+    if array != nil
+      array.each do |code|
+        page.eo_by_ao_status(code, "CL Leftovers").should match /#{exp_state}/
+        page.eo_by_ao_days(code, "CL Leftovers").should == ""
+        page.eo_by_ao_st_time(code, "CL Leftovers").should == ""
+        page.eo_by_ao_end_time(code, "CL Leftovers").should == ""
+        page.eo_by_ao_bldg(code, "CL Leftovers").should == ""
+        page.eo_by_ao_room(code, "CL Leftovers").should == ""
+      end
+      no_of_eos = no_of_eos + array.length
+    end
+    no_of_eos.should == no_of_aos.to_i
   end
 end
 
-Then /^the leftover cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
-  on ViewExamOfferings do |page|
-    #page.ao_table_header_text.should match /for Activity Offering/
-    array = page.return_array_of_ao_codes("CL Leftovers")
-    array.each do |code|
-      page.eo_by_ao_status(code, "CL Leftovers").should match /#{exp_state}/
-      page.eo_by_ao_days(code, "CL Leftovers").should == ""
-      page.eo_by_ao_st_time(code, "CL Leftovers").should == ""
-      page.eo_by_ao_end_time(code, "CL Leftovers").should == ""
-      page.eo_by_ao_bldg(code, "CL Leftovers").should == ""
-      page.eo_by_ao_room(code, "CL Leftovers").should == ""
-    end
-    array.length.should == no_of_aos.to_i
-  end
-end
+#Then /^the default cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
+#  on ViewExamOfferings do |page|
+#    #page.ao_table_header_text.should match /for Activity Offering/
+#    array = page.return_array_of_ao_codes
+#    array.each do |code|
+#      page.eo_by_ao_status(code).should match /#{exp_state}/
+#      page.eo_by_ao_days(code).should == ""
+#      page.eo_by_ao_st_time(code).should == ""
+#      page.eo_by_ao_end_time(code).should == ""
+#      page.eo_by_ao_bldg(code).should == ""
+#      page.eo_by_ao_room(code).should == ""
+#    end
+#    array.length.should == no_of_aos.to_i
+#  end
+#end
+#
+#Then /^the leftover cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
+#  on ViewExamOfferings do |page|
+#    #page.ao_table_header_text.should match /for Activity Offering/
+#    array = page.return_array_of_ao_codes("CL Leftovers")
+#    array.each do |code|
+#      page.eo_by_ao_status(code, "CL Leftovers").should match /#{exp_state}/
+#      page.eo_by_ao_days(code, "CL Leftovers").should == ""
+#      page.eo_by_ao_st_time(code, "CL Leftovers").should == ""
+#      page.eo_by_ao_end_time(code, "CL Leftovers").should == ""
+#      page.eo_by_ao_bldg(code, "CL Leftovers").should == ""
+#      page.eo_by_ao_room(code, "CL Leftovers").should == ""
+#    end
+#    array.length.should == no_of_aos.to_i
+#  end
+#end
 
 Then /^there should be an Activity Offering table where all Exam Offerings is in the ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|

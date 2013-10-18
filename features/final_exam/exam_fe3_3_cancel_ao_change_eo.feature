@@ -25,7 +25,7 @@ Feature: SA.FE3-3 Cancelling an AO should cancel the EO depending on all the exa
   Scenario: Test that cancelling a discussion AO does create an EO for AO table
     When I cancel a discussion Activity Offering for a CO with a standard final exam driven by Activity Offering
     And I view the Exam Offerings for the Course Offering
-    Then the default cluster's Activity Offering table should for all 1 Exam Offering only show that it is in the Draft state
+    Then the 1 Exam Offering for Activity Offering should be in a Draft state
 
   #FE3.3.EB4 (KSENROLL-10220)
   @pending

@@ -148,7 +148,11 @@ class ViewExamOfferings < BasePage
         array << row.cells[AO_CODE].text
       end
     end
-    return array
+    if !array.empty?
+      return array
+    else
+      return nil
+    end
   end
 
   #########Clusters #############################
