@@ -25,7 +25,7 @@ import java.util.*;
  * @author Michael Ivanov
  */
 @Service("paymentService")
-@Transactional(readOnly = true)
+@Transactional(timeout = 3600)
 @WebService(serviceName = PaymentService.SERVICE_NAME, portName = PaymentService.PORT_NAME,
         targetNamespace = Constants.WS_NAMESPACE)
 @SuppressWarnings("unchecked")
@@ -52,7 +52,6 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
      */
     @Override
     @WebMethod(exclude = true)
-    @Transactional(readOnly = false)
     public List<GlTransaction> applyPayments(List<Transaction> transactions, boolean isQueued) {
         return applyPayments(transactions, BigDecimal.valueOf(Long.MAX_VALUE), isQueued);
     }
@@ -65,7 +64,6 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
      */
     @Override
     @WebMethod(exclude = true)
-    @Transactional(readOnly = false)
     public List<GlTransaction> applyPayments(List<Transaction> transactions) {
         return applyPayments(transactions, true);
     }
@@ -79,7 +77,6 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
      */
     @Override
     @WebMethod(exclude = true)
-    @Transactional(readOnly = false)
     public List<GlTransaction> applyPayments(List<Transaction> transactions, BigDecimal maxAmount) {
         return applyPayments(transactions, maxAmount, true);
     }
@@ -102,7 +99,6 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
      * @return List of generated GL transactions
      */
     @Override
-    @Transactional(readOnly = false)
     public List<GlTransaction> applyPayments(List<Transaction> transactions, BigDecimal maxAmount, boolean isQueued) {
 
         BigDecimal remainingAmount = maxAmount;

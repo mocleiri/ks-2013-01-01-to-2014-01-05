@@ -925,26 +925,30 @@ public class TransactionServiceTest extends AbstractServiceTest {
     @Test
     public void makeFailedTransactionsEffective() throws Exception {
 
-        TransactionType transactionType = transactionService.createTransactionType("TT_77", 0, "TT_77",
-                new Date(), 1, "Credit Type 77", CreditType.class, true);
+        TransactionType creditType =
+                transactionService.createCreditType("TT_77", "TT_77 Name", new Date(), 1, "Credit Type 77 Description");
 
-        Assert.notNull(transactionType);
-        Assert.notNull(transactionType.getId());
+        Assert.notNull(creditType);
+        Assert.notNull(creditType.getId());
+
+        String creditTypeId = creditType.getId().getId();
+
+        Assert.notNull(creditTypeId);
 
         Transaction transaction1 =
-                transactionService.createTransaction(transactionType.getId().getId(), TEST_USER_ID, new Date(), new BigDecimal(0.01));
+                transactionService.createTransaction(creditTypeId, TEST_USER_ID, new Date(), new BigDecimal(0.01));
 
         Assert.notNull(transaction1);
         Assert.notNull(transaction1.getId());
 
         Transaction transaction2 =
-                transactionService.createTransaction(transactionType.getId().getId(), TEST_USER_ID, new Date(), new BigDecimal(-600));
+                transactionService.createTransaction(creditTypeId, TEST_USER_ID, new Date(), new BigDecimal(-600));
 
         Assert.notNull(transaction2);
         Assert.notNull(transaction2.getId());
 
         Transaction transaction3 =
-                transactionService.createTransaction(transactionType.getId().getId(), TEST_USER_ID, new Date(), new BigDecimal(10e3));
+                transactionService.createTransaction(creditTypeId, TEST_USER_ID, new Date(), new BigDecimal(10e3));
 
         Assert.notNull(transaction3);
         Assert.notNull(transaction3.getId());
@@ -1973,7 +1977,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
 
         TransactionType transactionType1 =
-                transactionService.createDebitSubType(transactionTypeCode, dateFormat.parse("03/27/2012"));
+                transactionService.createDebitSubType(transactionTypeCode, dateFormat.parse("03/27/2015"));
 
         Assert.notNull(transactionType1);
         Assert.notNull(transactionType1.getCode());
@@ -1984,7 +1988,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Assert.isNull(transactionType1.getEndDate());
 
         TransactionType transactionType2 =
-                transactionService.createDebitSubType(transactionTypeCode, dateFormat.parse("07/02/2012"));
+                transactionService.createDebitSubType(transactionTypeCode, dateFormat.parse("07/02/2015"));
 
         transactionType1 = transactionService.getTransactionType(transactionType1.getId());
 

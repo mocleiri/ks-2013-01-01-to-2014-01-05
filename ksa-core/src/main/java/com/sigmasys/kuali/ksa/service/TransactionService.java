@@ -184,25 +184,6 @@ public interface TransactionService {
     CreditType createCreditSubType(String creditTypeId, Date startDate);
 
     /**
-     * Creates a new transaction type based on the given parameters
-     *
-     * @param transactionTypeId Transaction Type ID
-     * @param subCode           Transaction Type sub-code
-     * @param name              Transaction Type name
-     * @param startDate         Transaction Type start date
-     * @param priority          Transaction Type priority
-     * @param description       TransactionType description
-     * @param entityType        Transaction Type class (DebitType or CreditType)
-     * @param createNewType     true if the new transaction type is supposed to be created, false - for sub-types only.
-     * @param <T>               TransactionType subclass
-     * @return TransactionType persistent instance
-     */
-    @WebMethod(exclude = true)
-    <T extends TransactionType> T createTransactionType(String transactionTypeId, int subCode, String name,
-                                                        Date startDate, int priority, String description,
-                                                        Class<T> entityType, boolean createNewType);
-
-    /**
      * Checks if the transaction type exists.
      *
      * @param transactionTypeId Transaction Type ID

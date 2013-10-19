@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -73,16 +72,16 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
     private void logFailedGlTransaction(Long sourceTransactionId, Exception exception) {
 
-            Transaction sourceTransaction = getEntity(sourceTransactionId, Transaction.class);
+        Transaction sourceTransaction = getEntity(sourceTransactionId, Transaction.class);
 
-            FailedGlTransaction failedGlTransaction = new FailedGlTransaction();
-            failedGlTransaction.setTransaction(sourceTransaction);
-            failedGlTransaction.setFailureReason(exception.getMessage());
-            failedGlTransaction.setFixed(false);
-            failedGlTransaction.setCreationDate(new Date());
-            failedGlTransaction.setCreatorId(userSessionManager.getUserId());
+        FailedGlTransaction failedGlTransaction = new FailedGlTransaction();
+        failedGlTransaction.setTransaction(sourceTransaction);
+        failedGlTransaction.setFailureReason(exception.getMessage());
+        failedGlTransaction.setFixed(false);
+        failedGlTransaction.setCreationDate(new Date());
+        failedGlTransaction.setCreatorId(userSessionManager.getUserId());
 
-            persistEntity(failedGlTransaction);
+        persistEntity(failedGlTransaction);
     }
 
 
@@ -399,6 +398,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         startDate = CalendarUtils.removeTime(startDate);
 
+        if (!startDate.after(transactionType.getStartDate())) {
+            String errMsg = "New transaction type's start date must be greater than the current transaction type's one";
+            logger.error(errMsg);
+            throw new InvalidTransactionTypeException(errMsg);
+        }
+
         Date endDate = CalendarUtils.addCalendarDays(startDate, -1);
 
         logger.debug("Previous Transaction Type end date = " + endDate);
@@ -427,26 +432,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 false);
     }
 
-    /**
-     * Creates a new transaction type based on the given parameters
-     *
-     * @param transactionTypeId Transaction Type ID
-     * @param subCode           Transaction Type sub-code
-     * @param name              Transaction Type name
-     * @param startDate         Transaction Type start date
-     * @param priority          Transaction Type priority
-     * @param description       TransactionType description
-     * @param entityType        Transaction Type class (DebitType or CreditType)
-     * @param createNewType     true if the new transaction type is supposed to be created, false - for sub-types only.
-     * @param <T>               TransactionType subclass
-     * @return TransactionType persistent instance
-     */
-    @Override
-    @WebMethod(exclude = true)
-    @Transactional(readOnly = false)
-    public <T extends TransactionType> T createTransactionType(String transactionTypeId, int subCode, String name,
-                                                               Date startDate, int priority, String description,
-                                                               Class<T> entityType, boolean createNewType) {
+    private <T extends TransactionType> T createTransactionType(String transactionTypeId, int subCode, String name,
+                                                                Date startDate, int priority, String description,
+                                                                Class<T> entityType, boolean createNewType) {
 
         PermissionUtils.checkPermission(Permission.CREATE_TRANSACTION_TYPE);
 
