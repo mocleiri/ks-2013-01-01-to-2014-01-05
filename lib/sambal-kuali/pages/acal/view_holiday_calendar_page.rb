@@ -43,7 +43,7 @@ class ViewHolidayCalendar < BasePage
 
   def holiday_instructional_status holiday_type
     true_false_text = target_row(holiday_type).cells[HOLIDAY_INSTRUCTIONAL_COL].text
-    return true_false_text == "true"
+    return true_false_text == "Yes"
   end
 
 end
