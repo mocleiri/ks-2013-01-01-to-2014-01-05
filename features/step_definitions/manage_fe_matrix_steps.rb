@@ -253,3 +253,10 @@ Then /^the rules should be sorted on the Days and Time columns$/ do
     table_text.should match /#{day_six_text[0]}.*#{day_six_text[1]}/m
   end
 end
+
+Then /^the option to set the Exam Location should be disabled and selected$/ do
+  on FEMatrixView do |page|
+    page.set_exam_locations_toggle.attribute_value('disabled').should == "true"
+    page.set_exam_locations_toggle.attribute_value('checked').should == "true"
+  end
+end

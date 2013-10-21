@@ -8,6 +8,7 @@ class FEMatrixView < BasePage
 
   element(:fe_matrix_criteria_section) { |b| b.fe_agenda_maintenance_page.div( id: "finalExamMatrixManagementCriteriaSection")}
   element(:term_type_select) { |b| b.fe_matrix_criteria_section.select( name: "document.newMaintainableObject.dataObject.termToUse")}
+  element(:set_exam_locations_toggle) { |b| b.frm.checkbox( id: "KSFE_location_control")}
 
   element(:submit_btn) { |b| b.div( id: "KSFE-DocumentPageFooter-SubmitCancel").button( text: /Submit/)}
   action(:submit) { |b| b.submit_btn.click}
