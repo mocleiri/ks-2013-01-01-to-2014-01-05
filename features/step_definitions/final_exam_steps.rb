@@ -571,9 +571,9 @@ Then /^I do not have access to the final exam status for the course offering fro
 end
 
 Then /^all the exam settings and messages are retained after the rollover is completed$/ do
-  #@co_one
-  @test_co_one = make CourseOffering, :term => @term_target.term_code, :course => @co_one.course
-  @test_co_one.manage
+  @test_co_list = []
+  @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[0].course)
+  @test_co_list[0].manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering
   end
@@ -581,9 +581,8 @@ Then /^all the exam settings and messages are retained after the rollover is com
     page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
     page.final_exam_driver_value_0.should == "No final exam for this offering"
   end
-  #@co_two
-  @test_co_two = make CourseOffering, :term => @term_target.term_code, :course => @co_two.course
-  @test_co_two.manage
+  @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[1].course)
+  @test_co_list[1].manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering
   end
@@ -591,24 +590,21 @@ Then /^all the exam settings and messages are retained after the rollover is com
     page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
     page.final_exam_driver_value_0.should == "Alternate exam for this offering"
   end
-  #@co_three
-  @test_co_three = make CourseOffering, :term => @term_target.term_code, :course => @co_three.course
-  @test_co_three.manage
+  @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[2].course)
+  @test_co_list[2].manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering
   end
   on CourseOfferingEdit do |page|
     page.final_exam_driver_value_0.should == "Activity Offering"
   end
-  #@co_four
-  @test_co_four = make CourseOffering, :term => @term_target.term_code, :course => @co_four.course
-  @test_co_four.manage
+  @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[3].course)
+  @test_co_list[3].manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering
   end
   on CourseOfferingEdit do |page|
     page.final_exam_driver_value_0.should == "Course Offering"
-    #TODO: add assertion to check if use final exam matrix is checked or not
   end
 end
 
