@@ -1,0 +1,77 @@
+/* Shopping Cart Dialog */
+
+.ksap-sb-cart-secondary-deselected {
+	display : none;
+}
+
+.ksap-sb-cart-primary-selected {
+	background-color : #f8f3d2;
+}
+
+.ksap-sb-cart-primary-deselected:hover {
+	background-color : #fbf9e8;
+}
+
+.ksap-sb-cart-activity-group {
+	margin-bottom : 6px;
+}
+
+.ksap-sb-cart-course-instruction {
+	font-weight : bold;
+	line-height : 1.8em;
+	border-bottom : 1px solid #eeebdc;
+	padding : 4px ;
+}
+
+
+.ksap-sb-cart-secondary-header-row {
+	text-align : center;
+	line-height : 1.25em;
+	background-color : #fbf9e8;
+	padding : 2px ;
+}
+
+.ksap-sb-cart-secondary-title {
+}
+
+.ksap-sb-cart-secondary-options-wrapper {
+	margin : 0.25em;
+	font-size : 0.85em;
+	line-height : 1.1em;
+}
+
+.ksap-sb-cart-classtimes-group {
+	font-size : 0.8em;
+}
+
+.ksap-sb-cart-classtimes-with-radio {
+	margin : 0 0 0 4em;
+}
+
+.ksap-sb-cart-activity-radio {
+	line-height : 1.2em;
+}
+
+.ksap-sb-cart-secondary-activity-group {
+	width : 10em;
+	min-height : 5.25em;
+	float : left;
+	padding : 0.50em;
+	margin : 0.25em;
+	border-bottom : 1px solid #eeebdc;
+	border-left: 1px solid #eeebdc;
+	cursor : pointer;
+}
+
+.ksap-sb-cart-secondary-activity-group-selected {
+	background-color : #f8f3d2;
+}
+
+.ksap-sb-cart-secondary-activity-group-deselected:hover {
+	background-color : #fbf9e8;
+}
+
+.ksap-sb-cart-classtimes-secondary span {
+	display : block;
+}
+
