@@ -25,7 +25,7 @@ public class CourseLinkBuilder {
 
     private transient static CluService luService;
 
-    static String link = "<a onclick=\"openCourse('%s', event);\" href=\"#\" title=\"%s\">%s</a>";
+    static String link = "<a onclick=\"openCourse('%s','%s %s', event);\" href=\"#\" title=\"%s\">%s</a>";
 
     /**
      * References to course (subject + number) are found and converted to links.
@@ -213,7 +213,7 @@ public class CourseLinkBuilder {
                 for (SearchResultRow row : searchResult.getRows()) {
                     String courseId = getCellValue(row, "lu.resultColumn.cluId");
                     String title = getCellValue(row, "id.lngName");
-                    String temp = String.format(link, courseId, title, text);
+                    String temp = String.format(link, courseId, subject.trim(), num.trim(), title, text);
                     return temp;
                 }
 

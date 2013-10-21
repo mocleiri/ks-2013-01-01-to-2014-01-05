@@ -130,7 +130,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
          * else get the same id as the provided course version specific Id
          */
         CourseInfo course = getCourseHelper().getCourseInfo(courseId);
-        CourseSummaryDetails courseDetails = retrieveCourseSummary(course, null);
+        CourseSummaryDetails courseDetails = retrieveCourseSummary(course, course.getCode());
         return courseDetails;
     }
 
@@ -146,6 +146,11 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         if (null == course) {
             return null;
         }
+
+        if (!StringUtils.hasText(courseCd)) {
+            return null;
+        }
+
 
         DeconstructedCourseCode courseCode = getCourseHelper().getCourseDivisionAndNumber(courseCd);
         String subject = null;
