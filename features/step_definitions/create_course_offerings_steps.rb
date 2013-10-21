@@ -41,7 +41,9 @@ end
 
 Then /^the new Course Offering should not contain any instructor information in its activity offerings$/ do
   @course_offering.manage
-  @course_offering.get_instructor_list.should == ""
+  on ManageCourseOfferings do |page|
+    page.get_instructor_list.should == ""
+  end
 end
 
 And /^I create a Course Offering from catalog with Activity Offerings assigned to subterms$/ do

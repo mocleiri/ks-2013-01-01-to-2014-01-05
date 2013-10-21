@@ -4,21 +4,21 @@ class CreateCOFromExisting < BasePage
   frame_element
   validation_elements
 
-  expected_element :exclude_instructor_checkbox
+  expected_element :exclude_instructor
 
   action(:create) { |b| b.frm.button(id: "createFromCopy_btn").click; b.loading.wait_while_present(120) }
   #element(:sticky_footer_div) { |b| b.frm.div(id: "u8") } #static id required
   element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter") }
   action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click; b.loading.wait_while_present }
 
-  element(:exclude_cancelled_aos_checkbox) { |b| b.frm.label(text: /Exclude cancelled Activity Offerings/) }
-  action(:select_exclude_cancelled_aos_checkbox) { |b| b.exclude_cancelled_aos_checkbox.wait_until_present; b.exclude_cancelled_aos_checkbox.click }
+  element(:exclude_cancelled_aos) { |b| b.frm.label(text: /Exclude cancelled Activity Offerings/) }
+  action(:select_exclude_cancelled_aos) { |b| b.exclude_cancelled_aos.wait_until_present; b.exclude_cancelled_aos.click }
 
-  element(:exclude_scheduling_checkbox) { |b| b.frm.label(text: /Exclude scheduling information/) }
-  action(:select_exclude_scheduling_checkbox) { |b| b.exclude_scheduling_checkbox.wait_until_present; b.exclude_scheduling_checkbox.click }
+  element(:exclude_scheduling) { |b| b.frm.label(text: /Exclude scheduling information/) }
+  action(:select_exclude_scheduling) { |b| b.exclude_scheduling.wait_until_present; b.exclude_scheduling.click }
 
-  element(:exclude_instructor_checkbox) { |b| b.frm.label(text: /Exclude instructor information/) }
-  action(:select_exclude_instructor_checkbox) { |b| b.exclude_instructor_checkbox.wait_until_present; b.exclude_instructor_checkbox.click }
+  element(:exclude_instructor) { |b| b.frm.label(text: /Exclude instructor information/) }
+  action(:select_exclude_instructor) { |b| b.exclude_instructor.wait_until_present; b.exclude_instructor.click }
 
   element(:course_offering_existing_table) { |b| b.frm.div(id: "KS-ExistingOffering-ListCOs").table() }
 

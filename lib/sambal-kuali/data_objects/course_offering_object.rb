@@ -1045,9 +1045,9 @@ class CourseOffering
     on CreateCOFromExisting do |page|
       page.select_copy_for_existing_course(term, course)
 
-      page.select_exclude_cancelled_aos_checkbox if @exclude_cancelled_aos
-      page.select_exclude_scheduling_checkbox if @exclude_scheduling
-      page.select_exclude_instructor_checkbox if @exclude_instructor
+      page.select_exclude_cancelled_aos if @exclude_cancelled_aos
+      page.select_exclude_scheduling if @exclude_scheduling
+      page.select_exclude_instructor if @exclude_instructor
       page.create
     end
     co_code = ""
@@ -1156,16 +1156,6 @@ class CourseOffering
     # If there is a string, remove final ", "
     formatted_credits_list[-2..-1] = "" if formatted_credits_list.length > 0
     formatted_credits_list
-  end
-
-  def get_instructor_list
-    instructor_list = ""
-    on ManageCourseOfferings do |page|
-      page.activity_offering_results_table.rows[1..-1].each do |row|
-        instructor_list << row.cells[ManageCourseOfferings::AO_INSTRUCTOR].text
-      end
-    end
-    instructor_list
   end
 
   # merged with delete_co

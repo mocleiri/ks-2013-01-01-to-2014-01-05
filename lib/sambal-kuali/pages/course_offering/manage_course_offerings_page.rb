@@ -446,4 +446,12 @@ class ManageCourseOfferings < BasePage
     raise "error: target_reg_group_row not found for #{codes}"
   end
 
+  def get_instructor_list
+    instructor_list = ""
+    activity_offering_results_table.rows[1..-1].each do |row|
+      instructor_list << row.cells[ManageCourseOfferings::AO_INSTRUCTOR].text
+    end
+    instructor_list
+  end
+
 end

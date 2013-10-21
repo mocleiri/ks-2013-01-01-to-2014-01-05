@@ -403,7 +403,7 @@ When /^I have access to create the course from an existing offering$/ do
     page.continue
   end
   on CreateCOFromExisting do |page|
-    page.exclude_instructor_checkbox.present?.should == true
+    page.exclude_instructor.present?.should == true
     page.cancel
   end
 end
