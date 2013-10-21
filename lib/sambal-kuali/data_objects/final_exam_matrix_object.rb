@@ -8,7 +8,7 @@ class FinalExamMatrix
 
   attr_accessor :term_type, :courses, :days, :start_time,
                 :end_time, :time_ampm, :free_text, :rdl_days,
-                :rule_requirements
+                :rule_requirements, :exam_type
 
   def initialize(browser,opts = {})
     @browser = browser
@@ -222,14 +222,16 @@ class FinalExamMatrix
 
   def set_common_rule options
     on FEMatrixEdit do |page|
+      page.loading.wait_while_present
       if options[:rule] =~ /<Course>/
         page.proposition_section.a( text: /Advanced Search/).click
         page.lookup_course_code.when_present.set options[:courses]
         page.lookup_search
         page.return_course_code(options[:courses]).a( text: /Select/).click
       elsif options[:rule] =~ /<Courses>/
-        page.courses_type_dropdown options[:courses_type]
+        page.courses_type_dropdown.select options[:courses_type]
         courses_array = options[:courses].split(/,/)
+        page.loading.wait_while_present
         courses_array.each do |course|
           page.proposition_section.a( text: /Advanced Search/).click
           page.lookup_course_code.when_present.set course
@@ -243,19 +245,34 @@ class FinalExamMatrix
     end
   end
 
-  def add_more_statements
-    if @exam_type == "Standard"
-      opts = {:rule => "Free Form Text",
-              :free_text => "Standard FE free text"}
-      set_standard_rule opts
-    elsif @add_more_statements == true
-      opts = {:rule => "Course must be part of <Courses>",
-              :courses => "HIST110,ENGL304,BSCI202",
-              :courses_type => "Approved Courses"}
-      set_common_rule opts
-      opts = {:rule => "Free Form Text",
-              :free_text => "Common FE free text"}
-      set_common_rule opts
+  def add_multiple_statements
+    on FEMatrixEdit do |page|
+      if @exam_type == "Standard"
+        opts = {:rule => "Free Form Text",
+                :free_text => "Standard FE free text"}
+        page.add_statement
+        page.rule_dropdown.select opts[:rule]
+        set_standard_rule opts
+        page.preview_change
+        page.loading.wait_while_present
+      elsif @add_more_statements == true
+        opts = {:rule => "Course must be part of <Courses>",
+                :courses => "HIST110,ENGL304,BSCI202",
+                :courses_type => "Approved Courses"}
+        page.add_statement
+        page.rule_dropdown.select opts[:rule]
+        set_common_rule opts
+        page.preview_change
+        page.loading.wait_while_present
+
+        page.add_statement
+        page.rule_dropdown.select opts[:rule]
+        opts = {:rule => "Free Form Text",
+                :free_text => "Common FE free text"}
+        set_common_rule opts
+        page.preview_change
+        page.loading.wait_while_present
+      end
     end
   end
 end

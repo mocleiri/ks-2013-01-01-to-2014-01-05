@@ -40,6 +40,22 @@ When /^I submit and return to see my changes$/ do
   @matrix.manage
 end
 
+Given /^I have added two Standard Final Exam rules to the Final Exam Matrix$/ do
+  @matrix_rule_list = []
+  @matrix_rule_list << (create FinalExamMatrix, :term_type => "Winter Term", :days => "TH", :start_time => "06:00",
+                   :end_time => "07:00", :time_ampm => "am", :rule_requirements => "TH at 06:00 AM - 07:00 AM")
+  on FEMatrixView do |page|
+    page.submit
+  end
+
+  @matrix_rule_list << (create FinalExamMatrix, :term_type => "Winter Term", :rule => "Free Form Text",
+                               :free_text => "To test the editing of the statement",
+                               :rule_requirements => "To test the editing of the statement")
+  on FEMatrixView do |page|
+    page.submit
+  end
+end
+
 Given /^I have added a Standard Final Exam timeslot rule to the Final Exam Matrix$/ do
   @matrix = create FinalExamMatrix, :term_type => "Winter Term", :days => "TH", :start_time => "06:00",
                    :end_time => "07:00", :time_ampm => "am", :rule_requirements => "TH at 06:00 AM - 07:00 AM"
@@ -68,14 +84,50 @@ When /^I edit a Standard Final Exam text rule$/ do
                :rule_requirements => @matrix.rule_requirements
 end
 
+When /^I submit after editing the newly created Standard Final Exam rules$/ do
+  @matrix_rule_list[0].edit :edit_statement => true, :days => "TWH",
+                            :rule_requirements => @matrix_rule_list[0].rule_requirements
+  on FEMatrixView do |page|
+    page.loading.wait_while_present
+    page.submit
+  end
+  @matrix_rule_list[0].manage
+
+  @matrix_rule_list[1].edit :edit_statement => true, :free_text => "This statement has been edited",
+               :rule_requirements => @matrix_rule_list[1].rule_requirements
+  on FEMatrixView do |page|
+    page.loading.wait_while_present
+    page.submit
+  end
+  @matrix_rule_list[1].manage
+end
+
 When /^I delete a statement in the Standard Final Exam text rule$/ do
   @matrix.delete_statement :rule_requirements => @matrix.rule_requirements
 end
 
-When /^I add multiple Common Final Exam rules to the Final Exam Matrix$/ do
+When /^I delete an existing Standard Final Exam text rule to the Final Exam Matrix$/ do
+  @matrix = create FinalExamMatrix, :term_type => "Winter Term", :rule => "Free Form Text",
+                   :free_text => "To test whether rule is deleted",
+                   :rule_requirements => "To test whether rule is deleted"
+
+  on FEMatrixView do |page|
+    page.submit
+  end
+
+  @matrix.manage
+  on(FEMatrixView).delete( @matrix.rule_requirements, @matrix.exam_type)
+end
+
+When /^I add multiple statements to a Common Final Exam rule on the Final Exam Matrix$/ do
   @matrix = create FinalExamMatrix, :term_type => "Winter Term", :rule => "Course must be <Course>",
                    :exam_type => "Common", :courses => "HIST111",
                    :rule_requirements => "To test the editing of the statement", :add_more_statements => true
+end
+
+When /^I view the Standard Final Exam rules on the Final Exam Matrix$/ do
+  @matrix = make FinalExamMatrix
+  @matrix.manage
 end
 
 Then /^I should be able to choose any one of Day 1 to 6 for the rule$/ do
@@ -165,8 +217,40 @@ Then /^there should be a validation message displayed stating "([^"]+)"$/ do |ex
   end
 end
 
-Then /^I should be able to see the multiple statement Common Final Exam rule$/ do
+Then /^I should be able to see the Common Final Exam rule with the multiple statements$/ do
   on FEMatrixView do |page|
 
+  end
+end
+
+Then /^I should be able to see all the changes I have made on the Final Exam Matrix$/ do
+  on FEMatrixView do |page|
+    page.standard_final_exam_table.present?.should be_true
+    requirements = page.get_standard_fe_requirements( @matrix_rule_list[0].days)
+    requirements.should match /#{@matrix_rule_list[0].days} at #{@matrix_rule_list[0].start_time} #{@matrix_rule_list[0].time_ampm.upcase} - #{@matrix_rule_list[0].end_time} #{@matrix_rule_list[0].time_ampm.upcase}\./
+    page.get_standard_fe_requirements( @matrix_rule_list[1].free_text).should match /#{@matrix_rule_list[1].free_text}/
+  end
+end
+
+Then /^the deleted text rule should not exist on the Final Exam Matrix$/ do
+  on FEMatrixView do |page|
+    page.get_standard_fe_requirements( @matrix.free_text).should_not match /#{@matrix.free_text}/
+  end
+end
+
+Then /^the rules should be sorted on the Days and Time columns$/ do
+  on FEMatrixView do |page|
+    table_text = page.standard_final_exam_table.text
+    #table_text.should match /Day 1.*03:00 AM-05:00 AM.*Day 1.*05:30 AM-07:30 AM/m
+    #table_text.should match /Day 2.*03:00 AM-05:00 AM.*Day 2.*08:30 AM-10:30 AM/m
+    table_text.should match /Day 1.*Day 2.*Day 3.*Day 4.*Day 5.*Day 6/m
+    day_one_text = []
+    day_one_text << page.standard_fe_target_row( "TH at 06:00 AM - 07:15 AM.").text
+    day_one_text << page.standard_fe_target_row( "MWF at 03:00 AM - 03:50 AM. Or MW at 03:00 AM - 04:15 AM.").text
+    table_text.should match /#{day_one_text[0]}.*#{day_one_text[1]}/m
+    day_six_text = []
+    day_six_text << page.standard_fe_target_row( "MWF at 05:00 AM - 05:50 AM. Or MW at 04:30 AM - 05:45 AM.").text
+    day_six_text << page.standard_fe_target_row( "TH at 10:30 AM - 11:45 AM.").text
+    table_text.should match /#{day_six_text[0]}.*#{day_six_text[1]}/m
   end
 end

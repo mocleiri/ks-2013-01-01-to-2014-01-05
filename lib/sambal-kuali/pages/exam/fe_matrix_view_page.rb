@@ -87,6 +87,8 @@ class FEMatrixView < BasePage
   end
 
   def delete( requirements, exam_type)
+    loading.wait_while_present
+    sleep 10
     if exam_type == "Standard"
       standard_fe_target_row( requirements).link(text: "Delete").click
     else

@@ -35,8 +35,11 @@ Feature: SA.FE1-6 Manage the Final Exam Matrix so that FEs can be Scheduled in p
     And I submit and return to see my changes
     Then I should be able to see the edited text rule in the Standard Final Exam table
 
-##FE1.6.EB5 (KSENROLL-9796)
-#  Scenario:
+  #FE1.6.EB5 (KSENROLL-9796)
+  @pending
+  Scenario: Test that the Days are sorted from beginning to end in the table
+    When I view the Standard Final Exam rules on the Final Exam Matrix
+    Then the rules should be sorted on the Days and Time columns
 
   #FE1.6.EB6 (KSENROLL-9796)
   @pending
@@ -48,12 +51,20 @@ Feature: SA.FE1-6 Manage the Final Exam Matrix so that FEs can be Scheduled in p
   #FE1.6.EB7 (KSENROLL-9796)
   @bug @KSENROLL-10272
   Scenario: Test that multiple statements can be added to one rule on the Final Exam Matrix
-    When I add multiple Common Final Exam rules to the Final Exam Matrix
+    When I add multiple statements to a Common Final Exam rule on the Final Exam Matrix
     And I submit and return to see my changes
-    Then I should be able to see the multiple statement Common Final Exam rule
+    Then I should be able to see the Common Final Exam rule with the multiple statements
 
-##FE1.6.EB8 (KSENROLL-9796)
-#  Scenario:
+  #FE1.6.EB8 (KSENROLL-9796)
+  @pending
+  Scenario: Test that editing or adding rules and submitting multiple times works as expected
+    Given I have added two Standard Final Exam rules to the Final Exam Matrix
+    When I submit after editing the newly created Standard Final Exam rules
+    Then I should be able to see all the changes I have made on the Final Exam Matrix
 
-##FE1.6.EB9 (KSENROLL-9796)
-#  Scenario:
+  #FE1.6.EB9 (KSENROLL-9796)
+  @pending
+  Scenario: Test that deleting an existing rule works as expected
+    When I delete an existing Standard Final Exam text rule to the Final Exam Matrix
+    And I submit and return to see my changes
+    Then the deleted text rule should not exist on the Final Exam Matrix
