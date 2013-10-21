@@ -275,7 +275,14 @@ public class PaymentController extends GenericSearchController {
             for(TransactionModel model : allocations) {
                 BigDecimal amount = model.getNewAllocation();
                 if(amount != null && (amount.compareTo(BigDecimal.ZERO) > 0)) {
-                    transactionService.createAllocation(payment.getId(), model.getParentTransaction().getId(), amount);
+                    try{
+                        transactionService.createAllocation(payment.getId(), model.getParentTransaction().getId(), amount);
+                    } catch(IllegalStateException e) {
+                        GlobalVariables.getMessageMap().putError(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+
+                        return getUIFModelAndView(form);
+
+                    }
                 }
             }
 
