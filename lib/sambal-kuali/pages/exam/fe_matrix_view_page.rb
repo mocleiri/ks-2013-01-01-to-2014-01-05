@@ -28,19 +28,17 @@ class FEMatrixView < BasePage
   action(:add_common_fe_rule) { |b| b.common_final_exam_section.a( text: "Add").click; b.loading.wait_while_present}
 
   def standard_fe_target_row( requirements)
-    begin
+    row = nil
+    if standard_final_exam_table.row(text: /#{requirements}/).exists?
       row = standard_final_exam_table.row(text: /#{requirements}/)
-    rescue
-      return nil
     end
     return row
   end
 
   def common_fe_target_row( requirements)
-    begin
+    row = nil
+    if common_final_exam_table.row(text: /#{requirements}/).exists?
       row = common_final_exam_table.row(text: /#{requirements}/)
-    rescue
-      return nil
     end
     return row
   end

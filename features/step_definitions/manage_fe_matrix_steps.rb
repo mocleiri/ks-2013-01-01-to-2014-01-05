@@ -234,15 +234,13 @@ end
 
 Then /^the deleted text rule should not exist on the Final Exam Matrix$/ do
   on FEMatrixView do |page|
-    page.get_standard_fe_requirements( @matrix.free_text).should_not match /#{@matrix.free_text}/
+    page.standard_fe_target_row( @matrix.free_text).should == nil
   end
 end
 
 Then /^the rules should be sorted on the Days and Time columns$/ do
   on FEMatrixView do |page|
     table_text = page.standard_final_exam_table.text
-    #table_text.should match /Day 1.*03:00 AM-05:00 AM.*Day 1.*05:30 AM-07:30 AM/m
-    #table_text.should match /Day 2.*03:00 AM-05:00 AM.*Day 2.*08:30 AM-10:30 AM/m
     table_text.should match /Day 1.*Day 2.*Day 3.*Day 4.*Day 5.*Day 6/m
     day_one_text = []
     day_one_text << page.standard_fe_target_row( "TH at 06:00 AM - 07:15 AM.").text
