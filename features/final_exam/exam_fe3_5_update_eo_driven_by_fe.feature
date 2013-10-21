@@ -6,7 +6,6 @@ Feature: SA.FE3-5 Update Exam Offerings based on Final Exam Driver
     Given I am logged in as admin
 
 #FE3.5.EB1 (KSENROLL-10214)
-  @pending
   Scenario: Update FE driver to Activity Offering and then change to Course Offering and back to Activity Offering again.
     When I view the Exam Offerings for an open CO with a standard final exam driven by Activity Offering
     Then the 2 Exam Offerings for Activity Offering should be in a Draft state
