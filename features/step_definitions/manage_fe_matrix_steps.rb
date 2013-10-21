@@ -219,8 +219,8 @@ end
 
 Then /^I should be able to see the Common Final Exam rule with the multiple statements$/ do
   on FEMatrixView do |page|
-    page.get_standard_fe_day( @matrix.courses).should match /#{@matrix.rdl_days}/
-    page.get_standard_fe_time( @matrix.courses).should match /#{@matrix.start_time} #{@matrix.time_ampm.upcase}-#{@matrix.end_time} #{@matrix.time_ampm.upcase}/
+    page.get_common_fe_day( @matrix.courses).should match /#{@matrix.rdl_days}/
+    page.get_common_fe_time( @matrix.courses).should match /#{@matrix.start_time} #{@matrix.time_ampm.upcase}-#{@matrix.end_time} #{@matrix.time_ampm.upcase}/
   end
 end
 

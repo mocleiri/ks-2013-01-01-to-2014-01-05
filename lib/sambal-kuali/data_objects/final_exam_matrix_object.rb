@@ -244,6 +244,7 @@ class FinalExamMatrix
       else
         page.rule_freeformtext.set options[:free_text]
       end
+      page.loading.wait_while_present
     end
   end
 
