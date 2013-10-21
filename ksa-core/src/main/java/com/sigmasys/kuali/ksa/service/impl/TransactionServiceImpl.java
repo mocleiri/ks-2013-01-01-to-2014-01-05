@@ -1204,7 +1204,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                             transaction2.getTransactionTypeValue() == TransactionTypeValue.CHARGE)) {
                 String statement = configService.getParameter(Constants.DEFAULT_GL_PA_STATEMENT);
                 Pair<GlTransaction, GlTransaction> pair =
-                        createGlTransactions(transaction1, transaction2, newAmount, statement, isQueued);
+                        createGlTransactions(transaction1, transaction2, newAmount, statement, true, isQueued);
                 compositeAllocation.setCreditGlTransaction(pair.getA());
                 compositeAllocation.setDebitGlTransaction(pair.getB());
             }
@@ -1223,17 +1223,19 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     /**
      * Creates the credit and debit transactions
      *
-     * @param transaction1 First Transaction instance
-     * @param transaction2 Second Transaction instance
-     * @param amount       Allocation amount
-     * @param statement    GL transaction statement
-     * @param isQueued     indicates whether the GL transaction should be in Q or W status
+     * @param transaction1          First Transaction instance
+     * @param transaction2          Second Transaction instance
+     * @param amount                Allocation amount
+     * @param statement             GL transaction statement
+     * @param isQueued              Indicates whether the GL transaction should be in Q or W status
+     * @param isOppositeGlOperation When "true" use the opposite GL operation
      * @return Pair instance with credit and debit GL transactions
      */
     protected Pair<GlTransaction, GlTransaction> createGlTransactions(Transaction transaction1,
                                                                       Transaction transaction2,
                                                                       BigDecimal amount,
                                                                       String statement,
+                                                                      boolean isOppositeGlOperation,
                                                                       boolean isQueued) {
 
         PermissionUtils.checkPermission(Permission.CREATE_GL_TRANSACTION);
@@ -1261,10 +1263,14 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 creditType = (CreditType) transactionType2;
             }
 
-            // Getting the opposite GL operation for credit
-            GlOperationType operationType = (GlOperationType.CREDIT == creditType.getUnallocatedGlOperation()) ?
-                    GlOperationType.DEBIT :
-                    GlOperationType.CREDIT;
+            // Calculating the appropriate GL operation for Credit
+            GlOperationType operationType = creditType.getUnallocatedGlOperation();
+
+            if (isOppositeGlOperation) {
+                operationType = (GlOperationType.CREDIT == operationType) ?
+                        GlOperationType.DEBIT :
+                        GlOperationType.CREDIT;
+            }
 
             // Creating GL transaction for credit
             GlTransaction creditGlTransaction = glService.createGlTransaction(creditTransaction.getId(),
@@ -1277,17 +1283,21 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             if (glType != null) {
 
-                // Getting the opposite GL operation for debit
-                operationType = (GlOperationType.CREDIT.equals(glType.getGlOperationOnCharge())) ?
-                        GlOperationType.DEBIT :
-                        GlOperationType.CREDIT;
+                // Calculating the appropriate GL operation for Debit
+                operationType = glType.getGlOperationOnCharge();
+
+                if (isOppositeGlOperation) {
+                    operationType = (GlOperationType.CREDIT.equals(operationType)) ?
+                            GlOperationType.DEBIT :
+                            GlOperationType.CREDIT;
+                }
 
                 // Creating GL transaction for debit
                 GlTransaction debitGlTransaction = glService.createGlTransaction(debitTransaction.getId(),
                         glType.getGlAccountId(), amount, operationType, statement, isQueued);
+
                 pair.setB(debitGlTransaction);
             }
-
         }
 
         return pair;
@@ -1635,9 +1645,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 transaction2.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) ||
                 (transaction1.getTransactionTypeValue() == TransactionTypeValue.PAYMENT &&
                         transaction2.getTransactionTypeValue() == TransactionTypeValue.CHARGE)) {
+
             String statement = configService.getParameter(Constants.DEFAULT_GL_PA_STATEMENT);
+
             Pair<GlTransaction, GlTransaction> pair =
-                    createGlTransactions(transaction1, transaction2, allocatedAmount, statement, isQueued);
+                    createGlTransactions(transaction1, transaction2, allocatedAmount, statement, false, isQueued);
+
             glTransactions.add(pair.getA());
             glTransactions.add(pair.getB());
         }
@@ -3974,7 +3987,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         persistentTags.addAll(newTags);
 
         return persistentTags;
-
     }
 
 }

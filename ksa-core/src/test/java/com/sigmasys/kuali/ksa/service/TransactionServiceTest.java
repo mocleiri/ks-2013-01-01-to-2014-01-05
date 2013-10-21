@@ -784,8 +784,16 @@ public class TransactionServiceTest extends AbstractServiceTest {
     @Test
     public void makeEffectiveFailed() throws Exception {
 
-        Transaction transaction = transactionService.createTransaction("chip", TEST_USER_ID, new Date(),
-                new BigDecimal(12000.89));
+        TransactionType debitType = transactionService.createDebitType("Debit_#", "Debit_# Name", new Date(), 1, "");
+
+        Assert.notNull(debitType);
+        Assert.notNull(debitType.getId());
+
+        String debitTypeId = debitType.getId().getId();
+
+        Assert.notNull(debitTypeId);
+
+        Transaction transaction = transactionService.createTransaction(debitTypeId, TEST_USER_ID, new Date(), new BigDecimal(12000.89));
 
         notNull(transaction);
         notNull(transaction.getId());
