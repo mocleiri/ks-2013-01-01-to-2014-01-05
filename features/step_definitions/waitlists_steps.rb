@@ -504,7 +504,7 @@ When /^I delete one of the related course offerings$/ do
   @ao_list[0].parent_course_offering.delete_co_coc_view
 end
 
-Then /^the (:?remaining )?activity offerings.*are still colocated$/ do
+Then /^the (?:remaining )?activity offerings.*are still colocated$/ do
   @ao_list[1..2].each do |ao|
     ao.parent_course_offering.manage
     on(ManageCourseOfferings).has_colo_icon(ao.code).should be_true
