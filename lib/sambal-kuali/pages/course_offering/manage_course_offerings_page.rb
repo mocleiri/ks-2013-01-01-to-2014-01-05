@@ -107,6 +107,8 @@ class ManageCourseOfferings < BasePage
 
   element(:activity_offering_results_div) { |b| b.frm.div(id: "KS-CourseOfferingManagement-AOClustersCollection") }
 
+
+
   def activity_offering_results_table(cluster_private_name = :default_cluster)
     if cluster_private_name == :default_cluster then
       return cluster_div_list[0].table unless !cluster_div_list[0].table.exists?
@@ -114,7 +116,7 @@ class ManageCourseOfferings < BasePage
       cluster = target_cluster(cluster_private_name)
       return cluster.table unless !cluster.table.exists?
     end
-    raise "error in activity_offering_results_table - no AOs for #{cluster_private_name}"
+    raise "error - no AOs for #{cluster_private_name}, indicates failure in previous step or scenario"
   end
 
   AO_SELECT = 0
