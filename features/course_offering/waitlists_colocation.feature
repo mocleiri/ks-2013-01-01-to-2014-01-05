@@ -76,7 +76,7 @@ Feature: EC.Waitlists Colocation
     But the remaining activity offering still has the same waitlist configuration
 
   @bug @assert
-  Scenario: WL 1.17.9a - Break colocation in a colocated-shared enrollment set (3 activity offerings)
+  Scenario: WL 1.17.9a Break colocation in a colocated-shared enrollment set (3 activity offerings)
     Given I create three course offerings with one activity offering in each with waitlists enabled
     And I colocate the three activity offerings (shared enrolment)
     And I make changes to the default waitlist configuration for one of the activity offerings
@@ -86,7 +86,7 @@ Feature: EC.Waitlists Colocation
     When I deactivate waitlists on the first activity offering
     Then the waitlist configuration for the two remaining colocated activity offerings is not changed
 
-  @bug @stacktrace
+  @bug @assert
   Scenario: WL 1.17.9b Break colocation in a colocated-shared enrollment set (2 activity offerings)
     Given I create two colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
@@ -96,15 +96,14 @@ Feature: EC.Waitlists Colocation
     When I deactivate waitlists on the first activity offering
     Then the waitlist configuration for the second activity offering is not changed
 
-  @bug @assert
   Scenario: WL 1.17.10 De-activate the waitlist option at the CO level for colocated AO (shared enrollment) and ensure that waitlists are deactivated
     Given I create two colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
     When I deactivate waitlists at the course offering level for one of the activity offerings
-    Then the activity offerings are no longer colocated
+    Then the activity offerings are still colocated
     And waitlists is deactived for both activity offerings
 
-  @bug
+  @bug @KSENROLL-10251
   Scenario: WL 1.17.11 Add an activity offering to a colocated-shared enrollment set and ensure that the newly added activity offerring has the shared waitlist settings
     Given I create two colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings

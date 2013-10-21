@@ -348,11 +348,11 @@ class ActivityOffering
   private :edit_colocation
 
   def edit_break_colocation
-    @browser.confirm( true ) { #TODO - @browser.confirm is deprecated
-      on ActivityOfferingMaintenance do |page|
-        page.select_colocated_checkbox if page.colocated_checkbox.set?
-      end
-    }
+    on ActivityOfferingMaintenance do |page|
+      page.select_colocated_checkbox if page.colocated_checkbox.set?
+      page.break_colocation
+    end
+
     @colocated = false
   end #END: edit_break_colocation
   private :edit_break_colocation
@@ -1321,7 +1321,7 @@ class Waitlist
       @enabled ? page.waitlist_checkbox.set : page.waitlist_checkbox.clear
     end
 
-    #return unless @enabled
+    return unless @enabled
 
     on ActivityOfferingMaintenance do |page|
       case @type

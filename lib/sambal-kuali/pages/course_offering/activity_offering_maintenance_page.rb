@@ -360,4 +360,10 @@ class ActivityOfferingMaintenance < BasePage
   action(:close_validation_error_dialog) { |b| b.validation_error_dialog_div.div(title: "Close").click}
   #validation error dialog
 
+  #break colo dialog
+  element(:break_colocation_dialog_div)  { |b| b.frm.div(class: /fancybox-opened/) }
+  value(:break_colocation_dialog_text) { |b| b.break_colocation_dialog_div.div(index: 2).text } #TODO
+  action(:break_colocation) { |b| b.break_colocation_dialog_div.button(id: "edit_ao_breakcolo").click}
+  action(:cancel_break_colocation) { |b| b.break_colocation_dialog_div.link(id: "button_close").click}
+  #validation break colo dialog
 end

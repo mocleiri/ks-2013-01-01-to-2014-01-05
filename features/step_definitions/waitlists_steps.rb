@@ -83,7 +83,7 @@ end
 #When /^I make changes to the default waitlist configuration for one of the activity offerings$/ do
 #  pending # express the regexp above with the code you wish you had
 #end
-Then /^I make changes to the default waitlist configuration.*activity offering/ do
+Then /^I make changes to the default waitlist configuration for one of the activity offerings$/ do
   waitlist = @ao_list[0].waitlist_config
   waitlist.enabled = true
   waitlist.type = "Manual"
@@ -92,6 +92,17 @@ Then /^I make changes to the default waitlist configuration.*activity offering/ 
   @ao_list[0].edit :waitlist_config => waitlist
   @ao_list[0].save
 end
+
+Then /^I make changes to the default waitlist configuration for the activity offering$/ do
+  waitlist = @activity_offering.waitlist_config
+  waitlist.enabled = true
+  waitlist.type = "Manual"
+  waitlist.limit_size = 10
+  waitlist.allow_hold_list = true
+  @activity_offering.edit :waitlist_config => waitlist
+  @activity_offering.save
+end
+
 
 Then /^I set the limit waitlist size$/ do
   waitlist = @activity_offering.waitlist_config
@@ -493,7 +504,7 @@ When /^I delete one of the related course offerings$/ do
   @ao_list[0].parent_course_offering.delete_co_coc_view
 end
 
-Then /^the remaining activity offerings.*are still colocated$/ do
+Then /^the (:?remaining )?activity offerings.*are still colocated$/ do
   @ao_list[1..2].each do |ao|
     ao.parent_course_offering.manage
     on(ManageCourseOfferings).has_colo_icon(ao.code).should be_true
