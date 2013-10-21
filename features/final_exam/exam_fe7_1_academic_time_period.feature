@@ -9,12 +9,12 @@ Feature: SA.FE7-1 Academic Time Period
   #FE7.1.EB1 (KSENROLL-8829)
   Scenario: Test whether an error message is given when the exam start date is changed to before term start date
     When I change the final exam start date to be before the term start date and save
-    Then a warning in the Final Exam section is displayed stating "Final Examination Period doesn't fall within the dates of Fall 2012."
+    Then a warning in the Final Exam section is displayed stating "Final Exam Period doesn't fall within the dates of Fall 2012."
 
   #FE7.1.EB2 (KSENROLL-8829)
   Scenario: Test whether an error message is given when the exam end date is changed to after term end date
     When I change the final exam end date to be after the term end date and save
-    Then a warning in the Final Exam section is displayed stating "Final Examination Period doesn't fall within the dates of Fall 2012."
+    Then a warning in the Final Exam section is displayed stating "Final Exam Period doesn't fall within the dates of Fall 2012."
 
   #FE7.1.EB3 (KSENROLL-8829)
   Scenario: Test whether a final exam period can be added to a newly created academic calender
