@@ -338,7 +338,7 @@ class ActivityOffering
           page.colocated_shared_max_enrollment_input_field.set opts[:max_enrollment]
         else # ie: 'separately manage'
           page.select_separately_manage_enrollment_radio
-          page.colocated_shared_max_enrollment_table_first_ao_input.set opts[:max_enrollment]
+          page.colocated_shared_max_enrollment_table_first_ao_input.set @max_enrollment
         end
         @max_enrollment = opts[:max_enrollment]
       end
