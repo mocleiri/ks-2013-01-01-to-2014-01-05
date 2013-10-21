@@ -85,61 +85,61 @@ When /^I create an Academic Calender and add an official term$/ do
   @manage_soc.set_up_soc
 end
 
-When /^I create an Academic Calender and add an official Winter and Summer term that each has an exam period$/ do
-  @calendar = create AcademicCalendar
-  @calendar.make_official
-  @term_winter = make AcademicTerm, :term_year => "#{@calendar.year.to_i + 1}", #:term_name => "Winter",
-                      :term_code => "#{@calendar.year.to_i + 1}00", :start_date=>"01/01/#{@calendar.year.to_i + 1}",
-                      :end_date=>"01/21/#{@calendar.year.to_i + 1}", :term_type=>"Winter Term"
-  @term_summer = make AcademicTerm, :term_year => "#{@calendar.year.to_i + 1}", #:term_name => "Summer",
-                      :term_code => "#{@calendar.year.to_i + 1}05", :start_date=>"03/10/#{@calendar.year.to_i + 1}",
-                      :end_date=>"06/20/#{@calendar.year.to_i + 1}", :term_type=>"Summer 1"
-
-  @calendar.add_term(@term_winter)
-  @calendar.add_term(@term_summer)
-
-  @term_winter.make_official
-  @term_summer.make_official
-
-  @manage_soc_winter = make ManageSoc, :term_code => @term_winter.term_code
-  @manage_soc_winter.set_up_soc
-  @manage_soc_winter.perform_manual_soc_state_change("open")
-
-  @manage_soc_summer = make ManageSoc, :term_code => @term_summer.term_code
-  @manage_soc_summer.set_up_soc
-  @manage_soc_summer.perform_manual_soc_state_change("open")
-end
-
-When /^I publish the Winter term$/ do
-  @manage_soc_winter.search
-  @manage_soc_winter.change_action "Lock"
-  on(ManageSocPage).go_action
-  @manage_soc_winter.change_action "Schedule"
-  on(ManageSocPage).go_action
-  @manage_soc_winter.change_action "FinalEdit"
-  on(ManageSocPage).go_action
-  @manage_soc_winter.change_action "Publish"
-end
-
-When /^I publish both terms in the Academic Calendar$/ do
-  @manage_soc_winter.search
-  @manage_soc_winter.change_action "Lock"
-  on(ManageSocPage).go_action
-  @manage_soc_winter.change_action "Schedule"
-  on(ManageSocPage).go_action
-  @manage_soc_winter.change_action "FinalEdit"
-  on(ManageSocPage).go_action
-  @manage_soc_winter.change_action "Publish"
-
-  @manage_soc_summer.search
-  @manage_soc_summer.change_action "Lock"
-  on(ManageSocPage).go_action
-  @manage_soc_summer.change_action "Schedule"
-  on(ManageSocPage).go_action
-  @manage_soc_summer.change_action "FinalEdit"
-  on(ManageSocPage).go_action
-  @manage_soc_summer.change_action "Publish"
-end
+#When /^I create an Academic Calender and add an official Winter and Summer term that each has an exam period$/ do
+#  @calendar = create AcademicCalendar
+#  @calendar.make_official
+#  @term_winter = make AcademicTerm, :term_year => "#{@calendar.year.to_i + 1}", #:term_name => "Winter",
+#                      :term_code => "#{@calendar.year.to_i + 1}00", :start_date=>"01/01/#{@calendar.year.to_i + 1}",
+#                      :end_date=>"01/21/#{@calendar.year.to_i + 1}", :term_type=>"Winter Term"
+#  @term_summer = make AcademicTerm, :term_year => "#{@calendar.year.to_i + 1}", #:term_name => "Summer",
+#                      :term_code => "#{@calendar.year.to_i + 1}05", :start_date=>"03/10/#{@calendar.year.to_i + 1}",
+#                      :end_date=>"06/20/#{@calendar.year.to_i + 1}", :term_type=>"Summer 1"
+#
+#  @calendar.add_term(@term_winter)
+#  @calendar.add_term(@term_summer)
+#
+#  @term_winter.make_official
+#  @term_summer.make_official
+#
+#  @manage_soc_winter = make ManageSoc, :term_code => @term_winter.term_code
+#  @manage_soc_winter.set_up_soc
+#  @manage_soc_winter.perform_manual_soc_state_change("open")
+#
+#  @manage_soc_summer = make ManageSoc, :term_code => @term_summer.term_code
+#  @manage_soc_summer.set_up_soc
+#  @manage_soc_summer.perform_manual_soc_state_change("open")
+#end
+#
+#When /^I publish the Winter term$/ do
+#  @manage_soc_winter.search
+#  @manage_soc_winter.change_action "Lock"
+#  on(ManageSocPage).go_action
+#  @manage_soc_winter.change_action "Schedule"
+#  on(ManageSocPage).go_action
+#  @manage_soc_winter.change_action "FinalEdit"
+#  on(ManageSocPage).go_action
+#  @manage_soc_winter.change_action "Publish"
+#end
+#
+#When /^I publish both terms in the Academic Calendar$/ do
+#  @manage_soc_winter.search
+#  @manage_soc_winter.change_action "Lock"
+#  on(ManageSocPage).go_action
+#  @manage_soc_winter.change_action "Schedule"
+#  on(ManageSocPage).go_action
+#  @manage_soc_winter.change_action "FinalEdit"
+#  on(ManageSocPage).go_action
+#  @manage_soc_winter.change_action "Publish"
+#
+#  @manage_soc_summer.search
+#  @manage_soc_summer.change_action "Lock"
+#  on(ManageSocPage).go_action
+#  @manage_soc_summer.change_action "Schedule"
+#  on(ManageSocPage).go_action
+#  @manage_soc_summer.change_action "FinalEdit"
+#  on(ManageSocPage).go_action
+#  @manage_soc_summer.change_action "Publish"
+#end
 
 When /^I create multiple Course Offerings each with a different Exam Offering in the new term$/ do
   @co_list = []
@@ -204,12 +204,6 @@ When /^I rollover the term to a new academic term that has an exam period$/ do
                    :exp_success => false
   @rollover.perform_rollover
   @rollover.wait_for_rollover_to_complete
-end
-
-When /^I have ensured that the Fall Term of the Calender is setup with a Final Exam Period$/ do
-  @source_calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar", :year => "2012"
-  @term = make AcademicTerm, :term_year => @source_calendar.year, :term_type => "Fall Term", :term_name => "Fall"
-  @term.edit :exam_period => true
 end
 
 When /^I have ensured that the Spring Term of the Calender is setup with a Final Exam Period$/ do

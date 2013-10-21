@@ -4,7 +4,6 @@ Feature: SA.FE3-3 Cancelling an AO should cancel the EO depending on all the exa
 
   Background:
     Given I am logged in as admin
-    And I have ensured that the Fall Term of the Calender is setup with a Final Exam Period
 
   #FE3.3.EB1 (KSENROLL-10220)
   @bug @KSENROLL-10217

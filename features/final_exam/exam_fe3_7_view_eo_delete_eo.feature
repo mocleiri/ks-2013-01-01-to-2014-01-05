@@ -6,7 +6,6 @@ Feature: SA.FE3-7 View Exam Offerings only when the Exam Period is set to Standa
 
   Background:
     Given I am logged in as admin
-    And I have ensured that the Spring Term of the Calender is setup with a Final Exam Period
 
   #FE3.7.EB1 (KSENROLL-9791)
   Scenario: Test whether the View EO table is by Course Offering and that there is only one Exam Offering

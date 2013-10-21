@@ -5,7 +5,6 @@ Feature: SA.FE3-6 View Exam Offerings table renedered depending on FE Driver
 
   Background:
     Given I am logged in as admin
-    And I have ensured that the Fall Term of the Calender is setup with a Final Exam Period
 
   #FE3.6.EB1 (KSENROLL-9790)
   Scenario: Test whether the View EO table is by Course Offering and that there is only one Exam Offering

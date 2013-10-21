@@ -5,7 +5,6 @@ Feature: SA.FE3-2 View Exam Offerings for AO not created when no Activity Offeri
 
   Background:
     Given I am logged in as admin
-    And I have ensured that the Fall Term of the Calender is setup with a Final Exam Period
 
   #FE3.2.EB1 (KSENROLL-9534)
   Scenario: Test whether the EO table only shows Eos by AO when Activity Offerings are configured
