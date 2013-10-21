@@ -32,10 +32,10 @@ class FEMatrixEdit < BasePage
   element(:rule_starttime_ampm) { |b| b.proposition_section.select( name: /editTree.*proposition\.startTimeAMPM/)}
   element(:rule_endtime) { |b| b.proposition_section.text_field( name: /editTree.*proposition\.endTime/)}
   element(:rule_endtime_ampm) { |b| b.proposition_section.select( name: /editTree.*proposition\.endTimeAMPM/)}
-  element(:rule_freeformtext) { |b| b.proposition_section.text_field( name: /editTree.*proposition\.termParameter/)}
+  element(:rule_freeformtext) { |b| b.frm.text_field( name: /editTree.*proposition\.termParameter/)}
   element(:courses_type_dropdown) { |b| b.proposition_section.select( name: /editTree.*proposition\.multipleCourseType/)}
 
-  element(:add_line_btn) { |b| b.proposition_section.button( id: "KRMS-ApprovedCourseStackedCollectionGroup_add")}
+  element(:add_line_btn) { |b| b.frm.button( text: "add")} #( id: "KRMS-ApprovedCourseStackedCollectionGroup_add")}
   action(:add_line) { |b| b.add_line_btn.click}
   element(:preview_change_btn) { |b| b.proposition_section.button( text: /Preview Change/)}
   action(:preview_change) { |b| b.preview_change_btn.click; b.loading.wait_while_present}

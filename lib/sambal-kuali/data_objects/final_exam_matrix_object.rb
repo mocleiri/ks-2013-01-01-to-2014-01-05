@@ -227,6 +227,7 @@ class FinalExamMatrix
         page.proposition_section.a( text: /Advanced Search/).click
         page.lookup_course_code.when_present.set options[:courses]
         page.lookup_search
+        page.loading.wait_while_present
         page.return_course_code(options[:courses]).a( text: /Select/).click
       elsif options[:rule] =~ /<Courses>/
         page.courses_type_dropdown.select options[:courses_type]
@@ -236,6 +237,7 @@ class FinalExamMatrix
           page.proposition_section.a( text: /Advanced Search/).click
           page.lookup_course_code.when_present.set course
           page.lookup_search
+          page.loading.wait_while_present
           page.return_course_code(course).a( text: /Select/).click
           page.add_line
         end
@@ -265,10 +267,10 @@ class FinalExamMatrix
         page.preview_change
         page.loading.wait_while_present
 
-        page.add_statement
-        page.rule_dropdown.select opts[:rule]
         opts = {:rule => "Free Form Text",
                 :free_text => "Common FE free text"}
+        page.add_statement
+        page.rule_dropdown.select opts[:rule]
         set_common_rule opts
         page.preview_change
         page.loading.wait_while_present
