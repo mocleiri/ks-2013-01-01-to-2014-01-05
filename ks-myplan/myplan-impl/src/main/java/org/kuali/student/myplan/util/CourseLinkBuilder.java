@@ -204,8 +204,8 @@ public class CourseLinkBuilder {
         if (!num.endsWith("00")) {
             try {
                 SearchRequestInfo searchRequest = new SearchRequestInfo("myplan.course.getCourseTitleAndId");
-                searchRequest.addParam("subject", subject);
-                searchRequest.addParam("number", num);
+                searchRequest.addParam("subject", subject.trim());
+                searchRequest.addParam("number", num.trim());
                 searchRequest.addParam("lastScheduledTerm", DegreeAuditAtpHelper.getLastScheduledAtpId());
 
 

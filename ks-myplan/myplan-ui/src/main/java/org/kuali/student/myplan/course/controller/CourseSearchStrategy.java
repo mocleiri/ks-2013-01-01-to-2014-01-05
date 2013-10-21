@@ -151,9 +151,13 @@ public class CourseSearchStrategy {
                 // Converts "1XX" to "100"
                 level = level.substring(0, 1) + "00";
 
+                //Converts "100" to "1"
+                String levelStart = level.substring(0, 1);
+
                 SearchRequestInfo request = new SearchRequestInfo("myplan.lu.search.divisionAndLevel");
                 request.addParam("division", division);
                 request.addParam("level", level);
+                request.addParam("levelStart", levelStart);
                 requests.add(request);
             }
 

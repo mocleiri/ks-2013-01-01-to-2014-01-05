@@ -1,7 +1,5 @@
 package edu.uw.kuali.student.web;
 
-
-
 import org.kuali.rice.krad.web.filter.UserLoginFilter;
 
 import javax.servlet.FilterChain;

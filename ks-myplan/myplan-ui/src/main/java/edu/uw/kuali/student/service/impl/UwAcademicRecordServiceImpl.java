@@ -13,6 +13,7 @@ import org.kuali.student.enrollment.academicrecord.dto.*;
 import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
+import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.r2.common.dto.ContextInfo;
@@ -412,7 +413,7 @@ public class UwAcademicRecordServiceImpl implements AcademicRecordService {
      */
     private String[] getCourseTitleAndId(String subject, String number) {
         List<SearchRequestInfo> requests = new ArrayList<SearchRequestInfo>();
-        SearchRequestInfo request = new SearchRequestInfo("myplan.course.getCourseTitleAndId");
+        SearchRequestInfo request = new SearchRequestInfo(CourseSearchConstants.COURSE_SEARCH_FOR_COURSE_ID);
         request.addParam("subject", subject);
         request.addParam("number", number);
         request.addParam("lastScheduledTerm", AtpHelper.getLastScheduledAtpId());

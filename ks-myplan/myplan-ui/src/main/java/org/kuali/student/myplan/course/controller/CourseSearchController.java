@@ -49,7 +49,6 @@ import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
-import org.kuali.student.r2.common.util.constants.CourseOfferingServiceConstants;
 import org.kuali.student.r2.core.atp.service.AtpService;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.kuali.student.r2.core.class1.type.service.TypeService;
@@ -63,6 +62,7 @@ import org.kuali.student.r2.lum.course.service.assembler.CourseAssemblerConstant
 import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -288,6 +288,7 @@ public class CourseSearchController extends UifControllerBase {
         int maxCount = (StringUtils.hasText(maxCountProp)) ? Integer.valueOf(maxCountProp) : MAX_HITS;
         try {
             List<SearchRequestInfo> requests = searcher.queryToRequests(form);
+            Set<String> divisionsQueried = getDivisionsFromSearchRequests(requests);
             List<Hit> hits = processSearchRequests(requests);
             List<CourseSearchItem> courseList = new ArrayList<CourseSearchItem>();
             Map<String, CourseSearchItem.PlanState> courseStatusMap = getCourseStatusMap(studentId);
@@ -295,15 +296,21 @@ public class CourseSearchController extends UifControllerBase {
             Set<String> subjectArea = new HashSet<String>();
 
             for (Hit hit : hits) {
-                CourseSearchItem course = getCourseInfo(hit.courseID);
-                //       loadScheduledTerms(course);
-                subjectArea.add(course.getSubject());
-                loadTermsOffered(course);
-                loadGenEduReqs(course);
-                if (courseStatusMap.containsKey(course.getCourseVersionIndependentId())) {
-                    course.setStatus(courseStatusMap.get(course.getCourseVersionIndependentId()));
+                List<CourseSearchItem> courseSearchItems = getCourseInfo(hit.courseID);
+                for (CourseSearchItem course : courseSearchItems) {
+
+                    if (divisionsQueried.size() == 1 && !divisionsQueried.contains(course.getSubject())) {
+                        continue;
+                    }
+                    //       loadScheduledTerms(course);
+                    subjectArea.add(course.getSubject());
+                    loadTermsOffered(course);
+                    loadGenEduReqs(course);
+                    if (courseStatusMap.containsKey(course.getCourseVersionIndependentId())) {
+                        course.setStatus(courseStatusMap.get(course.getCourseVersionIndependentId()));
+                    }
+                    courseList.add(course);
                 }
-                courseList.add(course);
                 if (courseList.size() >= maxCount) {
                     break;
                 }
@@ -385,7 +392,7 @@ public class CourseSearchController extends UifControllerBase {
 
             jsonString.append("[\"").append(item.getCode()).
                     append("\",\" <a href=\\\"inquiry?methodToCall=start&viewId=CourseDetails-InquiryView&courseId=").
-                    append(courseId).append("\\\" target=\\\"_self\\\" title=\\\"").append(courseName).append("\\\" class=\\\"ellipsisItem\\\">").
+                    append(courseId + "&courseCd=" + item.getCode()).append("\\\" target=\\\"_self\\\" title=\\\"").append(courseName).append("\\\" class=\\\"ellipsisItem\\\">").
                     append(courseName).append("</a>\",\"").
                     append(item.getCredit()).append("\",").append(scheduledAndOfferedTerms).append(",\"").
                     append(item.getGenEduReq()).append("\",\"").append(status).
@@ -456,6 +463,32 @@ public class CourseSearchController extends UifControllerBase {
         }
     }
 
+    /**
+     * Divisions that are added as params in the search request are passed as a set for crossListing course verification
+     *
+     * @param requestInfos
+     * @return
+     */
+    private Set<String> getDivisionsFromSearchRequests(List<SearchRequestInfo> requestInfos) {
+        Set<String> divisions = new HashSet<String>();
+        for (SearchRequestInfo searchRequestInfo : requestInfos) {
+            for (SearchParamInfo requestParam : searchRequestInfo.getParams()) {
+                if ("division".equals(requestParam.getKey())) {
+                    divisions.add(requestParam.getValues().get(0).trim());
+                }
+            }
+        }
+        return divisions;
+    }
+
+
+    /**
+     * Gets the CluIds from the given search requests
+     *
+     * @param requests
+     * @return
+     * @throws MissingParameterException
+     */
     public ArrayList<Hit> processSearchRequests(List<SearchRequestInfo> requests) throws MissingParameterException {
         logger.info("Start of processSearchRequests of CourseSearchController:" + System.currentTimeMillis());
 
@@ -638,23 +671,29 @@ public class CourseSearchController extends UifControllerBase {
         return savedCourseSet;
     }
 
-    private CourseSearchItem getCourseInfo(String courseId) throws MissingParameterException {
+    /**
+     * A list of course search items are returned back if the provided courseId has crossListing courses
+     * else a list with only one Object is sent back
+     *
+     * @param courseId
+     * @return
+     * @throws MissingParameterException
+     */
+    private List<CourseSearchItem> getCourseInfo(String courseId) throws MissingParameterException {
         logger.info("Start of method getCourseInfo of CourseSearchController:" + System.currentTimeMillis());
-        CourseSearchItem course = new CourseSearchItem();
+        List<CourseSearchItem> courseSearchItems = new ArrayList<CourseSearchItem>();
 
         SearchRequestInfo request = new SearchRequestInfo("myplan.course.info");
         request.addParam("courseID", courseId);
         SearchResultInfo result = null;
         try {
             result = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
-        } catch (InvalidParameterException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (OperationFailedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (PermissionDeniedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Exception e) {
+            logger.error("Could not load courseInfo for CourseId: " + courseId, e);
         }
+
         for (SearchResultRow row : result.getRows()) {
+            CourseSearchItem course = new CourseSearchItem();
             String name = SearchHelper.getCellValue(row, "course.name");
             String number = SearchHelper.getCellValue(row, "course.number");
             String subject = SearchHelper.getCellValue(row, "course.subject");
@@ -676,10 +715,13 @@ public class CourseSearchController extends UifControllerBase {
             course.setCreditMax(credit.max);
             course.setCreditType(credit.type);
             course.setCredit(credit.display);
-            break;
+
+            courseSearchItems.add(course);
         }
+
+
         logger.info("End of method getCourseInfo of CourseSearchController:" + System.currentTimeMillis());
-        return course;
+        return courseSearchItems;
     }
 
     public void populateFacets(CourseSearchForm form, List<CourseSearchItem> courses) {

@@ -26,10 +26,7 @@ import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.course.util.CreditsFormatter;
 import org.kuali.student.myplan.plan.PlanConstants;
-import org.kuali.student.myplan.plan.dataobject.AcademicRecordDataObject;
-import org.kuali.student.myplan.plan.dataobject.PlanItemDataObject;
-import org.kuali.student.myplan.plan.dataobject.PlannedCourseSummary;
-import org.kuali.student.myplan.plan.dataobject.RecommendedItemDataObject;
+import org.kuali.student.myplan.plan.dataobject.*;
 import org.kuali.student.myplan.plan.util.*;
 import org.kuali.student.myplan.plan.util.AtpHelper.YearTerm;
 import org.kuali.student.myplan.util.CourseLinkBuilder;
@@ -47,6 +44,7 @@ import org.kuali.student.r2.core.scheduling.dto.ScheduleDisplayInfo;
 import org.kuali.student.r2.core.scheduling.infc.ScheduleComponentDisplay;
 import org.kuali.student.r2.core.scheduling.infc.TimeSlot;
 import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.course.dto.CourseCrossListingInfo;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.lum.course.service.CourseService;
 import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
@@ -112,7 +110,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         if (fieldValues.get(PlanConstants.PARAM_OFFERINGS_FLAG) != null) {
             loadActivityOffering = Boolean.valueOf(fieldValues.get(PlanConstants.PARAM_OFFERINGS_FLAG).toString());
         }
-        return retrieveCourseDetails((String) fieldValues.get(PlanConstants.PARAM_COURSE_ID), studentId, loadActivityOffering);
+        return retrieveCourseDetails((String) fieldValues.get(PlanConstants.PARAM_COURSE_ID), (String) fieldValues.get(PlanConstants.PARAM_COURSE_CD), studentId, loadActivityOffering);
     }
 
 
@@ -132,7 +130,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
          * else get the same id as the provided course version specific Id
          */
         CourseInfo course = getCourseHelper().getCourseInfo(courseId);
-        CourseSummaryDetails courseDetails = retrieveCourseSummary(course);
+        CourseSummaryDetails courseDetails = retrieveCourseSummary(course, null);
         return courseDetails;
     }
 
@@ -143,22 +141,46 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      * @param course
      * @return
      */
-    protected CourseSummaryDetails retrieveCourseSummary(CourseInfo course) {
+    protected CourseSummaryDetails retrieveCourseSummary(CourseInfo course, String courseCd) {
 
         if (null == course) {
             return null;
         }
 
-        String subject = course.getSubjectArea().trim();
+        DeconstructedCourseCode courseCode = getCourseHelper().getCourseDivisionAndNumber(courseCd);
+        String subject = null;
+        String number = null;
+        String code = null;
+        List<String> crossListings = new ArrayList<String>();
+
+        if (courseCode.getSubject().trim().equals(course.getSubjectArea().trim()) && courseCode.getNumber().trim().equals(course.getCourseNumberSuffix().trim())) {
+            subject = course.getSubjectArea().trim();
+            number = course.getCourseNumberSuffix();
+            code = course.getCode();
+            for (CourseCrossListingInfo crossListingInfo : course.getCrossListings()) {
+                crossListings.add(getCourseLinkBuilder().makeLinks(crossListingInfo.getCode()));
+            }
+        } else {
+            for (CourseCrossListingInfo crossListingInfo : course.getCrossListings()) {
+                if (courseCode.getSubject().trim().equals(crossListingInfo.getSubjectArea().trim()) && courseCode.getNumber().trim().equals(crossListingInfo.getCourseNumberSuffix().trim())) {
+                    subject = crossListingInfo.getSubjectArea().trim();
+                    number = crossListingInfo.getCourseNumberSuffix().trim();
+                    code = crossListingInfo.getCode();
+                    break;
+                }
+            }
+        }
+
 
         CourseSummaryDetails courseDetails = new CourseSummaryDetails();
         courseDetails.setVersionIndependentId(course.getVersion().getVersionIndId());
         courseDetails.setCourseId(course.getId());
-        courseDetails.setCode(course.getCode());
+        courseDetails.setCode(code);
         courseDetails.setCredit(CreditsFormatter.formatCredits(course));
         courseDetails.setCourseTitle(course.getCourseTitle());
         courseDetails.setSubjectArea(subject);
-        courseDetails.setCourseNumber(course.getCourseNumberSuffix());
+        courseDetails.setCourseNumber(number);
+        courseDetails.setCrossListings(crossListings);
         String campusCd = null;
         for (AttributeInfo attributeInfo : course.getAttributes()) {
             if (CourseSearchConstants.CAMPUS_LOCATION_COURSE_ATTRIBUTE.equals(attributeInfo.getKey())) {
@@ -313,14 +335,14 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      * @param studentId
      * @return
      */
-    public CourseDetails retrieveCourseDetails(String courseId, String studentId, boolean loadActivityOffering) {
+    public CourseDetails retrieveCourseDetails(String courseId, String courseCd, String studentId, boolean loadActivityOffering) {
 
         CourseDetails courseDetails = new CourseDetails();
 
         CourseInfo course = getCourseHelper().getCourseInfo(courseId);
 
         // Get Course Summary first
-        CourseSummaryDetails courseSummaryDetails = retrieveCourseSummary(course);
+        CourseSummaryDetails courseSummaryDetails = retrieveCourseSummary(course, courseCd);
         courseDetails.setCourseSummaryDetails(courseSummaryDetails);
 
         // Course Plan + Academic Records

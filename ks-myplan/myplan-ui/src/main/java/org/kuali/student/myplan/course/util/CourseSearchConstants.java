@@ -58,7 +58,7 @@ public class CourseSearchConstants {
 
     public static final String APP_URL = "appserver.url";
 
-    public static final String COURSE_SEARCH_FOR_COURSE_ID = "myplan.course.getcluid";
+    public static final String COURSE_SEARCH_FOR_COURSE_ID = "myplan.course.getCourseTitleAndId";
 
     public static final String COURSE_SEARCH_FOR_DIVISION_LEVELS = "myplan.clu.division.level";
 
