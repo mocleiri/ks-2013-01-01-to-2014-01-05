@@ -72,6 +72,27 @@ public class OrganizationServiceConstants {
     public static final String ORGANIZATION_SUBJECT_CODE_TYPE_KEY = "kuali.org.type.subject.code"; // KSENROLL-5112
 
     /**
+     * lifecycles
+     */
+    public static final String GENERAL_ORGANIZATION_LIFECYCLE = "kuali.org.lifecycle";
+    public static final String GENERAL_ORG_ORG_RELATION_LIFECCYCLE = "kuali.org.org.relation.lifecycle";
+    public static final String GENERAL_ORG_PERSON_RELATION_LIFECCYCLE = "kuali.org.person.relation.lifecycle";
+    public static final String GENERAL_ORG_HIERARCHY_LIFECCYCLE = "kuali.org.hierarchy.lifecycle";
+    
+    /**
+     * States
+     */
+    public static final String KUALI_ORG_STATE_ACTIVE = "kuali.org.state.active";
+    public static final String KUALI_ORG_STATE_INACTIVE = "kuali.org.state.inactive";
+    public static final String KUALI_ORG_ORG_RELATION_STATE_ACTIVE = "kuali.org.org.relation.state.active";
+    public static final String KUALI_ORG_ORG_RELATION_STATE_INACTIVE = "kuali.org.org.relation.state.inactive";
+    public static final String KUALI_ORG_PERSON_RELATION_STATE_ACTIVE = "kuali.org.person.relation.state.active";
+    public static final String KUALI_ORG_PERSON_RELATION_STATE_INACTIVE = "kuali.org.person.relation.state.inactive";
+    public static final String KUALI_ORG_HIERARCHY_STATE_ACTIVE = "kuali.org.hierarchy.state.active";
+    public static final String KUALI_ORG_HIERARCHY_STATE_INACTIVE = "kuali.org.hierarchy.state.inactive";
+    
+    
+    /**
      * Org-Org types (https://wiki.kuali.org/display/STUDENT/Organization+Service+Types+and+States)
      * KSENROLL-5112
      */
