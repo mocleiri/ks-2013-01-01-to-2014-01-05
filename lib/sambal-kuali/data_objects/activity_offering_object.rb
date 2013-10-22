@@ -1021,10 +1021,8 @@ class DeliveryLogistics
       end
 
       page.add_days.set @days
-      page.add_start_time.set @start_time
-      page.add_start_time_ampm.select @start_time_ampm
-      page.add_end_time.set @end_time
-      page.add_end_time_ampm.select @end_time_ampm
+      page.add_start_time.set @start_time + @start_time_ampm
+      page.add_end_time.set @end_time +  @end_time_ampm
       page.add_facility.set @facility
       page.add_room.set @room
       #page.facility_features TODO: later, facility features persistence not implemented yet
