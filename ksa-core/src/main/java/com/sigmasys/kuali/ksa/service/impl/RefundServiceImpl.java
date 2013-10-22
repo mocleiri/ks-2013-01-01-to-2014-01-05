@@ -892,7 +892,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             String errMsg = "No ACH information found for account " + accountId;
 
             logger.error(errMsg, e);
-            throw new NoAchInformationException(errMsg);
+
+            throw new InvalidAchInformationException(errMsg);
         }
 
         // Perform either an individual or consolidate refund:
@@ -1316,9 +1317,12 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return Newly created Ach transmission.
      */
     private Ach produceAchTransmissionInternal(BigDecimal amount, String reference, Ach ach) {
+
         // Validate the Amount:
-        if (amount.intValue() == 0) {
-            throw new InvalidAchAmountException("ACH transmission amount is zero.");
+        if (amount == null || amount.intValue() <= 0) {
+            String errMsg = "ACH transmission amount must be a positive number";
+            logger.error(errMsg);
+            throw new InvalidAchInformationException(errMsg);
         }
 
         // Create a new Ach:

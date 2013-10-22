@@ -665,8 +665,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                 // Doing divided funding
 
                 // Taking the smallest funding amount from remainingFund and chargeRemainingFund
-                BigDecimal maxDividedFund = remainingFund;
-                if (maxDividedFund.compareTo(chargeRemainingFund) > 0) {
+                BigDecimal maxDividedFund = (remainingFund != null) ? remainingFund : BigDecimal.ZERO;
+                if (chargeRemainingFund != null && maxDividedFund.compareTo(chargeRemainingFund) > 0) {
                     maxDividedFund = chargeRemainingFund;
                 }
 
