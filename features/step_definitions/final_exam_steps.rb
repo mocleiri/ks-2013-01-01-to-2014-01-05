@@ -441,6 +441,23 @@ When /^I view the Exam Offerings for the Course Offering$/ do
   end
 end
 
+When /^I suspend an Activity Offering for a CO with a standard final exam driven by Course Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Course Offering"
+  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.suspend :navigate_to_page => false
+end
+
+When /^I suspend an Activity Offering for a CO with a standard final exam driven by Activity Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.exam_offerings_setup :final_exam_type => "Standard final Exam",
+                                        :final_exam_driver => "Final Exam Per Activity Offering",
+                                        :final_exam_activity => "Lecture"
+  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.suspend :navigate_to_page => false
+end
+
 Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
@@ -738,38 +755,6 @@ Then /^the ([^"]*) Exam Offerings? for Activity Offering should be in a ([^"]*) 
     no_of_eos.should == no_of_aos.to_i
   end
 end
-
-#Then /^the default cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
-#  on ViewExamOfferings do |page|
-#    #page.ao_table_header_text.should match /for Activity Offering/
-#    array = page.return_array_of_ao_codes
-#    array.each do |code|
-#      page.eo_by_ao_status(code).should match /#{exp_state}/
-#      page.eo_by_ao_days(code).should == ""
-#      page.eo_by_ao_st_time(code).should == ""
-#      page.eo_by_ao_end_time(code).should == ""
-#      page.eo_by_ao_bldg(code).should == ""
-#      page.eo_by_ao_room(code).should == ""
-#    end
-#    array.length.should == no_of_aos.to_i
-#  end
-#end
-#
-#Then /^the leftover cluster's Activity Offering table should for all ([^"]*) Exam Offerings? only show that it is in the ([^"]*) state$/ do |no_of_aos,exp_state|
-#  on ViewExamOfferings do |page|
-#    #page.ao_table_header_text.should match /for Activity Offering/
-#    array = page.return_array_of_ao_codes("CL Leftovers")
-#    array.each do |code|
-#      page.eo_by_ao_status(code, "CL Leftovers").should match /#{exp_state}/
-#      page.eo_by_ao_days(code, "CL Leftovers").should == ""
-#      page.eo_by_ao_st_time(code, "CL Leftovers").should == ""
-#      page.eo_by_ao_end_time(code, "CL Leftovers").should == ""
-#      page.eo_by_ao_bldg(code, "CL Leftovers").should == ""
-#      page.eo_by_ao_room(code, "CL Leftovers").should == ""
-#    end
-#    array.length.should == no_of_aos.to_i
-#  end
-#end
 
 Then /^there should be an Activity Offering table where all Exam Offerings is in the ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
