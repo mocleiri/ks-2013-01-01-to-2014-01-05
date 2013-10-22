@@ -161,7 +161,7 @@ public class SingleQuarterInquiryHelperImpl extends KualiInquirableImpl {
                         //  If the course info lookup fails just log the error and omit the item.
                         try {
 
-                            plannedCourse.setCourseDetails(getCourseDetailsInquiryHelper().retrieveCourseSummaryById(courseID));
+                            plannedCourse.setCourseDetails(getCourseDetailsInquiryHelper().retrieveCourseSummaryByIdAndCd(courseID, null));
 
                             // TODO: Add Plan activities to this view
 

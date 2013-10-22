@@ -762,7 +762,7 @@ public class UwSolrCourseOfferingServiceImpl implements CourseOfferingService {
 
             CourseService courseService = getCourseService();
             String courseVersionId = getCourseHelper().getCourseVersionIdByTerm(id, termId);
-            CourseInfo courseInfo = courseService.getCourse(courseVersionId, context);
+            CourseInfo courseInfo = getCourseHelper().getCourseInfo(courseVersionId, String.format("%s %s", curriculumAbbreviation, number));
 
             List<String> sectionXMLs = solrSeviceClient.getPrimarySections(year, quarter, curriculumAbbreviation, number);
             if (sectionXMLs != null) {

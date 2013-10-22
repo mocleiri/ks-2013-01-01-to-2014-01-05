@@ -124,12 +124,12 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      * @param courseId
      * @return
      */
-    public CourseSummaryDetails retrieveCourseSummaryById(String courseId) {
+    public CourseSummaryDetails retrieveCourseSummaryByIdAndCd(String courseId, String courseCd) {
         /**
          * If version independent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId, courseCd);
         CourseSummaryDetails courseDetails = retrieveCourseSummary(course, course.getCode());
         return courseDetails;
     }
@@ -152,13 +152,13 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         }
 
 
-        DeconstructedCourseCode courseCode = getCourseHelper().getCourseDivisionAndNumber(courseCd);
-        String subject = null;
-        String number = null;
-        String code = null;
         List<String> crossListings = new ArrayList<String>();
 
-        if (courseCode.getSubject().trim().equals(course.getSubjectArea().trim()) && courseCode.getNumber().trim().equals(course.getCourseNumberSuffix().trim())) {
+        for (CourseCrossListingInfo crossListingInfo : course.getCrossListings()) {
+            crossListings.add(getCourseLinkBuilder().makeLinks(crossListingInfo.getCode()));
+        }
+
+        /*if (courseCode.getSubject().trim().equals(course.getSubjectArea().trim()) && courseCode.getNumber().trim().equals(course.getCourseNumberSuffix().trim())) {
             subject = course.getSubjectArea().trim();
             number = course.getCourseNumberSuffix();
             code = course.getCode();
@@ -176,17 +176,17 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                     crossListings.add(getCourseLinkBuilder().makeLinks(crossListingInfo.getCode()));
                 }
             }
-        }
+        }*/
 
 
         CourseSummaryDetails courseDetails = new CourseSummaryDetails();
         courseDetails.setVersionIndependentId(course.getVersion().getVersionIndId());
         courseDetails.setCourseId(course.getId());
-        courseDetails.setCode(code);
+        courseDetails.setCode(course.getCode());
         courseDetails.setCredit(CreditsFormatter.formatCredits(course));
         courseDetails.setCourseTitle(course.getCourseTitle());
-        courseDetails.setSubjectArea(subject);
-        courseDetails.setCourseNumber(number);
+        courseDetails.setSubjectArea(course.getSubjectArea().trim());
+        courseDetails.setCourseNumber(course.getCourseNumberSuffix());
         courseDetails.setCrossListings(crossListings);
         String campusCd = null;
         for (AttributeInfo attributeInfo : course.getAttributes()) {
@@ -199,7 +199,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
         // -- Curriculum  Title
         Map<String, String> subjectAreaMap = OrgHelper.getTrimmedSubjectAreas();
-        String curriculumTitle = subjectAreaMap.get(subject);
+        String curriculumTitle = subjectAreaMap.get(course.getSubjectArea().trim());
         courseDetails.setCurriculumTitle(curriculumTitle);
 
         // -- Course Description
@@ -313,7 +313,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             int year = Calendar.getInstance().get(Calendar.YEAR) - 10;
             try {
                 // The right strategy would be using the multiple equal predicates joined using an and
-                String values = String.format("%s, %s, %s", year, subject, course.getCourseNumberSuffix());
+                String values = String.format("%s, %s, %s", year, course.getSubjectArea().trim(), course.getCourseNumberSuffix());
                 QueryByCriteria criteria = QueryByCriteria.Builder.fromPredicates(equalIgnoreCase("values", values));
                 List<CourseOfferingInfo> courseOfferingInfo = cos.searchForCourseOfferings(criteria, CourseSearchConstants.CONTEXT_INFO);
 
@@ -347,7 +347,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
         CourseDetails courseDetails = new CourseDetails();
 
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId, courseCd);
 
         // Get Course Summary first
         CourseSummaryDetails courseSummaryDetails = retrieveCourseSummary(course, courseCd);
@@ -388,7 +388,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
          * If version independent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId, null);
         return getPlannedCourseSummary(course, studentId);
     }
 
@@ -510,7 +510,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
          * If version independent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId, null);
         return getCourseOfferingInstitutions(course, terms);
     }
 
@@ -623,7 +623,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
         List<ActivityOfferingItem> activityOfferingItems = new ArrayList<ActivityOfferingItem>();
 
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId, null);
         try {
 
             /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
@@ -909,9 +909,9 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      * @param courseId
      * @return
      */
-    public boolean isCourseIdValid(String courseId) {
+    public boolean isCourseIdValid(String courseId, String courseCd) {
         boolean isCourseIdValid = false;
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId);
+        CourseInfo course = getCourseHelper().getCourseInfo(courseId, courseCd);
         if (course != null) {
             isCourseIdValid = true;
         }

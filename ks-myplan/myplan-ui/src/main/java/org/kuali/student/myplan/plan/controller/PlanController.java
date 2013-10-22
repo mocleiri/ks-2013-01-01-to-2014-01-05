@@ -277,7 +277,7 @@ public class PlanController extends UifControllerBase {
                         }
                     } else {
                         if (hasText(planItemInfo.getRefObjectId())) {
-                            CourseInfo courseInfo = getCourseHelper().getCourseInfo(planItemInfo.getRefObjectId());
+                            CourseInfo courseInfo = getCourseHelper().getCourseInfo(planItemInfo.getRefObjectId(), null);
                             if (courseInfo != null && hasText(courseInfo.getCode())) {
                                 planForm.setCourseCd(courseInfo.getCode());
                             }
@@ -350,7 +350,7 @@ public class PlanController extends UifControllerBase {
 
                     if (PlanConstants.PLACE_HOLDER_TYPE_GEN_ED.equals(planItem.getRefObjectType())
                             || PlanConstants.PLACE_HOLDER_TYPE.equals(planItem.getRefObjectType())) {
-                        planForm.setGeneralPlaceholder(String.format("%s|%s", planItem.getRefObjectId(),planItem.getRefObjectType()));
+                        planForm.setGeneralPlaceholder(String.format("%s|%s", planItem.getRefObjectId(), planItem.getRefObjectType()));
                         if (planItem.getCredit() != null) {
                             planForm.setCredit(String.valueOf(planItem.getCredit().intValue()));
                         }
@@ -398,7 +398,7 @@ public class PlanController extends UifControllerBase {
          */
         try {
 
-            planForm.setCourseSummaryDetails(getCourseDetailsInquiryService().retrieveCourseSummaryById(planForm.getCourseId()));
+            planForm.setCourseSummaryDetails(getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(planForm.getCourseId(), null));
 
         } catch (Exception e) {
 
@@ -513,7 +513,7 @@ public class PlanController extends UifControllerBase {
         CourseSummaryDetails courseDetails = null;
         if (!isPlaceHolderType(planItem.getRefObjectType())) {
             try {
-                courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryById(planItem.getRefObjectId());
+                courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(planItem.getRefObjectId(), null);
             } catch (Exception e) {
                 return doOperationFailedError(form, "Unable to retrieve Course Details.", e);
             }
@@ -616,7 +616,7 @@ public class PlanController extends UifControllerBase {
         CourseSummaryDetails courseDetails = null;
         if (!isPlaceHolderType(planItem.getRefObjectType())) {
             try {
-                courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryById(planItem.getRefObjectId());
+                courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(planItem.getRefObjectId(), null);
             } catch (Exception e) {
                 return doOperationFailedError(form, "Unable to retrieve Course Details.", e);
             }
@@ -711,7 +711,7 @@ public class PlanController extends UifControllerBase {
         CourseSummaryDetails courseDetails = null;
         if (!isPlaceHolderType(planItem.getRefObjectType())) {
             try {
-                courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryById(planItem.getRefObjectId());
+                courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(planItem.getRefObjectId(), null);
             } catch (Exception e) {
                 return doOperationFailedError(form, "Unable to retrieve Course Details.", null);
             }
@@ -877,7 +877,7 @@ public class PlanController extends UifControllerBase {
         CourseSummaryDetails courseDetails = null;
         if (!isPlaceHolderType(planItem.getRefObjectType())) {
             try {
-                courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryById(planItem.getRefObjectId());
+                courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(planItem.getRefObjectId(), null);
             } catch (Exception e) {
                 return doOperationFailedError(form, "Unable to retrieve Course Details.", e);
             }
@@ -1685,7 +1685,7 @@ public class PlanController extends UifControllerBase {
                             if (!hasText(courseId)) {
                                 return doErrorPage(form, "Course not found", PlanConstants.COURSE_NOT_FOUND, new String[]{form.getCourseCd()}, null);
                             }
-                            courseSummaryDetails = getCourseDetailsInquiryService().retrieveCourseSummaryById(courseId);
+                            courseSummaryDetails = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(courseId, null);
                             String versionId = courseSummaryDetails.getVersionIndependentId();
                             //  Check for duplicates since addPlanItem isn't being called.
                             if (!versionId.equals(planItemInfo.getRefObjectId()) && isDuplicate(atpId, versionId, planItemInfo.getTypeKey())) {
@@ -2011,7 +2011,7 @@ public class PlanController extends UifControllerBase {
         }
 
         if (StringUtils.isEmpty(planItemId)) {
-            CourseSummaryDetails course = getCourseDetailsInquiryService().retrieveCourseSummaryById(courseId);
+            CourseSummaryDetails course = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(courseId, null);
             planItemId = getPlanIdFromCourseId(course.getVersionIndependentId(), PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST);
         }
 
@@ -2038,7 +2038,7 @@ public class PlanController extends UifControllerBase {
         }
         CourseSummaryDetails courseDetail = null;
         if (PlanConstants.COURSE_TYPE.equals(planItem.getRefObjectType())) {
-            courseDetail = getCourseDetailsInquiryService().retrieveCourseSummaryById(planItem.getRefObjectId());
+            courseDetail = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(planItem.getRefObjectId(), null);
             courseId = courseDetail.getCourseId();
             code = courseDetail.getCode();
         } else if (PlanConstants.SECTION_TYPE.equals(planItem.getRefObjectType())) {
@@ -2069,7 +2069,7 @@ public class PlanController extends UifControllerBase {
             }
             if (courseOfferingInfo != null && activityDisplayInfo != null) {
                 courseId = courseOfferingInfo.getCourseId();
-                courseDetail = getCourseDetailsInquiryService().retrieveCourseSummaryById(courseId);
+                courseDetail = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(courseId, null);
                 activityCode = activityDisplayInfo.getActivityOfferingCode();
 
             } else {
@@ -2349,10 +2349,10 @@ public class PlanController extends UifControllerBase {
         CourseSummaryDetails courseDetails = null;
         try {
 
-            courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryById(courseId);
+            courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(courseId, null);
             /* Switching the courseDetails based on the versionIndependent Id*/
             if (!courseId.equals(courseDetails.getVersionIndependentId())) {
-                courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryById(courseDetails.getVersionIndependentId());
+                courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(courseDetails.getVersionIndependentId(), null);
             }
 
         } catch (Exception e) {
@@ -2367,9 +2367,11 @@ public class PlanController extends UifControllerBase {
     public void getCourseSectionStatusAsJson(HttpServletResponse response, HttpServletRequest request) {
         try {
             String courseId = request.getParameter("courseId");
+            String courseCd = request.getParameter("courseCd");
             String atpParam = request.getParameter("atpId");
 
-            CourseSummaryDetails courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryById(courseId);
+
+            CourseSummaryDetails courseDetails = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(courseId, courseCd);
 
             List<AtpHelper.YearTerm> atpList = new ArrayList<AtpHelper.YearTerm>();
             if (atpParam == null || "".equals(atpParam.trim())) {

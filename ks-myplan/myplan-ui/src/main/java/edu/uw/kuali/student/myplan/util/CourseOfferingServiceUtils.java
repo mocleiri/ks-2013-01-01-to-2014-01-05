@@ -362,7 +362,7 @@ public class CourseOfferingServiceUtils {
         // If course info not specified calculate the courseVersionId and courseInfo from courseHelper
         if (courseInfo == null) {
             info.setCourseId(getCourseHelper().getCourseIdForTerm(subject, number, yearTerm.toATP()));
-            courseInfo = getCourseHelper().getCourseInfo(info.getCourseId());
+            courseInfo = getCourseHelper().getCourseInfo(info.getCourseId(), info.getCourseCode());
         } else {
             info.setCourseId(courseInfo.getId());
         }

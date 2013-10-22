@@ -29,7 +29,7 @@ public interface CourseHelper {
 
     public String joinStringsByDelimiter(char delimiter, String... list);
 
-    public CourseInfo getCourseInfo(String courseId);
+    public CourseInfo getCourseInfo(String courseId, String courseCd);
 
     public String getVerifiedCourseId(String courseId);
 

@@ -218,8 +218,8 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
             }
             //  If the course info lookup fails just log the error and omit the item.
             try {
-                if (getCourseDetailsInquiryHelper().isCourseIdValid(courseID)) {
-                    CourseSummaryDetails courseDetails = getCourseDetailsInquiryHelper().retrieveCourseSummaryById(courseID);
+                if (getCourseDetailsInquiryHelper().isCourseIdValid(courseID, null)) {
+                    CourseSummaryDetails courseDetails = getCourseDetailsInquiryHelper().retrieveCourseSummaryByIdAndCd(courseID, null);
                     plannedCourse.setCourseDetails(courseDetails);
                     plannedCourseList.add(plannedCourse);
                 }

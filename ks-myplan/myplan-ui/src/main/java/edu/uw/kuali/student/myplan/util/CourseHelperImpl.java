@@ -28,7 +28,9 @@ import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 import org.kuali.student.r2.core.search.infc.SearchResultCell;
 import org.kuali.student.r2.core.search.infc.SearchResultRow;
 import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.course.dto.CourseCrossListingInfo;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.infc.CourseCrossListing;
 import org.kuali.student.r2.lum.course.service.CourseService;
 import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
 import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
@@ -204,7 +206,7 @@ public class CourseHelperImpl implements CourseHelper {
      * @return
      */
     @Override
-    public CourseInfo getCourseInfo(String courseId) {
+    public CourseInfo getCourseInfo(String courseId, String courseCd) {
 
         CourseInfo courseInfo = null;
         try {
@@ -214,6 +216,33 @@ public class CourseHelperImpl implements CourseHelper {
         } catch (Exception e) {
             throw new RuntimeException("Query failed.", e);
         }
+
+        /*If requested courseInfo is for a crossListed course then CrossListed course becomes the main course info and the rest becomes the crossListings*/
+        if (!StringUtils.isEmpty(courseCd)) {
+            DeconstructedCourseCode courseCode = getCourseDivisionAndNumber(courseCd);
+            List<CourseCrossListingInfo> courseCrossListingInfos = new ArrayList<CourseCrossListingInfo>();
+            if (!courseCode.getSubject().trim().equals(courseInfo.getSubjectArea().trim()) || !courseCode.getNumber().trim().equals(courseInfo.getCourseNumberSuffix().trim())) {
+                CourseCrossListingInfo crossListing = new CourseCrossListingInfo();
+                crossListing.setCode(courseInfo.getCode());
+                crossListing.setCourseNumberSuffix(courseInfo.getCourseNumberSuffix());
+                crossListing.setSubjectArea(courseInfo.getSubjectArea());
+                courseCrossListingInfos.add(crossListing);
+                for (CourseCrossListingInfo crossListingInfo : courseInfo.getCrossListings()) {
+                    if (courseCode.getSubject().trim().equals(crossListingInfo.getSubjectArea().trim()) && courseCode.getNumber().trim().equals(crossListingInfo.getCourseNumberSuffix().trim())) {
+                        courseInfo.setSubjectArea(crossListingInfo.getSubjectArea());
+                        courseInfo.setCourseNumberSuffix(crossListingInfo.getCourseNumberSuffix());
+                        courseInfo.setCode(crossListingInfo.getCode());
+                    } else {
+                        courseCrossListingInfos.add(crossListingInfo);
+                    }
+                }
+                if (!CollectionUtils.isEmpty(courseCrossListingInfos)) {
+                    courseInfo.setCrossListings(courseCrossListingInfos);
+                }
+            }
+
+        }
+
         return courseInfo;
     }
 
