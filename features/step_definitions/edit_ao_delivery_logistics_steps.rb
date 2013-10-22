@@ -109,3 +109,6 @@ end
 #  @activity_offering = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
 #end
 
+When /^I add (standard|ad hoc) RDLs for an AO$/ do |tsType|
+  pending
+end
