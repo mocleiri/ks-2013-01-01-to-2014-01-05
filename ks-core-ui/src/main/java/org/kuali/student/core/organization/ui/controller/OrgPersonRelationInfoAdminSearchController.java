@@ -160,6 +160,13 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
 		return getUIFModelAndView(viewForm, "KS-OrgPersonRelationInfoDetail-View");
 	}
 	
+	@RequestMapping(params = "methodToCall=cancel")
+	public ModelAndView cancel(@ModelAttribute("KualiForm") UifFormBase uifForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
+		OrgPersonRelationInfoAdminSearchForm viewForm = (OrgPersonRelationInfoAdminSearchForm)uifForm;
+		String returnViewName = viewForm.getActionParamaterValue("returnViewName");
+		return getUIFModelAndView(viewForm, returnViewName);
+	}
+	
 	private void resetForm(OrgPersonRelationInfoAdminSearchForm searchForm) {
 		searchForm.setOrgPersonRelationUIModel(new ArrayList<OrgPersonRelationUIModel>());
 	}

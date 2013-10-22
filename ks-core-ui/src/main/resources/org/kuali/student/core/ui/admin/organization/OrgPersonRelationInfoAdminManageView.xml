@@ -18,7 +18,8 @@
 			<list>
 				<ref bean="KS-OrgPersonRelationInfoSearch-View" />
 				<ref bean="KS-OrgPersonRelationInfoDetail-View" />
-				<!-- <ref bean="KS-OrgPersonRelationInfoEdit-View" />  -->
+				<ref bean="KS-OrgPersonRelationInfoEdit-View" />
+				<ref bean="KS-OrgPersonRelationInfoCreate-View" />
 			</list>
 		</property>
 	</bean>

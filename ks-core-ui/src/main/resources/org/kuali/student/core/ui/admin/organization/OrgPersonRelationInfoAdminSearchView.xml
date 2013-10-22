@@ -48,6 +48,8 @@
 											  -->
 										</bean> 
 										<bean parent="Uif-SecondaryActionButton" p:actionLabel="Search" p:methodToCall="search"/> 
+										<bean parent="Uif-NavigationActionButton" p:actionLabel="Create" p:navigateToPageId="KS-OrgPersonRelationInfoCreate-View" 
+											p:align="right" />
                                     </list>
                                 </property>
                             </bean>

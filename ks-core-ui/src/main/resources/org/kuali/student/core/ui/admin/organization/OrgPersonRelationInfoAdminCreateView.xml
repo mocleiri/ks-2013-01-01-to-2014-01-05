@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="KS-OrgPersonRelationInfoCreate-View" parent="Uif-Page" p:headerText="Organization Detail">
+		<property name="items">
+			<list>
+				<ref bean="KS-OrgPersonRelationInfoCreate-Section" />
+			</list>
+		</property>
+	</bean>
+	<bean id="KS-OrgPersonRelationInfoCreate-Section" parent="Uif-VerticalBoxSection" p:width="500px">
+		<property name="items">
+			<list>
+				<bean parent="Uif-GridGroup">
+	                <property name="layoutManager.numberOfColumns" value="2"/>
+	                <property name="layoutManager.applyDefaultCellWidths" value="false" />
+	                <property name="style" value="margin-bottom:0;"/>
+	                <property name="items">
+						<list>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="selectedOrgPersonRelation.personId" p:label="Person" />
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="selectedOrgPersonRelation.typeInfo.key" p:label="Type">
+								<property name="control">
+            						<bean parent="Uif-DropdownControl"/>
+          						</property>
+          						<property name="optionsFinder">
+					            	<bean class="org.kuali.rice.student.lookup.keyvalues.DepartmentOrgValuesFinder"/>
+					          	</property>
+							</bean>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="selectedOrgPersonRelation.stateInfo.key" p:label="State" >
+								<property name="control">
+            						<bean parent="Uif-DropdownControl"/>
+          						</property>
+          						<property name="optionsFinder">
+					            	<bean class="org.kuali.rice.student.lookup.keyvalues.DepartmentOrgValuesFinder"/>
+					          	</property>
+							</bean>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="selectedOrgPersonRelation.effectiveDate" p:label="Effective Date" >
+								<property name="control">
+            						<bean parent="Uif-DateControl"/>
+          						</property>
+							</bean>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="selectedOrgPersonRelation.expirationDate" p:label="Expiration Date" >
+								<property name="control">
+            						<bean parent="Uif-DateControl"/>
+          						</property>
+							</bean>
+						</list>
+					</property>
+				</bean>				
+				<bean parent="Uif-HorizontalFieldGroup">
+					<property name="items">
+						<list>
+							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="save" p:actionLabel="Save" />
+							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="cancel" p:actionLabel="Cancel" 
+									p:actionParameters="returnViewName:KS-OrgPersonRelationInfoSearch-View" />
+						</list>
+					</property>
+				</bean>	
+			</list>
+		</property>
+	</bean>
+</beans>
