@@ -304,43 +304,47 @@ class ActivityOffering
   end
 
   def edit_colocation opts={}
-    is_colo_set = on(ActivityOfferingMaintenance).colocated_checkbox.set?
+    if on(ActivityOfferingMaintenance).colocated_checkbox.exists?
+      is_colo_set = on(ActivityOfferingMaintenance).colocated_checkbox.set?
 
-    if !opts[:colocated].nil?
-      if opts[:colocated] == false
-        edit_break_colocation if is_colo_set
-        return
-      else
-        on(ActivityOfferingMaintenance).select_colocated_checkbox unless is_colo_set
-        @colocated = true
-        is_colo_set = true
-      end
-    end
-    return unless is_colo_set
 
-    # else perform normal colo-EDIT
-    on ActivityOfferingMaintenance do |page|
-      # add the colo-COs to this CO
-      if !opts[:colocate_ao_list].nil?
-        opts[:colocate_ao_list].each do |ao_to_colo|
-          page.colocated_co_input_field.value = ao_to_colo.parent_course_offering.course
-          page.colocated_ao_input_field.value = ao_to_colo.code
-          page.add_colocated
-          page.add_colocate_ao_confirmation_add
-          @colocate_ao_list << ao_to_colo
+      if !opts[:colocated].nil?
+        if opts[:colocated] == false
+          edit_break_colocation if is_colo_set
+          return
+        else
+          on(ActivityOfferingMaintenance).select_colocated_checkbox unless is_colo_set
+          @colocated = true
+          is_colo_set = true
         end
       end
+      return unless is_colo_set
 
-      if !opts[:colocate_shared_enrollment].nil?
-        if opts[:colocate_shared_enrollment]
-          page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
-          page.select_jointly_share_enrollment_radio
-          page.colocated_shared_max_enrollment_input_field.set opts[:max_enrollment]
-        else # ie: 'separately manage'
-          page.select_separately_manage_enrollment_radio
-          page.colocated_shared_max_enrollment_table_first_ao_input.set @max_enrollment
+      # else perform normal colo-EDIT
+      on ActivityOfferingMaintenance do |page|
+        # add the colo-COs to this CO
+        if !opts[:colocate_ao_list].nil?
+          opts[:colocate_ao_list].each do |ao_to_colo|
+            page.colocated_co_input_field.value = ao_to_colo.parent_course_offering.course
+            page.colocated_ao_input_field.value = ao_to_colo.code
+            page.add_colocated
+            page.add_colocate_ao_confirmation_add
+            @colocate_ao_list << ao_to_colo
+          end
         end
-        @max_enrollment = opts[:max_enrollment]
+
+        if !opts[:colocate_shared_enrollment].nil?
+          if opts[:colocate_shared_enrollment]
+            page.select_separately_manage_enrollment_radio #toggling to this and back is required or an error generates on submit
+            page.select_jointly_share_enrollment_radio
+            page.colocated_shared_max_enrollment_input_field.set opts[:max_enrollment]
+          else # ie: 'separately manage'
+            page.select_separately_manage_enrollment_radio
+            page.colocated_shared_max_enrollment_table_first_ao_input.set @max_enrollment
+          end
+          @max_enrollment = opts[:max_enrollment]
+        end
+
       end
     end
 
@@ -358,7 +362,9 @@ class ActivityOffering
   private :edit_break_colocation
 
   def edit_max_enrollment_no_colocation opts={}
+  if on(ActivityOfferingMaintenance).colocated_checkbox.exists?
     return if on(ActivityOfferingMaintenance).colocated_checkbox.set?
+  end
 
     if opts[:max_enrollment] != nil
       on ActivityOfferingMaintenance do |page|
