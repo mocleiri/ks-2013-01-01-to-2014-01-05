@@ -145,7 +145,7 @@ class CourseOfferingEdit < BasePage
   
   element(:waitlist_div)  { |b| b.frm.div(id: "KS-CourseOfferingEdit-HasWaitlist") }
   element(:waitlist_checkbox) { |b| b.waitlist_div.checkbox() }
-  value(:has_waitlist?) { |b| b.waitlist_checkbox.value }
+  value(:has_waitlist?) { |b| b.waitlist_checkbox.value == "on" }
   action(:waitlist_on )  { |b| b.waitlist_checkbox.set; b.loading.wait_while_present }
   action(:waitlist_off )  { |b| b.waitlist_checkbox.clear; b.loading.wait_while_present }
 

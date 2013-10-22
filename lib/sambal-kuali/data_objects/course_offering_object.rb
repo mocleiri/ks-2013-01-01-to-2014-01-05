@@ -215,7 +215,9 @@ class CourseOffering
       @affiliated_person_list = options[:affiliated_person_list]
     end
 
-    if options[:waitlist] != nil
+    if options[:waitlist].nil?
+      @waitlist = on(CourseOfferingEdit).has_waitlist?
+    else
       on CourseOfferingEdit do |page|
         if options[:waitlist]
           page.waitlist_on
