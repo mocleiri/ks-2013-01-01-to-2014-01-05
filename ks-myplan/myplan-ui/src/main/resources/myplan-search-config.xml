@@ -400,7 +400,6 @@
                         FROM CluAttribute attr
                         JOIN attr.owner clu
                         JOIN clu.officialIdentifier ident
-                        JOIN clu.descr cludesc
                         WHERE
                         (
                         UPPER( ' ' || ident.longName || ' ' ) LIKE '% '||:queryText||'%'

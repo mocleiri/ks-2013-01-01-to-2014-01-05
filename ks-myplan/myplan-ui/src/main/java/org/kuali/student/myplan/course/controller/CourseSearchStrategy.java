@@ -172,6 +172,10 @@ public class CourseSearchStrategy {
     public void addFullTextSearches(String query, List<SearchRequestInfo> requests) {
         List<QueryTokenizer.Token> tokens = QueryTokenizer.tokenize(query);
 
+        SearchRequestInfo req = new SearchRequestInfo("myplan.lu.search.fulltext");
+        req.addParam("queryText", query);
+        requests.add(req);
+
         for (QueryTokenizer.Token token : tokens) {
             String queryText = null;
             switch (token.rule) {
@@ -295,57 +299,56 @@ public class CourseSearchStrategy {
                     if (key.length() <= 2) {
                         requests.get(i).getParams().get(0).setValues(Arrays.asList("null"));
                         break;
-                    } else {
-                        if (key.length() > 2) {
+                    } else if (key.length() > 2) {
 
-                            if (!this.getHashMap().containsKey(CourseSearchConstants.SUBJECT_AREA)) {
-                                subjects = OrgHelper.getSubjectAreas();
-                                getHashMap().put(CourseSearchConstants.SUBJECT_AREA, subjects);
+                        if (!this.getHashMap().containsKey(CourseSearchConstants.SUBJECT_AREA)) {
+                            subjects = OrgHelper.getSubjectAreas();
+                            getHashMap().put(CourseSearchConstants.SUBJECT_AREA, subjects);
 
-                            } else {
-                                subjects = getHashMap().get(CourseSearchConstants.SUBJECT_AREA);
-                            }
-
-                            if (subjects != null && subjects.size() > 0) {
-                                //  Look to see if the query text is present in any subject area descriptions
-                                String divKey = key.trim().toUpperCase();
-                                for (Map.Entry<String, String> entry : subjects.entrySet()) {
-                                    if (entry.getValue().contains(divKey)) {
-                                        divisions.add(entry.getKey());
-                                    }
-                                }
-                            }
-                            if (divisions.size() > 0) {
-                                // Re-purpose the request for the first division
-                                requests.get(i).setSearchKey("myplan.lu.search.division");
-                                requests.get(i).getParams().get(0).setKey("division");
-                                requests.get(i).getParams().get(0).setValues(Arrays.asList(divisions.get(0)));
-
-                                // Now add the rest of the divisions
-                                for (int dItr = 1; dItr < divisions.size(); dItr++) {
-                                    SearchRequestInfo requestD = new SearchRequestInfo("myplan.lu.search.division");
-                                    requestD.addParam("division", divisions.get(dItr));
-                                    addCampusParam(requestD, form);
-                                    requests.add(requestD);
-                                }
-
-                                SearchRequestInfo request1 = new SearchRequestInfo("myplan.lu.search.title");
-                                request1.addParam("queryText", key.trim());
-                                addCampusParam(request1, form);
-                                requests.add(request1);
-
-                            } else {
-                                // Re-purpose the request for title search
-                                requests.get(i).setSearchKey("myplan.lu.search.title");
-                            }
-
-                            SearchRequestInfo request2 = new SearchRequestInfo("myplan.lu.search.description");
-                            request2.addParam("queryText", key.trim());
-                            addCampusParam(request2, form);
-                            requests.add(request2);
+                        } else {
+                            subjects = getHashMap().get(CourseSearchConstants.SUBJECT_AREA);
                         }
 
+                        if (subjects != null && subjects.size() > 0) {
+                            //  Look to see if the query text is present in any subject area descriptions
+                            String divKey = key.trim().toUpperCase();
+                            for (Map.Entry<String, String> entry : subjects.entrySet()) {
+                                if (entry.getValue().contains(divKey)) {
+                                    divisions.add(entry.getKey());
+                                }
+                            }
+                        }
+                        if (divisions.size() > 0) {
+                            // Re-purpose the request for the first division
+                            requests.get(i).setSearchKey("myplan.lu.search.division");
+                            requests.get(i).getParams().get(0).setKey("division");
+                            requests.get(i).getParams().get(0).setValues(Arrays.asList(divisions.get(0)));
+
+                            // Now add the rest of the divisions
+                            for (int dItr = 1; dItr < divisions.size(); dItr++) {
+                                SearchRequestInfo requestD = new SearchRequestInfo("myplan.lu.search.division");
+                                requestD.addParam("division", divisions.get(dItr));
+                                addCampusParam(requestD, form);
+                                requests.add(requestD);
+                            }
+
+                            SearchRequestInfo request1 = new SearchRequestInfo("myplan.lu.search.title");
+                            request1.addParam("queryText", key.trim());
+                            addCampusParam(request1, form);
+                            requests.add(request1);
+
+                        } else {
+                            // Re-purpose the request for title search
+                            requests.get(i).setSearchKey("myplan.lu.search.title");
+                        }
+
+                        SearchRequestInfo request2 = new SearchRequestInfo("myplan.lu.search.description");
+                        request2.addParam("queryText", key.trim());
+                        addCampusParam(request2, form);
+                        requests.add(request2);
                     }
+
+
                 }
             }
         }
