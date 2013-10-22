@@ -54,8 +54,11 @@ When /^I create and then edit a Course Offering from catalog with an alternate f
 end
 
 When /^I create a Course Offering from an existing course offering with no final exam period$/ do
-  @course_offering = create CourseOffering, :term => "201301", :course => "CHEM277",
-                          :final_exam_type => "NONE"
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "CHEM277")
+  @course_offering.exam_offerings_setup :final_exam_type => "No final exam or assessment"
+
+  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
 
   @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
   on ManageCourseOfferings do |page|
@@ -530,7 +533,7 @@ end
 
 Then /^the exam period for the copied course offering should match that of the original$/ do
   on CourseOfferingEdit do |page|
-    page.final_exam_driver_value.should == "No final exam for this offering"
+    page.final_exam_driver_value_0.should == "No final exam for this offering"
   end
 end
 
