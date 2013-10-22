@@ -80,6 +80,11 @@ public abstract class Account implements Identifiable {
     protected BigDecimal creditLimit;
 
     /**
+     * Account Type
+     */
+    protected AccountType accountType;
+
+    /**
      * Organization name (For non-personal accounts only)
      */
     protected OrgName orgName;
@@ -222,6 +227,16 @@ public abstract class Account implements Identifiable {
 
     public void setCreditLimit(BigDecimal creditLimit) {
         this.creditLimit = creditLimit;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACNT_TYPE_ID_FK")
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

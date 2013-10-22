@@ -67,7 +67,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
 
     private static final String GET_FULL_ACCOUNTS_JOIN =
-            " left outer join fetch a.personNames pn " +
+            "left outer join fetch a.accountType at " +
+                    " left outer join fetch a.personNames pn " +
                     "left outer join fetch a.postalAddresses pa " +
                     "left outer join fetch a.electronicContacts ec " +
                     "left outer join fetch a.statusType st " +

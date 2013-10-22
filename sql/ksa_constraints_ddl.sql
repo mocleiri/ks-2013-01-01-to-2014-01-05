@@ -22,6 +22,7 @@ alter table KSSA_TP_PLAN_MEMBER add constraint UK_bgpig0htwb0jod2er246bnuwq uniq
 alter table KSSA_TRANSACTION_TAG add constraint UK_dh1l5j405ij2xn6hvonthgvlj unique (TRANSACTION_ID_FK, TAG_ID_FK);
 alter table KSSA_TRANSACTION_TYPE_TAG add constraint UK_aamh7n0pswq3nnjoscjjgbp61 unique (TRANSACTION_TYPE_ID_FK, TRANSACTION_TYPE_SUB_CODE_FK, TAG_ID_FK);
 alter table KSSA_TRANSFER_TYPE add constraint UK_s2dw32xke2xgxl2510qha56c0 unique (CODE);
+alter table KSSA_ACNT add constraint FK_rny2i3fu0wn844s0jd9xa8rfy foreign key (ACNT_TYPE_ID_FK) references KSSA_ACNT_TYPE;
 alter table KSSA_ACNT add constraint FK_kplrufxwsiaxw5qgl5cmurg4k foreign key (ORG_NAME_ID_FK) references KSSA_NAME;
 alter table KSSA_ACNT add constraint FK_cbb7ylmp2mcedx63h4jes17g3 foreign key (ACNT_STATUS_TYPE_ID_FK) references KSSA_ACNT_STATUS_TYPE;
 alter table KSSA_ACNT add constraint FK_sl2a9wguvw7869x63obkeqyxp foreign key (LATE_PERIOD_ID_FK) references KSSA_LATE_PERIOD;
@@ -99,9 +100,9 @@ alter table KSSA_GL_TRANS_TRANSACTION add constraint FK_1my950k340rmx2c3ydexadmi
 alter table KSSA_INFORMATION add constraint FK_gy8g1avxg2det6j1tl283kuva foreign key (ACCESS_LEVEL_ID_FK) references KSSA_ACCESS_LEVEL;
 alter table KSSA_INFORMATION add constraint FK_jkmvsju06ltyhp1m4dhx7jt8p foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_INFORMATION add constraint FK_9w42lpdu788owfio9c1yv0ls foreign key (TRANSACTION_ID_FK) references KSSA_TRANSACTION;
-alter table KSSA_INFORMATION add constraint FK_ga8qrg1b82u3ni0olwintyqlj foreign key (FLAG_TYPE_ID_FK) references KSSA_FLAG_TYPE;
 alter table KSSA_INFORMATION add constraint FK_uhpxb6v7kivqiaqebsrktivo foreign key (NEXT_ID) references KSSA_INFORMATION;
 alter table KSSA_INFORMATION add constraint FK_apdxe9rlaruk7p1n1x8geltge foreign key (PREV_ID) references KSSA_INFORMATION;
+alter table KSSA_INFORMATION add constraint FK_ga8qrg1b82u3ni0olwintyqlj foreign key (FLAG_TYPE_ID_FK) references KSSA_FLAG_TYPE;
 alter table KSSA_IRS_1098T add constraint FK_qwl4b4v2oxppgrmh6r6fsjgrl foreign key (ACNT_ID_FK) references KSSA_ACNT;
 alter table KSSA_IRS_1098T add constraint FK_j0uib0dd0178l66216i5imjre foreign key (STUDENT_POSTAL_ADDRESS_ID_FK) references KSSA_POSTAL_ADDRESS;
 alter table KSSA_IRS_1098T add constraint FK_uyku2l4yahd2xk54noldsaoc foreign key (XML_ID_FK) references KSSA_XML;
