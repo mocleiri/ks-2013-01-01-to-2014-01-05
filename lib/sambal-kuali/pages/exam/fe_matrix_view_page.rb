@@ -37,6 +37,7 @@ class FEMatrixView < BasePage
   end
 
   def common_fe_target_row( requirements)
+    row = nil
     if common_final_exam_table.row(text: /#{requirements}/).exists?
       row = common_final_exam_table.row(text: /#{requirements}/)
     end

@@ -20,7 +20,8 @@ When /^I open the Final Exam Matrix for ([^"]*)$/ do |term|
 end
 
 When /^I add a Common Final Exam course rule to the Final Exam Matrix$/ do
-  @matrix = create FinalExamMatrix
+  @matrix = create FinalExamMatrix, :rule => "if course is <Course>",
+                   :exam_type => "Common", :courses => "CHEM272"
 end
 
 When /^I add a Standard Final Exam timeslot rule to the Final Exam Matrix$/ do
