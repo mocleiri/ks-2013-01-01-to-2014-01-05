@@ -889,6 +889,25 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     /**
+     * Returns third-party transfers for each eligible account with the given plan ID
+     *
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @return list of ThirdPartyTransferDetail instances
+     */
+    @Override
+    public List<ThirdPartyTransferDetail> getThirdPartyTransfersByPlanId(Long thirdPartyPlanId) {
+
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
+
+        Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where p.id = :planId and d.chargeStatusCode = :statusCode");
+
+        query.setParameter("planId", thirdPartyPlanId);
+        query.setParameter("statusCode", ThirdPartyChargeStatus.ACTIVE_CODE);
+
+        return query.getResultList();
+    }
+
+    /**
      * Reverses a third-party transaction transfer specified by ThirdPartyTransferDetail ID.
      *
      * @param transferDetailId ThirdPartyTransferDetail ID

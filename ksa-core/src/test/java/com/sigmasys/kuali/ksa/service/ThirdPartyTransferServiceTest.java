@@ -471,5 +471,39 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void getThirdPartyTransfersByPlanId() throws Exception {
+
+        ThirdPartyPlan plan = _createThirdPartyPlan("Plan_$$33");
+
+        List<ThirdPartyTransferDetail> transfers =
+                thirdPartyTransferService.generateThirdPartyTransfers(plan.getId(), false);
+
+        Assert.notNull(transfers);
+        Assert.notEmpty(transfers);
+
+        for (ThirdPartyTransferDetail transfer : transfers) {
+
+            Assert.notNull(transfer);
+            Assert.notNull(transfer.getId());
+
+            Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.ACTIVE);
+        }
+
+        transfers = thirdPartyTransferService.getThirdPartyTransfersByPlanId(plan.getId());
+
+        Assert.notNull(transfers);
+        Assert.notEmpty(transfers);
+
+        for (ThirdPartyTransferDetail transfer : transfers) {
+
+            Assert.notNull(transfer);
+            Assert.notNull(transfer.getId());
+
+            Assert.isTrue(transfer.getChargeStatus() == ThirdPartyChargeStatus.ACTIVE);
+        }
+
+    }
+
 
 }

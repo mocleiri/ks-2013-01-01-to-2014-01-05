@@ -222,6 +222,14 @@ public interface ThirdPartyTransferService {
     List<ThirdPartyTransferDetail> generateThirdPartyTransfers(Long thirdPartyPlanId, boolean ignoreExecuted);
 
     /**
+     * Returns third-party transfers for each eligible account with the given plan ID
+     *
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @return list of ThirdPartyTransferDetail instances
+     */
+    List<ThirdPartyTransferDetail> getThirdPartyTransfersByPlanId(Long thirdPartyPlanId);
+
+    /**
      * Reverses a third-party transaction transfer specified by ThirdPartyTransferDetail ID.
      *
      * @param transferDetailId ThirdPartyTransferDetail ID
