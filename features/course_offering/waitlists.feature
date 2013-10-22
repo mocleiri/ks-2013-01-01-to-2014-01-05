@@ -86,7 +86,6 @@ Feature: EC.Waitlists
 
   #Scenario: WL 1.13.3 - Verify a new course offering from catalog has the default system waitlist setting - see WL 1.3.1
 
-  @bug @KSENROLL-10301
   Scenario: WL 1.13.4 - Verify waitlist information (enabled) when a course offering is created by copying an offering existing in a prior term
     Given there is an existing course offering with activity offerings that have waitlists enabled
     When I create a new course offering in a subsequent term by copying the existing course offering
