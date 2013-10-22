@@ -80,7 +80,7 @@ Given /^I have created an additional activity offering cluster for a course offe
 end
 
 Given /^there are default registration groups for a catalog course offering$/ do
-  @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"CHEM277"
+  @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"ENGL245"
   @course_offering.manage_and_init
 end
 
