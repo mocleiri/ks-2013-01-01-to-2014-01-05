@@ -80,10 +80,8 @@ Given /^I can update the processing type to (.*)$/ do |processing_type|
   end
 end
 
-#When /^I make changes to the default waitlist configuration for one of the activity offerings$/ do
-#  pending # express the regexp above with the code you wish you had
-#end
 Then /^I make changes to the default waitlist configuration for one of the activity offerings$/ do
+  @ao_list[0].parent_course_offering.manage
   waitlist = @ao_list[0].waitlist_config
   waitlist.enabled = true
   waitlist.type = "Manual"
@@ -397,10 +395,6 @@ Then /activity offerings have the same waitlist configuration$/ do
   end
 end
 
-Given /^I make changes the default waitlist configuration for one of the activity offerings$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
 Then /^the waitlist configuration is copied to the colocated activity offerings in the target term$/ do
   @ao_list.each do |source_ao|
 
@@ -438,10 +432,6 @@ Then /^the waitlist configuration is copied to the(?: new)? colocated activity o
 
 end
 
-Given /^I make changes to activity offering waitlist configuration$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
 Given /^there is an existing course offering with a colocated activity offering \(shared enrolment\) with waitlists enabled$/ do
   @course_offering = make CourseOffering, :term => "201208", :course => "ENGL362"
   @course_offering.manage
@@ -465,11 +455,6 @@ Given /^the waitlist configuration is copied to the new activity offering.*$/ do
     page.waitlists_max_size.should == @ao_list[0].waitlist_config.waitlist_limit_str
     page.close
   end
-end
-
-
-Then /^the new activity offering has the default waitlist configuration$/ do
-  pending # express the regexp above with the code you wish you had
 end
 
 When /^I delete one of the colocated activity offerings$/ do
@@ -543,11 +528,8 @@ Then /^the remaining activity offering still has the same waitlist configuration
   end
 end
 
-Then /^the all three activity offerings still have the same waitlist configuration$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
 When /^I deactivate waitlists on the first activity offering$/ do
+  @ao_list[0].parent_course_offering.manage
   waitlist = @ao_list[0].waitlist_config
   waitlist.enabled = false
   @ao_list[0].edit :waitlist_config => waitlist
@@ -589,10 +571,6 @@ Given /^I create two colocated activity offerings \(shared enrolment\) with wait
                    :max_enrollment => 120
   @ao_list[0].save
 
-end
-
-Then /^both activity offerings still have the same waitlist configuration$/ do
-  pending # express the regexp above with the code you wish you had
 end
 
 When /^I deactivate waitlists at the course offering level for one of the activity offerings$/ do
