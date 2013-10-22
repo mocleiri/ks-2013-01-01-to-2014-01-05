@@ -19,7 +19,7 @@ Feature: SA.FE1-5 Associate Final Exam Matrix with more than one term
     And there should be no Standard or Common rules on the page
 
   #FE1.2.EB3 (KSENROLL-9797)
-  @bug @KSENROLL-10311
+  @pending
   Scenario: Test that only one matrix can be assigned to a term
     Given I associate the Summer Term's FE Matrix to that of the Fall Term
     When I associate the Summer Term's FE Matrix to that of the Spring Term
