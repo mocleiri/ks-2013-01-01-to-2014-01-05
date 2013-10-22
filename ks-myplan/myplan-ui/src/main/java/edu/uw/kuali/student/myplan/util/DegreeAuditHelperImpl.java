@@ -214,7 +214,7 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                         boolean ignore = false;
                         if (courseId != null) {
                             CourseInfo courseInfo = null;
-                            courseInfo = getCourseService().getCourse(courseId,DegreeAuditConstants.CONTEXT_INFO);
+                            courseInfo = getCourseService().getCourse(courseId, DegreeAuditConstants.CONTEXT_INFO);
                             Set<Choice> choices = new HashSet<Choice>();
                             if (isTermPublished) {
                                 List<ActivityOfferingItem> activities = new ArrayList<ActivityOfferingItem>();
@@ -244,7 +244,8 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                                 // If plan item activity list is empty, populate the activities offered for that course
                                 if (activities.isEmpty() && !ignore) {
                                     long start = System.currentTimeMillis();
-                                    List<CourseOfferingInfo> courseOfferings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(courseId, atpId, CONTEXT_INFO);
+                                    /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
+                                    List<CourseOfferingInfo> courseOfferings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(String.format("%s|%s|%s", courseInfo.getId(), courseInfo.getSubjectArea().trim(), courseInfo.getCourseNumberSuffix().trim()), atpId, CONTEXT_INFO);
                                     List<ActivityOfferingItem> honorsCrNcActivities = new ArrayList<ActivityOfferingItem>();
                                     if (courseOfferings != null && !courseOfferings.isEmpty()) {
                                         for (CourseOfferingInfo courseOfferingInfo : courseOfferings) {
@@ -665,7 +666,7 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
             for (LearningPlanInfo learningPlanInfo : learningPlanList) {
                 PlanAuditItem planAuditItem = new PlanAuditItem();
                 String auditId = null;
-                
+
                 for (AttributeInfo attributeInfo : learningPlanInfo.getAttributes()) {
                     String key = attributeInfo.getKey();
                     String value = attributeInfo.getValue();
@@ -675,10 +676,10 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                         planAuditItem.setTotalAuditedCredit(value);
                     } else if ("forQuarter".equalsIgnoreCase(key)) {
                         planAuditItem.setAuditedQuarterUpTo(value);
-                    } else if("isAdviser".equalsIgnoreCase(key)) {
+                    } else if ("isAdviser".equalsIgnoreCase(key)) {
                         planAuditItem.setRunByAdviser(Boolean.valueOf(value));
-                    } else if("requestedBy".equalsIgnoreCase(key)) {
-                       planAuditItem.setRequestedBy(value);
+                    } else if ("requestedBy".equalsIgnoreCase(key)) {
+                        planAuditItem.setRequestedBy(value);
                     } else if ("auditId".equalsIgnoreCase(key)) {
                         auditId = value;
                     }

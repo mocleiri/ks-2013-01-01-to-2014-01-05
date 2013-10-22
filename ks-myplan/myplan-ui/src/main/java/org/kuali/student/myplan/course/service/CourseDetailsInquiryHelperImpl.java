@@ -166,12 +166,14 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                 crossListings.add(getCourseLinkBuilder().makeLinks(crossListingInfo.getCode()));
             }
         } else {
+            crossListings.add(getCourseLinkBuilder().makeLinks(course.getCode()));
             for (CourseCrossListingInfo crossListingInfo : course.getCrossListings()) {
                 if (courseCode.getSubject().trim().equals(crossListingInfo.getSubjectArea().trim()) && courseCode.getNumber().trim().equals(crossListingInfo.getCourseNumberSuffix().trim())) {
                     subject = crossListingInfo.getSubjectArea().trim();
                     number = crossListingInfo.getCourseNumberSuffix().trim();
                     code = crossListingInfo.getCode();
-                    break;
+                } else {
+                    crossListings.add(getCourseLinkBuilder().makeLinks(crossListingInfo.getCode()));
                 }
             }
         }
@@ -283,7 +285,8 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             QueryByCriteria predicates = QueryByCriteria.Builder.fromPredicates(equalIgnoreCase("query", PlanConstants.PUBLISHED));
             List<TermInfo> termInfos = getAcademicCalendarService().searchForTerms(predicates, CourseSearchConstants.CONTEXT_INFO);
             for (TermInfo term : termInfos) {
-                List<CourseOfferingInfo> offerings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(course.getId(), term.getId(), CourseSearchConstants.CONTEXT_INFO);
+                /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
+                List<CourseOfferingInfo> offerings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(String.format("%s|%s|%s", courseDetails.getCourseId(), courseDetails.getSubjectArea().trim(), courseDetails.getCourseNumber().trim()), term.getId(), CourseSearchConstants.CONTEXT_INFO);
                 if (offerings != null && !offerings.isEmpty()) {
                     courseDetails.getScheduledTerms().add(term.getName());
                 }
@@ -538,7 +541,8 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                 // Load course offering comments
                 List<CourseOfferingInfo> courseOfferingInfoList = null;
                 try {
-                    courseOfferingInfoList = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(course.getId(), atp, CourseSearchConstants.CONTEXT_INFO);
+                    /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
+                    courseOfferingInfoList = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(String.format("%s|%s|%s", course.getId(), course.getSubjectArea().trim(), course.getCourseNumberSuffix().trim()), atp, CourseSearchConstants.CONTEXT_INFO);
                 } catch (Exception e) {
                     logger.error(" Could not load course offerings for : " + course.getCode() + " atp : " + atp);
                     return instituteList;
@@ -622,7 +626,8 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         CourseInfo course = getCourseHelper().getCourseInfo(courseId);
         try {
 
-            List<CourseOfferingInfo> courseOfferingInfoList = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(course.getId(), termId, CourseSearchConstants.CONTEXT_INFO);
+            /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
+            List<CourseOfferingInfo> courseOfferingInfoList = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(String.format("%s|%s|%s", course.getId(), course.getSubjectArea().trim(), course.getCourseNumberSuffix().trim()), termId, CourseSearchConstants.CONTEXT_INFO);
 
             Map<String, Map<String, PlanItem>> planItemsByTerm = loadStudentsPlanItems();
             activityOfferingItems = getActivityOfferingItems(course, courseOfferingInfoList, termId, planItemsByTerm.get(termId));

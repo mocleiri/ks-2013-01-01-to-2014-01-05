@@ -464,7 +464,7 @@
 
                 <entry key="myplan.lu.search.divisionAndCode">
                     <value>NATIVE:
-                        SELECT clu.ID FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
+                        SELECT DISTINCT clu.ID FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
                         WHERE attr.OWNER = clu.ID
                         AND (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
                         AND ident.DIVISION = :division
@@ -480,13 +480,12 @@
                         WHERE  c.VER_IND_ID = clu.VER_IND_ID
                         AND c.LAST_ATP >= :lastScheduledTerm
                         GROUP  BY c.VER_IND_ID)
-                        ORDER  BY ident.SUFX_CD
                     </value>
                 </entry>
 
                 <entry key="myplan.lu.search.divisionAndLevel">
                     <value>NATIVE:
-                        SELECT clu.ID FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
+                        SELECT DISTINCT clu.ID, ident.SUFX_CD FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
                         WHERE attr.OWNER = clu.ID
                         AND (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
                         AND ident.DIVISION = :division
@@ -507,7 +506,7 @@
                 </entry>
                 <entry key="myplan.lu.search.additionalDivision">
                     <value>NATIVE:
-                        SELECT clu.ID FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
+                        SELECT DISTINCT clu.ID, ident.SUFX_CD FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
                         WHERE attr.OWNER = clu.ID
                         AND (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
                         AND ident.DIVISION IN (:divisions)
@@ -527,7 +526,7 @@
                 </entry>
                 <entry key="myplan.lu.search.division">
                     <value>NATIVE:
-                        SELECT clu.ID FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
+                        SELECT DISTINCT clu.ID, ident.SUFX_CD FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
                         WHERE attr.OWNER = clu.ID
                         AND (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
                         AND ident.DIVISION = :division
@@ -548,10 +547,10 @@
                 <entry key="myplan.course.info">
                     <value>NATIVE:
                         SELECT
-                        ident2.LNG_NAME,
-                        trim( ident.SUFX_CD ),
+                        DISTINCT ident2.LNG_NAME,
+                        ident.SUFX_CD,
                         trim( ident.DIVISION ),
-                        trim( ident2.LVL ),
+                        ident2.LVL,
                         opt.RES_COMP_ID,
                         ident.cd,
                         clu.VER_IND_ID
@@ -577,6 +576,7 @@
                         clu.id = :courseID
                         AND
                         ident2.id = (select c.OFFIC_CLU_ID from kslu_clu c join kslu_clu_ident ide on ide.ID = c.OFFIC_CLU_ID where c.ID = clu.ID)
+                        ORDER BY ident.SUFX_CD
                     </value>
                 </entry>
 
@@ -674,7 +674,7 @@
 
                 <entry key="myplan.course.getCourseTitleAndId">
                     <value>NATIVE:
-                        SELECT
+                        SELECT DISTINCT
                         clu.id, ident2.LNG_NAME
                         FROM
                         KSLU_CLU clu,
@@ -712,44 +712,6 @@
                     </value>
                 </entry>
 
-                <!--Quick search queries-->
-                <entry key="myplan.clu.division">
-                    <value>
-                        SELECT
-                        ident.code
-                        FROM CluAttribute attr
-                        JOIN attr.owner clu
-                        JOIN clu.officialIdentifier ident
-                        WHERE
-                        ident.division LIKE :division||'%'
-                        AND
-                        attr.name = 'course.campus'
-                        AND clu.id NOT IN (SELECT att.owner FROM CluAttribute att where
-                        att.name='course.catalogOmit_ind' and att.value='true')
-                        AND clu.expectedFirstAtp = (select min(c.expectedFirstAtp) FROM Clu c where c.version.versionIndId = clu.version.versionIndId and c.lastAtp &gt;= :lastScheduledTerm group by c.version.versionIndId )
-                        ORDER BY ident.division, ident.suffixCode
-                    </value>
-                </entry>
-
-                <entry key="myplan.clu.divisionAndCode">
-                    <value>
-                        SELECT
-                        ident.code
-                        FROM CluAttribute attr
-                        JOIN attr.owner clu
-                        JOIN clu.officialIdentifier ident
-                        WHERE
-                        ident.division LIKE :division||'%'
-                        AND
-                        ident.suffixCode LIKE :code||'%'
-                        AND
-                        attr.name = 'course.campus'
-                        AND clu.id NOT IN (SELECT att.owner FROM CluAttribute att where
-                        att.name='course.catalogOmit_ind' and att.value='true')
-                        AND clu.expectedFirstAtp = (select min(c.expectedFirstAtp) FROM Clu c where c.version.versionIndId = clu.version.versionIndId and c.lastAtp &gt;= :lastScheduledTerm group by c.version.versionIndId )
-                        ORDER BY ident.division, ident.suffixCode
-                    </value>
-                </entry>
                 <entry key="myplan.course.version.id">
                     <value>NATIVE:
                         SELECT clu.ID

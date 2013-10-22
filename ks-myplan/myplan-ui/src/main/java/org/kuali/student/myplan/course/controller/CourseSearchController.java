@@ -289,6 +289,7 @@ public class CourseSearchController extends UifControllerBase {
         try {
             List<SearchRequestInfo> requests = searcher.queryToRequests(form);
             Set<String> divisionsQueried = getDivisionsFromSearchRequests(requests);
+            Set<String> numbersQueried = getNumbersFromSearchRequests(requests);
             List<Hit> hits = processSearchRequests(requests);
             List<CourseSearchItem> courseList = new ArrayList<CourseSearchItem>();
             Map<String, CourseSearchItem.PlanState> courseStatusMap = getCourseStatusMap(studentId);
@@ -299,7 +300,7 @@ public class CourseSearchController extends UifControllerBase {
                 List<CourseSearchItem> courseSearchItems = getCourseInfo(hit.courseID);
                 for (CourseSearchItem course : courseSearchItems) {
 
-                    if (divisionsQueried.size() == 1 && !divisionsQueried.contains(course.getSubject())) {
+                    if ((divisionsQueried.size() == 1 && !divisionsQueried.contains(course.getSubject())) || (numbersQueried.size() == 1 && !numbersQueried.contains(course.getNumber()))) {
                         continue;
                     }
                     //       loadScheduledTerms(course);
@@ -481,6 +482,24 @@ public class CourseSearchController extends UifControllerBase {
         return divisions;
     }
 
+    /**
+     * Numbers that are added as params in the search request are passed as a set for crossListing course verification
+     *
+     * @param requestInfos
+     * @return
+     */
+    private Set<String> getNumbersFromSearchRequests(List<SearchRequestInfo> requestInfos) {
+        Set<String> numbers = new HashSet<String>();
+        for (SearchRequestInfo searchRequestInfo : requestInfos) {
+            for (SearchParamInfo requestParam : searchRequestInfo.getParams()) {
+                if ("code".equals(requestParam.getKey())) {
+                    numbers.add(requestParam.getValues().get(0).trim());
+                }
+            }
+        }
+        return numbers;
+    }
+
 
     /**
      * Gets the CluIds from the given search requests
@@ -494,6 +513,7 @@ public class CourseSearchController extends UifControllerBase {
 
         ArrayList<Hit> hits = new ArrayList<Hit>();
         ArrayList<Hit> tempHits = new ArrayList<Hit>();
+        List<String> courseIds = new ArrayList<String>();
         for (SearchRequestInfo request : requests) {
             SearchResultInfo searchResult = null;
             try {
@@ -507,9 +527,13 @@ public class CourseSearchController extends UifControllerBase {
             }
             for (SearchResultRow row : searchResult.getRows()) {
                 String id = SearchHelper.getCellValue(row, "lu.resultColumn.cluId");
+                if (!courseIds.contains(id)) {
                 /* hitCourseID(courseMap, id);*/
-                Hit hit = new Hit(id);
-                tempHits.add(hit);
+                    courseIds.add(id);
+                    Hit hit = new Hit(id);
+                    tempHits.add(hit);
+
+                }
 
             }
             tempHits.removeAll(hits);

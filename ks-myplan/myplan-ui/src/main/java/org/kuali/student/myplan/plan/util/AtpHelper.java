@@ -327,7 +327,8 @@ public class AtpHelper {
         try {
             DeconstructedCourseCode courseCode = getCourseHelper().getCourseDivisionAndNumber(course);
             String courseId = getCourseHelper().getCourseId(courseCode.getSubject(), courseCode.getNumber());
-            List<CourseOfferingInfo> offerings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(courseId, atp, CourseSearchConstants.CONTEXT_INFO);
+            /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
+            List<CourseOfferingInfo> offerings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(String.format("%s|%s|%s", courseId, courseCode.getSubject().trim(), courseCode.getNumber().trim()), atp, CourseSearchConstants.CONTEXT_INFO);
             if (offerings != null && !offerings.isEmpty()) {
                 isCourseOfferedInTerm = true;
             }

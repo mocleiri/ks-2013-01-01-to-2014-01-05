@@ -14,6 +14,7 @@ import org.kuali.student.enrollment.courseoffering.dto.*;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.enrollment.courseofferingset.dto.SocRolloverResultItemInfo;
 import org.kuali.student.myplan.course.util.CourseHelper;
+import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.AtpHelper.YearTerm;
 import org.kuali.student.r2.common.dto.ContextInfo;
@@ -752,11 +753,16 @@ public class UwSolrCourseOfferingServiceImpl implements CourseOfferingService {
             String year = yt.getYearAsString();
             String quarter = yt.getTermAsID();
 
+            /*TODO: This impl to move to another method as the method parameter is courseId but we are using it as a composite key*/
+            /*Format of courseId is courseId|subject|number */
+            String[] str = courseId.split(PlanConstants.CODE_KEY_SEPARATOR);
+            String id = str[0].trim();
+            String curriculumAbbreviation = str[1].trim();
+            String number = str[2].trim();
+
             CourseService courseService = getCourseService();
-            String courseVersionId = getCourseHelper().getCourseVersionIdByTerm(courseId, termId);
+            String courseVersionId = getCourseHelper().getCourseVersionIdByTerm(id, termId);
             CourseInfo courseInfo = courseService.getCourse(courseVersionId, context);
-            String curriculumAbbreviation = courseInfo.getSubjectArea().trim();
-            String number = courseInfo.getCourseNumberSuffix();
 
             List<String> sectionXMLs = solrSeviceClient.getPrimarySections(year, quarter, curriculumAbbreviation, number);
             if (sectionXMLs != null) {
