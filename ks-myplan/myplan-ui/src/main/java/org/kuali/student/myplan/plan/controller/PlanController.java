@@ -398,7 +398,7 @@ public class PlanController extends UifControllerBase {
          */
         try {
 
-            planForm.setCourseSummaryDetails(getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(planForm.getCourseId(), null));
+            planForm.setCourseSummaryDetails(getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(planForm.getCourseId(), planForm.getCourseCd()));
 
         } catch (Exception e) {
 
