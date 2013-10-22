@@ -14,8 +14,8 @@ When /^I edit an existing TH at 04:30 AM Standard Final Exam rule on the matrix$
   sleep 10
 end
 
-When /^I open the Final Exam Matrix for the Fall Term$/ do
-  @matrix = make FinalExamMatrix
+When /^I open the Final Exam Matrix for ([^"]*)$/ do |term|
+  @matrix = make FinalExamMatrix, :term_type => term
   @matrix.manage
 end
 
@@ -128,6 +128,24 @@ end
 When /^I view the Standard Final Exam rules on the Final Exam Matrix$/ do
   @matrix = make FinalExamMatrix
   @matrix.manage
+end
+
+When /^I associate the Summer Term's FE Matrix to that of the Fall Term$/ do
+  @matrix = make FinalExamMatrix, :term_type => "Summer Term"
+  @matrix.manage
+  on FEMatrixView do |page|
+    page.term_type_select.select "Fall Term"
+    page.submit
+  end
+end
+
+When /^I associate the Summer Term's FE Matrix to that of the Spring Term$/ do
+  @matrix = make FinalExamMatrix, :term_type => "Summer Term"
+  @matrix.manage
+  on FEMatrixView do |page|
+    page.term_type_select.select "Spring Term"
+    page.submit
+  end
 end
 
 Then /^I should be able to choose any one of Day 1 to 6 for the rule$/ do
@@ -258,5 +276,33 @@ Then /^the option to set the Exam Location should be disabled and selected$/ do
   on FEMatrixView do |page|
     page.set_exam_locations_toggle.attribute_value('disabled').should == "true"
     page.set_exam_locations_toggle.attribute_value('checked').should == "true"
+  end
+end
+
+Then /^the Fall Term's Final Exam Matrix should be used$/ do
+  on FEMatrixView do |page|
+    @matrix.manage
+    page.term_type_select.option(selected: "selected").text.should == "Fall Term"
+  end
+end
+
+Then /^there should be no Standard or Common rules on the page$/ do
+  on FEMatrixView do |page|
+    page.standard_final_exam_section.visible?.should == false
+    page.common_final_exam_section.visible?.should == false
+  end
+end
+
+Then /^the Fall Term's Final Exam Matrix should not be used$/ do
+  on FEMatrixView do |page|
+    @matrix.manage
+    page.term_type_select.option(selected: "selected").text.should_not == "Fall Term"
+  end
+end
+
+Then /^I should have a choice of terms from which to associate the Final Exam Matrix$/ do
+  on FEMatrixView do |page|
+    page.term_type_select.option(value: "kuali.atp.type.Fall").text.should == "Fall Term"
+    page.term_type_select.option(value: "kuali.atp.type.Spring").text.should == "Spring Term"
   end
 end
