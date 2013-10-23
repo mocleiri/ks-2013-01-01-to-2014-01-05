@@ -135,6 +135,7 @@ When /^I search for course offerings by course by entering a course offering cod
   @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "ENGL304", :exp_course_list => ["ENGL304"],
                               :term => "Fall 2012"
   @schedule_of_classes.display
+  @schedule_of_classes.expand_course_details
 end
 
 When /^I search for course offerings by course to view the course offering requisites$/ do

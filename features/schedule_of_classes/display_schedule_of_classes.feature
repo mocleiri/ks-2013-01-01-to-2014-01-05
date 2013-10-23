@@ -42,7 +42,7 @@ Feature: WC.Schedule of Classes
   @pending
   Scenario: Confirm requisites' natural language for a particular course is displayed correctly
     When I search for course offerings by course by entering a course offering code to view the course offering requisites
-    Then the course offering requisites should be displayed stating "Student Eligibility & Prerequisite.*Two lower-level English courses.*Or permission of ARHU-English.*Antirequisite.*any courses from ENGL403 or ENGL404"
+    Then the course offering requisites should be displayed stating "Antirequisite.*any courses from ENGL403 or ENGL404.*Student Eligibility & Prerequisite.*Two lower-level English courses.*permission of ARHU-English"
 
 #KSENROLL-9524
 #Create AFT scenarios to test for Co-located and Cross-listed icons and tool tips on Schedule of Classes
