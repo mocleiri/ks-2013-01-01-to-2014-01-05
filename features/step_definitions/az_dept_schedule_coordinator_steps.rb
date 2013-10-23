@@ -134,7 +134,7 @@ end
 
 When /^I manage a course offering in my admin org$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :course=>"ENGL222", :term=>@term_for_test
+  @course_offering = make CourseOffering, :course=>"ENGL245", :term=>@term_for_test
   @course_offering.manage
   @activity_offering = make ActivityOffering, :code=>"A"
 end
