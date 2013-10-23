@@ -160,6 +160,13 @@ When /^I edit the Prerequisite section by adding a new text statement$/ do
   end
 end
 
+When /^I suppress the rule in the Student Eligibilty & Prerequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
+  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "CHEM272"
+  @prereq.sepr_suppress_co_rule
+  @prereq.commit_changes
+end
+
 Then /^I should be able to compare the CO Rule to the AO in the Student Eligibility & Prerequisite section$/ do
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
@@ -306,6 +313,20 @@ When /^I suppress the rule in the Corequisite section$/ do
   @coreq = make AOCorequisiteRule, :term => "201208", :course => "PHYS272"
   @coreq.cr_suppress_co_rule
   @coreq.commit_changes
+end
+
+When /^I edit the Corequisite section by adding a new text statement$/ do
+  @activityOR = make AORequisitesData, :section => "Corequisite", :activity => "C"
+  @coreq = make AOCorequisiteRule, :activity => "C", :term => "201208", :course => "CHEM272"
+  @coreq.navigate_to_ao_requisites
+  on ActivityOfferingRequisites do |page|
+    if page.coreq_copy_edit_link.exists?
+      page.loading.wait_while_present
+      page.coreq_copy_edit
+      @coreq.cr_text_rule( "add", "", "Changed the Corequisite on AO V only")
+      @coreq.commit_changes
+    end
+  end
 end
 
 

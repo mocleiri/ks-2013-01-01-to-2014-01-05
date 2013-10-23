@@ -128,6 +128,15 @@ When /^I want to compare the CO to the CLU for the Antirequisite section$/ do
   end
 end
 
+When /^I add a new text statement to the Antirequisite section$/ do
+  @courseOR = make CORequisitesData
+  @antireq = make AntirequisiteRule, :section => "Antirequisite", :term => "201208", :course => "CHEM272"
+  @antireq.navigate_to_mco_requisites
+  @antireq.ar_edit_add( "add")
+  @antireq.ar_text_rule( "add", "", "Added Antirequisite on CO level")
+  @antireq.commit_changes
+end
+
 Then /^the tree in the Antirequisite section should be empty$/ do
   @antireq.open_agenda_section
   on CourseOfferingRequisites do |page|
