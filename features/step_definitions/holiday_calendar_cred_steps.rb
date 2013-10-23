@@ -167,18 +167,14 @@ end
 
 When /^I add a new Holiday with a start date with an invalid format$/ do
   holiday = (make Holiday, :type => "Veterans Day",
-                  :start_date => "2014/11/11")
-  @holiday_calendar.add_holiday :holiday =>  holiday, :exp_success => false
+                  :start_date => "2014/11/11",
+                  :instructional => true) #ensures error message is displayed, focus leaves start date field)
+  @holiday_calendar.add_holiday :holiday =>  holiday, :defer_add => true
 end
 
 Then /^the holiday start date field is highlighted for the error$/ do
   on CreateEditHolidayCalendar do |page|
     page.holiday_start_date.attribute_value('class').should match /error/
-    #make sure don't get alert when leaving the page
-	page.holiday_type.select "Select holiday type"
-    page.holiday_end_date.set ""
-    page.holiday_start_date.set ""
-    page.instructional.clear
     page.cancel
   end
 end

@@ -225,13 +225,14 @@ class HolidayCalendar
 
   def add_holiday(opts)
     defaults = {
-        :exp_success=> true
+        :exp_success=> true,
+        :defer_save => false
     }
     options = defaults.merge(opts)
 
     edit
-    options[:holiday].create :exp_success => options[:exp_success]
-    @holiday_list << options[:holiday] if options[:exp_success]
+    options[:holiday].create options
+    @holiday_list << options[:holiday] if options[:exp_success] and !options[:defer_save]
   end
 
   def delete_holidays(opts)
@@ -282,7 +283,8 @@ class Holiday
 
   def create(opts = {})
     defaults = {
-        :exp_success=> true
+        :exp_success=> true,
+        :defer_add => false
     }
     options = defaults.merge(opts)
 
@@ -316,6 +318,7 @@ class Holiday
       else
         page.instructional.set
       end
+      return if options[:defer_add]
       page.add_link.click
       page.adding.wait_while_present
       page.save if options[:exp_success]
