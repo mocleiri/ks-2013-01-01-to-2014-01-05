@@ -13,6 +13,7 @@ And /^I verify that the Registration Window is deleted/ do
   on RegistrationWindowsCreate do |page|
     page.is_window_deleted(@registration_window.appointment_window_info_name, @registration_window.period_key).should be_true
   end
+  on(RegistrationWindowsCreate).cancel_and_leave
 end
 
 And /^I verify that the Registration Window is not deleted/ do
@@ -20,6 +21,7 @@ And /^I verify that the Registration Window is not deleted/ do
     page.is_window_deleted(@registration_window.appointment_window_info_name, @registration_window.period_key).should be_false
   end
   @registration_window.delete
+  on(RegistrationWindowsCreate).cancel_and_leave
 end
 
 And /^I verify that the registration window is not created$/ do
@@ -43,6 +45,7 @@ Then /^I verify that no field is editable in Registration Window and the Window 
     page.is_anchor(@registration_window.appointment_window_info_name, @registration_window.period_key).should be_true
   end
   @registration_window.delete
+  on(RegistrationWindowsCreate).cancel_and_leave
 end
 
 Then /^I verify that all editable fields in Registration Window are editable and Window Name is not a link$/ do
@@ -61,6 +64,7 @@ Then /^I verify the new Registration Window's read-only and editable fields$/ do
     page.are_non_editable_window_fields_editable(@registration_window.appointment_window_info_name, @registration_window.period_key).should be_false
   end
   @registration_window.delete
+  on(RegistrationWindowsCreate).cancel_and_leave
 end
 
 Then /^I verify the Registration Window is unique within the same period$/ do
@@ -76,6 +80,7 @@ Then /^I verify each Registration Window is created within each period/ do
     page.is_window_created(@registration_window2.appointment_window_info_name, @registration_window2.period_key).should be_true
   end
   @registration_window.delete
+  on(RegistrationWindowsCreate).cancel_and_leave
 end
 
 Then /^verify error exists for the registration page/ do
@@ -100,7 +105,7 @@ Then /^I verify that the Registration Window is not modified$/ do
     row_object[:end_time_am_pm].should == @registration_window.end_time_am_pm
   end
   @registration_window.delete
-
+  on(RegistrationWindowsCreate).cancel_and_leave
 end
 
 Then /^I verify the new Registration Window's buttons are created$/ do
