@@ -521,9 +521,9 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
         ThirdPartyTransferDetail transferDetail;
 
-        BigDecimal remainingFund;
+        BigDecimal remainingFund = null;
 
-        BigDecimal maxAmount = (thirdPartyPlan.getMaxAmount() != null) ? thirdPartyPlan.getMaxAmount() : BigDecimal.ZERO;
+        BigDecimal maxAmount = thirdPartyPlan.getMaxAmount();
 
         if (planMember.isExecuted()) {
 
@@ -535,7 +535,9 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                 throw new IllegalStateException(errMsg);
             }
 
-            remainingFund = maxAmount.subtract(transferDetail.getTransferAmount());
+            if (maxAmount != null) {
+                remainingFund = maxAmount.subtract(transferDetail.getTransferAmount());
+            }
 
         } else {
 
@@ -655,7 +657,9 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                     transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
 
                     // Subtracting the transfer amount from the remaining fund
-                    remainingFund = remainingFund.subtract(transferAmount);
+                    if (remainingFund != null) {
+                        remainingFund = remainingFund.subtract(transferAmount);
+                    }
 
                     totalTransferAmount = totalTransferAmount.add(transferAmount);
                 }
@@ -689,7 +693,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                 for (Transaction transaction : transactions) {
 
                     if (maxDividedFund.compareTo(BigDecimal.ZERO) <= 0 ||
-                            remainingFund.compareTo(BigDecimal.ZERO) <= 0) {
+                            (remainingFund != null && remainingFund.compareTo(BigDecimal.ZERO) <= 0)) {
                         break;
                     }
 
@@ -701,7 +705,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                         transferAmount = maxDividedFund;
                     }
 
-                    if (transferAmount.compareTo(remainingFund) > 0) {
+                    if (remainingFund != null && transferAmount.compareTo(remainingFund) > 0) {
                         transferAmount = remainingFund;
                     }
 
@@ -737,7 +741,9 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                     maxDividedFund = maxDividedFund.subtract(transferAmount);
 
                     // Subtracting the transfer amount from the remaining fund
-                    remainingFund = remainingFund.subtract(transferAmount);
+                    if (remainingFund != null) {
+                        remainingFund = remainingFund.subtract(transferAmount);
+                    }
 
                     totalTransferAmount = totalTransferAmount.add(transferAmount);
                 }
