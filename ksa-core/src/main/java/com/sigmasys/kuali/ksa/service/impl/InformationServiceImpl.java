@@ -81,7 +81,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         return entity;
     }
 
-    private <T extends Information> List<T> getInformations(String userId, Class<T> entityType) {
+    private <T extends Information> List<T> getInformationEntities(String userId, Class<T> entityType) {
 
         Query query = em.createQuery("select i from " + entityType.getName() + " i " + GET_INFORMATION_JOIN +
                 (userId != null ? " where a.id = :userId " : "") +
@@ -153,8 +153,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      * @return List of Information instances
      */
     @Override
-    public List<Information> getInformations() {
-        return getInformations(null, Information.class);
+    public List<Information> getInformationEntities() {
+        return getInformationEntities(null, Information.class);
     }
 
     /**
@@ -164,7 +164,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public List<Memo> getMemos() {
-        return getInformations(null, Memo.class);
+        return getInformationEntities(null, Memo.class);
     }
 
     /**
@@ -173,7 +173,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      * @return List of flags
      */
     public List<Flag> getFlags() {
-        return getInformations(null, Flag.class);
+        return getInformationEntities(null, Flag.class);
     }
 
     /**
@@ -182,7 +182,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      * @return List of alerts
      */
     public List<Alert> getAlerts() {
-        return getInformations(null, Alert.class);
+        return getInformationEntities(null, Alert.class);
     }
 
     /**
@@ -193,7 +193,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public List<Alert> getAlerts(String userId) {
-        return getInformations(userId, Alert.class);
+        return getInformationEntities(userId, Alert.class);
     }
 
     /**
@@ -204,7 +204,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public List<Flag> getFlags(String userId) {
-        return getInformations(userId, Flag.class);
+        return getInformationEntities(userId, Flag.class);
     }
 
     /**
@@ -215,7 +215,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     public List<Memo> getMemos(String userId) {
-        return getInformations(userId, Memo.class);
+        return getInformationEntities(userId, Memo.class);
     }
 
     /**

@@ -50,7 +50,7 @@ public interface InformationService {
      *
      * @return List of Information instances
      */
-    List<Information> getInformations();
+    List<Information> getInformationEntities();
 
     /**
      * Returns all Memo entities sorted by ID in the descendant order

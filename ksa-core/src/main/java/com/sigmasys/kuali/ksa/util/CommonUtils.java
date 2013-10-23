@@ -160,30 +160,48 @@ public class CommonUtils {
     }
 
     public static boolean containsAny(Collection<String> collection, String values, String delimiter, boolean trimValues) {
+
+        if (collection == null || collection.isEmpty()) {
+            return false;
+        }
+
         for (String value : values.split(delimiter)) {
+
             if (trimValues) {
                 value = value.trim();
             }
+
             if (collection.contains(value)) {
                 return true;
             }
         }
+
         return false;
     }
 
     public static boolean containsAll(Collection<String> collection, String values, String delimiter, boolean trimValues) {
+
+        if (collection == null || collection.isEmpty()) {
+            return false;
+        }
+
         String[] valueArray = values.split(delimiter);
+
         if (valueArray.length == 0) {
             return false;
         }
+
         for (String value : valueArray) {
+
             if (trimValues) {
                 value = value.trim();
             }
+
             if (!collection.contains(value)) {
                 return false;
             }
         }
+
         return true;
     }
 

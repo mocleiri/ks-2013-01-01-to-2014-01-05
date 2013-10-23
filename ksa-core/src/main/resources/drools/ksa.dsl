@@ -1,9 +1,26 @@
 # The KSA DSL definition
 
-# FEE MANAGEMENT DSL definitions
+# Commonly used DSL definitions
 
 [keyword][]and = &&
 [keyword][]equals = ==
+
+# LHS definitions
+
+[when][]Account ID is "{userId}" = account.id == "{userId}"
+[when][]ATP is "{atpIds}" = CommonUtils.containsAny(atpIds, "{atpIds}", ",")
+[when][]Transaction Type is "{transactionTypeIds}" = CommonUtils.containsAny(transactionTypeIds, "{transactionTypeIds}", ",")
+[when][]Hold Issue is "{holdIssueNames}" = CommonUtils.containsAny(holdIssueNames, "{holdIssueNames}", ",")
+[when][]Permission is "{permissionNames}" = CommonUtils.containsAny(permissionNames, "{permissionNames}", ",")
+[when][]Account Type is "{accountTypeNames}" = CommonUtils.containsAny(accountTypeNames, "{accountTypeNames}", ",")
+[when][]Transaction Amount is "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) == 0
+[when][]Transaction Amount > "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) > 0
+[when][]Transaction Amount < "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) < 0
+[when][]Transaction Amount < "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) < 0
+[when][]Flag is "{flags}" = CommonUtils.containsAny(informationService.getFlags(account.getId()), "{flags}")
+
+
+# FEE MANAGEMENT DSL definitions
 
 # LHS definitions
 [when][]\({constraints}\) = context : BrmContext({constraints})
@@ -32,13 +49,6 @@
 
 # ACCOUNT BLOCKING DSL definitions
 # Assumption: transactionTypeIds, atpIds, holdIssueNames, permissionNames are global parameters
-
-# LHS definitions
-[when][]ATP is "{atpIds}" = eval(CommonUtils.containsAny(atpIds, "{atpIds}", ","))
-[when][]Transaction Type is "{transactionTypeIds}" = eval(CommonUtils.containsAny(transactionTypeIds, "{transactionTypeIds}", ","))
-[when][]Hold Issue is "{holdIssueNames}" = eval(CommonUtils.containsAny(holdIssueNames, "{holdIssueNames}", ","))
-[when][]Permission is "{permissionNames}" = eval(CommonUtils.containsAny(permissionNames, "{permissionNames}", ","))
-[when][]Account ID is "{userId}" = account.id == "{userId}"
 
 # RHS definitions
 [then][]Apply block = blockNames.add(drools.getRule().getName());

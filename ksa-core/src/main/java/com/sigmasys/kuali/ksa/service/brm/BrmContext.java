@@ -78,6 +78,10 @@ public class BrmContext implements Serializable {
         return getService(AtpService.class);
     }
 
+    public InformationService getInformationService() {
+        return getService(InformationService.class);
+    }
+
     protected <T> T getService(Class<T> serviceType) {
         T service = ContextUtils.getBean(serviceType);
         if (service == null) {

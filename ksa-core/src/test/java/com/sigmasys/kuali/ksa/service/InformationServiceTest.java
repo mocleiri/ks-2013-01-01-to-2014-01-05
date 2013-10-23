@@ -48,7 +48,7 @@ public class InformationServiceTest extends AbstractServiceTest {
 
         informationService.createMemo("admin", "New memo for 1020", memoAccessLevelCode, new Date(), null, null);
 
-        List<Information> informations = informationService.getInformations();
+        List<Information> informations = informationService.getInformationEntities();
 
         Assert.notNull(informations);
         Assert.isTrue(!informations.isEmpty());
