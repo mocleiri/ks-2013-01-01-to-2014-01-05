@@ -1123,11 +1123,6 @@ public abstract class TestOrganizationServiceImplConformanceBaseCrud {
 	// SERVICE OPS NOT TESTED IN BASE TEST CLASS
 	// ========================================
 	
-	/* Method Name: search */
-	@Test
-	public abstract void test_search() 
-	throws 	MissingParameterException	,InvalidParameterException	,OperationFailedException	,PermissionDeniedException	;
-	
 	/* Method Name: getOrgHierarchies */
 	@Test
 	public abstract void test_getOrgHierarchies() 

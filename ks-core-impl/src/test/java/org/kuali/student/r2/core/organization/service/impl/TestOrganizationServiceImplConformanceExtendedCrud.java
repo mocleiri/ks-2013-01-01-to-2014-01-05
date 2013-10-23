@@ -74,7 +74,7 @@ import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:org-test-with-mock-context.xml"})
-public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrganizationServiceImplConformanceBaseCrud 
+public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrganizationServiceImplConformanceBaseCrud
 {
 
     @Resource(name = "organizationDataLoader")
@@ -643,12 +643,6 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
 	// SERVICE OPS NOT TESTED IN BASE TEST CLASS
 	// ========================================
 	
-	/* Method Name: search */
-	@Test
-	public void test_search() 
-	throws 	MissingParameterException	,InvalidParameterException	,OperationFailedException	,PermissionDeniedException	{
-	}
-	
 	/* Method Name: getOrgHierarchies */
 	@Test
 	public void test_getOrgHierarchies() 
@@ -897,44 +891,44 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
 	throws 	InvalidParameterException	,MissingParameterException	,OperationFailedException	,PermissionDeniedException	{
         //NOT NEEDED
 	}
-	
+
 	/* Method Name: searchForOrgOrgRelations */
 	@Test
 	public void test_searchForOrgOrgRelations() 
 	throws 	InvalidParameterException	,MissingParameterException	,OperationFailedException	,PermissionDeniedException	{
         QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
-        Predicate[] predicates = {PredicateFactory.equal("personId", "1")};
+        Predicate[] predicates = {PredicateFactory.equal("orgId", "13")};
         builder.setPredicates(predicates);
         QueryByCriteria criteria = builder.build();
 
-        List<String> ids = testService.searchForOrgPersonRelationIds(criteria, contextInfo);
-        assertEquals(40, ids.size());
+        List<String> ids = testService.searchForOrgOrgRelationIds(criteria, contextInfo);
+        assertEquals(3, ids.size());
 
-        List<OrgPersonRelationInfo> orgPersonRelations = testService.searchForOrgPersonRelations(criteria, contextInfo);
-        assertEquals(40, ids.size());
-        for(OrgPersonRelationInfo orgPersonRelation : orgPersonRelations) {
-            assertTrue(ids.remove(orgPersonRelation.getId()));
+        List<OrgOrgRelationInfo> orgOrgRelations = testService.searchForOrgOrgRelations(criteria, contextInfo);
+        assertEquals(3, orgOrgRelations.size());
+        for(OrgOrgRelationInfo orgRelation : orgOrgRelations) {
+            assertTrue(ids.remove(orgRelation.getId()));
         }
 
-        predicates[0] = PredicateFactory.equal("id", "someRandomFakeId");
+        predicates[0] = PredicateFactory.equal("orgId", "someRandomFakeId");
         builder.setPredicates(predicates);
         criteria = builder.build();
 
-        ids = testService.searchForOrgPersonRelationIds(criteria, contextInfo);
+        ids = testService.searchForOrgOrgRelationIds(criteria, contextInfo);
         assertEquals(0, ids.size());
-        orgPersonRelations = testService.searchForOrgPersonRelations(criteria, contextInfo);
-        assertEquals(0, orgPersonRelations.size());
+        orgOrgRelations = testService.searchForOrgOrgRelations(criteria, contextInfo);
+        assertEquals(0, orgOrgRelations.size());
 
-        predicates[0] = PredicateFactory.and(PredicateFactory.equal("orgId", "20"),
-                PredicateFactory.equal("typeKey", OrganizationServiceDataLoader.ORG_PERSON_RELATION_PRESIDENT_TYPE));
+        predicates[0] = PredicateFactory.and(PredicateFactory.equal("orgId", "2"),
+                PredicateFactory.equal("relatedOrgId", "3"));
         builder.setPredicates(predicates);
         criteria = builder.build();
 
-        ids = testService.searchForOrgPersonRelationIds(criteria, contextInfo);
+        ids = testService.searchForOrgOrgRelationIds(criteria, contextInfo);
         assertEquals(1, ids.size());
-        orgPersonRelations = testService.searchForOrgPersonRelations(criteria, contextInfo);
-        assertEquals(1, orgPersonRelations.size());
-        assertEquals(ids.get(0), orgPersonRelations.get(0).getId());
+        orgOrgRelations = testService.searchForOrgOrgRelations(criteria, contextInfo);
+        assertEquals(1, orgOrgRelations.size());
+        assertEquals(ids.get(0), orgOrgRelations.get(0).getId());
 	}
 	
 	/* Method Name: validateOrgOrgRelation */
@@ -1048,42 +1042,39 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
 	public void test_searchForOrgPersonRelations() 
 	throws 	InvalidParameterException	,MissingParameterException	,OperationFailedException	,PermissionDeniedException	{
         QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
-        Predicate[] predicates = {PredicateFactory.like("name", "Hierarchy%")};
+        Predicate[] predicates = {PredicateFactory.and(PredicateFactory.equal("personId", "1"), PredicateFactory.like("orgId", "2%"), PredicateFactory.equal("typeKey", OrganizationServiceDataLoader.ORG_PERSON_RELATION_PRESIDENT_TYPE))};
         builder.setPredicates(predicates);
         QueryByCriteria criteria = builder.build();
 
-        List<String> ids = testService.searchForOrgHierarchyIds(criteria, contextInfo);
+        List<String> ids = testService.searchForOrgPersonRelationIds(criteria, contextInfo);
         assertEquals(2, ids.size());
-        assertTrue(ids.contains("A"));
-        assertTrue(ids.contains("B"));
 
-        List<OrgHierarchyInfo> orgHierarchies = testService.searchForOrgHierarchies(criteria, contextInfo);
-        assertEquals(2, ids.size());
-        for(OrgHierarchy orgHierarchy : orgHierarchies) {
-            assertTrue(ids.remove(orgHierarchy.getId()));
+        List<OrgPersonRelationInfo> orgPeople = testService.searchForOrgPersonRelations(criteria, contextInfo);
+        assertEquals(2, orgPeople.size());
+        for(OrgPersonRelationInfo orgPerson : orgPeople) {
+            assertTrue(ids.remove(orgPerson.getId()));
         }
 
         predicates[0] = PredicateFactory.equal("id", "someRandomFakeId");
         builder.setPredicates(predicates);
         criteria = builder.build();
 
-        ids = testService.searchForOrgHierarchyIds(criteria, contextInfo);
+        ids = testService.searchForOrgPersonRelationIds(criteria, contextInfo);
         assertEquals(0, ids.size());
-        orgHierarchies = testService.searchForOrgHierarchies(criteria, contextInfo);
-        assertEquals(0, orgHierarchies.size());
+        orgPeople = testService.searchForOrgPersonRelations(criteria, contextInfo);
+        assertEquals(0, orgPeople.size());
 
-        predicates[0] = PredicateFactory.and(PredicateFactory.equal("id", "A"),
+        predicates[0] = PredicateFactory.and(PredicateFactory.equal("orgId", "1"),
                 PredicateFactory.equal("stateKey", OrganizationServiceDataLoader.ACTIVE_STATE),
-                PredicateFactory.like("descr.formatted", "%desc%"));
+                PredicateFactory.equal("typeKey", OrganizationServiceDataLoader.ORG_PERSON_RELATION_PRESIDENT_TYPE));
         builder.setPredicates(predicates);
         criteria = builder.build();
 
-        ids = testService.searchForOrgHierarchyIds(criteria, contextInfo);
+        ids = testService.searchForOrgPersonRelationIds(criteria, contextInfo);
         assertEquals(1, ids.size());
-        assertEquals("A", ids.get(0));
-        orgHierarchies = testService.searchForOrgHierarchies(criteria, contextInfo);
-        assertEquals(1, orgHierarchies.size());
-        assertEquals("A", orgHierarchies.get(0).getId());
+        orgPeople = testService.searchForOrgPersonRelations(criteria, contextInfo);
+        assertEquals(1, orgPeople.size());
+        assertEquals("1", orgPeople.get(0).getOrgId());
 	}
 	
 	/* Method Name: validateOrgPersonRelation */
@@ -1148,7 +1139,7 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
         }
 
         List<OrgPositionRestrictionInfo> orgPositionRestrictions = testService.searchForOrgPositionRestrictions(criteria, contextInfo);
-        assertEquals(20, ids.size());
+        assertEquals(20, orgPositionRestrictions.size());
         for(OrgPositionRestrictionInfo restriction : orgPositionRestrictions) {
             assertTrue(ids.remove(restriction.getId()));
         }
