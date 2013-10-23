@@ -304,7 +304,19 @@ public class PaymentPlanController extends GenericSearchController {
     }
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=batchThirdParty")
-    public ModelAndView batchThirdParty(@ModelAttribute("KualiForm") PaymentPlanForm form) {
+    public ModelAndView batchThirdParty(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+        String action = request.getParameter("actionParameters[action]");
+        boolean enroll = false;
+        if("enroll".equals(action)) {
+            enroll = true;
+        }
+
+        String forceReversalString = form.getForceReversal();
+        Boolean forceReversal = false;
+        if("on".equalsIgnoreCase(forceReversalString)) {
+            forceReversal = true;
+        }
+
         ThirdPartyPlan plan = form.getBatchThirdPartyPlan();
 
         if(plan == null) {
@@ -346,11 +358,51 @@ public class PaymentPlanController extends GenericSearchController {
         }
 
         Date today = new Date();
+        int newCount = 0;
+        int enrollCount = 0;
+        int reversalCount = 0;
+
         for(String account : accountList) {
-            thirdPartyTransferService.createThirdPartyPlanMember(account, plan.getId(), 1);
+            ThirdPartyPlanMember member = thirdPartyTransferService.getThirdPartyPlanMember(plan.getId(), account);
+
+            if(member == null) {
+                thirdPartyTransferService.createThirdPartyPlanMember(account, plan.getId(), 1);
+                newCount++;
+            }
+
+            if(enroll) {
+                ThirdPartyTransferDetail transferDetail = thirdPartyTransferService.getThirdPartyTransferDetail(plan.getId(), account);
+
+                if(transferDetail == null) {
+                    thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), account, new Date());
+                    enrollCount++;
+                } else if(forceReversal){
+                    thirdPartyTransferService.reverseThirdPartyTransfer(transferDetail.getId(), account);
+
+                    thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), account, new Date());
+
+                    reversalCount++;
+                }
+            }
         }
 
-        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, accountList.size() + " accounts added to " + plan.getName() + " plan");
+        StringBuilder message = new StringBuilder();
+        message.append(newCount);
+        message.append(" accounts added");
+        if(enrollCount > 0) {
+            message.append(", ");
+            message.append(enrollCount);
+            message.append(" accounts enrolled");
+        }
+        if(reversalCount > 0) {
+            message.append(", ");
+            message.append(reversalCount);
+            message.append(" accounts reversed");
+        }
+        message.append(" for ");
+        message.append(plan.getName());
+        message.append(" plan");
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, message.toString());
 
         return getUIFModelAndView(form);
     }

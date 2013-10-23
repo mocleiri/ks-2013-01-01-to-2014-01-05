@@ -47,6 +47,7 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     private String planName;
     private String batchAccounts;
+    private String forceReversal;
 
     private ThirdPartyPlanModel thirdPartyPlan;
     private TransactionTransferModel thirdPartyTransactionTransfer;
@@ -492,5 +493,13 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     public void setThirdPartyTransactionTransfer(TransactionTransferModel thirdPartyTransactionTransfer) {
         this.thirdPartyTransactionTransfer = thirdPartyTransactionTransfer;
+    }
+
+    public String getForceReversal() {
+        return forceReversal;
+    }
+
+    public void setForceReversal(String forceReversal) {
+        this.forceReversal = forceReversal;
     }
 }

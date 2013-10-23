@@ -390,7 +390,14 @@
                         <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
                     </property>
                 </bean>
-                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="batchThirdParty" p:actionLabel="Submit"/>
+                <bean parent="Uif-InputField" p:propertyName="forceReversal">
+                    <property name="control">
+                        <bean parent="Uif-CheckboxControl" p:checkboxLabel="Force reversal of existing accounts"/>
+                    </property>
+                </bean>
+
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="batchThirdParty" p:actionLabel="Queue" p:actionParameters="action:queue"/>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="batchThirdParty" p:actionLabel="Enroll" p:actionParameters="action:enroll"/>
             </list>
         </property>
     </bean>
