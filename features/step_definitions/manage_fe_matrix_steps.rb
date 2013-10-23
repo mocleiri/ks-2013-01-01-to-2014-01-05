@@ -131,20 +131,42 @@ When /^I view the Standard Final Exam rules on the Final Exam Matrix$/ do
   @matrix.manage
 end
 
-When /^I associate the Summer Term's FE Matrix to that of the Fall Term$/ do
-  @matrix = make FinalExamMatrix, :term_type => "Summer Term"
-  @matrix.manage
+When /^there is an Academic Term associated with a Final Exam matrix$/ do
+  @matrix_term = make FinalExamMatrix, :term_type => "Fall Term"
+end
+
+When /^there is a second Academic Term that is not associated with any final exam matrix$/ do
+  @matrix_second_term = make FinalExamMatrix, :term_type => "Summer Term"
+end
+
+When /^there is a third Academic Term associated with a Final Exam matrix$/ do
+  @matrix_third_term = make FinalExamMatrix, :term_type => "Spring Term"
+end
+
+When /^there is an Academic Half Term that is not associated with any final exam matrix$/ do
+  @matrix_halfterm = make FinalExamMatrix, :term_type => "Summer 1"
+end
+
+When /^I associate the second Term with the Final Exam matrix of the initial Term$/ do
+  @matrix_second_term.manage
   on FEMatrixView do |page|
-    page.term_type_select.select "Fall Term"
+    page.term_type_select.select @matrix_term.term_type
     page.submit
   end
 end
 
-When /^I associate the Summer Term's FE Matrix to that of the Spring Term$/ do
-  @matrix = make FinalExamMatrix, :term_type => "Summer Term"
-  @matrix.manage
+When /^I view the second term$/ do
+  @matrix_second_term.manage
+end
+
+When /^I view the half term$/ do
+  @matrix_halfterm.manage
+end
+
+When /^I associate the second Term with the Final Exam matrix of the third Term$/ do
+  @matrix_second_term.manage
   on FEMatrixView do |page|
-    page.term_type_select.select "Spring Term"
+    page.term_type_select.select @matrix_third_term.term_type
     page.submit
   end
 end
@@ -287,7 +309,7 @@ Then /^the Fall Term's Final Exam Matrix should be used$/ do
   end
 end
 
-Then /^there should be no Standard or Common rules on the page$/ do
+Then /^no Standard Final Exam or Common Final Exam rules are listed$/ do
   on FEMatrixView do |page|
     page.standard_final_exam_section.visible?.should == false
     page.common_final_exam_section.visible?.should == false
