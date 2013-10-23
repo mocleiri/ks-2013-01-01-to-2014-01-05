@@ -172,10 +172,6 @@ public class CourseSearchStrategy {
     public void addFullTextSearches(String query, List<SearchRequestInfo> requests) {
         List<QueryTokenizer.Token> tokens = QueryTokenizer.tokenize(query);
 
-        SearchRequestInfo req = new SearchRequestInfo("myplan.lu.search.fulltext");
-        req.addParam("queryText", query);
-        requests.add(req);
-
         for (QueryTokenizer.Token token : tokens) {
             String queryText = null;
             switch (token.rule) {
