@@ -3,6 +3,7 @@ package org.kuali.student.ap.sb;
 import java.util.List;
 
 import org.kuali.student.ap.sb.infc.CourseOption;
+import org.kuali.student.ap.sb.infc.PossibleScheduleOption;
 import org.kuali.student.enrollment.acal.infc.Term;
 import org.kuali.student.myplan.academicplan.infc.PlanItem;
 
@@ -51,6 +52,17 @@ public interface ShoppingCartStrategy {
 	 * @return A shopping cart request for the specific plan item and term.
 	 */
 	List<ShoppingCartRequest> createRequests(Term term, List<CourseOption> courseOptions);
+
+	/**
+	 * Create a shopping cart request for a specific term, based on a plan item.
+	 * 
+	 * @param term
+	 *            The term to create a shopping cart request for.
+	 * @param planItem
+	 *            The plan item to create a shopping cart request for.
+	 * @return A shopping cart request for the specific plan item and term.
+	 */
+	List<ShoppingCartRequest> createRequests(String learningPlanId, Term term, PossibleScheduleOption schedule);
 
 	/**
 	 * Process shopping cart requests.

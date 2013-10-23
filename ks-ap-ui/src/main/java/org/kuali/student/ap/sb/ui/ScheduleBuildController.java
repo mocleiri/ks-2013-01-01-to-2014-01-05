@@ -5,8 +5,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -21,11 +23,14 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.kuali.rice.krad.UserSession;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.student.ap.common.infc.HasUniqueId;
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
 import org.kuali.student.ap.sb.ScheduleBuildForm;
+import org.kuali.student.ap.sb.ShoppingCartForm;
 import org.kuali.student.ap.sb.infc.ActivityOption;
 import org.kuali.student.ap.sb.infc.ClassMeetingTime;
 import org.kuali.student.ap.sb.infc.PossibleScheduleOption;
@@ -372,6 +377,9 @@ public class ScheduleBuildController extends UifControllerBase {
 		JsonArrayBuilder jpossible = Json.createArrayBuilder();
 		List<PossibleScheduleOption> psos = form.getPossibleScheduleOptions();
 		List<PossibleScheduleOption> sss = form.getSavedSchedules();
+		Map<String, PossibleScheduleOption> cartOptions =
+				new HashMap<String, PossibleScheduleOption>(psos.size() + sss.size());
+		
 		int discardCount = 0;
 		for (int i = 0; i < psos.size(); i++) {
 			PossibleScheduleOption pso = psos.get(i);
@@ -416,6 +424,8 @@ public class ScheduleBuildController extends UifControllerBase {
 			jpso.add("maxTime", aggregate.maxTime);
 			jpso.add("events", jevents);
 			jpossible.add(jpso);
+			
+			cartOptions.put(pso.getUniqueId(), pso);
 		}
 		json.add("possible", jpossible);
 
@@ -461,8 +471,13 @@ public class ScheduleBuildController extends UifControllerBase {
 			jsso.add("maxTime", aggregate.maxTime);
 			jsso.add("events", jevents);
 			jsaved.add(jsso);
+			
+			cartOptions.put(sso.getUniqueId(), sso);
 		}
 		json.add("saved", jsaved);
+		
+		UserSession sess = GlobalVariables.getUserSession();
+		sess.addObject(ShoppingCartForm.POSSIBLE_OPTIONS_KEY, cartOptions);
 
 		SimpleDateFormat ddf = new SimpleDateFormat("MM/dd/yyyy");
 		JsonArrayBuilder jreserved = Json.createArrayBuilder();

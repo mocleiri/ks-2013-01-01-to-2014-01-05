@@ -1,7 +1,6 @@
 package org.kuali.student.ap.sb.util;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -9,12 +8,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.kuali.student.ap.sb.dto.ActivityOptionInfo;
+import org.kuali.student.ap.sb.dto.CourseOptionInfo;
 import org.kuali.student.ap.sb.dto.PossibleScheduleOptionInfo;
+import org.kuali.student.ap.sb.dto.SecondaryActivityOptionsInfo;
 import org.kuali.student.ap.sb.infc.ActivityOption;
 import org.kuali.student.ap.sb.infc.ClassMeetingTime;
 import org.kuali.student.ap.sb.infc.CourseOption;
@@ -151,9 +155,9 @@ public class ScheduleBuilder implements Serializable {
 
 	private final Term term;
 	private final List<CourseOption> courseOptions;
-	private final BigDecimal minCredits;
-	private final BigDecimal maxCredits;
 	private final List<ReservedTime> reservedTimes;
+	private final Set<Long> primaryConflicts = new HashSet<Long>();
+	private final boolean empty;
 
 	private int currentCourseIndex;
 	private final int[] currentPrimaryActivityIndex;
@@ -185,19 +189,64 @@ public class ScheduleBuilder implements Serializable {
 	}
 
 	public ScheduleBuilder(Term term, List<CourseOption> courseOptions,
-			BigDecimal minCredits, BigDecimal maxCredits,
 			List<ReservedTime> reservedTimes) {
 		this.term = term;
-		this.minCredits = minCredits;
-		this.maxCredits = maxCredits;
 		this.reservedTimes = reservedTimes;
 
+		boolean empty = false;
 		List<CourseOption> co = new java.util.ArrayList<CourseOption>(
 				courseOptions == null ? 0 : courseOptions.size());
 		if (courseOptions != null)
-			for (CourseOption c : courseOptions)
-				if (c.isSelected())
-					co.add(c);
+			course: for (CourseOption c : courseOptions)
+				if (c.isSelected()) {
+					List<ActivityOption> oaol = c.getActivityOptions();
+					List<ActivityOption> aol = new ArrayList<ActivityOption>();
+					for (ActivityOption ao : oaol)
+						if (ao.isSelected() || ao.isLockedIn()) {
+							List<SecondaryActivityOptions> osol = ao
+									.getSecondaryOptions();
+							List<SecondaryActivityOptions> sol = new ArrayList<SecondaryActivityOptions>(
+									osol.size());
+							for (SecondaryActivityOptions so : osol) {
+								List<ActivityOption> osaol = so
+										.getActivityOptions();
+								List<ActivityOption> saol = new ArrayList<ActivityOption>(
+										osaol.size());
+								for (ActivityOption sao : osaol)
+									if (sao.isSelected() || sao.isLockedIn())
+										saol.add(sao);
+								if (saol.isEmpty()) {
+									LOG.warn("Course option is selected, but has no selected activities for "
+											+ ao.getRegistrationCode()
+											+ " "
+											+ so.getActivityTypeDescription()
+											+ " "
+											+ c.getCourseId()
+											+ " "
+											+ c.getCourseCode());
+									empty = true;
+									break course;
+								}
+								SecondaryActivityOptionsInfo soi = new SecondaryActivityOptionsInfo(
+										so);
+								soi.setActivityOptions(saol);
+								sol.add(soi);
+							}
+							ActivityOptionInfo aoi = new ActivityOptionInfo(ao);
+							aoi.setSecondaryOptions(sol);
+							aol.add(aoi);
+						}
+					if (aol.isEmpty()) {
+						LOG.warn("Course option is selected, but has no selected activities "
+								+ c.getCourseId() + " " + c.getCourseCode());
+						empty = true;
+						break course;
+					}
+					CourseOptionInfo ci = new CourseOptionInfo(c);
+					ci.setActivityOptions(aol);
+					co.add(ci);
+				}
+		this.empty = empty;
 		this.courseOptions = Collections.unmodifiableList(co);
 
 		currentPrimaryActivityIndex = new int[co.size()];
@@ -238,80 +287,151 @@ public class ScheduleBuilder implements Serializable {
 	}
 
 	/**
+	 * Queue course indexes for the current run, considering locked-in courses
+	 * first followed by selected course.
+	 * 
+	 * @param courseQueue
+	 */
+	private void prepareCourseQueue(Queue<Integer> courseQueue) {
+		courseQueue.clear();
+		int courseOptionsLength = courseOptions.size();
+		for (int i = 0; i < courseOptionsLength; i++) {
+			int courseIndex = currentCourseIndex + i;
+			if (courseIndex >= courseOptionsLength)
+				courseIndex -= courseOptionsLength;
+			CourseOption courseOption = courseOptions.get(courseIndex);
+
+			if (courseOption.isLockedIn())
+				courseQueue.offer(courseIndex);
+		}
+		for (int i = 0; i < courseOptionsLength; i++) {
+			int courseIndex = currentCourseIndex + i;
+			if (courseIndex >= courseOptionsLength)
+				courseIndex -= courseOptionsLength;
+			CourseOption courseOption = courseOptions.get(courseIndex);
+
+			if (!courseOption.isLockedIn() && courseOption.isSelected())
+				courseQueue.offer(courseIndex);
+		}
+	}
+
+	/**
 	 * Step forward to the next course and activity option combination.
 	 * 
 	 * @return True if this step has rolled the options over to the initial
 	 *         state, false if the initial state has not reached.
 	 */
-	private boolean step() {
+	private boolean step(Queue<Integer> courseQueue) {
 		if (currentPrimaryActivityIndex.length < 1)
 			return true;
 
-		// Operate on the next course option, stepping backward
-		int lastCourseIndex = courseOptions.size() - 1;
-		currentCourseIndex = currentCourseIndex == 0 ? lastCourseIndex
-				: currentCourseIndex - 1;
+		boolean conflict;
 
-		int primaryActivityIndex = currentPrimaryActivityIndex[currentCourseIndex];
-		int[] secondaryActivityIndex = currentSecondaryActivityIndex[currentCourseIndex][primaryActivityIndex];
-		if (secondaryActivityIndex.length > 0) {
-			// increment current secondary option activity index, stepping
-			// forward.
-			int secondaryOptionIndex = currentSecondaryOptionIndex[currentCourseIndex][primaryActivityIndex];
-			int secondaryOptionActivityIndex = secondaryActivityIndex[secondaryOptionIndex] + 1;
-			if (secondaryOptionActivityIndex >= limitSecondaryOption[currentCourseIndex][primaryActivityIndex][secondaryOptionIndex])
-				secondaryOptionActivityIndex = 0;
-			secondaryActivityIndex[secondaryOptionIndex] = secondaryOptionActivityIndex;
+		do {
+			increment: {
+				// Operate on the next course option, stepping backward
+				int lastCourseIndex = courseOptions.size() - 1;
+				currentCourseIndex = currentCourseIndex == 0 ? lastCourseIndex
+						: currentCourseIndex - 1;
 
-			// increment current secondary option index, stepping forward.
-			secondaryOptionIndex += 1;
-			if (secondaryOptionIndex >= secondaryActivityIndex.length)
-				secondaryOptionIndex = 0;
-			currentSecondaryOptionIndex[currentCourseIndex][primaryActivityIndex] = secondaryOptionIndex;
+				int primaryActivityIndex = currentPrimaryActivityIndex[currentCourseIndex];
+				int[] secondaryActivityIndex = currentSecondaryActivityIndex[currentCourseIndex][primaryActivityIndex];
+				if (secondaryActivityIndex.length > 0) {
+					// increment current secondary option activity index,
+					// stepping
+					// forward.
+					int secondaryOptionIndex = currentSecondaryOptionIndex[currentCourseIndex][primaryActivityIndex];
+					int secondaryOptionActivityIndex = secondaryActivityIndex[secondaryOptionIndex] + 1;
+					if (secondaryOptionActivityIndex >= limitSecondaryOption[currentCourseIndex][primaryActivityIndex][secondaryOptionIndex])
+						secondaryOptionActivityIndex = 0;
+					secondaryActivityIndex[secondaryOptionIndex] = secondaryOptionActivityIndex;
 
-			// Not the last secondary option for the current primary, return
-			// without rollover
-			if (secondaryOptionActivityIndex > 0 || secondaryOptionIndex > 0)
-				return false;
-		}
+					// increment current secondary option index, stepping
+					// forward.
+					secondaryOptionIndex += 1;
+					if (secondaryOptionIndex >= secondaryActivityIndex.length)
+						secondaryOptionIndex = 0;
+					currentSecondaryOptionIndex[currentCourseIndex][primaryActivityIndex] = secondaryOptionIndex;
 
-		// increment current primary activity index, stepping forward.
-		primaryActivityIndex += 1;
-		if (primaryActivityIndex >= currentSecondaryActivityIndex[currentCourseIndex].length)
-			primaryActivityIndex = 0;
-		currentPrimaryActivityIndex[currentCourseIndex] = primaryActivityIndex;
+					// Not the last secondary option for the current primary,
+					// return
+					// without rollover
+					if (secondaryOptionActivityIndex > 0
+							|| secondaryOptionIndex > 0)
+						break increment;
+				}
 
-		// Determine whether or not rollover has taken place, and return
-		if (currentCourseIndex == 0) {
-			assert currentPrimaryActivityIndex.length == currentSecondaryActivityIndex.length;
-			for (int i = 0; i < currentSecondaryActivityIndex.length; i++) {
-				if (currentPrimaryActivityIndex[i] > 0)
-					return false;
-				for (int j = 0; j < currentSecondaryActivityIndex[i].length; j++)
-					for (int k = 0; k < currentSecondaryActivityIndex[i][j].length; k++)
-						if (currentSecondaryActivityIndex[i][j][k] > 0)
-							return false;
+				// increment current primary activity index, stepping forward.
+				primaryActivityIndex += 1;
+				if (primaryActivityIndex >= currentSecondaryActivityIndex[currentCourseIndex].length)
+					primaryActivityIndex = 0;
+				currentPrimaryActivityIndex[currentCourseIndex] = primaryActivityIndex;
+
+				// Determine whether or not rollover has taken place, and return
+				if (currentCourseIndex == 0) {
+					assert currentPrimaryActivityIndex.length == currentSecondaryActivityIndex.length;
+					for (int i = 0; i < currentSecondaryActivityIndex.length; i++) {
+						if (currentPrimaryActivityIndex[i] > 0)
+							break increment;
+						for (int j = 0; j < currentSecondaryActivityIndex[i].length; j++)
+							for (int k = 0; k < currentSecondaryActivityIndex[i][j].length; k++)
+								if (currentSecondaryActivityIndex[i][j][k] > 0)
+									break increment;
+					}
+					primaryConflicts.clear();
+					return true;
+				}
 			}
-			return true;
-		} else
-			return false;
+
+			conflict = false;
+			long hash = (long) currentCourseIndex;
+			prepareCourseQueue(courseQueue);
+			conflict: while (!conflict && !courseQueue.isEmpty()) {
+
+				int courseIndex = courseQueue.poll();
+				int activityOptionIndex = currentPrimaryActivityIndex[courseIndex];
+				hash = hash * 127L + (long) activityOptionIndex;
+				if (conflict = primaryConflicts.contains(hash))
+					break conflict;
+
+				int[] secondaryActivityIndex = currentSecondaryActivityIndex[courseIndex][activityOptionIndex];
+				long shash = hash;
+				for (int j = 0; j < secondaryActivityIndex.length; j++) {
+					int sidx = secondaryActivityIndex[j];
+					shash = shash * 31L + (long) sidx;
+					if (conflict = primaryConflicts.contains(shash))
+						break conflict;
+				}
+			}
+
+		} while (conflict);
+
+		return false;
 	}
 
 	public List<PossibleScheduleOption> getNext(int count,
 			Set<PossibleScheduleOption> current) {
+		if (empty) {
+			if (LOG.isDebugEnabled())
+				LOG.debug("Schedule builder is marked as empty, at least one course "
+						+ "option has not associated activity options");
+			return Collections.emptyList();
+		}
+
 		boolean rolled = false;
 		boolean done = false;
-		int courseOptionsLength = courseOptions.size();
 		Calendar tempCalendar = Calendar.getInstance();
 		Date[] sundays = getSundays(term, tempCalendar);
 		long[][][] days = new long[sundays.length][7][5];
 		int iterationCount = 0;
+		int iterationsSinceLast = 0;
 		if (generated == null) {
 			assert !hasMore;
 			generated = new HashSet<PossibleScheduleOption>();
 		}
-		List<PossibleScheduleOption> rv = new ArrayList<PossibleScheduleOption>(
-				count);
+
+		Queue<Integer> courseQueue = new LinkedList<Integer>();
+		List<PossibleScheduleOption> rv = new ArrayList<PossibleScheduleOption>(count);
 		List<ActivityOption> possibleActivityOptions = new java.util.LinkedList<ActivityOption>();
 
 		StringBuilder msg = null;
@@ -319,19 +439,32 @@ public class ScheduleBuilder implements Serializable {
 			msg = new StringBuilder("Schedule build run\nCourses:");
 			for (CourseOption co : courseOptions) {
 				msg.append("\n  ").append(co.getCourseCode());
+				if (co.isSelected())
+					msg.append(" selected");
+				if (co.isLockedIn())
+					msg.append(" locked-in");
 				for (ActivityOption pao : co.getActivityOptions())
-					if (pao.isSelected()) {
+					if (pao.isSelected() || pao.isLockedIn()) {
 						msg.append("\n    Primary ").append(
 								pao.getRegistrationCode());
+						if (pao.isSelected())
+							msg.append(" selected");
+						if (pao.isLockedIn())
+							msg.append(" locked-in");
 						for (SecondaryActivityOptions so : pao
 								.getSecondaryOptions()) {
 							for (ActivityOption sao : so.getActivityOptions()) {
-								if (sao.isSelected() || sao.isLockedIn())
+								if (sao.isSelected() || sao.isLockedIn()) {
 									msg.append("\n    ")
 											.append(so
 													.getActivityTypeDescription())
 											.append(" ")
 											.append(pao.getRegistrationCode());
+									if (sao.isSelected())
+										msg.append(" selected");
+									if (sao.isLockedIn())
+										msg.append(" locked-in");
+								}
 							}
 						}
 					}
@@ -339,8 +472,6 @@ public class ScheduleBuilder implements Serializable {
 		}
 
 		do {
-			BigDecimal minCreditSum = BigDecimal.ZERO;
-			BigDecimal maxCreditSum = BigDecimal.ZERO;
 			possibleActivityOptions.clear();
 			for (int i = 0; i < sundays.length; i++)
 				for (int j = 0; j < 7; j++)
@@ -349,34 +480,41 @@ public class ScheduleBuilder implements Serializable {
 			for (ReservedTime reservedTime : reservedTimes)
 				if (reservedTime.isSelected())
 					checkForConflicts(reservedTime, sundays, days, tempCalendar);
-			boolean loadLimit = false;
+
 			boolean allCourses = true;
 			if (msg != null)
 				msg.append("\nIteration ").append(++iterationCount);
-			course: for (int i = 0; !loadLimit && i < courseOptionsLength; i++) {
-				int courseIndex = currentCourseIndex + i;
-				if (courseIndex >= courseOptionsLength)
-					courseIndex -= courseOptionsLength;
+			iterationsSinceLast++;
+
+			long hash = (long) currentCourseIndex;
+			prepareCourseQueue(courseQueue);
+			course: while (!courseQueue.isEmpty()) {
+				int courseIndex = courseQueue.poll();
 				CourseOption courseOption = courseOptions.get(courseIndex);
 				if (msg != null)
 					msg.append(" co ").append(courseOption.getCourseCode());
 
 				int activityOptionIndex = currentPrimaryActivityIndex[courseIndex];
+				hash = hash * 127L + (long) activityOptionIndex;
+
 				ActivityOption primary = courseOption.getActivityOptions().get(
 						activityOptionIndex);
 				if (msg != null)
 					msg.append(" pri ").append(primary.getRegistrationCode());
 
+				if (!checkForConflicts(primary, sundays, days, tempCalendar)
+						&& !courseOption.isLockedIn()) {
+					if (msg != null)
+						msg.append(" conflict");
+					primaryConflicts.add(hash);
+					allCourses = false;
+					break course;
+				}
+
 				int[] secondaryActivityIndex = currentSecondaryActivityIndex[courseIndex][activityOptionIndex];
 				if (primary.isEnrollmentGroup()) {
 					if (msg != null)
 						msg.append(" block");
-					if (!primary.isSelected()) {
-						if (msg != null)
-							msg.append(" not selected");
-						allCourses = false;
-						continue course;
-					}
 					for (int j = 0; j < secondaryActivityIndex.length; j++) {
 						List<ActivityOption> secondaryActivityOptions = primary
 								.getSecondaryOptions().get(j)
@@ -393,47 +531,33 @@ public class ScheduleBuilder implements Serializable {
 								if (msg != null)
 									msg.append(" conflict");
 								allCourses = false;
-								continue course;
+								break course;
 							}
 						}
 					}
 				} else {
-					if (msg != null)
-						msg.append(" section");
-					if (!primary.isSelected()
-							|| !checkForConflicts(primary, sundays, days,
-									tempCalendar)) {
-						if (msg != null)
-							msg.append(" conflict");
-						allCourses = false;
-						continue course;
-					}
+					long shash = hash;
 					for (int j = 0; j < secondaryActivityIndex.length; j++) {
+						int sidx = secondaryActivityIndex[j];
 						ActivityOption secondary = primary
 								.getSecondaryOptions().get(j)
-								.getActivityOptions()
-								.get(secondaryActivityIndex[j]);
+								.getActivityOptions().get(sidx);
+						shash = shash * 31L + (long) sidx;
 						if (msg != null)
 							msg.append(" sec ").append(
 									secondary.getRegistrationCode());
-						if (!secondary.isSelected()
+						if ((!secondary.isSelected() && !secondary.isLockedIn())
 								|| !checkForConflicts(secondary, sundays, days,
 										tempCalendar)) {
+							primaryConflicts.add(shash);
 							if (msg != null)
 								msg.append(" conflict");
 							allCourses = false;
-							continue course;
+							break course;
 						}
 					}
 				}
-				minCreditSum = minCreditSum.add(primary.getMinCredits());
-				if (loadLimit = minCreditSum.compareTo(maxCredits) >= 0) {
-					if (msg != null)
-						msg.append(" overload");
-					allCourses = false;
-					continue course;
-				}
-				maxCreditSum = maxCreditSum.add(primary.getMaxCredits());
+
 				possibleActivityOptions.add(primary);
 				for (int j = 0; j < secondaryActivityIndex.length; j++) {
 					SecondaryActivityOptions secondaryActivityOptions = primary
@@ -448,7 +572,8 @@ public class ScheduleBuilder implements Serializable {
 										secondaryActivityIndex[j]));
 				}
 			}
-			if (allCourses || maxCreditSum.compareTo(minCredits) >= 0) {
+
+			if (allCourses) {
 				PossibleScheduleOptionInfo pso = new PossibleScheduleOptionInfo();
 				pso.setUniqueId(UUID.randomUUID().toString());
 				Collections.sort(possibleActivityOptions,
@@ -479,6 +604,7 @@ public class ScheduleBuilder implements Serializable {
 					if (msg != null)
 						msg.append(" dup-current");
 				} else {
+					iterationsSinceLast = 0;
 					String descr = "Schedule " + (++scheduleNumber);
 					pso.setDescription(descr);
 					rv.add(pso);
@@ -491,10 +617,9 @@ public class ScheduleBuilder implements Serializable {
 									.append(ao.getRegistrationCode());
 					}
 				}
-			} else if (msg != null)
-				msg.append(" underload");
+			}
 
-			boolean justRolled = step();
+			boolean justRolled = step(courseQueue);
 			if (justRolled) {
 				scheduleNumber = 0;
 				rolled = true;
@@ -507,6 +632,11 @@ public class ScheduleBuilder implements Serializable {
 				generated = new HashSet<PossibleScheduleOption>();
 			}
 			done = rv.size() >= count || (justRolled && !hasMore);
+			if (iterationsSinceLast > 50000) {
+				done = true;
+				if (msg != null)
+					msg.append(" !loop");
+			}
 			if (msg != null) {
 				if (justRolled)
 					msg.append(" just");

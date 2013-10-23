@@ -14,11 +14,25 @@ import org.kuali.student.ap.sb.infc.CourseOption;
 public interface ShoppingCartForm extends PlanItemForm {
 
 	/**
+	 * Session attribute key used for passing schedule options between schedule
+	 * build and shopping cart.
+	 */
+	static final String POSSIBLE_OPTIONS_KEY = ShoppingCartForm.class.getName()
+			+ ".scheduleOptions";
+
+	/**
 	 * Get the requested activity offering ID, if applicable.
 	 * 
 	 * @return The requested activity offering ID.
 	 */
 	String getActivityOfferingId();
+
+	/**
+	 * Get the possible schedule ID.
+	 * 
+	 * @return The possible schedule ID.
+	 */
+	String getPossibleScheduleId();
 
 	/**
 	 * Get the course options for driving the shopping cart request.

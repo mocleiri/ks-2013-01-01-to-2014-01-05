@@ -34,12 +34,6 @@ public class DefaultScheduleBuildForm extends UifFormBase implements
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DefaultScheduleBuildForm.class);
 
-	private static final BigDecimal FIFTEEN = new BigDecimal("15");
-
-	private static final BigDecimal EIGHTEEN = new BigDecimal("18");
-
-	private static final BigDecimal TWENTYONE = new BigDecimal("21");
-
 	private int possibleScheduleSize = 10;
 	private boolean overload;
 
@@ -205,8 +199,7 @@ public class DefaultScheduleBuildForm extends UifFormBase implements
 			}
 
 		} else {
-			scheduleBuilder = new ScheduleBuilder(getTerm(), courseOptions,
-					FIFTEEN, overload ? TWENTYONE : EIGHTEEN, reservedTimes);
+			scheduleBuilder = new ScheduleBuilder(getTerm(), courseOptions, reservedTimes);
 			possibleScheduleOptions = getScheduleBuilder().getNext(
 					possibleScheduleSize,
 					Collections.<PossibleScheduleOption> emptySet());

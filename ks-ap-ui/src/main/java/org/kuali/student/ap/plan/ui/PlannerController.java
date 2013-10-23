@@ -17,7 +17,6 @@ import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
 import org.kuali.student.ap.framework.context.PlanConstants;
 import org.kuali.student.ap.framework.util.KsapStringUtil;
 import org.kuali.student.ap.plan.PlannerForm;
-import org.kuali.student.ap.plan.support.DefaultPlannerForm;
 import org.kuali.student.ap.plan.support.PlanItemControllerHelper;
 import org.kuali.student.ap.plan.util.PlanEventUtils;
 import org.kuali.student.enrollment.acal.infc.Term;
@@ -154,7 +153,7 @@ public class PlannerController extends UifControllerBase {
 
 	@Override
 	protected UifFormBase createInitialForm(HttpServletRequest request) {
-		return new DefaultPlannerForm();
+		return new PlannerFormImpl();
 	}
 
 	@RequestMapping(method = RequestMethod.GET)

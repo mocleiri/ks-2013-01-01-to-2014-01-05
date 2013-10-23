@@ -18,9 +18,11 @@ import org.kuali.student.r2.common.infc.RichText;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "course", "term", "primaryRegistrationCode", "secondaryRegistrationCode", "credits",
-		"addToCart", "processed", "error", "message", "_futureElements" })
-public class ShoppingCartRequestInfo implements ShoppingCartRequest, Serializable {
+@XmlType(propOrder = { "course", "term", "primaryRegistrationCode",
+		"secondaryRegistrationCode", "credits", "addToCart", "processed",
+		"error", "message", "_futureElements" })
+public class ShoppingCartRequestInfo implements ShoppingCartRequest,
+		Serializable {
 
 	private static final long serialVersionUID = 4958010630613010777L;
 
@@ -42,7 +44,7 @@ public class ShoppingCartRequestInfo implements ShoppingCartRequest, Serializabl
 	private boolean error;
 	@XmlElement
 	private RichTextInfo message;
-	@SuppressWarnings("unused")
+
 	@XmlAnyElement
 	private List<?> _futureElements;
 
@@ -121,7 +123,8 @@ public class ShoppingCartRequestInfo implements ShoppingCartRequest, Serializabl
 		return secondaryRegistrationCodes;
 	}
 
-	public void setSecondaryRegistrationCodes(List<String> secondaryRegistrationCodes) {
+	public void setSecondaryRegistrationCodes(
+			List<String> secondaryRegistrationCodes) {
 		this.secondaryRegistrationCodes = secondaryRegistrationCodes;
 	}
 
@@ -144,11 +147,14 @@ public class ShoppingCartRequestInfo implements ShoppingCartRequest, Serializabl
 
 	@Override
 	public String toString() {
-		return "ShoppingCartRequestInfo [course=" + (course == null ? "null" : course.getId()) + ", term="
-				+ (term == null ? "null" : term.getId()) + ", primaryRegistrationCode=" + primaryRegistrationCode
-				+ ", secondaryRegistrationCodes=" + secondaryRegistrationCodes + ", credits=" + credits
-				+ ", addToCart=" + addToCart + ", processed=" + processed + ", error=" + error + ", message=" + message
-				+ "]";
+		return "ShoppingCartRequestInfo [course="
+				+ (course == null ? "null" : course.getId()) + ", term="
+				+ (term == null ? "null" : term.getId())
+				+ ", primaryRegistrationCode=" + primaryRegistrationCode
+				+ ", secondaryRegistrationCodes=" + secondaryRegistrationCodes
+				+ ", credits=" + credits + ", addToCart=" + addToCart
+				+ ", processed=" + processed + ", error=" + error
+				+ ", message=" + message + "]";
 	}
 
 }

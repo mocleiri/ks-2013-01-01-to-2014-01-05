@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -12,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
@@ -22,6 +24,7 @@ import org.kuali.student.ap.sb.ShoppingCartForm;
 import org.kuali.student.ap.sb.ShoppingCartRequest;
 import org.kuali.student.ap.sb.ShoppingCartStrategy;
 import org.kuali.student.ap.sb.infc.CourseOption;
+import org.kuali.student.ap.sb.infc.PossibleScheduleOption;
 import org.kuali.student.enrollment.acal.infc.Term;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.infc.LearningPlan;
@@ -51,6 +54,7 @@ public class ShoppingCartController extends UifControllerBase {
 
 	private static final String SB_CART_FORM = "ShoppingCart-FormView";
 	private static final String SB_ADD_FROM_PLAN_PAGE = "sb_cart_add_from_plan_page";
+	private static final String SB_ADD_FROM_SB = "sb_cart_add_from_sb";
 	private static final String SB_REMOVE_PAGE = "sb_cart_remove_page";
 
 	private ModelAndView startPlannerDialog(
@@ -90,6 +94,55 @@ public class ShoppingCartController extends UifControllerBase {
 	protected UifFormBase createInitialForm(HttpServletRequest request) {
 		return (UifFormBase) KsapFrameworkServiceLocator
 				.getScheduleBuildStrategy().getInitialCartForm();
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = "pageId="
+			+ SB_ADD_FROM_SB)
+	public ModelAndView startAddFromScheduleBuild(
+			@ModelAttribute("KualiForm") ShoppingCartForm form,
+			BindingResult result, HttpServletRequest request,
+			HttpServletResponse response) throws IOException, ServletException {
+
+		Term term = form.getTerm();
+		if (!form.isPublished() || !form.isPlanning()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Term "
+					+ form.getTerm() + " not found");
+			return null;
+		}
+
+		String psoid = form.getPossibleScheduleId();
+		if (psoid == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					"Possible schedules have not been populated");
+			return null;
+		}
+
+		@SuppressWarnings("unchecked")
+		Map<String, PossibleScheduleOption> psomap = (Map<String, PossibleScheduleOption>) GlobalVariables
+				.getUserSession().getObjectMap()
+				.get(ShoppingCartForm.POSSIBLE_OPTIONS_KEY);
+		if (psomap == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					"Possible schedules have not been populated");
+			return null;
+		}
+
+		PossibleScheduleOption pso = psomap.get(psoid);
+		if (pso == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					"Invalid possible schedule ID " + psoid);
+			return null;
+		}
+		
+		ShoppingCartStrategy shoppingCartStrategy = KsapFrameworkServiceLocator
+				.getShoppingCartStrategy();
+		form.setShoppingCartRequests(shoppingCartStrategy.createRequests(
+				form.getLearningPlanId(), term, pso));
+
+		UifFormBase uifForm = (UifFormBase) form;
+		uifForm.setViewId(SB_CART_FORM);
+		uifForm.setView(super.getViewService().getViewById(SB_CART_FORM));
+		return getUIFModelAndView(uifForm);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "pageId="

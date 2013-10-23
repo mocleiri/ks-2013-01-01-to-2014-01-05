@@ -12,6 +12,7 @@ public class DefaultShoppingCartForm extends AbstractPlanItemForm implements Sho
 	private static final long serialVersionUID = 674405491584786921L;
 
 	private String activityOfferingId;
+	private String possibleScheduleId;
 
 	private List<ShoppingCartRequest> shoppingCartRequests;
 	private List<CourseOption> courseOptions;
@@ -23,6 +24,15 @@ public class DefaultShoppingCartForm extends AbstractPlanItemForm implements Sho
 
 	public void setActivityOfferingId(String activityOfferingId) {
 		this.activityOfferingId = activityOfferingId;
+	}
+
+	@Override
+	public String getPossibleScheduleId() {
+		return possibleScheduleId;
+	}
+
+	public void setPossibleScheduleId(String possibleScheduleId) {
+		this.possibleScheduleId = possibleScheduleId;
 	}
 
 	public List<ShoppingCartRequest> getShoppingCartRequests() {

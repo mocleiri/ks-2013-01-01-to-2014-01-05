@@ -4,7 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
 import org.kuali.student.ap.framework.context.CourseHelper;
@@ -17,10 +22,18 @@ import org.kuali.student.ap.sb.dto.ActivityOptionInfo;
 import org.kuali.student.ap.sb.dto.CourseOptionInfo;
 import org.kuali.student.ap.sb.infc.ActivityOption;
 import org.kuali.student.ap.sb.infc.CourseOption;
+import org.kuali.student.ap.sb.infc.PossibleScheduleOption;
 import org.kuali.student.ap.sb.infc.SecondaryActivityOptions;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.infc.Term;
+import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.infc.PlanItem;
+import org.kuali.student.myplan.academicplan.service.AcademicPlanService;
+import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.common.exceptions.InvalidParameterException;
+import org.kuali.student.r2.common.exceptions.MissingParameterException;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.infc.Attribute;
 
 public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
@@ -136,6 +149,125 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 			requests.add(cartRequest);
 		}
 		return requests;
+	}
+
+	private void buildExistingCartOptions(String learningPlanId,
+			TermInfo termInfo, Map<String, ShoppingCartRequestInfo> rmap) {
+		AcademicPlanService academicPlanService = KsapFrameworkServiceLocator
+				.getAcademicPlanService();
+		ContextInfo context = KsapFrameworkServiceLocator.getContext()
+				.getContextInfo();
+		List<PlanItemInfo> planItems;
+		try {
+			planItems = academicPlanService.getPlanItemsInPlanByType(
+					learningPlanId, PlanConstants.LEARNING_PLAN_ITEM_TYPE_CART,
+					context);
+		} catch (DoesNotExistException e) {
+			throw new IllegalArgumentException("CO lookup failure", e);
+		} catch (InvalidParameterException e) {
+			throw new IllegalArgumentException("CO lookup failure", e);
+		} catch (MissingParameterException e) {
+			throw new IllegalArgumentException("CO lookup failure", e);
+		} catch (OperationFailedException e) {
+			throw new IllegalArgumentException("CO lookup failure", e);
+		}
+
+		for (PlanItemInfo planItem : planItems) {
+			if (!PlanConstants.COURSE_TYPE.equals(planItem.getRefObjectType()))
+				continue;
+
+			List<String> periods = planItem.getPlanPeriods();
+			if (periods == null || !periods.contains(termInfo.getId()))
+				continue;
+
+			String acodeattr = planItem.getAttributeValue("activityCode");
+			List<String> acodes;
+			if (acodeattr == null || acodeattr.isEmpty())
+				continue;
+			else
+				acodes = Arrays.asList(acodeattr.split(","));
+
+			String courseId = planItem.getRefObjectId();
+			ShoppingCartRequestInfo cartRequest = new ShoppingCartRequestInfo();
+			cartRequest.setAddToCart(false);
+			cartRequest.setCourse(KsapFrameworkServiceLocator.getCourseHelper()
+					.getCourseInfo(courseId));
+			cartRequest.setPrimaryRegistrationCode(acodes.get(0));
+			if (acodes.size() > 1)
+				cartRequest.setSecondaryRegistrationCodes(acodes.subList(1,
+						acodes.size()));
+			else
+				cartRequest.setSecondaryRegistrationCodes(Collections
+						.<String> emptyList());
+			cartRequest.setTerm(termInfo);
+		}
+
+	}
+
+	@Override
+	public List<ShoppingCartRequest> createRequests(String learningPlanId,
+			Term term, PossibleScheduleOption schedule) {
+		TermInfo termInfo = new TermInfo(term);
+		Map<String, ShoppingCartRequestInfo> rmap = new LinkedHashMap<String, ShoppingCartRequestInfo>();
+		buildExistingCartOptions(learningPlanId, termInfo, rmap);
+
+		Map<String, List<ActivityOption>> aomap = new LinkedHashMap<String, List<ActivityOption>>();
+		for (ActivityOption ao : schedule.getActivityOptions()) {
+			List<ActivityOption> aol = aomap.get(ao.getCourseId());
+			if (aol == null)
+				aomap.put(ao.getCourseId(),
+						aol = new ArrayList<ActivityOption>());
+			aol.add(ao);
+		}
+
+		List<ShoppingCartRequest> rv = new ArrayList<ShoppingCartRequest>(
+				aomap.size() + rmap.size());
+		for (Entry<String, List<ActivityOption>> aoe : aomap.entrySet()) {
+			String courseId = aoe.getKey();
+
+			ShoppingCartRequestInfo cartRequest = rmap.remove(courseId);
+			if (cartRequest != null) {
+				Set<String> acodes = new HashSet<String>();
+				acodes.add(cartRequest.getPrimaryRegistrationCode());
+				for (String regcode : cartRequest
+						.getSecondaryRegistrationCodes())
+					acodes.add(regcode);
+				if (acodes.size() != aoe.getValue().size()) {
+					rv.add(cartRequest);
+					cartRequest = null;
+				} else
+					aoloop: for (ActivityOption ao : aoe.getValue()) {
+						if (!acodes.contains(ao.getRegistrationCode())) {
+							rv.add(cartRequest);
+							cartRequest = null;
+							break aoloop;
+						} else
+							acodes.remove(ao.getRegistrationCode());
+					}
+			}
+
+			if (cartRequest == null) {
+				cartRequest = new ShoppingCartRequestInfo();
+				cartRequest.setAddToCart(true);
+				cartRequest.setCourse(KsapFrameworkServiceLocator
+						.getCourseHelper().getCourseInfo(courseId));
+				List<ActivityOption> aol = aoe.getValue();
+				cartRequest.setPrimaryRegistrationCode(aol.get(0)
+						.getRegistrationCode());
+				if (aol.size() > 1) {
+					List<String> scodes = new ArrayList<String>(aol.size() - 1);
+					for (ActivityOption ao : aol.subList(1, aol.size()))
+						scodes.add(ao.getRegistrationCode());
+					cartRequest.setSecondaryRegistrationCodes(scodes);
+				} else
+					cartRequest.setSecondaryRegistrationCodes(Collections
+							.<String> emptyList());
+				cartRequest.setTerm(termInfo);
+				rv.add(cartRequest);
+			}
+		}
+
+		return rv;
 	}
 
 	@Override

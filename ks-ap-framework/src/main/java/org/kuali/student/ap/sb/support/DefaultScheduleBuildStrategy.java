@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 
@@ -43,6 +44,7 @@ import org.kuali.student.ap.sb.infc.CourseOption;
 import org.kuali.student.ap.sb.infc.PossibleScheduleOption;
 import org.kuali.student.ap.sb.infc.ReservedTime;
 import org.kuali.student.ap.sb.infc.SecondaryActivityOptions;
+import org.kuali.student.enrollment.academicrecord.dto.StudentCourseRecordInfo;
 import org.kuali.student.enrollment.acal.infc.Term;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingDisplayInfo;
 import org.kuali.student.myplan.academicplan.dto.LearningPlanInfo;
@@ -362,6 +364,7 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 				ActivityOptionInfo activityOption = new ActivityOptionInfo();
 				activityOption.setCourseIndex(courseIndex);
 				activityOption.setUniqueId(UUID.randomUUID().toString());
+				activityOption.setCourseId(courseId);
 				activityOption.setActivityOfferingId(aodi.getId());
 				activityOption.setActivityTypeDescription(aodi.getTypeName());
 				activityOption.setCourseOfferingCode((campusCode == null ? ""
@@ -546,9 +549,117 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 		return rv;
 	}
 
+	private void buildCourseOptions(String termId, boolean courseLockIn, boolean lockIn,
+			Map<String, List<String>> courseIdsActivityCodes, List<CourseOption> rv) {
+		if (!courseIdsActivityCodes.isEmpty()) {
+			StringBuilder msg = null;
+			if (LOG.isDebugEnabled()) {
+				msg = new StringBuilder("Course options for ");
+				msg.append(termId);
+				msg.append("\nCourse lock-in ? ");
+				msg.append(courseLockIn);
+				msg.append("\nActivity lock-in ? ");
+				msg.append(lockIn);
+				msg.append("\nSelections :");
+				msg.append(courseIdsActivityCodes);
+			}
+			Queue<ActivityOptionInfo> toCourseLockIn = courseLockIn
+					? new LinkedList<ActivityOptionInfo>() : null;
+			for (CourseOption co : getCourseOptions(new ArrayList<String>(
+					courseIdsActivityCodes.keySet()), termId)) {
+				List<String> acodes = courseIdsActivityCodes.get(co
+						.getCourseId());
+				if (msg != null) {
+					msg.append("\n  Course ").append(co.getCourseCode());
+					msg.append(" ").append(co.getCourseId());
+					msg.append(" ").append(acodes);
+				}
+				boolean found = false;
+				for (ActivityOption ao : co.getActivityOptions()) {
+					ActivityOptionInfo aoi = (ActivityOptionInfo) ao;
+
+					if (courseLockIn)
+						if (found)
+							aoi.setCourseLockedIn(true);
+						else
+							toCourseLockIn.add(aoi);
+
+					boolean foundHere = false;
+					if (acodes.isEmpty()
+							|| acodes.contains(ao.getRegistrationCode())) {
+						aoi.setSelected(true);
+						if (lockIn)
+							aoi.setLockedIn(true);
+						foundHere = found = true;
+					}
+					if (msg != null) {
+						msg.append("\n    Activity ")
+								.append(ao.getRegistrationCode()).append(" ")
+								.append(ao.getActivityOfferingId());
+						if (found)
+							msg.append(" found");
+						if (foundHere)
+							msg.append(" here");
+					}
+
+					for (SecondaryActivityOptions so : ao.getSecondaryOptions())
+						if (!so.isEnrollmentGroup())
+							for (ActivityOption sao : so.getActivityOptions()) {
+								ActivityOptionInfo saoi = (ActivityOptionInfo) sao;
+								if (courseLockIn)
+									if (found)
+										saoi.setCourseLockedIn(true);
+									else
+										toCourseLockIn.add(saoi);
+
+								boolean select = foundHere
+										&& (acodes.isEmpty() || acodes
+												.contains(sao
+														.getRegistrationCode()));
+								if (select) {
+									saoi.setSelected(true);
+									if (lockIn)
+										saoi.setLockedIn(true);
+								}
+								if (msg != null) {
+									msg.append("\n      ")
+											.append(so
+													.getActivityTypeDescription())
+											.append(" ")
+											.append(sao.getRegistrationCode())
+											.append(" ")
+											.append(sao.getActivityOfferingId());
+									if (select)
+										msg.append(" selected");
+								}
+
+							}
+				}
+
+				CourseOptionInfo coi = (CourseOptionInfo) co;
+				coi.setSelected(found);
+				if (found && courseLockIn) {
+					coi.setLockedIn(found);
+					while (!toCourseLockIn.isEmpty())
+						toCourseLockIn.poll().setCourseLockedIn(true);
+				}
+
+				rv.add(co);
+			}
+
+			if (msg != null) {
+				LOG.debug(msg);
+			}
+		}
+
+	}
+
 	@Override
 	public List<CourseOption> getCourseOptions(String learningPlanId,
 			String termId) {
+		String studentId = KsapFrameworkServiceLocator.getUserSessionHelper()
+				.getStudentId();
+
 		AcademicPlanService academicPlanService = KsapFrameworkServiceLocator
 				.getAcademicPlanService();
 		ContextInfo context = KsapFrameworkServiceLocator.getContext()
@@ -566,25 +677,56 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 		} catch (OperationFailedException e) {
 			throw new IllegalArgumentException("CO lookup failure", e);
 		}
+
+		List<StudentCourseRecordInfo> completedRecords;
+		try {
+			completedRecords = KsapFrameworkServiceLocator
+					.getAcademicRecordService().getCompletedCourseRecords(
+							studentId, context);
+		} catch (DoesNotExistException e) {
+			throw new IllegalArgumentException("AR lookup failure", e);
+		} catch (InvalidParameterException e) {
+			throw new IllegalArgumentException("AR lookup failure", e);
+		} catch (MissingParameterException e) {
+			throw new IllegalArgumentException("AR lookup failure", e);
+		} catch (OperationFailedException e) {
+			throw new IllegalStateException("AR lookup failure", e);
+		} catch (PermissionDeniedException e) {
+			throw new IllegalStateException("AR lookup failure", e);
+		}
+
+		Map<String, List<String>> registeredCourseIdsAndActivityCodes = new LinkedHashMap<String, List<String>>();
+		for (StudentCourseRecordInfo completedRecord : completedRecords) {
+			if (!termId.equals(completedRecord.getTermName()))
+				continue;
+
+			String acodeattr = completedRecord.getActivityCode();
+			List<String> acodes;
+			if (acodeattr == null) {
+				acodes = Collections.emptyList();
+			} else {
+				acodes = Arrays.asList(acodeattr.split(","));
+			}
+
+			// TODO: switch to attribute, ID is incorrect here
+			// courseId = completedRecord.getAttributeValue("courseId");
+			registeredCourseIdsAndActivityCodes.put(completedRecord.getId(),
+					acodes);
+		}
+
 		Map<String, List<String>> cartCourseIdsAndActivityCodes = new LinkedHashMap<String, List<String>>();
 		Map<String, List<String>> plannedCourseIdsAndActivityCodes = new LinkedHashMap<String, List<String>>();
-		List<String> backupCourseIds = new LinkedList<String>();
-		Iterator<PlanItemInfo> pi = planItems.iterator();
-		while (pi.hasNext()) {
-			PlanItemInfo planItem = pi.next();
 
-			if (!PlanConstants.COURSE_TYPE.equals(planItem.getRefObjectType())) {
-				pi.remove();
+		List<String> backupCourseIds = new LinkedList<String>();
+		for (PlanItemInfo planItem : planItems) {
+			if (!PlanConstants.COURSE_TYPE.equals(planItem.getRefObjectType()))
 				continue;
-			}
 
 			List<String> periods = planItem.getPlanPeriods();
-			if (periods == null || !periods.contains(termId)) {
-				pi.remove();
+			if (periods == null || !periods.contains(termId))
 				continue;
-			}
 
-			String acodeattr = planItem.getAttributeValue("activityCodes");
+			String acodeattr = planItem.getAttributeValue("activityCode");
 			List<String> acodes;
 			if (acodeattr == null) {
 				acodes = Collections.emptyList();
@@ -604,77 +746,20 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 			else if (AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP
 					.equals(type))
 				backupCourseIds.add(planItem.getRefObjectId());
-			else
-				pi.remove();
-
 		}
+
 		List<CourseOption> rv = new ArrayList<CourseOption>(
-				cartCourseIdsAndActivityCodes.size()
+				registeredCourseIdsAndActivityCodes.size()
+						+ cartCourseIdsAndActivityCodes.size()
 						+ plannedCourseIdsAndActivityCodes.size()
 						+ backupCourseIds.size());
-		if (!cartCourseIdsAndActivityCodes.isEmpty()) {
-			for (CourseOption co : getCourseOptions(new ArrayList<String>(
-					cartCourseIdsAndActivityCodes.keySet()), termId)) {
-				List<String> acodes = cartCourseIdsAndActivityCodes.get(co
-						.getCourseId());
-				boolean found = false;
-				for (ActivityOption ao : co.getActivityOptions())
-					if (acodes.contains(ao.getRegistrationCode())) {
-						((ActivityOptionInfo) ao).setSelected(true);
-						((ActivityOptionInfo) ao).setLockedIn(true);
-						found = true;
-						for (SecondaryActivityOptions so : ao
-								.getSecondaryOptions())
-							if (!so.isEnrollmentGroup())
-								for (ActivityOption sao : so
-										.getActivityOptions())
-									if (acodes.contains(sao
-											.getRegistrationCode())) {
-										((ActivityOptionInfo) sao)
-												.setSelected(true);
-										((ActivityOptionInfo) sao)
-												.setLockedIn(true);
-									}
-					}
-				((CourseOptionInfo) co).setSelected(found);
-				((CourseOptionInfo) co).setLockedIn(found);
+		buildCourseOptions(termId, true, true, registeredCourseIdsAndActivityCodes,
+				rv);
+		buildCourseOptions(termId, false, true, cartCourseIdsAndActivityCodes, rv);
+		buildCourseOptions(termId, false, false, plannedCourseIdsAndActivityCodes, rv);
+		if (!backupCourseIds.isEmpty())
+			for (CourseOption co : getCourseOptions(backupCourseIds, termId))
 				rv.add(co);
-			}
-		}
-		if (!plannedCourseIdsAndActivityCodes.isEmpty()) {
-			for (CourseOption co : getCourseOptions(new ArrayList<String>(
-					plannedCourseIdsAndActivityCodes.keySet()), termId)) {
-				List<String> acodes = plannedCourseIdsAndActivityCodes.get(co
-						.getCourseId());
-				boolean found = false;
-				for (ActivityOption ao : co.getActivityOptions()) {
-					boolean selected = (acodes.isEmpty() && !ao.isClosed())
-							|| acodes.contains(ao.getRegistrationCode());
-					if (selected) {
-						((ActivityOptionInfo) ao).setSelected(true);
-						found = true;
-						for (SecondaryActivityOptions so : ao
-								.getSecondaryOptions())
-							for (ActivityOption sao : so.getActivityOptions())
-								if (((acodes.isEmpty() || acodes.size() == 1
-										&& !sao.isClosed()) || acodes
-											.contains(sao.getRegistrationCode()))) {
-									((ActivityOptionInfo) sao)
-											.setSelected(true);
-									((ActivityOptionInfo) sao).setLockedIn(ao
-											.isEnrollmentGroup());
-								}
-					}
-				}
-				((CourseOptionInfo) co).setSelected(found);
-				rv.add(co);
-			}
-		}
-		if (!backupCourseIds.isEmpty()) {
-			for (CourseOption co : getCourseOptions(backupCourseIds, termId)) {
-				rv.add(co);
-			}
-		}
 
 		return rv;
 	}
