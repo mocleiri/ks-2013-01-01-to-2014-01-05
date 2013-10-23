@@ -727,7 +727,7 @@ Then /^the Exam Offerings for Activity Offering should be in a ([^"]*) state$/ d
   end
 end
 
-Then /^the ([^"]*) Exam Offerings? for Activity Offering should be in a ([^"]*) state$/ do |no_of_aos,exp_state|
+Then /^the ([^"]*) Exam Offerings for Activity Offering should be in a ([^"]*) state$/ do |no_of_aos,exp_state|
   on ViewExamOfferings do |page|
     page.ao_table_header_text.should match /for Activity Offering/
     array = page.return_array_of_ao_codes
@@ -753,6 +753,37 @@ Then /^the ([^"]*) Exam Offerings? for Activity Offering should be in a ([^"]*) 
       no_of_eos = no_of_eos + array.length
     end
     no_of_eos.should == no_of_aos.to_i
+  end
+end
+
+Then /^the Exam Offering for Activity Offering should be in a ([^"]*) state$/ do |exp_state|
+  on ViewExamOfferings do |page|
+    page.ao_table_header_text.should match /for Activity Offering/
+    array = page.return_array_of_ao_codes
+    if array != nil
+      array.each do |code|
+        page.eo_by_ao_status(code).should match /#{exp_state}/
+        page.eo_by_ao_days(code).should == ""
+        page.eo_by_ao_st_time(code).should == ""
+        page.eo_by_ao_end_time(code).should == ""
+        page.eo_by_ao_bldg(code).should == ""
+        page.eo_by_ao_room(code).should == ""
+      end
+      no_of_eos = array.length
+    end
+    array = page.return_array_of_ao_codes("CL Leftovers")
+    if array != nil
+      array.each do |code|
+        page.eo_by_ao_status(code, "CL Leftovers").should match /#{exp_state}/
+        page.eo_by_ao_days(code, "CL Leftovers").should == ""
+        page.eo_by_ao_st_time(code, "CL Leftovers").should == ""
+        page.eo_by_ao_end_time(code, "CL Leftovers").should == ""
+        page.eo_by_ao_bldg(code, "CL Leftovers").should == ""
+        page.eo_by_ao_room(code, "CL Leftovers").should == ""
+      end
+      no_of_eos = array.length
+    end
+    no_of_eos.should == 1
   end
 end
 

@@ -99,7 +99,7 @@ class CourseOffering
         :waitlist => nil,
         :grade_format => "",
         :delivery_format_list => [ (make DeliveryFormat ) ],
-        :final_exam_activity => "",
+        :final_exam_activity => nil,
         :honors_flag => "NO",
         :affiliated_person_list => {},
         :affiliated_org_list => {},
