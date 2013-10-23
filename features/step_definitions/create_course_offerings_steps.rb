@@ -9,6 +9,18 @@ When /^I create a Course Offering with "([^"]*)" delivery Formats$/ do |format_t
   @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "ENGL222", :delivery_format_list => delivery_format_list
 end
 
+When /^I create a Course Offering with standard final exam driven by Course Offering and "([^"]*)" as delivery format$/ do |format_type|
+  delivery_format_list = []
+  if format_type == "selected lecture"
+    delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture")
+  else
+    delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture")
+    delivery_format_list << (make DeliveryFormat, :format => "Discussion/Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture")
+  end
+  @course_offering = create CourseOffering, :term=> "201208", :course => "ENGL304", :delivery_format_list => delivery_format_list
+
+end
+
 And /^I create a Course Offering with random Delivery Formats$/ do
   @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM
 end
