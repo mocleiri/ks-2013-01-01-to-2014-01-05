@@ -21,7 +21,7 @@ var KsapScheduleBuild = {
 			return;
 		if (this.pendingBuild != 0)
 			clearTimeout(this.pendingBuild);
-		this.pendingBuild = setTimeout("KsapScheduleBuild.build(false)", 500);
+		this.pendingBuild = setTimeout("KsapScheduleBuild.build(false)", 1250);
 	},
 
 	build : function(more, removeReserved) {
@@ -661,6 +661,7 @@ function updateCourseSelectedCount(courseUniqueId) {
 
 function toggleCourseOption(uniqueId) {
 	var cb = jQuery("#sb-course-option-select-" + uniqueId + "_control");
+	if (cb.length == 0) return;
 	cb.prop("checked", !cb.is(":checked"));
 	toggleCourseOptionSelect(uniqueId);
 }
