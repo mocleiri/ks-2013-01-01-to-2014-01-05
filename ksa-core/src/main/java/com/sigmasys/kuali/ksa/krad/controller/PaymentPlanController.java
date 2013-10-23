@@ -8,10 +8,7 @@ import com.sigmasys.kuali.ksa.krad.model.TransactionTransferModel;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.pb.*;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
+import com.sigmasys.kuali.ksa.model.tp.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
@@ -139,6 +136,40 @@ public class PaymentPlanController extends GenericSearchController {
         populateThirdPartyForm(form);
 
         return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=enrollThirdParty")
+    public ModelAndView enrollThirdParty(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+
+        String memberIdString = request.getParameter("actionParameters[memberId]");
+
+        String planIdString = request.getParameter("actionParameters[planId]");
+        Long planId = Long.parseLong(planIdString);
+
+        thirdPartyTransferService.generateThirdPartyTransfer(planId, memberIdString, new Date());
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, memberIdString + " enrolled.");
+
+        populateThirdPartyForm(form);
+
+        return getUIFModelAndView(form);
+
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeFromThirdPartyQueue")
+    public ModelAndView removeFromThirdPartyQueue(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+
+        String memberIdString = request.getParameter("actionParameters[memberId]");
+
+        String planIdString = request.getParameter("actionParameters[planId]");
+        Long planId = Long.parseLong(planIdString);
+
+        //thirdPartyTransferService.removeThirdPartyPlanMember(planId, memberIdString);
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, memberIdString + " enrolled.");
+
+        populateThirdPartyForm(form);
+
+        return getUIFModelAndView(form);
+
     }
 
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeThirdPartyAccount")
@@ -376,6 +407,8 @@ public class PaymentPlanController extends GenericSearchController {
         String planIdString = request.getParameter("actionParameters[planId]");
         Long planId = Long.parseLong(planIdString);
 
+        String transferDetailIdString = request.getParameter("actionParameters[transferDetailId]");
+        Long transferDetailId = Long.parseLong(transferDetailIdString);
 
         List<ThirdPartyPlanModel> plans = form.getThirdPartyPlans();
         ThirdPartyPlanModel currentPlan = null;
@@ -391,26 +424,26 @@ public class PaymentPlanController extends GenericSearchController {
             currentPlan = new ThirdPartyPlanModel();
             currentPlan.setParent(plan);
         }
+        form.setThirdPartyPlan(currentPlan);
 
-        List<TransactionTransferModel> transferDetails = currentPlan.getThirdPartyTransferDetails();
-        if(transferDetails == null || transferDetails.size() == 0) {
-            TransactionTransferModel transferModel = new TransactionTransferModel();
-            List<ThirdPartyTransferDetail> details = thirdPartyTransferService.getThirdPartyTransferDetails(memberIdString);
-            if(details != null) {
-                for(ThirdPartyTransferDetail detail : details) {
-                    transferModel.setThirdPartyTransferDetail(detail);
-                    if(detail != null && detail.getTransferGroupId() != null) {
-                        List<TransactionTransfer> transfers = transactionTransferService.getTransactionTransfersByGroupId(detail.getTransferGroupId());
-                        transferModel.setTransactionTransfers(transfers);
-                    }
-                    transferDetails.add(transferModel);
-                }
-            }
 
+        ThirdPartyTransferDetail transferDetail = thirdPartyTransferService.getThirdPartyTransferDetail(transferDetailId);
+        transferDetail.getDirectChargeAccount().getCompositeDefaultPersonName();
+
+        // check that the member id passed in matches what's really in the database
+        if( ! memberIdString.equals(transferDetail.getDirectChargeAccount().getId())) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Transfer Detail doesn't match selected user.");
+            return getUIFModelAndView(form);
         }
 
+        TransactionTransferModel model = new TransactionTransferModel();
+        model.setThirdPartyTransferDetail(transferDetail);
+        String transferGroupId = transferDetail.getTransferGroupId();
+        List<TransactionTransfer> transactionTransfers = transactionTransferService.getTransactionTransfersByGroupId(transferGroupId);
 
-        form.setThirdPartyPlan(currentPlan);
+        model.setTransactionTransfers(transactionTransfers);
+
+        form.setThirdPartyTransactionTransfer(model);
 
         form.setPageId("ViewTransactionTransferListPage");
 
@@ -499,11 +532,30 @@ public class PaymentPlanController extends GenericSearchController {
 
             model.setThirdPartyAllowableCharges(thirdPartyTransferService.getThirdPartyAllowableCharges(plan.getId()));
 
-            List<ThirdPartyPlanMember> members = thirdPartyTransferService.getThirdPartyPlanMembers(plan.getId());
-            model.setThirdPartyPlanMembers(members);
-            for(ThirdPartyPlanMember member : members) {
-                member.getDirectChargeAccount().getCompositeDefaultPersonName();
+            List<ThirdPartyTransferDetail> transferDetails = thirdPartyTransferService.getThirdPartyTransfersByPlanId(plan.getId());
+
+            for(ThirdPartyTransferDetail transferDetail : transferDetails) {
+                ThirdPartyChargeStatus status = transferDetail.getChargeStatus();
+                transferDetail.getDirectChargeAccount().getCompositeDefaultPersonName();
+
+                if(ThirdPartyChargeStatus.ACTIVE.equals(status)){
+                    model.getPlanMembers().add(transferDetail);
+                } else if(ThirdPartyChargeStatus.REVERSED.equals(status)) {
+                    model.getReversedMembers().add(transferDetail);
+                }
+
             }
+
+            List<ThirdPartyPlanMember> members = thirdPartyTransferService.getThirdPartyPlanMembers(plan.getId());
+
+            for(ThirdPartyPlanMember member : members) {
+                if(! member.isExecuted()) {
+                    model.getQueuedMembers().add(member);
+                    // Make sure it is loaded from the database
+                    member.getDirectChargeAccount().getCompositeDefaultPersonName();
+                }
+            }
+
 
             models.add(model);
 

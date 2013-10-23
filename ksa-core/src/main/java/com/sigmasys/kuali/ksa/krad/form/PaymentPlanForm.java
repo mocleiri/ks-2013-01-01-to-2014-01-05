@@ -5,6 +5,7 @@ package com.sigmasys.kuali.ksa.krad.form;
 import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
 import com.sigmasys.kuali.ksa.krad.model.PaymentBillingPlanModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
+import com.sigmasys.kuali.ksa.krad.model.TransactionTransferModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingAllowableCharge;
@@ -48,6 +49,7 @@ public class PaymentPlanForm extends AbstractViewModel {
     private String batchAccounts;
 
     private ThirdPartyPlanModel thirdPartyPlan;
+    private TransactionTransferModel thirdPartyTransactionTransfer;
 
     private String responsibleAccount;
     private String responsibleAccountMessage;
@@ -482,5 +484,13 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     public void setBatchThirdPartyPlan(ThirdPartyPlan batchThirdPartyPlan) {
         this.batchThirdPartyPlan = batchThirdPartyPlan;
+    }
+
+    public TransactionTransferModel getThirdPartyTransactionTransfer() {
+        return thirdPartyTransactionTransfer;
+    }
+
+    public void setThirdPartyTransactionTransfer(TransactionTransferModel thirdPartyTransactionTransfer) {
+        this.thirdPartyTransactionTransfer = thirdPartyTransactionTransfer;
     }
 }

@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,9 +21,9 @@ public class ThirdPartyPlanModel {
 
     private List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges;
 
-    private List<ThirdPartyPlanMember> thirdPartyPlanMembers;
-
-    private List<TransactionTransferModel> thirdPartyTransferDetails;
+    private List<ThirdPartyTransferDetail> planMembers;
+    private List<ThirdPartyPlanMember> queuedMembers;
+    private List<ThirdPartyTransferDetail> reversedMembers;
 
     public ThirdPartyPlan getParent() {
         if (parent == null) {
@@ -142,22 +143,36 @@ public class ThirdPartyPlanModel {
         this.thirdPartyAllowableCharges = thirdPartyAllowableCharges;
     }
 
-    public List<ThirdPartyPlanMember> getThirdPartyPlanMembers() {
-        return thirdPartyPlanMembers;
-    }
-
-    public void setThirdPartyPlanMembers(List<ThirdPartyPlanMember> thirdPartyPlanMembers) {
-        this.thirdPartyPlanMembers = thirdPartyPlanMembers;
-    }
-
-    public List<TransactionTransferModel> getThirdPartyTransferDetails() {
-        if(thirdPartyTransferDetails == null) {
-            thirdPartyTransferDetails = new ArrayList<TransactionTransferModel>();
+    public List<ThirdPartyTransferDetail> getPlanMembers() {
+        if(planMembers == null){
+            planMembers = new ArrayList<ThirdPartyTransferDetail>();
         }
-        return thirdPartyTransferDetails;
+        return planMembers;
     }
 
-    public void setThirdPartyTransferDetails(List<TransactionTransferModel> thirdPartyTransferDetails) {
-        this.thirdPartyTransferDetails = thirdPartyTransferDetails;
+    public void setPlanMembers(List<ThirdPartyTransferDetail> planMembers) {
+        this.planMembers = planMembers;
+    }
+
+    public List<ThirdPartyPlanMember> getQueuedMembers() {
+        if (queuedMembers == null) {
+            queuedMembers = new ArrayList<ThirdPartyPlanMember>();
+        }
+        return queuedMembers;
+    }
+
+    public void setQueuedMembers(List<ThirdPartyPlanMember> queuedMembers) {
+        this.queuedMembers = queuedMembers;
+    }
+
+    public List<ThirdPartyTransferDetail> getReversedMembers() {
+        if(reversedMembers == null) {
+            reversedMembers = new ArrayList<ThirdPartyTransferDetail>();
+        }
+        return reversedMembers;
+    }
+
+    public void setReversedMembers(List<ThirdPartyTransferDetail> reversedMembers) {
+        this.reversedMembers = reversedMembers;
     }
 }

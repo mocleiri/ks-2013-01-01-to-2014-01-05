@@ -14,7 +14,7 @@ public class TransactionTransferModel {
 
     private ThirdPartyTransferDetail thirdPartyTransferDetail;
 
-    private List<TransactionTransfer> transactionTransfer;
+    private List<TransactionTransfer> transactionTransfers;
 
 
     public ThirdPartyTransferDetail getThirdPartyTransferDetail() {
@@ -25,14 +25,21 @@ public class TransactionTransferModel {
         this.thirdPartyTransferDetail = thirdPartyTransferDetail;
     }
 
-    public List<TransactionTransfer> getTransactionTransfers() {
-        if(transactionTransfer == null) {
-            transactionTransfer = new ArrayList<TransactionTransfer>();
+    public String getDirectChargeAccountName() {
+        if(thirdPartyTransferDetail != null) {
+            return thirdPartyTransferDetail.getDirectChargeAccount().getCompositeDefaultPersonName();
         }
-        return transactionTransfer;
+        return "Unknown";
     }
 
-    public void setTransactionTransfers(List<TransactionTransfer> transactionTransfer) {
-        this.transactionTransfer = transactionTransfer;
+    public List<TransactionTransfer> getTransactionTransfers() {
+        if(transactionTransfers == null) {
+            transactionTransfers = new ArrayList<TransactionTransfer>();
+        }
+        return transactionTransfers;
+    }
+
+    public void setTransactionTransfers(List<TransactionTransfer> transactionTransfers) {
+        this.transactionTransfers = transactionTransfers;
     }
 }
