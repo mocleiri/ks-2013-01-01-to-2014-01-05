@@ -70,7 +70,7 @@ class ViewAcademicTerms < BasePage
 
   def term_status(term_type)
     index = term_index_by_term_type(term_type)
-    acal_term_list_div.span(class: /text-lozenge/, index: index.to_i).text
+    acal_term_list_div.span(data_aft_id: /Lozenge/, index: index.to_i).text
   end
 
   def term_status_by_term_code(term_code)
