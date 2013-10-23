@@ -375,12 +375,8 @@ class CourseOffering
     end
 
     if options[:cross_listed] != nil
-      on ManageCourseOfferings do |page|
-        page.edit_course_offering
-      end
       on CourseOfferingEdit do |page|
         options[:cross_listed] ? page.cross_listed_co_set : page.cross_listed_co_clear
-        page.submit
       end
     end
 
