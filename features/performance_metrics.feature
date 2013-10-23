@@ -125,3 +125,13 @@ Feature: Performance.Metrics
     Then the transaction takes less than "3" seconds
     When I view the detailed schedule of classes
     Then the transaction takes less than "3" seconds
+
+  Scenario: Display Final Exam Matrix
+    When I search for a Final Exam
+    Then the transaction takes less than "3" seconds
+    And when I edit the matrix
+    Then the transaction takes less than "3" seconds
+    And when I add a standard rule
+    Then the transaction takes less than "3" seconds
+    And when I submit the rule change
+    Then the transaction takes less than "3" seconds

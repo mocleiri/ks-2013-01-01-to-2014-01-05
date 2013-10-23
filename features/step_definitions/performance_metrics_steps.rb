@@ -524,3 +524,53 @@ When /^I view the detailed schedule of classes$/ do
   end
 end
 
+When /^I search for a Final Exam$/ do
+  @performance_test = make PerformanceTest
+  @matrix = make FinalExamMatrix, :term_type => "Fall Term"
+
+  go_to_manage_final_exam_matrix
+
+  on ManageFEMatrix do |page|
+    page.term_type_select.select  @matrix.term_type
+    @performance_test.start
+    page.show
+    @performance_test.end
+  end
+end
+
+When /^when I edit the matrix$/ do
+  on FEMatrixView do |page|
+    @performance_test.start
+    page.edit "TH at 11:00 AM - 12:15 PM.", "Standard"
+    @performance_test.end
+  end
+end
+
+When /^when I add a standard rule$/ do
+  on FEMatrixEdit do |page|
+    page.add_statement
+    page.rule_dropdown.select "If Course meets on <timeslot>"
+
+    page.rule_days.set @matrix.days
+    page.rule_starttime.set @matrix.start_time
+    page.rule_starttime_ampm.select @matrix.time_ampm
+    page.rule_endtime.set @matrix.end_time
+    page.rule_endtime_ampm.select @matrix.time_ampm
+    page.preview_change
+    page.loading.wait_while_present
+
+
+    @performance_test.start
+    page.update_rule
+    page.loading.wait_while_present
+    @performance_test.end
+  end
+end
+
+And /^when I submit the rule change$/ do
+  on FEMatrixView do |page|
+    @performance_test.start
+    page.submit
+    @performance_test.end
+  end
+end
