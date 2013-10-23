@@ -270,6 +270,8 @@ class RegistrationWindow
             end_dates_map[period_name.strip] = period_date.strip
           end
         end
+      else
+        raise "RegistrationWindowsCreate - date ranges not found"
       end
     end
     returend_map[RegistrationWindowsConstants::START_DATES_MAP_NAME] = start_dates_map

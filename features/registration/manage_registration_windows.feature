@@ -42,7 +42,7 @@ Feature: EC.Manage registration windows
   Scenario: Add a new Registration Window with the same Start Date and End Date whose End Time is in AM and its Start Time is in PM
     Given I add a Registration Window with the same Start Date and End Date whose End Time is in AM and its Start Time is in PM
     Then I verify that the registration window is not created
-
+  @wip
   Scenario: Add two Registration Windows with the same name in the same Period
     Given I add two Registration Windows with the same name for the same Period
     Then I verify the Registration Window is unique within the same period
@@ -90,7 +90,7 @@ Feature: EC.Manage registration windows
     Given I successfully add a Registration Window for a period
     And I assign Student Appointments in Registration Window
     Then I verify that no field is editable in Registration Window and the Window Name is a link to a popup
-
+  @wip
   Scenario: Break Student Appointments in Registration Window
     Given I successfully add a Registration Window for a period
     And I assign Student Appointments in Registration Window

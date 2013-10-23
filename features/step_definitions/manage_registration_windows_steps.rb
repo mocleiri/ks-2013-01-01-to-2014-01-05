@@ -25,7 +25,7 @@ end
 And /^I verify that the registration window is not created$/ do
   on RegistrationWindowsCreate do |page|
     page.is_window_created(@registration_window.appointment_window_info_name, period_key = @registration_window.period_key).should be_false
-    page.save
+    page.cancel_and_leave
   end
 end
 
@@ -100,6 +100,7 @@ Then /^I verify that the Registration Window is not modified$/ do
     row_object[:end_time_am_pm].should == @registration_window.end_time_am_pm
   end
   @registration_window.delete
+
 end
 
 Then /^I verify the new Registration Window's buttons are created$/ do
@@ -158,6 +159,7 @@ end
 When /^I add two Registration Windows with the same name for the same Period$/ do
   @registration_window = make RegistrationWindow
   @registration_window.create
+  on(RegistrationWindowsCreate).cancel_and_leave
   @registration_window2 = make RegistrationWindow, :appointment_window_info_name => @registration_window.appointment_window_info_name
   @registration_window.create
 end

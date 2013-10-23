@@ -86,7 +86,7 @@ class RegistrationWindowsCreate < RegistrationWindowsBase
   element(:max_appointments_per_slot) { |b| b.frm.text_field(name: "newCollectionLines['appointmentWindows'].appointmentWindowInfo.maxAppointmentsPerSlot") }
   element(:page_validation_header) { |b| b.h3(id: "pageValidationHeader") }
   #element(:date_ranges) { |b| b.div(id: "KS-RegistrationWindows-PeriodSection") }
-  element(:date_ranges) { |b| b.span(id: "periodDetails_span") }
+  element(:date_ranges) { |b| b.frm.span(id: "periodDetails_span") }
   #value(:date_ranges) { |b| b.div(id: "KS-RegistrationWindows-PeriodSection").span().text }
   element(:add_button_element) { |b| b.frm.button(text: "add") }
   action(:add) { |b| b.frm.button(text: "add").click; b.adding.wait_while_present }
@@ -95,7 +95,13 @@ class RegistrationWindowsCreate < RegistrationWindowsBase
   action(:break_appointments) { |b| b.frm.button(text: "Break Appointments").click; b.loading.wait_while_present }
   action(:appointment_detail) { |b| b.frm.a(id: "u206_line0").click; b.loading.wait_while_present }
   action(:save) { |b| b.frm.button(text: "Save").click; b.loading.wait_while_present }
+  action(:cancel) { |b| b.frm.link(text: "Cancel").click; b.loading.wait_while_present }
 
+  def cancel_and_leave
+    cancel
+    home
+    alert.ok if alert.exists?
+  end
 
   element(:yes_label) { |b| b.frm.span(text: "Yes") }
   element(:delete_popup_div) { |b| b.frm.div(id: "KS-Uif-Confirmation-Dialog") }
@@ -103,7 +109,7 @@ class RegistrationWindowsCreate < RegistrationWindowsBase
   action(:confirm_delete) { |b| b.delete_popup_div.radio(index:0).click; b.loading.wait_while_present }
   action(:cancel_delete) { |b| b.delete_popup_div.radio(index:1).click; b.loading.wait_while_present }
 
-  element(:break_appointments_popup_div) { |b| b.div(id: "KS-RegistrationWindowsManagement-ConfirmBreakAppointments-Dialog") }
+  element(:break_appointments_popup_div) { |b| b.frm.div(id: "KS-RegistrationWindowsManagement-ConfirmBreakAppointments-Dialog") }
   action(:confirm_break_appointments) { |b| b.break_appointments_popup_div.radio(index: 0).click; b.loading.wait_while_present }
   action(:cancel_break_appointments) { |b| b.break_appointments_popup_div.radio(index: 1).click; b.loading.wait_while_present }
 
@@ -277,7 +283,7 @@ class RegistrationWindowsCreate < RegistrationWindowsBase
     row.cells[COLUMN_END_TIME].text_field.set end_time
     row.cells[COLUMN_END_TIME_AM_PM].select.select end_time_am_pm
 
-    form.button(text: "Save").click
+    save
     loading.wait_while_present
     #sleep(5)
 

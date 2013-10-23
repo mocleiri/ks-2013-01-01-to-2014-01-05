@@ -7,11 +7,9 @@ class BasePage < PageFactory
       action(:logout) { |b| b.logged_in_link.click; b.logout_el.click }
 
       action(:enrollment_via_breadcrumb) { |b| b.link(id: "KS-HomewardPathBreadcrumbs-Enrollment").click }
-      action(:home) { |b| b.link(text: "Home").click }
+      action(:home) { |b| b.frm.link(id: "KS-HomewardPathBreadcrumbs-Home").click }
 
       action(:action_list) { |b| b.link(title: "Action List").click }
-
-
       element(:logged_in_link) { |b| b.div(class: "ks-uif-viewHeader-container navbar-inverse navbar").link(class: "dropdown-toggle") }
       value(:logged_in_user) { |b| b.div(class: "ks-uif-viewHeader-container navbar-inverse navbar").link(class: "dropdown-toggle").text }
 
