@@ -191,7 +191,7 @@ end
 
 Then /^I should be able to see the newly created course rule in the Common Final Exam table$/ do
   on FEMatrixView do |page|
-    page.get_common_fe_requirements( @matrix.courses).should match /#{@matrix.courses}\./
+    page.get_common_fe_requirements( @matrix.courses).should match /#{@matrix.courses}/
   end
 end
 
