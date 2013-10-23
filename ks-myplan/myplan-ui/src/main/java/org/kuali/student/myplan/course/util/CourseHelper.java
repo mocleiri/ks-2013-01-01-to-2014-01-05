@@ -29,7 +29,9 @@ public interface CourseHelper {
 
     public String joinStringsByDelimiter(char delimiter, String... list);
 
-    public CourseInfo getCourseInfo(String courseId, String courseCd);
+    public CourseInfo getCourseInfo(String courseId);
+
+    public CourseInfo getCourseInfoByIdAndCd(String courseId, String courseCd);
 
     public String getVerifiedCourseId(String courseId);
 
@@ -55,4 +57,6 @@ public interface CourseHelper {
     public boolean isCourseInOfferingIds(String subjectArea, String courseNumber, Set<String> courseOfferingIds);
     
     public boolean isValidCourseLevel(String division, String level);
+
+    public String getKeyForCourseOffering(String courseId, String subject, String number);
 }

@@ -672,7 +672,7 @@ public class PlannedTermsHelperBase {
                 for (PlanItemInfo planItemInfo : plannedCourses) {
                     String credit = null;
                     if (PlanConstants.COURSE_TYPE.equals(planItemInfo.getRefObjectType())) {
-                        CourseInfo courseInfo = getCourseHelper().getCourseInfo(planItemInfo.getRefObjectId(), null);
+                        CourseInfo courseInfo = getCourseHelper().getCourseInfoByIdAndCd(planItemInfo.getRefObjectId(), null);
                         String key = generateKey(courseInfo.getSubjectArea().trim(), courseInfo.getCourseNumberSuffix());
                         List<String> sectionCreditRangeList = courseSectionCreditsMap.get(key);
 

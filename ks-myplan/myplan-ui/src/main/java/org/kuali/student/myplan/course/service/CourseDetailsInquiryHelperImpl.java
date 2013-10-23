@@ -129,7 +129,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
          * If version independent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId, courseCd);
+        CourseInfo course = getCourseHelper().getCourseInfoByIdAndCd(courseId, courseCd);
         CourseSummaryDetails courseDetails = retrieveCourseSummary(course, course.getCode());
         return courseDetails;
     }
@@ -286,7 +286,8 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             List<TermInfo> termInfos = getAcademicCalendarService().searchForTerms(predicates, CourseSearchConstants.CONTEXT_INFO);
             for (TermInfo term : termInfos) {
                 /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
-                List<CourseOfferingInfo> offerings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(String.format("%s|%s|%s", courseDetails.getCourseId(), courseDetails.getSubjectArea().trim(), courseDetails.getCourseNumber().trim()), term.getId(), CourseSearchConstants.CONTEXT_INFO);
+                String id = getCourseHelper().getKeyForCourseOffering(courseDetails.getCourseId(), courseDetails.getSubjectArea().trim(), courseDetails.getCourseNumber().trim());
+                List<CourseOfferingInfo> offerings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(id, term.getId(), CourseSearchConstants.CONTEXT_INFO);
                 if (offerings != null && !offerings.isEmpty()) {
                     courseDetails.getScheduledTerms().add(term.getName());
                 }
@@ -347,7 +348,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
         CourseDetails courseDetails = new CourseDetails();
 
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId, courseCd);
+        CourseInfo course = getCourseHelper().getCourseInfoByIdAndCd(courseId, courseCd);
 
         // Get Course Summary first
         CourseSummaryDetails courseSummaryDetails = retrieveCourseSummary(course, courseCd);
@@ -388,7 +389,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
          * If version independent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId, null);
+        CourseInfo course = getCourseHelper().getCourseInfoByIdAndCd(courseId, null);
         return getPlannedCourseSummary(course, studentId);
     }
 
@@ -510,7 +511,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
          * If version independent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId, null);
+        CourseInfo course = getCourseHelper().getCourseInfoByIdAndCd(courseId, null);
         return getCourseOfferingInstitutions(course, terms);
     }
 
@@ -542,7 +543,8 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                 List<CourseOfferingInfo> courseOfferingInfoList = null;
                 try {
                     /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
-                    courseOfferingInfoList = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(String.format("%s|%s|%s", course.getId(), course.getSubjectArea().trim(), course.getCourseNumberSuffix().trim()), atp, CourseSearchConstants.CONTEXT_INFO);
+                    String id = getCourseHelper().getKeyForCourseOffering(course.getId(), course.getSubjectArea().trim(), course.getCourseNumberSuffix().trim());
+                    courseOfferingInfoList = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(id, atp, CourseSearchConstants.CONTEXT_INFO);
                 } catch (Exception e) {
                     logger.error(" Could not load course offerings for : " + course.getCode() + " atp : " + atp);
                     return instituteList;
@@ -623,11 +625,12 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
         List<ActivityOfferingItem> activityOfferingItems = new ArrayList<ActivityOfferingItem>();
 
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId, null);
+        CourseInfo course = getCourseHelper().getCourseInfoByIdAndCd(courseId, null);
         try {
 
             /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
-            List<CourseOfferingInfo> courseOfferingInfoList = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(String.format("%s|%s|%s", course.getId(), course.getSubjectArea().trim(), course.getCourseNumberSuffix().trim()), termId, CourseSearchConstants.CONTEXT_INFO);
+            String id = getCourseHelper().getKeyForCourseOffering(course.getId(), course.getSubjectArea().trim(), course.getCourseNumberSuffix().trim());
+            List<CourseOfferingInfo> courseOfferingInfoList = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(id, termId, CourseSearchConstants.CONTEXT_INFO);
 
             Map<String, Map<String, PlanItem>> planItemsByTerm = loadStudentsPlanItems();
             activityOfferingItems = getActivityOfferingItems(course, courseOfferingInfoList, termId, planItemsByTerm.get(termId));
@@ -911,7 +914,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      */
     public boolean isCourseIdValid(String courseId, String courseCd) {
         boolean isCourseIdValid = false;
-        CourseInfo course = getCourseHelper().getCourseInfo(courseId, courseCd);
+        CourseInfo course = getCourseHelper().getCourseInfoByIdAndCd(courseId, courseCd);
         if (course != null) {
             isCourseIdValid = true;
         }

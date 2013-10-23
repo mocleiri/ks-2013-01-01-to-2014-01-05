@@ -245,7 +245,8 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                                 if (activities.isEmpty() && !ignore) {
                                     long start = System.currentTimeMillis();
                                     /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
-                                    List<CourseOfferingInfo> courseOfferings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(String.format("%s|%s|%s", courseInfo.getId(), courseInfo.getSubjectArea().trim(), courseInfo.getCourseNumberSuffix().trim()), atpId, CONTEXT_INFO);
+                                    String id = getCourseHelper().getKeyForCourseOffering(courseInfo.getId(), courseInfo.getSubjectArea().trim(), courseInfo.getCourseNumberSuffix().trim());
+                                    List<CourseOfferingInfo> courseOfferings = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(id, atpId, CONTEXT_INFO);
                                     List<ActivityOfferingItem> honorsCrNcActivities = new ArrayList<ActivityOfferingItem>();
                                     if (courseOfferings != null && !courseOfferings.isEmpty()) {
                                         for (CourseOfferingInfo courseOfferingInfo : courseOfferings) {

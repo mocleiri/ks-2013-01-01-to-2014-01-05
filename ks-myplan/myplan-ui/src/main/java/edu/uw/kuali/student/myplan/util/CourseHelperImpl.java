@@ -32,6 +32,7 @@ import org.kuali.student.r2.lum.course.dto.CourseCrossListingInfo;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.lum.course.infc.CourseCrossListing;
 import org.kuali.student.r2.lum.course.service.CourseService;
+import org.kuali.student.r2.lum.course.service.assembler.CourseAssemblerConstants;
 import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
 import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
 import org.springframework.util.CollectionUtils;
@@ -206,7 +207,7 @@ public class CourseHelperImpl implements CourseHelper {
      * @return
      */
     @Override
-    public CourseInfo getCourseInfo(String courseId, String courseCd) {
+    public CourseInfo getCourseInfo(String courseId) {
 
         CourseInfo courseInfo = null;
         try {
@@ -217,6 +218,28 @@ public class CourseHelperImpl implements CourseHelper {
             throw new RuntimeException("Query failed.", e);
         }
 
+
+        return courseInfo;
+    }
+
+    /**
+     * This method is used to get the courseInfo based on courseId and courseCd
+     * Mostly used for crossListed courses to get exact courseInfo for that course
+     * In this method if the courseCd given is a crossListed then that is swapped from the list of crossListings to be a actual courseInfo
+     * <p/>
+     * Eg: HIST 420 is crossListed and MATH 403 is original both have the same courseId
+     * Search for courseInfo based on courseId gives back courseInfo for MATH 403
+     * but the actual one we requested is for HIST 420 then that is picked out of the crossListings
+     * and made as actual courseInfo and adds the MATH 403 as a crossListing course
+     *
+     * @param courseId
+     * @param courseCd
+     * @return
+     */
+    @Override
+    public CourseInfo getCourseInfoByIdAndCd(String courseId, String courseCd) {
+        CourseInfo courseInfo = getCourseInfo(courseId);
+
         /*If requested courseInfo is for a crossListed course then CrossListed course becomes the main course info and the rest becomes the crossListings*/
         if (!StringUtils.isEmpty(courseCd)) {
             DeconstructedCourseCode courseCode = getCourseDivisionAndNumber(courseCd);
@@ -226,6 +249,7 @@ public class CourseHelperImpl implements CourseHelper {
                 crossListing.setCode(courseInfo.getCode());
                 crossListing.setCourseNumberSuffix(courseInfo.getCourseNumberSuffix());
                 crossListing.setSubjectArea(courseInfo.getSubjectArea());
+                crossListing.setTypeKey(CourseAssemblerConstants.COURSE_OFFICIAL_IDENT_TYPE);
                 courseCrossListingInfos.add(crossListing);
                 for (CourseCrossListingInfo crossListingInfo : courseInfo.getCrossListings()) {
                     if (courseCode.getSubject().trim().equals(crossListingInfo.getSubjectArea().trim()) && courseCode.getNumber().trim().equals(crossListingInfo.getCourseNumberSuffix().trim())) {
@@ -247,6 +271,11 @@ public class CourseHelperImpl implements CourseHelper {
     }
 
 
+    /**
+     * @param element
+     * @param name
+     * @return
+     */
     private static int getAsInteger(Element element, String name) {
         int result = 0;
         try {
@@ -258,6 +287,12 @@ public class CourseHelperImpl implements CourseHelper {
         return result;
     }
 
+    /**
+     * @param parent
+     * @param sectionStatus
+     * @param yt
+     * @throws DocumentException
+     */
     private void formatSectionStatus(LinkedHashMap<String, LinkedHashMap<String, Object>> parent, Element sectionStatus,
                                      AtpHelper.YearTerm yt) throws DocumentException {
         String sln = sectionStatus.elementText("SLN");
@@ -537,6 +572,7 @@ public class CourseHelperImpl implements CourseHelper {
      * @param level
      * @return true if for the given division and level courses exists else false
      */
+    @Override
     public boolean isValidCourseLevel(String division, String level) {
         List<SearchRequestInfo> requests = new ArrayList<SearchRequestInfo>();
         SearchRequestInfo request = new SearchRequestInfo(CourseSearchConstants.COURSE_SEARCH_FOR_DIVISION_LEVELS);
@@ -553,6 +589,23 @@ public class CourseHelperImpl implements CourseHelper {
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * Method used to generate a compositeKey for CourseOffering data search
+     * format: courseId|subject|number
+     *
+     * Eg: 'c87e6090-a177-445b-9a7d-7915120e4adc:ENGL:201'
+     *
+     * @param courseId
+     * @param subject
+     * @param number
+     * @return
+     */
+    @Override
+    public String getKeyForCourseOffering(String courseId, String subject, String number) {
+        return String.format("%s|%s|%s", courseId, subject, number);
     }
 
 

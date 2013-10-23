@@ -277,7 +277,7 @@ public class PlanController extends UifControllerBase {
                         }
                     } else {
                         if (hasText(planItemInfo.getRefObjectId())) {
-                            CourseInfo courseInfo = getCourseHelper().getCourseInfo(planItemInfo.getRefObjectId(), null);
+                            CourseInfo courseInfo = getCourseHelper().getCourseInfoByIdAndCd(planItemInfo.getRefObjectId(), null);
                             if (courseInfo != null && hasText(courseInfo.getCode())) {
                                 planForm.setCourseCd(courseInfo.getCode());
                             }
