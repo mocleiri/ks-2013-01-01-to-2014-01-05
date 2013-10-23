@@ -194,8 +194,7 @@ public class QuickViewForm extends AbstractViewModel {
     }
 
     public void setMemoModels(List<Memo> memoModels) {
-
-        this.memoModels = InformationUtils.orderMemoByEffectiveDate(memoModels, false);
+        this.memoModels = memoModels;
     }
 
     public Memo getMemoModel() {
