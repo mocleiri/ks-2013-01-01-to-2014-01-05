@@ -44,6 +44,11 @@ var KsapScheduleBuild = {
 				jQuery("#sb_possible_options > .uif-boxLayout").empty();
 				for (var i in sb.possibleSchedules.possible)
 					sb.appendPossibleOption(sb.possibleSchedules.possible[i]);
+				if (sb.possibleSchedules.possible.length == 0)
+					jQuery(".ksap-sb-noschedules").show();
+				else
+					jQuery(".ksap-sb-noschedules").hide();
+
 				if (sb.possibleSchedules.more)
 					jQuery(".ksap-sb-morelink").show();
 				else
@@ -121,6 +126,10 @@ var KsapScheduleBuild = {
 
 	save : function(uniqueId) {
 		saveOrRemoveScheduleOption(uniqueId);
+	},
+
+	sendToCart : function(uniqueId, termId, e) {
+		ksapSbOpenDialog("sb_cart_add_from_sb", "sb/cart", {"possibleScheduleId" : uniqueId, "termId": termId}, e.target, e);
 	},
 
 	getReservedTime : function(index) {
@@ -460,17 +469,15 @@ function toggleScheduleOptionSelect(uniqueId) {
 	}
 }
 
+
 ///////////////////////////////////////
 // Schedule Build dialog box support
 
-function ksapSbOpenDialog(pageId, action, methodToCall, target, e) {
+function ksapSbOpenDialog(pageId, action, data, target, e) {
 	var t = jQuery(target);
-	var retrieveData = {
-		action : action,
-		methodToCall : methodToCall,
-		uniqueId : t.data('uniqueid'),
-		pageId : pageId + "_page"
-	};
+	var retrieveData = jQuery.extend(data, {
+		action : action, pageId : pageId + "_page"
+	});
 	var popupOptions = {
 		tail : {
 			hidden : true

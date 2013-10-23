@@ -36,6 +36,7 @@
 				<value>ks-ap/scripts/sb/fullcalendar/fullcalendar.min.js</value>
 				<value>ks-ap/scripts/sb/calendar.js</value>
 				<value>ks-ap/scripts/sb/sb.js</value>
+				<value>ks-ap/scripts/sb/cart.js</value>
 			</list>
 		</property>
 		<property name="items">
@@ -128,6 +129,8 @@
 		<property name="items">
 			<list>
 				<ref bean="sb_possible_options" />
+				<bean parent="Uif-Message" p:id="sb_possible_noschedules" p:style="display : none"
+						p:additionalCssClasses="ksap-sb-noschedules" p:messageText="No schedules found. Adjust your class selections to find more options." />
 				<bean parent="Uif-ActionLink" p:id="sb_possible_morelink" p:style="display : none"
 						p:additionalCssClasses="ksap-sb-morelink" p:actionLabel="More..." p:actionScript="moreSchedules();" />
 			</list>
@@ -203,7 +206,7 @@
 									</list>
 								</property>
 							</bean>
-							<bean parent="sb_schedule_icon" p:actionScript="KsapScheduleBuild.sendToCart('__KSAP_UID__')">
+							<bean parent="sb_schedule_icon" p:actionScript="KsapScheduleBuild.sendToCart('__KSAP_UID__', '@{term.id}', e)">
 								<property name="cssClasses">
 									<list merge="true">
 										<value>ksap-sb-schedule-carticon</value>
@@ -244,7 +247,7 @@
 						<property name="items">
 							<list>
 								<bean parent="Uif-PrimaryActionButton-Small" p:actionLabel="New"
-										p:actionScript="ksapSbOpenDialog('sb_create_reserved_time','sb/reserved','startDialog', this, e)" />
+										p:actionScript="ksapSbOpenDialog('sb_create_reserved_time','sb/reserved',{methodToCall:'startDialog'}, this, e)" />
 							</list>
 						</property>
 					</bean>
@@ -391,7 +394,7 @@
 			<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
 				<property name="lineGroupPrototype">
 					<bean parent="Uif-CollectionVerticalBoxItem" p:footer.render="false"
-							p:render="@{((includeClosed or !#line.closed) and !#line.courseLockedIn) or (#line.selected and #line.courseLockedIn)}" />
+							p:render="@{((includeClosed or !#line.closed) and !#line.courseLockedIn) or #line.lockedIn}" />
 				</property>
 			</bean>
 		</property>
@@ -409,7 +412,8 @@
 		</property>
 		<property name="items">
 			<list>
-				<bean parent="sb_option_control-parent" p:propertyName="selected" p:id="sb-activity-select-@{#line.uniqueId}" p:control.disabled="@{#line.lockedIn}"
+				<bean parent="sb_option_control-parent" p:propertyName="selected" p:id="sb-activity-select-@{#line.uniqueId}"
+						p:control.disabled="@{#line.courseLockedIn}" p:render="@{!#line.enrollmentGroup or !#line.secondaryOptions.empty}"
 						p:additionalCssClasses="ksap-sb-activity-select" p:onChangeScript="toggleActivitySelect(@{#line.primary}, '@{#line.uniqueId}', '@{#line.parentUniqueId}')" />
 				<bean parent="Uif-VerticalBoxGroup" p:onClickScript="toggleActivity(@{#line.primary}, '@{#line.uniqueId}', '@{#line.parentUniqueId}')"
 							p:additionalCssClasses="ksap-sb-activity-details">
@@ -424,18 +428,19 @@
 												p:title="@{#line.courseOfferingCode} @{#line.activityName}" p:additionalCssClasses="ksap-sb-activity-title" />
 										<bean parent="Uif-MessageField" p:messageText="@{#line.activityTypeDescription}"
 												p:title="@{#line.courseOfferingCode} @{#line.activityName}" p:additionalCssClasses="ksap-sb-activity-subtitle" />
-										<bean parent="Uif-Message" p:messageText="@{#line.closed?'Closed ':'Open '}@{#line.openSeats}/@{#line.totalSeats}" p:render="@{!#line.lockedIn}"
+										<bean parent="Uif-Message" p:messageText="@{#line.closed?'Closed ':'Open '}@{#line.openSeats}/@{#line.totalSeats}" p:render="@{!#line.enrollmentGroup}"
 												p:title="@{#line.openSeats} seat@{#line.openSeats ne 1?'s':''} available out of @{#line.totalSeats}" p:additionalCssClasses="ksap-sb-activity-seats" />
-										<bean parent="Uif-Message" p:messageText="@{#line.courseOfferingCode}" p:render="@{#line.lockedIn}"
+										<bean parent="Uif-Message" p:messageText="@{#line.courseOfferingCode}" p:render="@{#line.enrollmentGroup}"
 												p:title="@{#line.courseOfferingCode} @{#line.activityName}" p:additionalCssClasses="ksap-sb-activity-seats" />
 									</list>
 								</property>
 							</bean>
-							<bean parent="Uif-Message" p:messageText="@{#line.academicSessionDescr}" p:additionalCssClasses="ksap-sb-activity-session" p:render="@{!#line.enrollmentGroup}" />
+							<bean parent="Uif-Message" p:messageText="@{#line.academicSessionDescr}" p:additionalCssClasses="ksap-sb-activity-session"
+									p:render="@{!#line.enrollmentGroup || #line.secondaryOptions.empty}" />
 							<bean parent="Uif-Message" p:messageText="Permission Required" p:render="@{#line.requiresPermission}"
 									p:additionalCssClasses="ksap-sb-activity-permission" />
 							<bean parent="Uif-StackedCollectionGroup" p:id="sb_activity_classtimes_@{#line.uniqueId}"
-									p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false" p:render="@{!#line.enrollmentGroup}">
+									p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false" p:render="@{!#line.enrollmentGroup || #line.secondaryOptions.empty}">
 								<property name="propertyName" value="classMeetingTimes" />
 								<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.ClassMeetingTime" />
 								<property name="layoutManager">

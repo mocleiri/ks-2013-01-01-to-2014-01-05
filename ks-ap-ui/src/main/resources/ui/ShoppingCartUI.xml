@@ -20,6 +20,7 @@
 			<list>
 				<ref bean="sb_cart_add_page" />
 				<ref bean="sb_cart_add_from_plan_page" />
+				<ref bean="sb_cart_add_from_sb_page" />
 				<ref bean="sb_cart_add_from_search_page" />
 				<ref bean="sb_cart_remove_page" />
 			</list>
@@ -301,6 +302,63 @@
 		</property>
 	</bean>
 
+	<bean id="sb_cart_requests" parent="Uif-TableCollectionSection" p:id="sb_cart_requests"
+			p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false">
+		<property name="propertyName" value="shoppingCartRequests" />
+		<property name="collectionObjectClass" value="org.kuali.student.ap.sb.ShoppingCartRequest" />
+    	<property name="layoutManager">
+			<bean parent="Uif-TableCollectionLayout">
+				<property name="numberOfColumns" value="4" />
+				<property name="renderSequenceField" value="false" />
+				<property name="richTable.render" value="false" />
+				<property name="richTable.forceLocalJsonData" value="false" />
+			</bean>
+		</property>
+		<property name="items">
+			<list>
+				<bean parent="Uif-MessageField" p:label="Class #" p:additionalCssClasses="ksap-sb-cart-request-regCode" p:messageText="@{#line.primaryRegistrationCode}" />
+				<bean parent="Uif-MessageField" p:label="Course" p:additionalCssClasses="ksap-sb-cart-request-courseCode" p:messageText="@{#line.course.code}" />
+				<bean parent="Uif-MessageField" p:label="Title" p:additionalCssClasses="ksap-sb-cart-request-courseTitle" p:messageText="@{#line.course.courseTitle}" />
+				<bean parent="Uif-MessageField" p:additionalCssClasses="ksap-sb-cart-request-action" p:messageText="@{#line.addToCart?'Add':'Remove'}" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="sb_cart_add_from_sb_page" parent="sb_cart_add_from_sb_page-parent" />
+	<bean abstract="true" id="sb_cart_add_from_sb_page-parent" parent="sb_cart_add_page-parent" p:innerViewWrapperId="sb_cart_add_from_sb_inner">
+		<property name="items">
+			<list>
+				<ref bean="sb_cart_requests" />
+			</list>
+		</property>
+		<property name="footer">
+			<bean parent="Uif-FooterBase">
+				<property name="items">
+					<list>
+						<bean parent="Uif-VerticalBoxGroup">
+							<property name="items">
+								<list>
+									<bean parent="Uif-HorizontalBoxGroup">
+										<property name="items">
+											<list>
+												<bean parent="Uif-PrimaryActionButton" p:additionalCssClasses="ks-Button,ks-Button--primary"
+														p:actionLabel="Update Cart" p:actionScript="ksapCartSubmitDialog(e);" />
+												<bean parent="Uif-SecondaryActionButton" p:additionalCssClasses="ks-Button"
+														p:actionLabel="Cancel" p:actionScript="fnClosePopup();" />
+											</list>
+										</property>
+									</bean>
+									<bean parent="Uif-HorizontalBoxGroup"
+										p:hidden="true" p:additionalCssClasses="myplan-feedback,error,ks-Popover-error" />
+								</list>
+							</property>
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
 	<bean id="sb_cart_add_from_search_page" parent="sb_cart_add_from_search_page-parent" />
 	<bean abstract="true" id="sb_cart_add_from_search_page-parent" parent="sb_cart_add_page-parent" p:innerViewWrapperId="sb_cart_add_from_search_inner">
 		<property name="items">
@@ -322,7 +380,7 @@
 									<list>
 										<bean parent="Uif-PrimaryActionButton-Small" p:additionalCssClasses="ks-Button,ks-Button--primary"
 												p:actionLabel="Add to cart" p:actionScript="ksapCartSubmitDialog(e);"
-												p:render="@{!courseOptions[0].activityOptions.empty}" />
+												p:render="@{courseOptions ne null and !courseOptions[0].activityOptions.empty}" />
 										<bean parent="Uif-SecondaryActionButton-Small" p:additionalCssClasses="ks-Button"
 												p:actionLabel="Cancel" p:actionScript="fnClosePopup();" />
 									</list>
