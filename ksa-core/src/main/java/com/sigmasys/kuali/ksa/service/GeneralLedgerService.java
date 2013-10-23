@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.service;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
+import com.sigmasys.kuali.ksa.exception.GlTransactionFailedException;
 import com.sigmasys.kuali.ksa.model.*;
 
 import javax.jws.WebMethod;
@@ -64,10 +65,15 @@ public interface GeneralLedgerService {
      * @param statement     GL transaction statement
      * @param isQueued      Set status to Q unless isQueued is passed and is false, in which case, set status to W
      * @return new GL Transaction instance
+     * @throws GlTransactionFailedException
      */
     @WebMethod(exclude = true)
-    GlTransaction createGlTransaction(Long transactionId, String glAccountId, BigDecimal amount,
-                                      GlOperationType operationType, String statement, boolean isQueued);
+    GlTransaction createGlTransaction(Long transactionId,
+                                      String glAccountId,
+                                      BigDecimal amount,
+                                      GlOperationType operationType,
+                                      String statement,
+                                      boolean isQueued) throws GlTransactionFailedException;
 
     /**
      * Creates a new general ledger transaction based on the given parameters
@@ -78,10 +84,14 @@ public interface GeneralLedgerService {
      * @param operationType GL operation type
      * @param statement     GL transaction statement
      * @return new GL Transaction instance
+     * @throws GlTransactionFailedException
      */
     @WebMethod(exclude = true)
-    GlTransaction createGlTransaction(Long transactionId, String glAccountId, BigDecimal amount,
-                                      GlOperationType operationType, String statement);
+    GlTransaction createGlTransaction(Long transactionId,
+                                      String glAccountId,
+                                      BigDecimal amount,
+                                      GlOperationType operationType,
+                                      String statement) throws GlTransactionFailedException;
 
     /**
      * Persists GL Transaction in the persistent store

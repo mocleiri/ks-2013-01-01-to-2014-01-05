@@ -13,11 +13,14 @@
 [when][]Hold Issue is "{holdIssueNames}" = CommonUtils.containsAny(holdIssueNames, "{holdIssueNames}", ",")
 [when][]Permission is "{permissionNames}" = CommonUtils.containsAny(permissionNames, "{permissionNames}", ",")
 [when][]Account Type is "{accountTypeNames}" = CommonUtils.containsAny(accountTypeNames, "{accountTypeNames}", ",")
-[when][]Transaction Amount is "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) == 0
-[when][]Transaction Amount > "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) > 0
-[when][]Transaction Amount < "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) < 0
-[when][]Transaction Amount < "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) < 0
-[when][]Flag is "{flags}" = CommonUtils.containsAny(informationService.getFlags(account.getId()), "{flags}")
+[when][]Transaction amount is "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) == 0
+[when][]Transaction amount > "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) > 0
+[when][]Transaction amount < "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) < 0
+[when][]Transaction amount < "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) < 0
+[when][]Flag is "{flagCodes}" = CommonUtils.containsAny(flagCodes, "{flagCodes}")
+
+# RHS definitions
+[then][]Use code "{transactionTypeId}" to charge ${amount} = context.getTransactionService().createTransaction("{transactionTypeId}",context.getAccount().getId(), new Date(), new BigDecimal({amount}));
 
 
 # FEE MANAGEMENT DSL definitions
@@ -38,8 +41,6 @@
 [when][]Key pair "{key}" is "{values}" = feeManagementService.containsKeyPair(feeBase, "{key}", "{values}")
 
 # RHS definitions
-[then][]Use code "{transactionTypeId}" to charge ${amount} = context.getTransactionService().createTransaction("{transactionTypeId}",context.getAccount().getId(), new Date(), new BigDecimal({amount}));
-[then][]Use code "{transactionTypeId}" to credit ${amount} = context.getTransactionService().createTransaction("{transactionTypeId}",context.getAccount().getId(), new Date(), new BigDecimal({amount}));
 [then][]Set status to "{status}", key pair "{key}" to "{value}" where code is "{luCodes}" = context.getFeeManagementService().setCourseStatusForLearningUnits(feeBase,"{luCodes}","{status}","{key}","{value}");
 [then][]Set status to "{status}", key pair "{key}" to "{value}" where section is "{sectionCodes}" = context.getFeeManagementService().setCourseStatusForSections(feeBase,"{sectionCodes}","{status}","{key}","{value}");
 [then][]Set status to "{newStatus}", key pair "{key}" to "{value}" where status is "{oldStatus}" = context.getFeeManagementService().setCourseStatusForStatus(feeBase,"{oldStatus}","{newStatus}","{key}","{value}");
@@ -52,6 +53,9 @@
 
 # RHS definitions
 [then][]Apply block = blockNames.add(drools.getRule().getName());
+
+# PAYMENT BOUNCING DSL definitions
+# [then][]Use "{flagTypeCode}" type, "{accessLevelCode}" access level, {severity} severity to create flag expiring in {days} days = context.getInformationService().createFlag(context.getAccount().getId(), "{flagTypeCode}", "{accessLevelCode}", {severity}, new Date(), CalendarUtils.addCalendarDays(new Date(), {days}));
 
 
 # PAYMENT APPLICATION DSL definitions

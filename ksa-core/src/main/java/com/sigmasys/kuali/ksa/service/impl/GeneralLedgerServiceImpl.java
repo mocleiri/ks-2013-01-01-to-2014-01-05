@@ -122,26 +122,31 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @param statement     GL transaction statement
      * @param isQueued      Set status to Q unless isQueued is passed and is false, in which case, set status to W
      * @return new GL Transaction instance
+     * @throws GlTransactionFailedException
      */
     @Override
     @WebMethod(exclude = true)
-    @Transactional(readOnly = false)
-    public GlTransaction createGlTransaction(Long transactionId, String glAccountId, BigDecimal amount,
-                                             GlOperationType operationType, String statement, boolean isQueued) {
+    @Transactional(readOnly = false, noRollbackFor = GlTransactionFailedException.class)
+    public GlTransaction createGlTransaction(Long transactionId,
+                                             String glAccountId,
+                                             BigDecimal amount,
+                                             GlOperationType operationType,
+                                             String statement,
+                                             boolean isQueued) throws GlTransactionFailedException {
 
         PermissionUtils.checkPermission(Permission.CREATE_GL_TRANSACTION);
 
         if (!isGlAccountValid(glAccountId)) {
             String errMsg = "GL Account '" + glAccountId + "' is invalid";
             logger.error(errMsg);
-            throw new InvalidGeneralLedgerAccountException(errMsg);
+            throw new GlTransactionFailedException(transactionId, errMsg);
         }
 
         Transaction transaction = em.find(Transaction.class, transactionId);
         if (transaction == null) {
             String errMsg = "Transaction with ID = " + transactionId + " does not exist";
             logger.error(errMsg);
-            throw new TransactionNotFoundException(errMsg);
+            throw new GlTransactionFailedException(transactionId, errMsg);
         }
 
         GlTransaction glTransaction = new GlTransaction();
@@ -160,13 +165,13 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         Date recognitionDate = transaction.getRecognitionDate();
         if (recognitionDate == null) {
             String errMsg = "GL recognition date cannot be null, Transaction ID = " + transactionId;
-            throw new IllegalStateException(errMsg);
+            throw new GlTransactionFailedException(transactionId, errMsg);
         }
 
         GlRecognitionPeriod recognitionPeriod = getGlRecognitionPeriod(recognitionDate);
         if (recognitionPeriod == null) {
             String errMsg = "GL recognition period cannot be found for the given date = " + recognitionDate;
-            throw new IllegalStateException(errMsg);
+            throw new GlTransactionFailedException(transactionId, errMsg);
         }
 
         glTransaction.setRecognitionPeriod(recognitionPeriod);
@@ -174,7 +179,6 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
         persistEntity(glTransaction);
 
         return glTransaction;
-
     }
 
     /**
@@ -186,14 +190,17 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @param operationType GL operation type
      * @param statement     GL transaction statement
      * @return new GL Transaction instance
+     * @throws GlTransactionFailedException
      */
     @Override
     @WebMethod(exclude = true)
-    @Transactional(readOnly = false)
-    public GlTransaction createGlTransaction(Long transactionId, String glAccountId, BigDecimal amount,
-                                             GlOperationType operationType, String statement) {
+    @Transactional(readOnly = false, noRollbackFor = GlTransactionFailedException.class)
+    public GlTransaction createGlTransaction(Long transactionId,
+                                             String glAccountId,
+                                             BigDecimal amount,
+                                             GlOperationType operationType,
+                                             String statement) throws GlTransactionFailedException {
         return createGlTransaction(transactionId, glAccountId, amount, operationType, statement, true);
-
     }
 
     /**

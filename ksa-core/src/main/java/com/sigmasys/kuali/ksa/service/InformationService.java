@@ -216,6 +216,20 @@ public interface InformationService {
                     Integer severity, Date effectiveDate, Date expirationDate);
 
     /**
+     * Creates a new flag based on the given parameters
+     *
+     * @param accountId       Account ID
+     * @param flagTypeCode    Flag Type code
+     * @param accessLevelCode InformationAccessLevel code
+     * @param severity        Severity
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date
+     * @return new Flag instance
+     */
+    Flag createFlag(String accountId, String flagTypeCode, String accessLevelCode,
+                    Integer severity, Date effectiveDate, Date expirationDate);
+
+    /**
      * Creates a new alert based on the given parameters
      *
      * @param transactionId   Transaction ID
@@ -273,6 +287,14 @@ public interface InformationService {
      * @return FlagType instance
      */
     FlagType getFlagType(Long flagTypeId);
+
+    /**
+     * Retrieves FlagType entity from the persistent store by code.
+     *
+     * @param flagTypeCode FlagType code
+     * @return FlagType instance
+     */
+    FlagType getFlagType(String flagTypeCode);
 
     /**
      * Returns all existing flag types from the persistent store.

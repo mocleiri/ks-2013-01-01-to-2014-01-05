@@ -46,11 +46,14 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         EXPIRE
     }
 
-
     private static final String GET_INFORMATION_JOIN =
             " left outer join fetch i.account a " +
                     " left outer join fetch i.accessLevel al " +
                     " left outer join fetch i.transaction t ";
+
+    private static final String GET_FLAG_TYPE_SELECT =
+            "select ft from FlagType ft " +
+                    " left outer join fetch ft.accessLevel ";
 
 
     @Autowired
@@ -488,6 +491,29 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     @Transactional(readOnly = false)
     public Flag createFlag(String accountId, Long flagTypeId, String accessLevelCode,
                            Integer severity, Date effectiveDate, Date expirationDate) {
+        return createFlag(accountId, getFlagType(flagTypeId), accessLevelCode, severity, effectiveDate, expirationDate);
+    }
+
+    /**
+     * Creates a new flag based on the given parameters
+     *
+     * @param accountId       Account ID
+     * @param flagTypeCode    Flag Type code
+     * @param accessLevelCode InformationAccessLevel code
+     * @param severity        Severity
+     * @param effectiveDate   Effective date
+     * @param expirationDate  Expiration date
+     * @return new Flag instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Flag createFlag(String accountId, String flagTypeCode, String accessLevelCode,
+                           Integer severity, Date effectiveDate, Date expirationDate) {
+        return createFlag(accountId, getFlagType(flagTypeCode), accessLevelCode, severity, effectiveDate, expirationDate);
+    }
+
+    protected Flag createFlag(String accountId, FlagType flagType, String accessLevelCode,
+                              Integer severity, Date effectiveDate, Date expirationDate) {
 
         if (accountId == null) {
             String errMsg = "Account ID cannot be null";
@@ -510,8 +536,6 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         }
 
         checkCreatePermission(accessLevel);
-
-        FlagType flagType = getFlagType(flagTypeId);
 
         Flag flag = new Flag();
         flag.setType(flagType);
@@ -694,11 +718,32 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     @Override
     public FlagType getFlagType(Long flagTypeId) {
 
-        Query query = em.createQuery("select ft from FlagType ft " +
-                " left outer join fetch ft.accessLevel " +
-                " where ft.id = :id");
+        Query query = em.createQuery(GET_FLAG_TYPE_SELECT + " where ft.id = :id");
 
         query.setParameter("id", flagTypeId);
+
+        List<FlagType> flagTypes = query.getResultList();
+        if (CollectionUtils.isNotEmpty(flagTypes)) {
+            FlagType flagType = flagTypes.get(0);
+            checkReadPermission(flagType.getAccessLevel());
+            return flagType;
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieves FlagType entity from the persistent store by code.
+     *
+     * @param flagTypeCode FlagType code
+     * @return FlagType instance
+     */
+    @Override
+    public FlagType getFlagType(String flagTypeCode) {
+
+        Query query = em.createQuery(GET_FLAG_TYPE_SELECT + " where ft.code = :code");
+
+        query.setParameter("code", flagTypeCode);
 
         List<FlagType> flagTypes = query.getResultList();
         if (CollectionUtils.isNotEmpty(flagTypes)) {
@@ -718,9 +763,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
     @Override
     public List<FlagType> getFlagTypes() {
 
-        Query query = em.createQuery("select ft from FlagType ft " +
-                " left outer join fetch ft.accessLevel " +
-                " order by ft.code desc");
+        Query query = em.createQuery(GET_FLAG_TYPE_SELECT + " order by ft.code desc");
 
         List<FlagType> flagTypes = query.getResultList();
         if (CollectionUtils.isNotEmpty(flagTypes)) {
