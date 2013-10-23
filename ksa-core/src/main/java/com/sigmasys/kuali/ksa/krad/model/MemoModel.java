@@ -38,8 +38,8 @@ public class MemoModel extends InformationModel {
         if(followupMemoModel == null) {
             followupMemoModel = new MemoModel();
             Memo memo = new Memo();
-            memo.setEffectiveDate(this.getParentEntity().getEffectiveDate());
             followupMemoModel.setParentEntity(memo);
+            memo.setEffectiveDate(this.getParentEntity().getEffectiveDate());
         }
         return followupMemoModel;
     }

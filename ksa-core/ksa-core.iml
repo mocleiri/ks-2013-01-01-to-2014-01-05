@@ -9,6 +9,11 @@
         <webroots>
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/src/main/java" />
+          <root url="file://$MODULE_DIR$/src/main/resources" />
+          <root url="file://$MODULE_DIR$/target/generated-sources/annotations" />
+        </sourceRoots>
       </configuration>
       <facet type="struts" name="Struts">
         <configuration>
@@ -81,6 +86,7 @@
       <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/test-annotations" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/target/ksa" />
       <excludeFolder url="file://$MODULE_DIR$/target/surefire-reports" />
       <excludeFolder url="file://$MODULE_DIR$/target/test-classes" />
     </content>
@@ -370,12 +376,12 @@
     <orderEntry type="library" name="Maven: net.sf.beanlib:beanlib-hibernate:5.0.2beta" level="project" />
     <orderEntry type="library" name="Maven: net.sf.beanlib:beanlib:5.0.2beta" level="project" />
     <orderEntry type="library" name="Maven: net.jcip:jcip-annotations:1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:transactions-jdbc:3.9.0.M1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:transactions-jta:3.9.0.M1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:transactions:3.9.0.M1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:transactions-api:3.9.0.M1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:atomikos-util:3.9.0.M1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:transactions-jms:3.9.0.M1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:transactions-jdbc:3.9.0.M2-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:transactions-jta:3.9.0.M2-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:transactions:3.9.0.M2-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:transactions-api:3.9.0.M2-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:atomikos-util:3.9.0.M2-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.atomikos:transactions-jms:3.9.0.M2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.sun.xml.ws:webservices-rt:1.4" level="project" />
     <orderEntry type="library" name="Maven: javax.xml:webservices-api:1.4" level="project" />
     <orderEntry type="library" name="Maven: org.jvnet.jax-ws-commons.spring:jaxws-spring:1.8" level="project" />

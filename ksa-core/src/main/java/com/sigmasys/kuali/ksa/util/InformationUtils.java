@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.util;
 
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.model.Information;
+import com.sigmasys.kuali.ksa.model.Memo;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,6 +12,21 @@ public class InformationUtils {
 
     public static List<Information> orderByEffectiveDate(List<Information> informations, boolean ascending) {
         return orderInformations(informations, new EffectiveDateComparator(), ascending);
+    }
+
+    public static List<Memo> orderMemoByEffectiveDate(List<Memo> informations, boolean ascending) {
+        return orderMemos(informations, new EffectiveDateComparator(), ascending);
+    }
+
+    private static List<Memo> orderMemos(List<Memo> informations, Comparator<Information> comparator ,boolean ascending) {
+        if (!ascending) {
+            comparator = Collections.reverseOrder(comparator);
+        }
+
+        Collections.sort(informations, comparator);
+
+        return informations;
+
     }
 
     private static List<Information> orderInformations(List<Information> informations,

@@ -131,8 +131,9 @@
     <bean id="memoTableSection" parent="Uif-Disclosure-TableCollectionSection"
         p:layoutManager.numberOfColumns="5"
         p:disclosure.render="false"
-        p:progressiveRenderViaAJAX="true"
         p:width="85%">
+        <!-- p:progressiveRenderViaAJAX="true" -->
+
         <property name="readOnly" value="true"/>
         <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.MemoModel"/>
         <property name="propertyName" value="memoModels"/>

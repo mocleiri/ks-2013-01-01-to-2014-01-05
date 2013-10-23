@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.UserPreferenceService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
+import com.sigmasys.kuali.ksa.util.InformationUtils;
 import com.sigmasys.kuali.ksa.util.LocaleUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.apache.commons.logging.Log;
@@ -322,6 +323,7 @@ public abstract class AbstractViewModel extends UifFormBase {
         }
 
         html += "<p>";
+        items = InformationUtils.orderModelsByEffectiveDate(items, false);
         for (int i = 0; i < items.size() && i < itemsPerPage; i++) {
             html += items.get(i).getDisplayValue() + "<br/>";
         }

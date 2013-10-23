@@ -155,6 +155,7 @@
         <property name="propertyName" value="transactionTypes"/>
         <property name="layoutManager.sequencePropertyName" value="currentTransactionType.id.id"/>
         <property name="layoutManager.richTable.render" value="true"/>
+        <!--<property name="useServerPaging" value="true"/>-->
         <property name="layoutManager.renderSequenceField" value="false"/>
         <property name="layoutManager.applyDefaultCellWidths" value="false"/>
         <property name="layoutManager.richTable.disableTableSort" value="false"/>
