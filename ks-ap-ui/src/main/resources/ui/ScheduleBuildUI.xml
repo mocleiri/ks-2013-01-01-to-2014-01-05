@@ -324,7 +324,7 @@
 								<property name="items">
 									<list>
 										<bean parent="sb_option_control-parent" p:propertyName="selected" p:id="sb-course-option-select-@{#line.uniqueId}"
-												p:control.render="@{#line.getActivityCount(includeClosed) gt 0}"
+												p:control.render="@{#line.getActivityCount(includeClosed) gt 0 and !#line.lockedIn}"
 												p:additionalCssClasses="ksap-sb-course-select" p:onChangeScript="toggleCourseOptionSelect('@{#line.uniqueId}')" />
 										<bean parent="Uif-VerticalFieldGroup" p:onClickScript="toggleCourseOption('@{#line.uniqueId}')">
 											<property name="items">
@@ -335,7 +335,10 @@
 															p:render="@{#line.getActivityCount(includeClosed) le 0}"
 															p:messageText="No@{includeClosed?'t':' open sections'} offered in @{term.name}" />
 													<bean parent="Uif-Message" p:id="sb-course-selected-message-@{#line.uniqueId}" p:additionalCssClasses="ksap-sb-course-subtext"
-															p:render="@{#line.getActivityCount(includeClosed) gt 0}"
+															p:render="@{#line.getActivityCount(includeClosed) gt 0 and #line.lockedIn and #line.selected}"
+															p:messageText="Registered for @{term.name}" />
+													<bean parent="Uif-Message" p:id="sb-course-selected-message-@{#line.uniqueId}" p:additionalCssClasses="ksap-sb-course-subtext"
+															p:render="@{#line.getActivityCount(includeClosed) gt 0 and !#line.lockedIn}"
 															p:messageText="@{#line.getSelectedActivityCount(includeClosed)} / @{#line.getActivityCount(includeClosed)} selected" />
 												</list>
 											</property>
@@ -387,7 +390,8 @@
     <property name="layoutManager">
 			<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
 				<property name="lineGroupPrototype">
-					<bean parent="Uif-CollectionVerticalBoxItem" p:footer.render="false" p:render="@{includeClosed or !#line.closed}" />
+					<bean parent="Uif-CollectionVerticalBoxItem" p:footer.render="false"
+							p:render="@{((includeClosed or !#line.closed) and !#line.courseLockedIn) or (#line.selected and #line.courseLockedIn)}" />
 				</property>
 			</bean>
 		</property>
@@ -405,7 +409,7 @@
 		</property>
 		<property name="items">
 			<list>
-				<bean parent="sb_option_control-parent" p:propertyName="selected" p:id="sb-activity-select-@{#line.uniqueId}" p:render="@{!#line.lockedIn}"
+				<bean parent="sb_option_control-parent" p:propertyName="selected" p:id="sb-activity-select-@{#line.uniqueId}" p:control.disabled="@{#line.lockedIn}"
 						p:additionalCssClasses="ksap-sb-activity-select" p:onChangeScript="toggleActivitySelect(@{#line.primary}, '@{#line.uniqueId}', '@{#line.parentUniqueId}')" />
 				<bean parent="Uif-VerticalBoxGroup" p:onClickScript="toggleActivity(@{#line.primary}, '@{#line.uniqueId}', '@{#line.parentUniqueId}')"
 							p:additionalCssClasses="ksap-sb-activity-details">
