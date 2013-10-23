@@ -1028,6 +1028,8 @@ class DeliveryLogistics
 
       page.add_days.set @days
       page.add_start_time.set @start_time + @start_time_ampm
+      page.add_start_time.fire_event "onblur"
+      sleep(2)
       page.add_end_time.set @end_time +  @end_time_ampm
       page.add_facility.set @facility
       page.add_room.set @room
