@@ -67,7 +67,6 @@ Feature: EC.Holiday Calendar CRED
     And I edit a Holiday date so that the start date is earlier than the Holiday Calendar start date
     Then a Holiday Dates warning message is displayed stating "doesn't fall within holiday calendar dates"
 
-  @bug @KSENROLL-9726
   Scenario: Verify error message when adding a Holiday with start date after end date
     Given I create a Holiday Calendar
     And I add a new Holiday with a date later than the Holiday end date
