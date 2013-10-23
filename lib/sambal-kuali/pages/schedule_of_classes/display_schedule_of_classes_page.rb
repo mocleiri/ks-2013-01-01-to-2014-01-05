@@ -111,7 +111,7 @@ class DisplayScheduleOfClasses < BasePage
   end
 
   def get_requisites_message_text
-    details_row.div(:class => /uif-messageField/).text
+    details_row.div(:class => /uif-horizontalBoxGroup uif-header-upperGroup/).text
   end
 
   REG_GROUP_COLUMN = 0

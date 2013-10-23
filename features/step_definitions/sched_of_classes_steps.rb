@@ -133,14 +133,40 @@ end
 
 When /^I search for course offerings by course by entering a course offering code to view the course offering requisites$/ do
   @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "ENGL304", :exp_course_list => ["ENGL304"],
-                                                 :term => "Fall 2012"
+                              :term => "Fall 2012"
   @schedule_of_classes.display
 end
 
-Then /^the course offering requisites should be displayed stating "([^"]+)"$/ do |exp_msg|
+When /^I search for course offerings by course to view the course offering requisites$/ do
+  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "PHYS272", :exp_course_list => ["PHYS272","PHYS272H"],
+                                                 :term => "Fall 2012"
+  @schedule_of_classes.display
   @schedule_of_classes.expand_course_details
+end
+
+Then /^the course offering requisites should be displayed stating "([^"]+)"$/ do |exp_msg|
   on DisplayScheduleOfClasses do |page|
-    page.get_requisites_message_text.should match /#{exp_msg}/
+    page.get_requisites_message_text.should match /#{exp_msg}/m
+  end
+end
+
+Then /^the Activity A of the Course Offering has Activity Offering Requisites displayed stating "([^"]+)"$/ do |exp_msg|
+  on DisplayScheduleOfClasses do |page|
+    if !page.details_table.exists?
+      raise "activities table not found"
+    else
+      page.details_table.rows[2].text.should match /#{exp_msg}/m
+    end
+  end
+end
+
+Then /^the Activity B of the Course Offering has Activity Offering Requisites displayed stating "([^"]+)"$/ do |exp_msg|
+  on DisplayScheduleOfClasses do |page|
+    if !page.details_table.exists?
+      raise "activities table not found"
+    else
+      page.details_table.rows[4].text.should match /#{exp_msg}/m
+    end
   end
 end
 

@@ -614,6 +614,15 @@ When /^I want to compare the CO to the CLU for the Student Eligibility & Prerequ
   end
 end
 
+When /^I add a new text statement to the Recommended Preparation section$/ do
+  @courseOR = make CORequisitesData
+  @prereq = make PreparationPrerequisiteRule, :section => "Recommended Preparation", :term => "201208", :course => "PHYS272"
+  @prereq.navigate_to_mco_requisites
+  @prereq.rp_edit_add( "add")
+  @prereq.rp_sepr_text_rule( "add", "", "Added Recommended Prep on CO level")
+  @prereq.commit_changes
+end
+
 Then /^the tree in the Recommended Preparation section should be empty$/ do
   @prereq.open_agenda_section
   on CourseOfferingRequisites do |page|

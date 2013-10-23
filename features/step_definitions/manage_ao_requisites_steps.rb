@@ -146,6 +146,20 @@ When /^I compare the added rule with the CO and CLU rules in the Student Eligibi
   @prereq.sepr_compare_new_ao_to_clu_co_rule
 end
 
+When /^I edit the Prerequisite section by adding a new text statement$/ do
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "B"
+  @prereq = make AOPreparationPrerequisiteRule, :activity => "B", :term => "201208", :course => "PHYS272"
+  @prereq.navigate_to_ao_requisites
+  on ActivityOfferingRequisites do |page|
+    if page.prereq_copy_edit_link.exists?
+      page.loading.wait_while_present
+      page.prereq_copy_edit
+      @prereq.rp_sepr_text_rule( "add", "B", "Changed the SE & Prerequisite on AO B only")
+      @prereq.commit_changes
+    end
+  end
+end
+
 Then /^I should be able to compare the CO Rule to the AO in the Student Eligibility & Prerequisite section$/ do
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
@@ -270,6 +284,30 @@ Then /^I should only be allowed to view the CLU and CO rule in the Student Eligi
     page.prereq_suppress_link.present?.should be_false
   end
 end
+
+#Antirequisite
+When /^I add a text rule to the Antirequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Antirequisite"
+  @antireq = make AOAntirequisiteRule, :term => "201208", :course => "PHYS272"
+  @antireq.navigate_to_ao_requisites
+  on ActivityOfferingRequisites do |page|
+    if page.antireq_add_link.exists?
+      page.loading.wait_while_present
+      page.antireq_add
+      @antireq.ar_text_rule( "add", "", "Add Antirequisite specific to AO A")
+      @antireq.commit_changes
+    end
+  end
+end
+
+#Corequisite
+When /^I suppress the rule in the Corequisite section$/ do
+  @activityOR = make AORequisitesData, :section => "Corequisite"
+  @coreq = make AOCorequisiteRule, :term => "201208", :course => "PHYS272"
+  @coreq.cr_suppress_co_rule
+  @coreq.commit_changes
+end
+
 
 
 
