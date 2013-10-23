@@ -1,5 +1,5 @@
 @nightly
-Feature: SA.FE3.8 Update Exam Offerings
+Feature: SA.FE3-8 Update Exam Offerings
   FE 3.8 As a Central Administrator I want exam offerings to be created if the course offering setting changes to
   "Final Exam" after the bulk creation so that exam offerings are appropriate to exam settings on the course offering
 
@@ -18,4 +18,4 @@ Feature: SA.FE3.8 Update Exam Offerings
     When I view the Exam Offerings for a CO where the Activity Offering Standard FE is changed to Alternate Final Exam
     Then there should be an Activity Offering table header explaining that the Exam Offerings have been canceled
     When I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
-    Then the 1 Exam Offering for Activity Offering should be in a Draft state
+    Then the Exam Offering for Activity Offering should be in a Draft state

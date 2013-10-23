@@ -22,4 +22,4 @@ Feature: SA.FE3-2 View Exam Offerings for AO not created when no Activity Offeri
   #FE3.2.EB3 (KSENROLL-9536)
   Scenario: Test whether each Exam Offering is in Draft state when the exam driver is set to Activity Offering
     When I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Activity Offering
-    Then the 1 Exam Offering for Activity Offering should be in a Draft state
+    Then the Exam Offering for Activity Offering should be in a Draft state
