@@ -65,6 +65,13 @@ class FinalExamMatrix
         set_common_rule opts
       end
 
+      page.preview_change
+      page.loading.wait_while_present
+
+      if @add_more_statements == true
+        add_multiple_statements
+      end
+
       page.rdl_days.select @rdl_days
       page.rdl_starttime.set @start_time
       page.rdl_starttime_ampm.select @time_ampm
@@ -73,13 +80,6 @@ class FinalExamMatrix
       if @exam_type == "Common"
         page.rdl_facility.set @facility
         page.rdl_room.set @room
-      end
-
-      page.preview_change
-      page.loading.wait_while_present
-
-      if @add_more_statements == true
-        add_multiple_statements
       end
 
       page.update_rule unless @defer_save == true
@@ -259,7 +259,7 @@ class FinalExamMatrix
         page.preview_change
         page.loading.wait_while_present
       elsif @add_more_statements == true
-        opts = {:rule => "if course is part of <Courses>",
+        opts = {:rule => "Course must be part of <Courses>",
                 :courses => "HIST110,ENGL304,BSCI202",
                 :courses_type => "Approved Courses"}
         page.add_statement
