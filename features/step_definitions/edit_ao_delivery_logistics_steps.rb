@@ -101,14 +101,15 @@ And /^I delete the original RDLs$/ do
   @activity_offering.save
 end
 
-########################################################################################################################
-### DUMMY DATA AND TESTING
-#When /^I create dummy data to speed dev of edit-ao-delivery-logistics$/ do
-#  course_offering = make CourseOffering, :term => "201208", :course => "ENGL222A"
-#  course_offering.manage_and_init
-#  @activity_offering = course_offering.activity_offering_cluster_list[0].get_ao_obj_by_code("A")
-#end
-
 When /^I add (standard|ad hoc) RDLs for an AO$/ do |tsType|
-  pending
+  # capture the RDLs
+  @new_rdls = @activity_offering.requested_delivery_logistics_list.values[0]
+  # add new RDL row
+  @activity_offering.edit
+  if tsType=="standard"
+    @new_rdls.add :std_ts => true, :days => "MWF", :start_time => "01:00", :start_time_ampm => "am", :end_time => "1:35", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  elsif tsType=="ad hoc"
+    @new_rdls.add :std_ts => false, :days => "TH", :start_time => "8:21", :start_time_ampm => "pm", :end_time => "9:04", :end_time_ampm => "pm", :facility => "PHYS", :room => "4102"
+  end
+  @activity_offering.save
 end

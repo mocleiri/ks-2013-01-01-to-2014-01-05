@@ -1170,13 +1170,13 @@ class DeliveryLogistics
         end
 
         if opts[:start_time] != nil then
-          page.add_start_time.set opts[:start_time]
-          page.add_start_time_ampm.select opts[:start_time_ampm] unless opts[:start_time_ampm] == ""
+          page.add_start_time.set opts[:start_time] + " " + opts[:start_time_ampm].upcase
+          page.add_start_time.fire_event "onblur" # fire onblur to trigger AJAX refresh of end time field
+          sleep(1)
         end
 
         if opts[:end_time] != nil then
-          page.add_end_time.set opts[:end_time]
-          page.add_end_time_ampm.select opts[:end_time_ampm] unless opts[:end_time_ampm] == ""
+          page.add_end_time.set opts[:end_time] + " " + opts[:end_time_ampm].upcase
         end
 
         if opts[:facility] != nil then
@@ -1214,13 +1214,23 @@ class DeliveryLogistics
         end
 
         if opts[:start_time] != nil then
-          page.add_start_time.set opts[:start_time]
-          page.add_start_time_ampm.select opts[:start_time_ampm] unless opts[:start_time_ampm] == ""
+          page.add_start_time.set opts[:start_time] + " " + opts[:start_time_ampm]
+          page.add_start_time.fire_event "onblur" # fire onblur to trigger AJAX refresh of end time field
+          sleep(1)
         end
 
         if opts[:end_time] != nil then
-          page.add_end_time.set opts[:end_time]
-          page.add_end_time_ampm.select opts[:end_time_ampm] unless opts[:end_time_ampm] == ""
+          if opts[:std_ts] then
+            page.add_end_time.set opts[:end_time].to_s[0]
+            sleep(1)
+            hr,min = opts[:end_time].split(":")
+            if hr.length == 1 then
+              hr="0"+hr
+            end
+            page.select_end_time("#{hr}:#{min} #{opts[:end_time_ampm].upcase}")
+          else
+            page.add_end_time.set opts[:end_time] + " " + opts[:end_time_ampm]
+          end
         end
 
         if opts[:facility] != nil then
