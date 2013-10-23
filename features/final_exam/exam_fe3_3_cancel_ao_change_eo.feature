@@ -6,7 +6,7 @@ Feature: SA.FE3-3 Cancelling an AO should cancel the EO depending on all the exa
     Given I am logged in as admin
 
   #FE3.3.EB1 (KSENROLL-10220)
-  @bug @KSENROLL-10217
+  @pending
   Scenario: Test that cancelling an AO does not effect the EOs when the FE Driver is set to CO
     When I cancel an Activity Offering for a CO with a standard final exam driven by Course Offering
     And I view the Exam Offerings for the Course Offering
@@ -24,7 +24,7 @@ Feature: SA.FE3-3 Cancelling an AO should cancel the EO depending on all the exa
   Scenario: Test that cancelling a discussion AO does create an EO for AO table
     When I cancel a discussion Activity Offering for a CO with a standard final exam driven by Activity Offering
     And I view the Exam Offerings for the Course Offering
-    Then the 1 Exam Offering for Activity Offering should be in a Draft state
+    Then the Exam Offering for Activity Offering should be in a Draft state
 
   #FE3.3.EB4 (KSENROLL-10220)
   @pending
