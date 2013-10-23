@@ -1191,32 +1191,6 @@ class CourseOffering
     end
   end
 
-  def exam_offerings_setup(opts={})
-    defaults = {
-        :final_exam_type => "Standard final Exam",
-        :final_exam_driver => "Final Exam Per Course Offering",
-        :final_exam_activity => "Lecture"
-    }
-    options = defaults.merge(opts)
-
-    #manage
-    on ManageCourseOfferings do |page|
-      page.edit_course_offering
-    end
-    if options[:final_exam_type] == "Standard final Exam" and options[:final_exam_driver] =~ /Activity Offering/
-      edit_offering :final_exam_type => options[:final_exam_type], :final_exam_driver => options[:final_exam_driver],
-                    :final_exam_activity => options[:final_exam_activity]
-    elsif options[:final_exam_type] == "Standard final Exam"
-      edit_offering :final_exam_type => options[:final_exam_type], :final_exam_driver => options[:final_exam_driver]
-    else
-      edit_offering :final_exam_type => opts[:final_exam_type]
-    end
-    on CourseOfferingEdit do |page|
-      page.submit
-      page.loading.wait_while_present
-    end
-  end
-
 end
 
 class AffiliatedOrg
