@@ -15,7 +15,7 @@ Feature: SA.ELIG8-22 Ensure that changes made to AO or CO Requisites displays di
     And the Activity L of the Course Offering has Activity Offering Requisites displayed stating "Corequisite.*CHEM271"
 
   #ELIG8.22.EB2 (KSENROLL-10123)
-#  @pending
+  @pending
   Scenario: Test that editing the Corequisite rule is displayed on the Schedule of Classes
     Given I edit the Corequisite section by adding a new text statement
     And I am using the schedule of classes page
@@ -23,7 +23,7 @@ Feature: SA.ELIG8-22 Ensure that changes made to AO or CO Requisites displays di
     Then the course offering requisites should be displayed not stating "Changed the Corequisite on AO V only"
     And the Activity C of the Course Offering has Activity Offering Requisites displayed stating "Changed the Corequisite on AO V only"
 
-  #ELIG8.18.EB5 (KSENROLL-9795)
+  #ELIG8.22.EB3 (KSENROLL-10123)
   @pending
   Scenario: Test that adding CO Requisites is displayed on the Schedule of Classes
     Given I add a new text statement to the Antirequisite section
