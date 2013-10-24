@@ -129,12 +129,8 @@
                       p:href="accountImportView?methodToCall=get&amp;viewId=AccountImportView"/>
                 <bean parent="Uif-Link" p:linkText="System Activity"
                       p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=SystemActivity"/>
-                <bean parent="Uif-Link" p:linkText="Regulatory Tracking"
-                      p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=RegulatoryTracking"/>
                 <bean parent="Uif-Link" p:linkText="System Roles &amp; Users"
                       p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=SystemRolesUsers"/>
-                <bean parent="Uif-Link" p:linkText="Refunds"
-                      p:href="adminView?methodToCall=get&amp;viewId=AdminView&amp;pageId=Refunds"/>
                 <bean parent="Uif-Link" p:linkText="Rule Management"
                       p:href="ruleSetsView?methodToCall=get&amp;viewId=RuleSetsView"/>
             </list>
