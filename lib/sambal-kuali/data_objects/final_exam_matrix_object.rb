@@ -234,6 +234,7 @@ class FinalExamMatrix
         courses_array = options[:courses].split(/,/)
         courses_array.each do |course|
           page.loading.wait_while_present
+          sleep 2 #Adding sleep due to loading image that disappears too quickly on some occasions but not always
           page.frm.a( text: /Advanced Search/).click
           page.lookup_course_code.when_present.set course
           page.lookup_search
