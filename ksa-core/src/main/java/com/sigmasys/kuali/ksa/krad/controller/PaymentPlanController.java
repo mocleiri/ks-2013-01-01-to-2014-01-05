@@ -754,6 +754,13 @@ public class PaymentPlanController extends GenericSearchController {
             plan.setMaxAmount(form.getMaxAmount());
         }
 
+        if (plan.getEffectiveDate() == null) {
+            plan.setEffectiveDate(form.getEffectiveDate());
+        }
+
+        if(plan.getRecognitionDate() == null) {
+            plan.setRecognitionDate(form.getRecognitionDate());
+        }
 
         boolean errors = false;
 
@@ -793,8 +800,8 @@ public class PaymentPlanController extends GenericSearchController {
                     charge.getDistributionPlan());
         }
 
-        String message = "Transfer Type saved";
-        GlobalVariables.getMessageMap().putInfo(PAYMENT_PLAN_VIEW, RiceKeyConstants.ERROR_CUSTOM, message);
+        String message = "Third Pary Payment Plan saved";
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, message);
 
 
         return getUIFModelAndView(form);
