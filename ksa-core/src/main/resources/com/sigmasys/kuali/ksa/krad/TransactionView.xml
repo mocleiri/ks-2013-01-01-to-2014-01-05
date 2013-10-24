@@ -341,6 +341,7 @@
                         <entry key="bSort" value="false" />
                     </map>
                 </property>
+                <!--
                 <property name="layoutManager.columnCalculations">
                     <list>
                         <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="chargeAmount"/>
@@ -349,7 +350,7 @@
                         <bean parent="Uif-ColumnCalculationInfo-Sum" p:propertyName="unallocatedAmount"/>
                     </list>
                 </property>
-
+                -->
                 <property name="items">
                     <list>
                         <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective" p:style="width: 10%;"/>
@@ -389,11 +390,7 @@
                                                                 <property name="items">
                                                                     <list>
                                                                         <bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Refund Amount"/>
-                                                                        <bean parent="Uif-InputField" p:propertyName="id">
-                                                                            <property name="control">
-                                                                                <bean parent="Uif-HiddenControl"/>
-                                                                            </property>
-                                                                        </bean>
+
                                                                     </list>
                                                                 </property>
                                                             </bean>
