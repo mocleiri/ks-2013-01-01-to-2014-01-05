@@ -249,7 +249,6 @@ When /^I view the Exam Offerings for a CO with two new AOs and a standard final 
   on CourseOfferingEdit do |page|
     page.submit
   end
-  @course_offering.exam_offerings_setup
   @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
   @activity_offering.edit :send_to_scheduler => true, :defer_save => false
 
