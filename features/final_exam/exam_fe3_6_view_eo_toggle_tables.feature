@@ -17,8 +17,7 @@ Feature: SA.FE3-6 View Exam Offerings table renedered depending on FE Driver
 
 
   #FE3.6 EB2 (KSENROLL-9876)
-  @pending
-  Scenario: Test whether the View EO table is by Course Offering when a delivery format "Lecture" is selected
+  Scenario: Test whether the View EO table is by Course Offering when a delivery format Lecture is selected
     When I create a Course Offering with standard final exam driven by Course Offering and "Lecture" as delivery format
     And I view the Exam Offerings for the Course Offering
     Then the Exam Offerings for Course Offering should be in a Draft state
