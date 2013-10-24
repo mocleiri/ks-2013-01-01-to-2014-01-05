@@ -71,7 +71,7 @@
                             <bean parent="Uif-InputField" p:label="Name of Plan" p:propertyName="addPlanName">
                                 <property name="suggest">
                                     <bean parent="Uif-Suggest">
-                                        <property name="valuePropertyName" value="id"/>
+                                        <property name="valuePropertyName" value="name"/>
                                         <property name="labelPropertyName" value="name"/>
                                         <property name="templateOptions" value="minLength:2,delay:0,html:true"/>
                                         <property name="suggestQuery">

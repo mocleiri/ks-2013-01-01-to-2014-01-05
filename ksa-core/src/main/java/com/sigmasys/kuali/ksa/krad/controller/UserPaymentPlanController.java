@@ -96,13 +96,23 @@ public class UserPaymentPlanController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=addThirdPartyPlan")
     public ModelAndView addThirdPartyPlan(@ModelAttribute("KualiForm") UserPaymentPlanForm form) {
         String planString = form.getAddPlanName();
-        Long planId = Long.parseLong(planString);
 
         String userId = form.getAccount().getId();
 
-        ThirdPartyPlan plan = thirdPartyTransferService.getThirdPartyPlan(planId);
+
+        List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlanByNamePattern(planString);
+        ThirdPartyPlan plan = null;
+
+        if(plans != null && plans.size() > 1) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Multiple Third Party plans match name: " + planString);
+            return getUIFModelAndView(form);
+        } else if(plans != null && plans.size() == 1) {
+            plan = plans.get(0);
+        }
+
 
         if (plan != null) {
+            Long planId = plan.getId();
             ThirdPartyPlanMember memeber = thirdPartyTransferService.getThirdPartyPlanMember(planId, userId);
             if(memeber == null) {
                 thirdPartyTransferService.createThirdPartyPlanMember(userId, planId, 1);
