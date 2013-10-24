@@ -329,9 +329,10 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_PLAN);
 
-        Query query = em.createQuery(PAYMENT_PLAN_SELECT + " where upper(p.name) like upper(:pattern) order by p.id desc");
+        Query query = em.createQuery(PAYMENT_PLAN_SELECT + " where upper(p.name) like :pattern or " +
+                " upper(p.code) like :pattern or upper(p.description) like :pattern order by p.id desc");
 
-        query.setParameter("pattern", "%" + pattern + "%");
+        query.setParameter("pattern", "%" + pattern.toUpperCase() + "%");
 
         return query.getResultList();
     }

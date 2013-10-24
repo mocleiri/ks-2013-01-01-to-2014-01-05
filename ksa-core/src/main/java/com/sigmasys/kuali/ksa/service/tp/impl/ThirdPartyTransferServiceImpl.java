@@ -295,9 +295,10 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
         PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
 
-        Query query = em.createQuery(THIRD_PARTY_PLAN_SELECT + " where upper(p.name) like upper(:pattern)");
+        Query query = em.createQuery(THIRD_PARTY_PLAN_SELECT + " where upper(p.name) like :pattern or " +
+                " upper(p.code) like :pattern or upper(p.description) like :pattern order by p.id desc");
 
-        query.setParameter("pattern", "%" + pattern + "%");
+        query.setParameter("pattern", "%" + pattern.toUpperCase() + "%");
 
         return query.getResultList();
     }
