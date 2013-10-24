@@ -8,7 +8,6 @@ class FEMatrixView < BasePage
 
   #element(:fe_matrix_criteria_section) { |b| b.fe_agenda_maintenance_page.div( id: "finalExamMatrixManagementCriteriaSection")}
   element(:term_type_select) { |b| b.frm.select( name: "document.newMaintainableObject.dataObject.termToUse")}
-  element(:set_exam_locations_toggle) { |b| b.frm.checkbox( id: "KSFE_location_control")}
 
   element(:submit_btn) { |b| b.div( id: "KSFE-DocumentPageFooter-SubmitCancel").button( text: /Submit/)}
   action(:submit) { |b| b.submit_btn.click}
@@ -23,6 +22,7 @@ class FEMatrixView < BasePage
   element(:standard_final_exam_section) { |b| b.frm.div( id: "ruledefinitions_agenda0")}
   element(:standard_final_exam_table) { |b| b.standard_final_exam_section.table}
   action(:add_standard_fe_rule) { |b| b.standard_final_exam_section.a( text: "Add").click; b.loading.wait_while_present}
+  element(:set_standard_exam_location) { |b| b.frm.checkbox( id: "KSFE_location_agenda0_control")}
 
   element(:common_final_exam_section) { |b| b.frm.div( id: "ruledefinitions_agenda1")}
   element(:common_final_exam_table) { |b| b.common_final_exam_section.table}

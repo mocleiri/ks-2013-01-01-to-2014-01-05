@@ -155,6 +155,10 @@ When /^I associate the second Term with the Final Exam matrix of the initial Ter
   end
 end
 
+When /^I view the term$/ do
+  @matrix_term.manage
+end
+
 When /^I view the second term$/ do
   @matrix_second_term.manage
 end
@@ -297,8 +301,8 @@ end
 
 Then /^the option to set the Exam Location should be disabled and selected$/ do
   on FEMatrixView do |page|
-    page.set_exam_locations_toggle.attribute_value('disabled').should == "true"
-    page.set_exam_locations_toggle.attribute_value('checked').should == "true"
+    page.set_standard_exam_location.attribute_value('disabled').should == "true"
+    page.set_standard_exam_location.attribute_value('checked').should == "true"
   end
 end
 

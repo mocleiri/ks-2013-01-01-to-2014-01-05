@@ -9,5 +9,6 @@ Feature: SA.FE1-5 Manage the Final Exam Matrix so that FEs can be Scheduled with
 
   #FE1.5.EB1 (KSENROLL-9798)
   Scenario: Test that the option to set the location is present but disabled
-    When I open the Final Exam Matrix for Fall Term
+    Given there is an Academic Term associated with a Final Exam matrix
+    And I view the term
     Then the option to set the Exam Location should be disabled and selected
