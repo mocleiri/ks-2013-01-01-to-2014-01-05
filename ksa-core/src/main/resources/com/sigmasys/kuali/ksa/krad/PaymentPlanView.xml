@@ -1058,29 +1058,6 @@
                                     <bean parent="Uif-CheckboxControl" p:disabled="true"/>
                                 </property>
                             </bean>
-                            <!--
-                            <bean parent="Uif-HorizontalFieldGroup" p:label="Actions">
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-ImageField" p:source="../images/re_execute.png" p:style="cursor:pointer;" p:altText="Re-execute the Third Party Payment Plan" p:title=""
-                                              p:onClickScript="showLightboxComponent('ThirdPartyReExecutePlanLightbox@{#lineSuffix}');">
-                                            <property name="toolTip">
-                                                <bean parent="Uif-Tooltip" p:tooltipContent="Re-execute the Third Party Payment Plan"/>
-                                            </property>
-                                        </bean>
-                                        <ref bean="ThirdPartyReExecutePlanLightbox"/>
-
-                                        <bean parent="Uif-ActionLink" p:methodToCall="transactionTransferList" p:actionParameters="memberId:@{#line.directChargeAccount.id},planId:@{#line.plan.id}"
-                                              p:onClickScript="jQuery.fancybox.close();">
-                                            <property name="actionImage">
-                                                <bean parent="Uif-Image" p:source="../images/transaction_transfer_list.png" p:altText="Transaction Transfer List"/>
-                                            </property>
-                                        </bean>
-
-                                    </list>
-                                </property>
-                            </bean>
-                            -->
                         </list>
                     </property>
                 </bean>
@@ -1159,9 +1136,9 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-InputField" p:label="Transfer Date" p:propertyName="creationDate"/>
-                            <bean parent="Uif-InputField" p:label="Source Transaction Description" p:propertyName="sourceTransaction.description"/>
-                            <bean parent="Uif-InputField" p:label="Offset Transaction Description" p:propertyName="offsetTransaction.description"/>
-                            <bean parent="Uif-InputField" p:label="Destination Transaction Description" p:propertyName="destTransaction.description"/>
+                            <bean parent="Uif-InputField" p:label="Source Transaction Description" p:propertyName="sourceTransaction.statementText"/>
+                            <bean parent="Uif-InputField" p:label="Offset Transaction Description" p:propertyName="offsetTransaction.statementText"/>
+                            <bean parent="Uif-InputField" p:label="Destination Transaction Description" p:propertyName="destTransaction.statementText"/>
                             <bean parent="Uif-InputField" p:label="Transfer Amount" p:propertyName="transferAmount"/>
                             <bean parent="Uif-InputField" p:label="Transaction Type" p:propertyName="transferType.name"/>
                             <bean parent="Uif-InputField" p:label="Reversal Amount" p:propertyName="reversalAmount"/>
