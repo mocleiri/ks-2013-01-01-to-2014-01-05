@@ -223,7 +223,7 @@ public class UserPaymentPlanController extends GenericSearchController {
 
         // Need to loop through and find the right one to get the memo text
         for(ThirdPartyMemberModel model : models) {
-            if(transferDetailId.equals(model.getTransferDetail().getId())) {
+            if(model.getTransferDetail() != null && transferDetailId.equals(model.getTransferDetail().getId())) {
                 memoText = model.getMemo().getText();
                 break;
             }
