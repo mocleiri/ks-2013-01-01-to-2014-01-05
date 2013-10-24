@@ -61,8 +61,8 @@ function indicateViewingAudit(id, type) {
  */
 function buildPlanHeader(aView, selector) {
     var sText = 'Academic Year';
-    var aFirst = jQuery(aView[0]).find(".planYear__term").data("atpid").split(".");
-    var aLast = jQuery(aView[aView.length - 1]).find(".planYear__term").data("atpid").split(".");
+    var aFirst = jQuery(aView[0]).find(".planYear__term").data("atpid").substring(0,3);
+    var aLast = jQuery(aView[aView.length - 1]).find(".planYear__term").data("atpid").substring(0,3);
     var quarterLink = "inquiry?methodToCall=start&viewId=SingleTerm-InquiryView&term_atp_id=" + jQuery(aView[0]).find(".planYear__term").data("single-quarter-atpid");
     jQuery(selector).html(sText + ' ' + aFirst[3] + '-' + aLast[3]);
     jQuery("#single_quarter_button").attr("href", quarterLink);
