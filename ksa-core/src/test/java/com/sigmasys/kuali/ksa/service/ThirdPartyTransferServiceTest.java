@@ -505,5 +505,24 @@ public class ThirdPartyTransferServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void deleteThirdPartyPlanMember() throws Exception {
+
+        ThirdPartyPlan plan = _createThirdPartyPlan("Plan_$$888");
+
+        ThirdPartyPlanMember planMember = thirdPartyTransferService.getThirdPartyPlanMember(plan.getId(), TEST_USER_ID);
+
+        Assert.notNull(planMember);
+        Assert.notNull(planMember.getId());
+
+        boolean isDeleted = thirdPartyTransferService.deleteThirdPartyPlanMember(plan.getId(), TEST_USER_ID);
+
+        Assert.isTrue(isDeleted);
+
+        planMember = thirdPartyTransferService.getThirdPartyPlanMember(plan.getId(), TEST_USER_ID);
+
+        Assert.isNull(planMember);
+    }
+
 
 }

@@ -465,6 +465,28 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         return CollectionUtils.isNotEmpty(planMembers) ? planMembers.get(0) : null;
     }
 
+    /**
+     * Removes ThirdPartyPlanMember instance from the persistent store by TP plan ID and DirectChargeAccount ID.
+     *
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @param accountId        DirectChargeAccount ID
+     * @return true if ThirdPartyPlanMember instance has been successfully deleted
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public boolean deleteThirdPartyPlanMember(Long thirdPartyPlanId, String accountId) {
+
+        PermissionUtils.checkPermission(Permission.DELETE_THIRD_PARTY_PLAN_MEMBER);
+
+        Query query = em.createQuery("delete from ThirdPartyPlanMember where directChargeAccount.id = :accountId" +
+                " and plan.id = :planId");
+
+        query.setParameter("accountId", accountId);
+        query.setParameter("planId", thirdPartyPlanId);
+
+        return query.executeUpdate() > 0;
+    }
+
     protected List<ThirdPartyPlanMember> getThirdPartyPlanMembers(Long thirdPartyPlanId, String accountId) {
 
         PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN_MEMBER);

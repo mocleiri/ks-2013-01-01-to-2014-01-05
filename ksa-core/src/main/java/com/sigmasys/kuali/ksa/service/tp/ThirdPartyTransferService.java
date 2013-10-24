@@ -181,6 +181,15 @@ public interface ThirdPartyTransferService {
     ThirdPartyPlanMember getThirdPartyPlanMember(Long thirdPartyPlanId, String accountId);
 
     /**
+     * Removes ThirdPartyPlanMember instance from the persistent store by TP plan ID and DirectChargeAccount ID.
+     *
+     * @param thirdPartyPlanId ThirdPartyPlan ID
+     * @param accountId        DirectChargeAccount ID
+     * @return true if ThirdPartyPlanMember instance has been successfully deleted
+     */
+    boolean deleteThirdPartyPlanMember(Long thirdPartyPlanId, String accountId);
+
+    /**
      * This method takes an account and follows the established third-party plan and applies it to the account.
      * The return value is a ThirdPartyTransferDetail object that explains what occurred during the plan execution.
      *
