@@ -433,13 +433,12 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
      */
     @Transactional(readOnly = true)
     public boolean batchIdExists(String batchId) {
-        Query query = em.createQuery("select br.externalId from BatchReceipt br where br.externalId = :batchId");
+        Query query = em.createQuery("select 1 from BatchReceipt where externalId = :batchId and statusCode <> :statusCode");
         query.setParameter("batchId", batchId);
+        query.setParameter("statusCode", BatchReceiptStatus.FAILED_CODE);
         query.setMaxResults(1);
-        List<String> results = query.getResultList();
-        return (results != null && !results.isEmpty());
+        return CollectionUtils.isNotEmpty(query.getResultList());
     }
-
 
     /**
      * Determine the credit limit of the account. do not exceed
