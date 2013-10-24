@@ -302,10 +302,15 @@ Then /^the option to set the Exam Location should be disabled and selected$/ do
   end
 end
 
-Then /^the Fall Term's Final Exam Matrix should be used$/ do
+Then /^there is a message indicating that the final exam matrix for the initial term is used$/ do
   on FEMatrixView do |page|
-    @matrix.manage
     page.term_type_select.option(selected: "selected").text.should == "Fall Term"
+  end
+end
+
+Then /^there is a message indicating that the final exam matrix for the initial term is not used$/ do
+  on FEMatrixView do |page|
+    page.term_type_select.option(selected: "selected").text.should_not == "Fall Term"
   end
 end
 
@@ -316,10 +321,10 @@ Then /^no Standard Final Exam or Common Final Exam rules are listed$/ do
   end
 end
 
-Then /^the Fall Term's Final Exam Matrix should not be used$/ do
+Then /^Standard Final Exam or Common Final Exam rules are listed$/ do
   on FEMatrixView do |page|
-    @matrix.manage
-    page.term_type_select.option(selected: "selected").text.should_not == "Fall Term"
+    page.standard_final_exam_section.visible?.should == true
+    page.common_final_exam_section.visible?.should == true
   end
 end
 

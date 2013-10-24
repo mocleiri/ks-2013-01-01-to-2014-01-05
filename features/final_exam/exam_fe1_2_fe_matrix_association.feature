@@ -19,10 +19,8 @@ Feature: SA.FE1-5 Associate Final Exam Matrix with more than one term
     And there is a second Academic Term that is not associated with any final exam matrix
     When I associate the second Term with the Final Exam matrix of the initial Term
     And I view the second term
-#    Then there is a message indicating that the final exam matrix for the initial term is used
-    And no Standard Final Exam or Common Final Exam rules are listed
-
-    Then the Fall Term's Final Exam Matrix should be used
+    Then there is a message indicating that the final exam matrix for the initial term is used
+    And Standard Final Exam or Common Final Exam rules are listed
 
   #FE1.2.EB3 (KSENROLL-9797)
   @pending
@@ -33,5 +31,5 @@ Feature: SA.FE1-5 Associate Final Exam Matrix with more than one term
     And I associate the second Term with the Final Exam matrix of the initial Term
     When I associate the second Term with the Final Exam matrix of the third Term
     And I view the second term
-#    Then the Fall Term's Final Exam Matrix should not be used
-    And no Standard Final Exam or Common Final Exam rules are listed
+    Then there is a message indicating that the final exam matrix for the initial term is not used
+    And Standard Final Exam or Common Final Exam rules are listed
