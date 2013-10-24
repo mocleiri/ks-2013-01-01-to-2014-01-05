@@ -167,7 +167,7 @@
     </bean>
 
     <bean id="paymentPlanDescription" parent="Uif-VerticalBoxSection">
-        <property name="headerText" value="Descriptive Information"/>
+        <property name="headerText" value="Payment Billing Plan"/>
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
@@ -185,7 +185,7 @@
     </bean>
 
     <bean id="thirdPartyDescription" parent="Uif-VerticalBoxSection">
-        <property name="headerText" value="Descriptive Information"/>
+        <property name="headerText" value="Third Party Plan"/>
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
