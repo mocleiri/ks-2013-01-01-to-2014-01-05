@@ -246,6 +246,8 @@ public class PaymentPlanController extends GenericSearchController {
 
         if(plans != null && plans.size() > 0) {
             form.setBatchThirdPartyPlan(plans.get(0));
+        } else {
+            form.setBatchThirdPartyPlan(null);
         }
 
         return getUIFModelAndView(form);
