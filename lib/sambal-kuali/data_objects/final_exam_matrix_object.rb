@@ -234,7 +234,7 @@ class FinalExamMatrix
         courses_array = options[:courses].split(/,/)
         courses_array.each do |course|
           page.loading.wait_while_present
-          page.proposition_section.a( text: /Advanced Search/).click
+          page.frm.a( text: /Advanced Search/).click
           page.lookup_course_code.when_present.set course
           page.lookup_search
           page.loading.wait_while_present
@@ -259,7 +259,7 @@ class FinalExamMatrix
         page.preview_change
         page.loading.wait_while_present
       elsif @add_more_statements == true
-        opts = {:rule => "Course must be part of <Courses>",
+        opts = {:rule => "if course is part of <Courses>",
                 :courses => "HIST110,ENGL304,BSCI202",
                 :courses_type => "Approved Courses"}
         page.add_statement
