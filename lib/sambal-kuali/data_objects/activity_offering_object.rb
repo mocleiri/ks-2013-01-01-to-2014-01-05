@@ -1175,12 +1175,15 @@ class DeliveryLogistics
         end
 
         if opts[:start_time] != nil then
+          page.add_start_time.click
+          page.loading.wait_while_present
           page.add_start_time.set opts[:start_time] + " " + opts[:start_time_ampm].upcase
-          page.add_start_time.fire_event "onblur" # fire onblur to trigger AJAX refresh of end time field
           sleep(1)
         end
 
         if opts[:end_time] != nil then
+          page.add_end_time.click
+          page.loading.wait_while_present
           page.add_end_time.set opts[:end_time] + " " + opts[:end_time_ampm].upcase
         end
 
@@ -1219,15 +1222,17 @@ class DeliveryLogistics
         end
 
         if opts[:start_time] != nil then
-          page.add_start_time.set opts[:start_time] + " " + opts[:start_time_ampm]
-          page.add_start_time.fire_event "onblur" # fire onblur to trigger AJAX refresh of end time field
-          sleep(1)
+          page.add_start_time.click
+          page.loading.wait_while_present
+          page.add_start_time.set opts[:start_time] + " " + opts[:start_time_ampm].upcase
         end
 
         if opts[:end_time] != nil then
           if opts[:std_ts] then
+            page.add_end_time.click
+            page.loading.wait_while_present
             page.add_end_time.set opts[:end_time].to_s[0]
-            sleep(1)
+            page.loading.wait_while_present
             hr,min = opts[:end_time].split(":")
             if hr.length == 1 then
               hr="0"+hr

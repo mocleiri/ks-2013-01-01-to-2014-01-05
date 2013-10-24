@@ -107,7 +107,7 @@ When /^I add (standard|ad hoc) RDLs for an AO$/ do |tsType|
   # add new RDL row
   @activity_offering.edit
   if tsType=="standard"
-    @new_rdls.add :std_ts => true, :days => "MWF", :start_time => "01:00", :start_time_ampm => "am", :end_time => "1:35", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+    @new_rdls.add :std_ts => true, :days => "MWF", :start_time => "08:00", :start_time_ampm => "am", :end_time => "8:35", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
   elsif tsType=="ad hoc"
     @new_rdls.add :std_ts => false, :days => "TH", :start_time => "8:21", :start_time_ampm => "pm", :end_time => "9:04", :end_time_ampm => "pm", :facility => "PHYS", :room => "4102"
   end
