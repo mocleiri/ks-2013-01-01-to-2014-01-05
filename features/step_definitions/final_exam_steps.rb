@@ -500,14 +500,15 @@ end
 When /^I edit the Fall Term Exam Period to have less days than the Final Exam Matrix days$/ do
   @term = make AcademicTerm, :term_year => @calendar.year, :start_date=>"08/29/#{@calendar.year}",
                :end_date=>"12/10/#{@calendar.year}"
-  @term.edit :exam_period => true, :change_exam_dates => true, :exam_start_date => "12/05/#{@calendar.year}"
+  @term.edit :exam_period => true, :change_exam_dates => true, :exam_start_date => "12/05/#{@calendar.year}",
+             :exp_success=> false
 end
 
 When /^I edit the Fall Term Exam Period to have less days than the Final Exam Matrix days and include non-active days$/ do
   @term = make AcademicTerm, :term_year => @calendar.year, :start_date=>"08/29/#{@calendar.year}",
                    :end_date=>"12/10/#{@calendar.year}"
   @term.edit :exam_period => true, :include_non_active_days => true, :change_exam_dates => true,
-             :exam_start_date => "12/05/#{@calendar.year}"
+             :exam_start_date => "12/05/#{@calendar.year}", :exp_success=> true
 end
 
 When /^I cancel an Activity Offering for a CO with a standard final exam driven by Course Offering$/ do

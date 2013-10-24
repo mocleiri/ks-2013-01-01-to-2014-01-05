@@ -367,7 +367,6 @@ class AcademicTerm
       on EditAcademicTerms do |page|
         create_final_exam_period if page.add_exam_period_btn( @term_type).present?
         page.set_exam_start_date @term_type, options[:exam_start_date]
-        page.save
       end
     end
 
@@ -375,7 +374,6 @@ class AcademicTerm
       on EditAcademicTerms do |page|
         create_final_exam_period if page.add_exam_period_btn( @term_type).present?
         page.set_exam_end_date @term_type, options[:exam_end_date]
-        page.save
       end
     end
 
