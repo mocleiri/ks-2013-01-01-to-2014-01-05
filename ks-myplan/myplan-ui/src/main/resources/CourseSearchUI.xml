@@ -17,7 +17,9 @@
     <bean id="CourseSearch-FormView" parent="MyPlanFormView">
         <property name="id" value="CourseSearch-FormView"/>
         <property name="entryPageId" value="course_search"/>
+        <property name="formClass" value="org.kuali.student.myplan.course.form.CourseSearchForm"/>
         <property name="headerText" value="Find Courses"/>
+        <property name="footer.render" value="false"/>
         <property name="items">
             <list>
                 <bean parent="KSAP-Page" p:id="course_search">
@@ -42,10 +44,7 @@
                 </bean>
             </list>
         </property>
-        <property name="footer.render" value="false"/>
-        <property name="formClass" value="org.kuali.student.myplan.course.form.CourseSearchForm"/>
     </bean>
-
 
     <!-- Layout for Empty Course Search Form Page  -->
     <bean id="course_search_section" parent="KSAP-VerticalBoxGroup" p:width="710px">
@@ -366,7 +365,7 @@
             <list>
                 <bean parent="Uif-ActionLink" p:actionLabel="Add to Plan" p:title="Add to Plan">
                     <property name="actionScript" value="
-                        var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', courseId:jQuery(this).data('courseid'), courseCd:jQuery(this).data('coursecd'), pageId:'add_dialog_page'};
+                        var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', courseId:jQuery(this).data('courseid'), code:jQuery(this).data('coursecd'), pageId:'add_dialog_page'};
                         var popupStyle = {width:'300px', height:'16px'};
                         var popupOptions = {tail:{hidden:true}, align:'top', close:true};
                         openPopup('add_dialog_page', retrieveData, 'plan', popupStyle, popupOptions, e);
@@ -374,7 +373,7 @@
                 </bean>
                 <bean parent="Uif-ActionLink" p:actionLabel="Bookmark" p:title="Bookmark">
                     <property name="actionScript" value="
-                        var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'addSavedCourse', courseId:jQuery(this).data('courseid')};
+                        var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'addSavedCourse', courseId:jQuery(this).data('courseid'), code:jQuery(this).data('coursecd')};
                         submitHiddenForm('plan', additionalFormData, e);
                     "/>
                 </bean>

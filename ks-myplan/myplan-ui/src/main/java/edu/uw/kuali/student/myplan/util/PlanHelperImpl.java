@@ -13,6 +13,7 @@ import org.kuali.student.myplan.plan.dataobject.RecommendedItemDataObject;
 import org.kuali.student.myplan.plan.util.DateFormatHelper;
 import org.kuali.student.myplan.plan.util.PlanHelper;
 import org.kuali.student.myplan.utils.UserSessionHelper;
+import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -224,6 +225,23 @@ public class PlanHelperImpl implements PlanHelper {
             logger.error("Could not load recommended Items", e);
         }
         return recommendedItemDataObjects;
+    }
+
+
+    /**
+     * Method used to get the crossListed value from attributeInfoList in PlanItemInfo
+     * If not found null is returned which indicates that this is a normal course that is planned
+     *
+     * @param attributeInfoList
+     * @return
+     */
+    public String getCrossListedCourse(List<AttributeInfo> attributeInfoList) {
+        for (AttributeInfo attributeInfo : attributeInfoList) {
+            if (PlanConstants.CROSS_LISTED_COURSE.equals(attributeInfo.getKey())) {
+                return attributeInfo.getValue();
+            }
+        }
+        return null;
     }
 
 

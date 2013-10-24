@@ -96,7 +96,7 @@
                         </bean>
                     </property>
                     <property name="actionScript" value="
-                        var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', courseId:'@{dataObject.courseSummaryDetails.courseId}', courseCd:'@{dataObject.courseSummaryDetails.code}', pageId:'add_dialog_page'};
+                        var retrieveData = {action:'plan', viewId:'PlannedCourse-FormView', methodToCall:'startAddPlannedCourseForm', courseId:'@{dataObject.courseSummaryDetails.courseId}', code:'@{dataObject.courseSummaryDetails.code}', pageId:'add_dialog_page'};
                         var popupStyle = {width:'300px', height:'16px'};
                         var popupOptions = {tail:{hidden:true}, position:'right', align:'top', close:true};
                         openPopup('add_dialog_page', retrieveData, 'plan', popupStyle, popupOptions, e);
@@ -485,7 +485,7 @@
                 <bean id="course_details_sections_list_container" parent="KSAP-VerticalBoxGroup"
                       p:style="min-height: 150px;">
                     <property name="onDocumentReadyScript" value="
-                        customRetrieveComponent('course_details_sections_list_container','course_details_sections_list','start','inquiry',{viewId:'CourseDetailsSections-InquiryView',courseId:'@{dataObject.courseSummaryDetails.courseId}',courseCd:'@{dataObject.courseSummaryDetails.code}',loadActivityOffering:'true'}, null, {centerX:true, centerY:false, message:'&lt;p&gt;&lt;img src=&quot;../themes/ksap/images/loader/ajax_large.gif&quot; alt=&quot;loading...&quot; /&gt;&lt;/p&gt;&lt;p&gt;Please wait while we are fetching sections...&lt;/p&gt;', fadeIn:0, fadeOut:0, overlayCSS:{backgroundColor:'#fff',opacity:0,cursor:'wait'}, css:{color:'#c09853', backgroundColor:'#fcf8e3', border:'solid 1px #fbeed5', borderRadius:'15px','-webkit-border-radius':'15px','-moz-border-radius':'15px', width:'230px', textAlign:'center', padding:'20px'}});
+                        customRetrieveComponent('course_details_sections_list_container','course_details_sections_list','start','inquiry',{viewId:'CourseDetailsSections-InquiryView',courseId:'@{dataObject.courseSummaryDetails.courseId}',code:'@{dataObject.courseSummaryDetails.code}',loadActivityOffering:'true'}, null, {centerX:true, centerY:false, message:'&lt;p&gt;&lt;img src=&quot;../themes/ksap/images/loader/ajax_large.gif&quot; alt=&quot;loading...&quot; /&gt;&lt;/p&gt;&lt;p&gt;Please wait while we are fetching sections...&lt;/p&gt;', fadeIn:0, fadeOut:0, overlayCSS:{backgroundColor:'#fff',opacity:0,cursor:'wait'}, css:{color:'#c09853', backgroundColor:'#fcf8e3', border:'solid 1px #fbeed5', borderRadius:'15px','-webkit-border-radius':'15px','-moz-border-radius':'15px', width:'230px', textAlign:'center', padding:'20px'}});
                     "/>
                 </bean>
             </list>
@@ -1145,7 +1145,7 @@
                                             });
                                         }
                                         });
-                                    getActivityEnrollment('/student/myplan/plan/enroll', {'courseId':'@{dataObject.courseSummaryDetails.courseId}', 'courseCd':'@{dataObject.courseSummaryDetails.code}'});
+                                    getActivityEnrollment('/student/myplan/plan/enroll', {'courseId':'@{dataObject.courseSummaryDetails.courseId}', 'code':'@{dataObject.courseSummaryDetails.code}'});
                                 "/>
                             <property name="items">
                                 <list>

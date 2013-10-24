@@ -59,4 +59,6 @@ public interface CourseHelper {
     public boolean isValidCourseLevel(String division, String level);
 
     public String getKeyForCourseOffering(String courseId, String subject, String number);
+
+    public boolean isCrossListedCourse (String courseCd);
 }

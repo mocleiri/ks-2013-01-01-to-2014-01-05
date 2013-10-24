@@ -196,6 +196,7 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
      */
     private void populatePlannedCourseList(PlanItemInfo planItemInfo, String planItemType, List<PlannedCourseDataObject> plannedCourseList, Map<String, List<ActivityOfferingItem>> plannedSections, Map<String, List<String>> sectionsSuspended, Map<String, List<String>> sectionsWithdrawn, Map<String, String> subjectAreas, boolean addPlaceHolders) {
         String courseID = planItemInfo.getRefObjectId();
+        String courseCd = getPlanHelper().getCrossListedCourse(planItemInfo.getAttributes());
         //  Only create a data object for the specified type.
         if (planItemInfo.getTypeKey().equals(planItemType) && planItemInfo.getRefObjectType().equalsIgnoreCase(PlanConstants.COURSE_TYPE)) {
 
@@ -219,7 +220,7 @@ public class PlanItemLookupableHelperBase extends MyPlanLookupableImpl {
             //  If the course info lookup fails just log the error and omit the item.
             try {
                 if (getCourseDetailsInquiryHelper().isCourseIdValid(courseID, null)) {
-                    CourseSummaryDetails courseDetails = getCourseDetailsInquiryHelper().retrieveCourseSummaryByIdAndCd(courseID, null);
+                    CourseSummaryDetails courseDetails = getCourseDetailsInquiryHelper().retrieveCourseSummaryByIdAndCd(courseID, courseCd);
                     plannedCourse.setCourseDetails(courseDetails);
                     plannedCourseList.add(plannedCourse);
                 }

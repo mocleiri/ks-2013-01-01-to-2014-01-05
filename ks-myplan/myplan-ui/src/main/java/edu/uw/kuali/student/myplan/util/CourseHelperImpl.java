@@ -21,6 +21,7 @@ import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
 import org.kuali.student.myplan.plan.util.AtpHelper;
+import org.kuali.student.myplan.plan.util.SearchHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
@@ -181,12 +182,10 @@ public class CourseHelperImpl implements CourseHelper {
      */
     @Override
     public String getCourseIdForTerm(String subjectArea, String number, String termId) {
-        List<SearchRequestInfo> requests = new ArrayList<SearchRequestInfo>();
         SearchRequestInfo request = new SearchRequestInfo(CourseSearchConstants.COURSE_SEARCH_FOR_COURSE_ID);
         request.addParam(CourseSearchConstants.SEARCH_REQUEST_SUBJECT_PARAM, subjectArea.trim());
         request.addParam(CourseSearchConstants.SEARCH_REQUEST_NUMBER_PARAM, number.trim());
         request.addParam(CourseSearchConstants.SEARCH_REQUEST_LAST_SCHEDULED_PARAM, termId);
-        requests.add(request);
         SearchResultInfo searchResult = new SearchResultInfo();
         try {
             searchResult = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
@@ -595,7 +594,7 @@ public class CourseHelperImpl implements CourseHelper {
     /**
      * Method used to generate a compositeKey for CourseOffering data search
      * format: courseId|subject|number
-     *
+     * <p/>
      * Eg: 'c87e6090-a177-445b-9a7d-7915120e4adc:ENGL:201'
      *
      * @param courseId
@@ -608,6 +607,35 @@ public class CourseHelperImpl implements CourseHelper {
         return String.format("%s|%s|%s", courseId, subject, number);
     }
 
+
+    /**
+     * Method used to know f the given courseCd is a alias or a regular parent course
+     *
+     * @param courseCd
+     * @return
+     */
+    @Override
+    public boolean isCrossListedCourse(String courseCd) {
+        DeconstructedCourseCode courseCode = getCourseDivisionAndNumber(courseCd);
+        SearchRequestInfo request = new SearchRequestInfo("myplan.course.ident.type");
+        request.addParam("division", courseCode.getSubject().trim());
+        request.addParam("number", courseCode.getNumber().trim());
+        request.addParam("lastScheduledTerm", AtpHelper.getLastScheduledAtpId());
+
+        SearchResultInfo searchResult = new SearchResultInfo();
+        try {
+            searchResult = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
+        } catch (Exception e) {
+            logger.error("Failed to get courseId for given subject and number", e);
+        }
+        String identType = null;
+        for (SearchResultRow row : searchResult.getRows()) {
+            identType = SearchHelper.getCellValue(row, "course.ident.type");
+            break;
+        }
+
+        return CourseAssemblerConstants.COURSE_CROSSLISTING_IDENT_TYPE.equals(identType);
+    }
 
     protected CluService getLuService() {
         if (luService == null) {

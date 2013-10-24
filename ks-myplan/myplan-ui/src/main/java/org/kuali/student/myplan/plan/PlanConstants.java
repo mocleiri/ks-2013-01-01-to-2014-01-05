@@ -97,6 +97,8 @@ public class PlanConstants extends AcademicPlanServiceConstants {
     public static final String GENERAL_TYPE = "general";
     public static final String COURSE_PLACEHOLDER_REGEX = "^[1-9](?i)XX$";
 
+    public static final String CROSS_LISTED_COURSE = "crossListed";
+
     public static final String PLAN = " plan";
     public static final String BACKUP = " backup";
 
@@ -150,7 +152,7 @@ public class PlanConstants extends AcademicPlanServiceConstants {
     public static final String ADD_RECOMMEND_NOTIFICATION_INFO = "myplan.recommendation.add.email.notification.info.line";
 
     public static final String RECOMMENDATION_EMAIL_BODY = "myplan.recommendation.email.body";
-    
+
     public static final String PROPERTIES_FILE_PATH = "/org/kuali/student/myplan/KSMyPlan-ApplicationResources.properties";
 
     public static final String DEFAULT_KEY = "default";

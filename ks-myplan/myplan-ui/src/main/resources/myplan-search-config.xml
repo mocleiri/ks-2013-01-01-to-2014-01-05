@@ -134,7 +134,7 @@
         </search:searchCriteriaTypeInfo>
     </search:searchType>
 
-    <search:searchType id="myplan.clu.divisionAndCode">
+    <search:searchType id="myplan.clu.division">
         <search:searchResultTypeInfo>
             <search:name/>
             <search:desc/>
@@ -142,20 +142,6 @@
                 <search:resultColumn id="courseCode">
                     <search:dataType>string</search:dataType>
                 </search:resultColumn>
-            </search:resultColumns>
-        </search:searchResultTypeInfo>
-        <search:searchCriteriaTypeInfo>
-            <search:queryParams>
-            </search:queryParams>
-        </search:searchCriteriaTypeInfo>
-    </search:searchType>
-
-    <search:searchType id="myplan.clu.division">
-        <search:searchResultTypeInfo>
-            <search:name/>
-            <search:desc/>
-            <search:resultColumns>
-                <ref bean="courseCode"/>
             </search:resultColumns>
         </search:searchResultTypeInfo>
         <search:searchCriteriaTypeInfo>
@@ -380,6 +366,23 @@
         </search:searchCriteriaTypeInfo>
     </search:searchType>
 
+
+    <search:searchType id="myplan.course.ident.type">
+        <search:searchResultTypeInfo>
+            <search:name/>
+            <search:desc/>
+            <search:resultColumns>
+                <search:resultColumn id="course.ident.type">
+                    <search:dataType>string</search:dataType>
+                </search:resultColumn>
+            </search:resultColumns>
+        </search:searchResultTypeInfo>
+        <search:searchCriteriaTypeInfo>
+            <search:queryParams>
+            </search:queryParams>
+        </search:searchCriteriaTypeInfo>
+    </search:searchType>
+
     <bean id="queryMap" parent="queryMap-parent">
         <property name="sourceMap">
             <map merge="true">
@@ -463,7 +466,7 @@
 
                 <entry key="myplan.lu.search.divisionAndCode">
                     <value>NATIVE:
-                        SELECT DISTINCT clu.ID FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
+                        SELECT DISTINCT clu.ID, ident.TYPE FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
                         WHERE attr.OWNER = clu.ID
                         AND (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
                         AND ident.DIVISION = :division
@@ -689,6 +692,24 @@
                         AND
                         ident2.id = (select c.OFFIC_CLU_ID from kslu_clu c join kslu_clu_ident ide on ide.ID = c.OFFIC_CLU_ID where c.ID = clu.ID)
                         AND clu.EXP_FIRST_ATP = (select min(c.EXP_FIRST_ATP) FROM KSLU_CLU c where c.ver_ind_id = clu.ver_ind_id and c.LAST_ATP >= :lastScheduledTerm group by c.ver_ind_id )
+                    </value>
+                </entry>
+
+                <entry key="myplan.course.ident.type">
+                    <value>NATIVE:
+                        SELECT DISTINCT ident.TYPE FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
+                        WHERE (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
+                        AND Trim(ident.DIVISION) = :division
+                        AND Trim(ident.SUFX_CD) = :number
+                        AND clu.ID NOT IN (SELECT att.OWNER
+                        FROM   KSLU_CLU_ATTR att
+                        WHERE  att.ATTR_NAME = 'course.catalogOmit_ind'
+                        AND att.ATTR_VALUE = 'true')
+                        AND clu.EXP_FIRST_ATP = (SELECT Min(c.EXP_FIRST_ATP)
+                        FROM   kslu_clu c
+                        WHERE  c.VER_IND_ID = clu.VER_IND_ID
+                        AND c.LAST_ATP >= :lastScheduledTerm
+                        GROUP  BY c.VER_IND_ID)
                     </value>
                 </entry>
 

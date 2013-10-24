@@ -3,6 +3,7 @@ package org.kuali.student.myplan.plan.util;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.infc.LearningPlan;
 import org.kuali.student.myplan.plan.dataobject.RecommendedItemDataObject;
+import org.kuali.student.r2.common.dto.AttributeInfo;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public interface PlanHelper {
     public LearningPlan getLearningPlan(String studentId);
 
     public List<RecommendedItemDataObject> getRecommendedItems(String refObjId);
+
+    public String getCrossListedCourse(List<AttributeInfo> attributeInfoList);
 
 
 }
