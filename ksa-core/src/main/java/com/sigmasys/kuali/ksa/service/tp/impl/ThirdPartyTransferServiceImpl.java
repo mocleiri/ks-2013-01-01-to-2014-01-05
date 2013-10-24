@@ -152,6 +152,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
         plan.setOpenPeriodEndDate(openPeriodEndDate);
         plan.setChargePeriodStartDate(chargePeriodStartDate);
         plan.setChargePeriodEndDate(chargePeriodEndDate);
+        plan.setMaxAmount(maxAmount);
 
         // Persisting a new created plan
         auditableEntityService.persistAuditableEntity(plan);
