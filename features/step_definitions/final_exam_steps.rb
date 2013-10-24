@@ -55,7 +55,13 @@ end
 
 When /^I create a Course Offering from an existing course offering with no final exam period$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "CHEM277")
-  @course_offering.exam_offerings_setup :final_exam_type => "No final exam or assessment"
+  on ManageCourseOfferings do |page|
+    page.edit_course_offering
+  end
+  @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
+  on CourseOfferingEdit do |page|
+    page.submit
+  end
 
   @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
   @activity_offering.edit :send_to_scheduler => true, :defer_save => false
