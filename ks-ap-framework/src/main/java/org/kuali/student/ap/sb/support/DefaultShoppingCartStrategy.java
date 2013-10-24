@@ -200,6 +200,8 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 				cartRequest.setSecondaryRegistrationCodes(Collections
 						.<String> emptyList());
 			cartRequest.setTerm(termInfo);
+			
+			rmap.put(courseId, cartRequest);
 		}
 
 	}
@@ -213,6 +215,8 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 
 		Map<String, List<ActivityOption>> aomap = new LinkedHashMap<String, List<ActivityOption>>();
 		for (ActivityOption ao : schedule.getActivityOptions()) {
+			if (ao.isCourseLockedIn())
+				continue;
 			List<ActivityOption> aol = aomap.get(ao.getCourseId());
 			if (aol == null)
 				aomap.put(ao.getCourseId(),
@@ -266,6 +270,8 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 				rv.add(cartRequest);
 			}
 		}
+		
+		rv.addAll(rmap.values());
 
 		return rv;
 	}

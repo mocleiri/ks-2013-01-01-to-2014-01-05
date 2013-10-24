@@ -1,6 +1,9 @@
 package org.kuali.student.ap.sb.ui;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -72,15 +75,15 @@ public class ScheduleBuildController extends UifControllerBase {
 			sbform.reset();
 			// Generate test case for ScheduleBuildMavenTest - not for
 			// production.
-			// File out = new File("/tmp/CourseOptions.ser");
-			// FileOutputStream fout = new FileOutputStream(out);
-			// ObjectOutputStream oos = new ObjectOutputStream(fout);
-			// oos.writeObject(((ScheduleBuildForm) form).getCourseOptions());
-			// oos.flush();
-			// oos.close();
-			// fout.flush();
-			// fout.close();
-			// LOG.debug("Written to " + out);
+			File out = new File("/tmp/CourseOptions.ser");
+			FileOutputStream fout = new FileOutputStream(out);
+			ObjectOutputStream oos = new ObjectOutputStream(fout);
+			oos.writeObject(((ScheduleBuildForm) form).getCourseOptions());
+			oos.flush();
+			oos.close();
+			fout.flush();
+			fout.close();
+			LOG.debug("Written to " + out);
 		} catch (IllegalArgumentException e) {
 			LOG.error("Failed to initialize schedule build form", e);
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
@@ -309,15 +312,15 @@ public class ScheduleBuildController extends UifControllerBase {
 
 		if (ao != null) {
 			StringBuilder hover = new StringBuilder();
-			hover.append(description);
-			hover.append(' ');
 			hover.append(ao.getActivityName());
 			hover.append(" (");
 			hover.append(ao.getActivityTypeDescription());
 			hover.append(") ");
+			hover.append(description);
+			hover.append(' ');
 			hover.append(ao.getAcademicSessionDescr());
 			for (ClassMeetingTime meetingTime : ao.getClassMeetingTimes()) {
-				hover.append(" ");
+				hover.append(' ');
 				hover.append(meetingTime.getDaysAndTimes());
 			}
 			event.add("hoverText", hover.toString());

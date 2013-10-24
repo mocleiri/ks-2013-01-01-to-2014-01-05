@@ -32,6 +32,7 @@ import org.kuali.student.ap.framework.context.PlanConstants;
 import org.kuali.student.ap.sb.ScheduleBuildForm;
 import org.kuali.student.ap.sb.ScheduleBuildStrategy;
 import org.kuali.student.ap.sb.ShoppingCartForm;
+import org.kuali.student.ap.sb.ShoppingCartStrategy;
 import org.kuali.student.ap.sb.dto.ActivityOptionInfo;
 import org.kuali.student.ap.sb.dto.ClassMeetingTimeInfo;
 import org.kuali.student.ap.sb.dto.CourseOptionInfo;
@@ -324,6 +325,7 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 		Term term = KsapFrameworkServiceLocator.getTermHelper().getTerm(termId);
 		CourseHelper courseHelper = KsapFrameworkServiceLocator
 				.getCourseHelper();
+		ShoppingCartStrategy cartStrategy = KsapFrameworkServiceLocator.getShoppingCartStrategy();
 		DateFormat tdf = new SimpleDateFormat("h:mm a");
 		DateFormat udf = new SimpleDateFormat("MM/dd/yyyy");
 		DateFormat ddf = new SimpleDateFormat("M/d");
@@ -347,6 +349,9 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 			for (Attribute ca : c.getAttributes())
 				if ("campusCode".equals(ca.getKey()))
 					code.append(campusCode = ca.getValue()).append(" ");
+			if (!cartStrategy.isCartAvailable(termId, campusCode))
+				continue;
+			
 			code.append(c.getCode());
 			courseOption.setCourseCode(code.toString());
 
@@ -436,7 +441,8 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 					}
 
 					if ("CourseCode".equalsIgnoreCase(key)) {
-						activityOption.setCourseOfferingCode(value);
+						activityOption.setCourseOfferingCode((campusCode == null ? ""
+								: campusCode + " ") + value);
 					}
 
 					// TODO: Add getResultValuesGroup() to
@@ -464,6 +470,7 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 								tcal, sdcal, edcal, tdf, ddf, instructor,
 								sessionStartDate, sessionEndDate));
 				activityOption.setClassMeetingTimes(meetingTimes);
+				activityOption.setEnrollmentGroup(enrollmentGroup);
 
 				if (activityOption.isPrimary()) {
 					activityOption
@@ -477,7 +484,6 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 								.append(activityOption.getRegistrationCode());
 					primaryActivities.add(activityOption);
 				} else {
-					activityOption.setLockedIn(enrollmentGroup);
 					Map<String, List<ActivityOptionInfo>> secondaryGroup = secondaryActivities
 							.get(primaryOfferingId);
 					if (msg != null)

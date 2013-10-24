@@ -725,7 +725,7 @@
 	</bean>
 
 	<bean id="planner_cart_collection" parent="planner_item_collection"
-		p:headerText="Cart" p:render="@{#line.cartAvailable}">
+			p:headerText="Cart" p:render="@{#line.cartAvailable}">
 		<property name="validationMessages.render" value="false" />
 		<property name="propertyName" value="cartList" />
 		<property name="header.rightGroup">

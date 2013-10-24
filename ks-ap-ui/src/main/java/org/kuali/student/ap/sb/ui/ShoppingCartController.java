@@ -54,7 +54,7 @@ public class ShoppingCartController extends UifControllerBase {
 
 	private static final String SB_CART_FORM = "ShoppingCart-FormView";
 	private static final String SB_ADD_FROM_PLAN_PAGE = "sb_cart_add_from_plan_page";
-	private static final String SB_ADD_FROM_SB = "sb_cart_add_from_sb";
+	private static final String SB_ADD_FROM_SB = "sb_cart_add_from_sb_page";
 	private static final String SB_REMOVE_PAGE = "sb_cart_remove_page";
 
 	private ModelAndView startPlannerDialog(
@@ -103,17 +103,22 @@ public class ShoppingCartController extends UifControllerBase {
 			BindingResult result, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
 
+		LearningPlan plan = PlanItemControllerHelper.getAuthorizedLearningPlan(form, request,
+				response);
+		if (plan == null)
+			return null;
+
 		Term term = form.getTerm();
 		if (!form.isPublished() || !form.isPlanning()) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Term "
-					+ form.getTerm() + " not found");
+					+ form.getTermId() + " not found");
 			return null;
 		}
 
 		String psoid = form.getPossibleScheduleId();
 		if (psoid == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					"Possible schedules have not been populated");
+					"Possible schedules ID not post");
 			return null;
 		}
 
@@ -133,11 +138,11 @@ public class ShoppingCartController extends UifControllerBase {
 					"Invalid possible schedule ID " + psoid);
 			return null;
 		}
-		
+
 		ShoppingCartStrategy shoppingCartStrategy = KsapFrameworkServiceLocator
 				.getShoppingCartStrategy();
 		form.setShoppingCartRequests(shoppingCartStrategy.createRequests(
-				form.getLearningPlanId(), term, pso));
+				plan.getId(), term, pso));
 
 		UifFormBase uifForm = (UifFormBase) form;
 		uifForm.setViewId(SB_CART_FORM);
@@ -307,9 +312,12 @@ public class ShoppingCartController extends UifControllerBase {
 						throw new IllegalStateException("LP service failure", e);
 					}
 
-					PlanEventUtils.makeAddEvent(planItemInfo);
-					PlanEventUtils.updateTotalCreditsEvent(true, cartRequest
-							.getTerm().getId());
+					if (form.getPossibleScheduleId() == null) {
+						// Don't send planner events back to schedule build
+						PlanEventUtils.makeAddEvent(planItemInfo);
+						PlanEventUtils.updateTotalCreditsEvent(true, cartRequest
+								.getTerm().getId());
+					}
 
 				} else {
 
@@ -338,12 +346,15 @@ public class ShoppingCartController extends UifControllerBase {
 												.getPrimaryRegistrationCode())) {
 									academicPlanService.deletePlanItem(
 											planItemInfo.getId(), context);
-									PlanEventUtils.makeRemoveEvent(
-											form.getUniqueId(), planItemInfo);
-									PlanEventUtils
-											.updateTotalCreditsEvent(true,
-													cartRequest.getTerm()
-															.getId());
+									if (form.getUniqueId() != null) {
+										// Send planner events back only when uniqueId is posted
+										// to correspond to an element on the front-end.
+										PlanEventUtils.makeRemoveEvent(
+												form.getUniqueId(), planItemInfo);
+										PlanEventUtils
+												.updateTotalCreditsEvent(true,
+														cartRequest.getTerm().getId());
+									}
 								}
 							}
 						}

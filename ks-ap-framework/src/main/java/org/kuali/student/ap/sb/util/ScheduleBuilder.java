@@ -606,6 +606,7 @@ public class ScheduleBuilder implements Serializable {
 				} else {
 					iterationsSinceLast = 0;
 					String descr = "Schedule " + (++scheduleNumber);
+					pso.setTermId(term.getId());
 					pso.setDescription(descr);
 					rv.add(pso);
 					if (msg != null) {
@@ -613,7 +614,7 @@ public class ScheduleBuilder implements Serializable {
 						msg.append(" ").append(descr).append(" ");
 						for (ActivityOption ao : pso.getActivityOptions())
 							msg.append(" ").append(ao.getCourseOfferingCode())
-									.append("#")
+									.append(" ")
 									.append(ao.getRegistrationCode());
 					}
 				}
