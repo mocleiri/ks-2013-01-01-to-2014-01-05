@@ -49,7 +49,7 @@ Feature: SA.FE1-6 Manage the Final Exam Matrix so that FEs can be Scheduled in p
     Then there should be a validation message displayed stating "Cannot 'Update Rule' until at least one"
 
   #FE1.6.EB7 (KSENROLL-9796)
-  @bug @KSENROLL-10311
+  @bug @KSENROLL-10346
   Scenario: Test that multiple statements can be added to one rule on the Final Exam Matrix
     When I add multiple statements to a Common Final Exam rule on the Final Exam Matrix
     And I submit and return to see my changes

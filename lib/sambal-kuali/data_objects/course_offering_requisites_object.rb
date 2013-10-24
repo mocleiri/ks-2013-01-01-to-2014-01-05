@@ -629,7 +629,7 @@ class AntirequisiteRule < CORequisitesData
     begin
       open_agenda_section
       on CourseOfferingRequisites do |page|
-        if edit_or_add == "add"
+        if edit_or_add == "add" and page.prereq_add_link.exists?
           page.antireq_add
         else
           page.antireq_edit
