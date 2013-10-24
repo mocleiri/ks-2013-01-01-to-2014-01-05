@@ -75,15 +75,15 @@ public class ScheduleBuildController extends UifControllerBase {
 			sbform.reset();
 			// Generate test case for ScheduleBuildMavenTest - not for
 			// production.
-			File out = new File("/tmp/CourseOptions.ser");
-			FileOutputStream fout = new FileOutputStream(out);
-			ObjectOutputStream oos = new ObjectOutputStream(fout);
-			oos.writeObject(((ScheduleBuildForm) form).getCourseOptions());
-			oos.flush();
-			oos.close();
-			fout.flush();
-			fout.close();
-			LOG.debug("Written to " + out);
+			//			File out = new File("/tmp/CourseOptions.ser");
+			//			FileOutputStream fout = new FileOutputStream(out);
+			//			ObjectOutputStream oos = new ObjectOutputStream(fout);
+			//			oos.writeObject(((ScheduleBuildForm) form).getCourseOptions());
+			//			oos.flush();
+			//			oos.close();
+			//			fout.flush();
+			//			fout.close();
+			//			LOG.debug("Written to " + out);
 		} catch (IllegalArgumentException e) {
 			LOG.error("Failed to initialize schedule build form", e);
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
@@ -382,7 +382,7 @@ public class ScheduleBuildController extends UifControllerBase {
 		List<PossibleScheduleOption> sss = form.getSavedSchedules();
 		Map<String, PossibleScheduleOption> cartOptions =
 				new HashMap<String, PossibleScheduleOption>(psos.size() + sss.size());
-		
+
 		int discardCount = 0;
 		for (int i = 0; i < psos.size(); i++) {
 			PossibleScheduleOption pso = psos.get(i);
@@ -427,7 +427,7 @@ public class ScheduleBuildController extends UifControllerBase {
 			jpso.add("maxTime", aggregate.maxTime);
 			jpso.add("events", jevents);
 			jpossible.add(jpso);
-			
+
 			cartOptions.put(pso.getUniqueId(), pso);
 		}
 		json.add("possible", jpossible);
@@ -474,11 +474,11 @@ public class ScheduleBuildController extends UifControllerBase {
 			jsso.add("maxTime", aggregate.maxTime);
 			jsso.add("events", jevents);
 			jsaved.add(jsso);
-			
+
 			cartOptions.put(sso.getUniqueId(), sso);
 		}
 		json.add("saved", jsaved);
-		
+
 		UserSession sess = GlobalVariables.getUserSession();
 		sess.addObject(ShoppingCartForm.POSSIBLE_OPTIONS_KEY, cartOptions);
 
