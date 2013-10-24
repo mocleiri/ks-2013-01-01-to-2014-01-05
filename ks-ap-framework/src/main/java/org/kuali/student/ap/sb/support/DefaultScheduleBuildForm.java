@@ -1,11 +1,11 @@
 package org.kuali.student.ap.sb.support;
 
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -138,14 +138,21 @@ public class DefaultScheduleBuildForm extends UifFormBase implements
 					"Failed to refresh saved schedules", e);
 		}
 
-		if (newSavedSchedules != null && savedSchedules != null)
-			for (int i = 0; i < newSavedSchedules.size(); i++) {
+		if (newSavedSchedules != null && savedSchedules != null) {
+			Iterator<PossibleScheduleOption> nsi = newSavedSchedules.iterator();
+			int i=0;
+			while (nsi.hasNext()) {
+				PossibleScheduleOptionInfo nss = (PossibleScheduleOptionInfo) nsi.next();
+				if (!getTermId().equals(nss.getTermId())) {
+					nsi.remove();
+				}
+				
 				if (i < savedSchedules.size()) {
-					PossibleScheduleOptionInfo nss = (PossibleScheduleOptionInfo) newSavedSchedules
-							.get(i);
 					nss.setSelected(savedSchedules.get(i).isSelected());
 				}
+				i++;
 			}
+		}
 		savedSchedules = newSavedSchedules;
 	}
 
