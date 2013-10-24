@@ -118,6 +118,7 @@
                                 <property name="suggest">
                                     <bean parent="Uif-Suggest">
                                         <property name="valuePropertyName" value="id.id"/>
+                                        <property name="labelPropertyName" value="description"/>
                                         <property name="templateOptions">
                                             <map>
                                                 <entry key="minLength" value="2"/>
