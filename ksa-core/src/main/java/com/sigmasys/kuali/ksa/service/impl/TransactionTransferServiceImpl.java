@@ -1,15 +1,9 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
-import com.sigmasys.kuali.ksa.exception.InvalidGeneralLedgerTypeException;
-import com.sigmasys.kuali.ksa.exception.InvalidTransactionTypeException;
-import com.sigmasys.kuali.ksa.exception.TransactionNotAllowedException;
-import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
+import com.sigmasys.kuali.ksa.exception.*;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
-import com.sigmasys.kuali.ksa.service.AuditableEntityService;
-import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
-import com.sigmasys.kuali.ksa.service.TransactionService;
-import com.sigmasys.kuali.ksa.service.TransactionTransferService;
+import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +51,9 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
 
     @Autowired
     private AuditableEntityService auditableEntityService;
+
+    @Autowired
+    private AccountService accountService;
 
 
     /**
@@ -218,6 +215,13 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
 
         PermissionUtils.checkPermission(Permission.CREATE_TRANSACTION_TRANSFER);
 
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null) {
+            String errMsg = "Account '" + transactionId + "' does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
         Transaction transaction = transactionService.getTransaction(transactionId);
         if (transaction == null) {
             String errMsg = "Transaction with ID = " + transactionId + " does not exist";
@@ -312,9 +316,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
             newTransaction.setTags(new ArrayList<Tag>(transactionTags));
         }
 
-        if (StringUtils.isNotBlank(statementPrefix) && StringUtils.isNotBlank(transaction.getStatementText())) {
-            newTransaction.setStatementText(statementPrefix + " " + transaction.getStatementText());
-        }
+        String prefix = account.getDefaultPersonName().getDisplayValue() + " (" + accountId + "): ";
+        newTransaction.setStatementText(prefix + transaction.getStatementText());
 
         // If both transactions are payments -> copy some additional properties from one to another
         if (newTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT &&

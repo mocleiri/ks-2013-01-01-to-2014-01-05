@@ -584,30 +584,36 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                 }
             }
 
-            // Retrieving the list of transactions for the given user ID and date range
-            List<Transaction> transactions = transactionService.getTransactions(accountId,
-                    thirdPartyPlan.getChargePeriodStartDate(), thirdPartyPlan.getChargePeriodEndDate());
+            // Retrieving the list of charges for the given user ID and date range
+            List<Charge> charges = transactionService.getCharges(accountId,
+                    thirdPartyPlan.getChargePeriodStartDate(),
+                    thirdPartyPlan.getChargePeriodEndDate());
 
-            // Sorting transactions by effective date
-            Collections.sort(transactions, dateComparator);
+            logger.info("Retrieved " + charges.size() + " charges for account '" + accountId + "' and date range [" +
+                    thirdPartyPlan.getChargePeriodStartDate() + ", " + thirdPartyPlan.getChargePeriodEndDate() + "]");
+
+            // Sorting charges by effective date
+            Collections.sort(charges, dateComparator);
 
             Pattern typeMaskPattern = Pattern.compile(allowableCharge.getTransactionTypeMask());
 
             BigDecimal totalUnallocatedAmount = BigDecimal.ZERO;
 
-            for (Transaction transaction : transactions) {
+            for (Charge charge : charges) {
 
-                String transactionTypeId = transaction.getTransactionType().getId().getId();
+                String chargeTypeId = charge.getTransactionType().getId().getId();
 
-                if (typeMaskPattern.matcher(transactionTypeId).matches()) {
+                if (typeMaskPattern.matcher(chargeTypeId).matches()) {
 
-                    BigDecimal unallocatedAmount = transaction.getUnallocatedAmount();
+                    BigDecimal unallocatedAmount = charge.getUnallocatedAmount();
                     if (unallocatedAmount.compareTo(BigDecimal.ZERO) > 0) {
                         totalUnallocatedAmount = totalUnallocatedAmount.add(unallocatedAmount);
                     }
 
                 }
             }
+
+            final String statementPrefix = "(Third Party Plan : " + thirdPartyPlan.getName() + "):";
 
             final BigDecimal hundredPercent = new BigDecimal(100);
 
@@ -616,52 +622,54 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                 maxPercentage = hundredPercent;
             }
 
-            BigDecimal financeChargeAmount = totalUnallocatedAmount.multiply(maxPercentage).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal financeChargeAmount = totalUnallocatedAmount.multiply(maxPercentage).divide(hundredPercent).setScale(2, RoundingMode.HALF_DOWN);
 
             if ((chargeRemainingFund == null || financeChargeAmount.compareTo(chargeRemainingFund) <= 0) &&
                     (remainingFund == null || financeChargeAmount.compareTo(remainingFund) <= 0)) {
 
                 // Doing non-divided funding
 
-                for (Transaction transaction : transactions) {
+                for (Charge charge : charges) {
 
                     Date effectiveDate = thirdPartyPlan.getEffectiveDate();
                     if (effectiveDate == null) {
-                        effectiveDate = transaction.getEffectiveDate();
+                        effectiveDate = charge.getEffectiveDate();
                     }
 
                     Date recognitionDate = thirdPartyPlan.getRecognitionDate();
                     if (recognitionDate == null) {
-                        recognitionDate = transaction.getRecognitionDate();
+                        recognitionDate = charge.getRecognitionDate();
                     }
 
                     // Calculating the transfer amount as unallocated amount multiplied by maxPercentage
-                    BigDecimal transferAmount = transaction.getUnallocatedAmount().multiply(maxPercentage).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal transferAmount = charge.getUnallocatedAmount().multiply(maxPercentage).divide(hundredPercent).setScale(2, RoundingMode.HALF_DOWN);
 
-                    // Creating a new transaction transfer
-                    TransactionTransfer transactionTransfer =
-                            transactionTransferService.transferTransaction(
-                                    transaction.getId(),
-                                    transaction.getTransactionType().getId().getId(),
-                                    thirdPartyPlan.getTransferType().getId(),
-                                    thirdPartyPlan.getThirdPartyAccount().getId(),
-                                    transferAmount,
-                                    effectiveDate,
-                                    recognitionDate,
-                                    // TODO: set memo text and statement prefix,
-                                    null,
-                                    null,
-                                    allowableCharge.getTransactionTypeMask());
+                    if (transferAmount.compareTo(BigDecimal.ZERO) > 0) {
 
-                    // Setting Transfer Group ID
-                    transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
+                        // Creating a new transaction transfer
+                        TransactionTransfer transactionTransfer =
+                                transactionTransferService.transferTransaction(
+                                        charge.getId(),
+                                        charge.getTransactionType().getId().getId(),
+                                        thirdPartyPlan.getTransferType().getId(),
+                                        thirdPartyPlan.getThirdPartyAccount().getId(),
+                                        transferAmount,
+                                        effectiveDate,
+                                        recognitionDate,
+                                        null,
+                                        statementPrefix,
+                                        allowableCharge.getTransactionTypeMask());
 
-                    // Subtracting the transfer amount from the remaining fund
-                    if (remainingFund != null) {
-                        remainingFund = remainingFund.subtract(transferAmount);
+                        // Setting Transfer Group ID
+                        transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
+
+                        // Subtracting the transfer amount from the remaining fund
+                        if (remainingFund != null) {
+                            remainingFund = remainingFund.subtract(transferAmount);
+                        }
+
+                        totalTransferAmount = totalTransferAmount.add(transferAmount);
                     }
-
-                    totalTransferAmount = totalTransferAmount.add(transferAmount);
                 }
 
             } else {
@@ -679,7 +687,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                 // Calculating the transfer amount percentage based on the distribution plan
                 switch (allowableCharge.getDistributionPlan()) {
                     case FULL:
-                        divideCoefficient = maxPercentage;
+                        divideCoefficient = maxPercentage.divide(hundredPercent);
                         break;
                     case DIVIDED:
                         divideCoefficient = maxDividedFund.divide(financeChargeAmount);
@@ -690,7 +698,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                         throw new IllegalStateException(errMsg);
                 }
 
-                for (Transaction transaction : transactions) {
+                for (Charge charge : charges) {
 
                     if (maxDividedFund.compareTo(BigDecimal.ZERO) <= 0 ||
                             (remainingFund != null && remainingFund.compareTo(BigDecimal.ZERO) <= 0)) {
@@ -698,56 +706,57 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                     }
 
                     // Calculating the transfer amount as unallocated amount multiplied by maxPercentage
-                    BigDecimal transferAmount = transaction.getUnallocatedAmount().multiply(divideCoefficient).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal transferAmount = charge.getUnallocatedAmount().multiply(divideCoefficient).setScale(2, RoundingMode.HALF_DOWN);
 
-                    // Getting the smallest value out of unallocated amount, maxDividedFund and remainingFund
-                    if (transferAmount.compareTo(maxDividedFund) > 0) {
-                        transferAmount = maxDividedFund;
+                    if (transferAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+                        // Getting the smallest value out of unallocated amount, maxDividedFund and remainingFund
+                        if (transferAmount.compareTo(maxDividedFund) > 0) {
+                            transferAmount = maxDividedFund;
+                        }
+
+                        if (remainingFund != null && transferAmount.compareTo(remainingFund) > 0) {
+                            transferAmount = remainingFund;
+                        }
+
+                        Date effectiveDate = thirdPartyPlan.getEffectiveDate();
+                        if (effectiveDate == null) {
+                            effectiveDate = charge.getEffectiveDate();
+                        }
+
+                        Date recognitionDate = thirdPartyPlan.getRecognitionDate();
+                        if (recognitionDate == null) {
+                            recognitionDate = charge.getRecognitionDate();
+                        }
+
+                        // Creating a new transaction transfer
+                        TransactionTransfer transactionTransfer =
+                                transactionTransferService.transferTransaction(
+                                        charge.getId(),
+                                        charge.getTransactionType().getId().getId(),
+                                        thirdPartyPlan.getTransferType().getId(),
+                                        thirdPartyPlan.getThirdPartyAccount().getId(),
+                                        transferAmount,
+                                        effectiveDate,
+                                        recognitionDate,
+                                        null,
+                                        statementPrefix,
+                                        allowableCharge.getTransactionTypeMask());
+
+                        // Setting Transfer Group ID
+                        transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
+
+                        // Subtracting the transfer amount from maxDividedFund
+                        maxDividedFund = maxDividedFund.subtract(transferAmount);
+
+                        // Subtracting the transfer amount from the remaining fund
+                        if (remainingFund != null) {
+                            remainingFund = remainingFund.subtract(transferAmount);
+                        }
+
+                        totalTransferAmount = totalTransferAmount.add(transferAmount);
                     }
-
-                    if (remainingFund != null && transferAmount.compareTo(remainingFund) > 0) {
-                        transferAmount = remainingFund;
-                    }
-
-                    Date effectiveDate = thirdPartyPlan.getEffectiveDate();
-                    if (effectiveDate == null) {
-                        effectiveDate = transaction.getEffectiveDate();
-                    }
-
-                    Date recognitionDate = thirdPartyPlan.getRecognitionDate();
-                    if (recognitionDate == null) {
-                        recognitionDate = transaction.getRecognitionDate();
-                    }
-
-                    // Creating a new transaction transfer
-                    TransactionTransfer transactionTransfer =
-                            transactionTransferService.transferTransaction(
-                                    transaction.getId(),
-                                    transaction.getTransactionType().getId().getId(),
-                                    thirdPartyPlan.getTransferType().getId(),
-                                    thirdPartyPlan.getThirdPartyAccount().getId(),
-                                    transferAmount,
-                                    effectiveDate,
-                                    recognitionDate,
-                                    // TODO: set memo text and statement prefix,
-                                    null,
-                                    null,
-                                    allowableCharge.getTransactionTypeMask());
-
-                    // Setting Transfer Group ID
-                    transactionTransfer.setGroupId(transferDetail.getTransferGroupId());
-
-                    // Subtracting the transfer amount from the maxDividedFund fund
-                    maxDividedFund = maxDividedFund.subtract(transferAmount);
-
-                    // Subtracting the transfer amount from the remaining fund
-                    if (remainingFund != null) {
-                        remainingFund = remainingFund.subtract(transferAmount);
-                    }
-
-                    totalTransferAmount = totalTransferAmount.add(transferAmount);
                 }
-
 
             }
 

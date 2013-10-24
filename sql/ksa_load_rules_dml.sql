@@ -154,7 +154,7 @@ global Set blockNames;
 global List permissionNames;
 global List transactionTypeIds;
 global List atpIds;
-global List holdIssueNames
+global List holdIssueNames;
 
 ')!
 
@@ -166,6 +166,45 @@ Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) va
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (10, 'Block 3', 3, 0, null,
  '(ATP is "20122" and Hold Issue is "Disciplinary Suspension" and Permission is "CREATE_REFUND")', 'Apply block')!
+
+
+-----------------------------------------------------------------------------------------------------------------------
+--- Inserting Payment Bouncing rules ---
+
+Insert into KSSA_RULE_SET (ID, NAME, RULE_TYPE_ID_FK, HEADER) values (3, 'Payment Bouncing', 3,
+'import java.util.*;
+import java.math.*;
+import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.rule.*;
+import com.sigmasys.kuali.ksa.service.brm.*;
+import com.sigmasys.kuali.ksa.model.security.*;
+import com.sigmasys.kuali.ksa.util.*;
+import org.apache.commons.lang.*;
+
+expander ksa.dsl
+
+global Set blockNames;
+
+global List permissionNames;
+global List transactionTypeIds;
+global List atpIds;
+global List holdIssueNames;
+global List flagCodes;
+global List accountTypeNames;
+global BigDecimal transactionAmount;
+
+
+')!
+
+Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (11, 'Bounce 1', 3, 0, null,
+ '(Account ID is "user1" and Permission is "CREATE_PAYMENT, CREATE_CHARGE" and Transaction Type is "cash, finaid")', 'Apply block')!
+
+Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (12, 'Bounce 2', 3, 0, null,
+ '(ATP is "20002001HOLIDAYCALENDAR" and Hold Issue is "Unpaid Library Fine")', 'Apply block')!
+
+Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (13, 'Bounce 3', 3, 0, null,
+ '(ATP is "20122" and Hold Issue is "Disciplinary Suspension" and Permission is "CREATE_REFUND")', 'Apply block')!
+
 
 --- PA associations
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 1)!
@@ -180,6 +219,11 @@ Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (1, 7)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (2, 8)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (2, 9)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (2, 10)!
+
+-- PB associations
+Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (3, 11)!
+Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (3, 12)!
+Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (3, 13)!
 
 
 -----------------------------------------------------------------------------------------------------------------------
