@@ -47,7 +47,7 @@ class ActivityOfferingRequisites < BasePage
   element(:prereq_replace_link) { |b| b.eligibility_prereq_add_links.a(:text => /Replace Rule/)}
   action(:prereq_replace) { |b| b.prereq_replace_link.click; b.loading.wait_while_present }
   element(:prereq_suppress_link) { |b| b.eligibility_prereq_add_links.a(:text => /Suppress Rule/)}
-  action(:prereq_suppress) { |b| b.coreq_suppress_link.click; b.loading.wait_while_present }
+  action(:prereq_suppress) { |b| b.prereq_suppress_link.click; b.loading.wait_while_present }
   element(:prereq_message_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleA_disclosureContent")}
 
   element(:corequisite_edit_links) {|b| b.frm.div( id: "KSAO-RuleEdit-ActionLinks_ruleB")}

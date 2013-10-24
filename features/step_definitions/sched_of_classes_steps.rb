@@ -152,6 +152,14 @@ When /^I search for course offerings by course in the CHEM subject group to view
   @schedule_of_classes.expand_course_details
 end
 
+When /^I search for course offerings by course in the CHEM subject group to view the registration group$/ do
+  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "CHEM272", :exp_course_list => ["CHEM272"],
+                              :term => "Fall 2012"
+  @schedule_of_classes.display
+  @schedule_of_classes.choose_rendering DisplayScheduleOfClasses::REG_GROUP_RENDERING
+  @schedule_of_classes.expand_course_details
+end
+
 Then /^the course offering requisites should be displayed stating "([^"]+)"$/ do |exp_msg|
   on DisplayScheduleOfClasses do |page|
     page.get_requisites_message_text.should match /#{exp_msg}/m
@@ -210,6 +218,36 @@ Then /^the Activity C of the Course Offering has Activity Offering Requisites di
       raise "activities table not found"
     else
       page.details_table.rows[10].text.should match /#{exp_msg}/m
+    end
+  end
+end
+
+Then /^Activity J in the Registration Group has Activity Offering Requisites displayed stating "([^"]+)"$/ do |exp_msg|
+  on DisplayScheduleOfClasses do |page|
+    if !page.details_table.exists?
+      raise "activities table not found"
+    else
+      page.details_table.rows[4].text.should match /#{exp_msg}/m
+    end
+  end
+end
+
+Then /^Activity J in the Registration Group has Activity Offering Requisites displayed not stating "([^"]+)"$/ do |exp_msg|
+  on DisplayScheduleOfClasses do |page|
+    if !page.details_table.exists?
+      raise "activities table not found"
+    else
+      page.details_table.rows[4].text.should_not match /#{exp_msg}/m
+    end
+  end
+end
+
+Then /^Activity C in the Registration Group has Activity Offering Requisites displayed stating "([^"]+)"$/ do |exp_msg|
+  on DisplayScheduleOfClasses do |page|
+    if !page.details_table.exists?
+      raise "activities table not found"
+    else
+      page.details_table.rows[12].text.should match /#{exp_msg}/m
     end
   end
 end
