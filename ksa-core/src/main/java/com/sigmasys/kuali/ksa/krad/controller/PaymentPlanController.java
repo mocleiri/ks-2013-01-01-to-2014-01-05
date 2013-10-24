@@ -319,7 +319,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         ThirdPartyPlan plan = form.getBatchThirdPartyPlan();
 
-        if(plan == null) {
+        if(plan == null || plan.getId() == null) {
             String planString = form.getPlanName();
 
             List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlanByNamePattern(planString);
@@ -330,8 +330,8 @@ public class PaymentPlanController extends GenericSearchController {
 
         }
 
-        if(plan == null) {
-            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "No plan selected");
+        if(plan == null || plan.getId() == null) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "No valid plan selected");
             return getUIFModelAndView(form);
         }
 
