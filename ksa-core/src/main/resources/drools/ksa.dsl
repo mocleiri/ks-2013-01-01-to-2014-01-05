@@ -55,8 +55,9 @@
 [then][]Apply block = blockNames.add(drools.getRule().getName());
 
 # PAYMENT BOUNCING DSL definitions
-# [then][]Use "{flagTypeCode}" type, "{accessLevelCode}" access level, {severity} severity to create flag expiring in {days} days = context.getInformationService().createFlag(context.getAccount().getId(), "{flagTypeCode}", "{accessLevelCode}", {severity}, new Date(), CalendarUtils.addCalendarDays(new Date(), {days}));
-
+[then][]Use "{flagTypeCode}" type, "{accessLevelCode}" access level, {severity} severity to create flag expiring in {days} days = context.getInformationService().createFlag(context.getAccount().getId(), "{flagTypeCode}", "{accessLevelCode}", {severity}, new Date(), CalendarUtils.addCalendarDays(new Date(), {days}));
+[then][]Use "{accessLevelCode}" access level to create alert "{alertText}" expiring in {days} days = context.getInformationService().createAlert(context.getAccount().getId(), "{alertText}", "{accessLevelCode}", new Date(), CalendarUtils.addCalendarDays(new Date(), {days}));
+[then][]Use "{accessLevelCode}" access level to create memo "{memoText}" expiring in {days} days = context.getInformationService().createMemo(context.getAccount().getId(), "{memoText}", "{accessLevelCode}", new Date(), CalendarUtils.addCalendarDays(new Date(), {days}), null);
 
 # PAYMENT APPLICATION DSL definitions
 

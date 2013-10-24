@@ -3,6 +3,9 @@ package com.sigmasys.kuali.ksa.service.atp;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.rice.kim.api.identity.IdentityService;
+import org.kuali.rice.kim.api.identity.principal.Principal;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.exceptions.*;
@@ -12,6 +15,8 @@ import org.kuali.student.r2.core.atp.dto.MilestoneInfo;
 import org.kuali.student.r2.core.class1.atp.service.impl.AtpServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * KSA-specific AtpService implementation.
@@ -36,10 +41,12 @@ public class AtpServiceDecorator extends AtpServiceImpl implements AtpService {
     @Override
     @Transactional(readOnly = true)
     public ContextInfo getAtpContextInfo() {
-        String userId = userSessionManager.getUserId();
+        IdentityService identityService = KimApiServiceLocator.getIdentityService();
+        Principal principal = identityService.getPrincipalByPrincipalName(userSessionManager.getUserId());
         ContextInfo contextInfo = new ContextInfo();
-        contextInfo.setAuthenticatedPrincipalId(userId);
-        contextInfo.setPrincipalId(userId);
+        contextInfo.setAuthenticatedPrincipalId(principal.getPrincipalId());
+        contextInfo.setPrincipalId(principal.getPrincipalId());
+        contextInfo.setCurrentDate(new Date());
         return contextInfo;
     }
 

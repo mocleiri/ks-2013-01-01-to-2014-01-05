@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.hold;
 
+import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,10 +9,13 @@ import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.student.enrollment.class1.hold.service.impl.HoldServiceImpl;
 import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.exceptions.*;
+import org.kuali.student.r2.core.constants.HoldServiceConstants;
 import org.kuali.student.r2.core.hold.dto.AppliedHoldInfo;
 import org.kuali.student.r2.core.hold.dto.HoldIssueInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -22,9 +26,32 @@ import java.util.*;
  *
  * @author Michael Ivanov
  */
+@Transactional
 public class HoldServiceDecorator extends HoldServiceImpl implements HoldService {
 
     private static final Log logger = LogFactory.getLog(HoldServiceDecorator.class);
+
+    @Autowired
+    private UserSessionManager userSessionManager;
+
+
+    /**
+     * Returns the default Hold ContextInfo object.
+     *
+     * @return ContextInfo instance
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public ContextInfo getHoldContextInfo() {
+        IdentityService identityService = KimApiServiceLocator.getIdentityService();
+        Principal principal = identityService.getPrincipalByPrincipalName(userSessionManager.getUserId());
+        ContextInfo contextInfo = new ContextInfo();
+        contextInfo.setAuthenticatedPrincipalId(principal.getPrincipalId());
+        contextInfo.setPrincipalId(principal.getPrincipalId());
+        contextInfo.setCurrentDate(new Date());
+        return contextInfo;
+    }
+
 
     @Override
     public AppliedHoldInfo createAppliedHold(String personId, String issueId, String holdTypeKey, AppliedHoldInfo holdInfo, ContextInfo context) throws DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
@@ -78,31 +105,18 @@ public class HoldServiceDecorator extends HoldServiceImpl implements HoldService
     /**
      * Retrieves HoldIssueInfo objects by User ID and ContextInfo.
      *
-     * @param userId  User ID
-     * @param context ContextInfo instance
+     * @param userId User ID
      * @return list of HoldIssueInfo instances
      */
     @Override
     @Transactional(readOnly = true)
-    public List<HoldIssueInfo> getHoldIssuesByUserId(String userId, ContextInfo context) {
+    public List<HoldIssueInfo> getHoldIssuesByUserId(String userId) {
 
-        IdentityService identityService = KimApiServiceLocator.getIdentityService();
-        if (identityService == null) {
-            String errMsg = "IdentityService cannot be null";
-            logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
-        }
-
-        Principal principal = identityService.getPrincipalByPrincipalName(userId);
-        if (principal == null) {
-            String errMsg = "Principal '" + userId + "' does not exist";
-            logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
-        }
+        final ContextInfo contextInfo = getHoldContextInfo();
 
         try {
 
-            List<AppliedHoldInfo> appliedHolds = getAppliedHoldsByPerson(principal.getPrincipalId(), context);
+            List<AppliedHoldInfo> appliedHolds = getAppliedHoldsByPerson(userId, contextInfo);
 
             if (CollectionUtils.isNotEmpty(appliedHolds)) {
 
@@ -112,14 +126,86 @@ public class HoldServiceDecorator extends HoldServiceImpl implements HoldService
                     holdIssueIds.add(appliedHold.getHoldIssueId());
                 }
 
-                return getHoldIssuesByIds(new ArrayList<String>(holdIssueIds), context);
+                return getHoldIssuesByIds(new ArrayList<String>(holdIssueIds), contextInfo);
             }
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
 
         return Collections.emptyList();
+    }
+
+    /**
+     * Creates and persists a new AppliedHoldInfo entity based on the given parameters.
+     *
+     * @param userId          User ID
+     * @param holdIssueType   Hold Issue type key
+     * @param holdIssueName   Hold Issue name
+     * @param holdName        Applied Hold name
+     * @param holdDescription Applied Hold description
+     * @param effectiveDate   Effective Date
+     * @param expirationDate  Expiration Date
+     * @return AppliedHoldInfo instance
+     */
+    @Override
+    public AppliedHoldInfo createAppliedHold(String userId,
+                                             String holdIssueType,
+                                             String holdIssueName,
+                                             String holdName,
+                                             String holdDescription,
+                                             Date effectiveDate,
+                                             Date expirationDate) {
+
+        final ContextInfo contextInfo = getHoldContextInfo();
+
+        try {
+
+            List<String> holdIssueIds = getHoldIssueIdsByType(holdIssueType, contextInfo);
+            if (CollectionUtils.isEmpty(holdIssueIds)) {
+                String errMsg = "Cannot find HoldIssue IDs for '" + holdIssueType + "' hold issue type";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+
+            List<HoldIssueInfo> holdIssueInfos = getHoldIssuesByIds(holdIssueIds, contextInfo);
+
+            HoldIssueInfo holdIssueInfo = null;
+            for (HoldIssueInfo holdIssue : holdIssueInfos) {
+                if (holdIssue.getName().equalsIgnoreCase(holdIssueName)) {
+                    holdIssueInfo = holdIssue;
+                    break;
+                }
+            }
+
+            if (holdIssueInfo == null) {
+                String errMsg = "Cannot find HoldIssueInfo for '" + holdIssueType + "' type and '" + holdIssueName + "' name";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
+
+            AppliedHoldInfo hold = new AppliedHoldInfo();
+
+            hold.setHoldIssueId(holdIssueInfo.getId());
+            hold.setPersonId(userId);
+
+            hold.setTypeKey(HoldServiceConstants.STUDENT_HOLD_TYPE_KEY);
+            hold.setStateKey(HoldServiceConstants.HOLD_ACTIVE_STATE_KEY);
+
+            hold.setName(holdName);
+            hold.setDescr(new RichTextInfo(holdDescription, holdDescription));
+
+            hold.setEffectiveDate(effectiveDate);
+            hold.setReleasedDate(expirationDate);
+
+            return createAppliedHold(userId, holdIssueInfo.getId(), hold.getTypeKey(), hold, contextInfo);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
     }
 
 }

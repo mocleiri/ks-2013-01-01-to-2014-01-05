@@ -1,8 +1,10 @@
 package com.sigmasys.kuali.ksa.service.hold;
 
 import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.core.hold.dto.AppliedHoldInfo;
 import org.kuali.student.r2.core.hold.dto.HoldIssueInfo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,12 +15,38 @@ import java.util.List;
 public interface HoldService extends org.kuali.student.r2.core.hold.service.HoldService {
 
     /**
+     * Returns the default Hold ContextInfo object.
+     *
+     * @return ContextInfo instance
+     */
+    ContextInfo getHoldContextInfo();
+
+    /**
      * Retrieves HoldIssueInfo objects by User ID and ContextInfo.
      *
-     * @param userId  User ID
-     * @param context ContextInfo instance
+     * @param userId User ID
      * @return list of HoldIssueInfo instances
      */
-    List<HoldIssueInfo> getHoldIssuesByUserId(String userId, ContextInfo context);
+    List<HoldIssueInfo> getHoldIssuesByUserId(String userId);
+
+    /**
+     * Creates and persists a new AppliedHoldInfo entity based on the given parameters.
+     *
+     * @param userId          User ID
+     * @param holdIssueType   Hold Issue type key
+     * @param holdIssueName   Hold Issue name
+     * @param holdName        Applied Hold name
+     * @param holdDescription Applied Hold description
+     * @param effectiveDate   Effective Date
+     * @param expirationDate  Expiration Date
+     * @return AppliedHoldInfo instance
+     */
+    AppliedHoldInfo createAppliedHold(String userId,
+                                      String holdIssueType,
+                                      String holdIssueName,
+                                      String holdName,
+                                      String holdDescription,
+                                      Date effectiveDate,
+                                      Date expirationDate);
 
 }
