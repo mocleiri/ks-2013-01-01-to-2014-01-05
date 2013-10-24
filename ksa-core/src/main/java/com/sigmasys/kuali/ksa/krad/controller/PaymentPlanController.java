@@ -163,8 +163,15 @@ public class PaymentPlanController extends GenericSearchController {
         String planIdString = request.getParameter("actionParameters[planId]");
         Long planId = Long.parseLong(planIdString);
 
-        //thirdPartyTransferService.removeThirdPartyPlanMember(planId, memberIdString);
-        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, memberIdString + " enrolled.");
+        boolean result = thirdPartyTransferService.deleteThirdPartyPlanMember(planId, memberIdString);
+
+        String message = "";
+        if(result){
+            message = memberIdString + " removed from the plan";
+        } else {
+            message = memberIdString + " not removed from the plan";
+        }
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, message);
 
         populateThirdPartyForm(form);
 
@@ -326,10 +333,12 @@ public class PaymentPlanController extends GenericSearchController {
 
             List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlanByNamePattern(planString);
 
-            if(plans != null && plans.size() > 0) {
+            if(plans != null && plans.size() > 1) {
+                GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Multiple Third Party plans match name: " + planString);
+                return getUIFModelAndView(form);
+            } else if(plans != null && plans.size() == 1) {
                 plan = plans.get(0);
             }
-
         }
 
         if(plan == null || plan.getId() == null) {
