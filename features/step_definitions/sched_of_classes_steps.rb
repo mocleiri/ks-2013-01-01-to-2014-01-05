@@ -138,6 +138,12 @@ When /^I search for course offerings by course by entering a course offering cod
   @schedule_of_classes.expand_course_details
 end
 
+Then /^the course offering requisites should be displayed stating "([^"]+)"$/ do |exp_msg|
+  on DisplayScheduleOfClasses do |page|
+    page.get_requisites_message_text.should match /#{exp_msg}/m
+  end
+end
+
 When /^I search for course offerings by course$/ do
   @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "PHYS272", :exp_course_list => ["PHYS272","PHYS272H"],
                               :term => "Fall 2012"
