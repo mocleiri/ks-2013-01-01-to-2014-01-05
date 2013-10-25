@@ -72,7 +72,7 @@ Feature: EC.Waitlists Colocation
     When I delete two of the related course offerings
     Then the remaining activity offering is no longer colocated
     But the remaining activity offering still has the same waitlist configuration
-
+  @bug
   Scenario: WL 1.17.9a Break colocation in a colocated-shared enrollment set (3 activity offerings)
     Given I create three course offerings with one activity offering in each with waitlists enabled
     And I colocate the three activity offerings (shared enrolment)
@@ -82,7 +82,7 @@ Feature: EC.Waitlists Colocation
     And all three activity offerings have the same waitlist configuration
     When I deactivate waitlists on the first activity offering
     Then the waitlist configuration for the two remaining colocated activity offerings is not changed
-
+  @bug
   Scenario: WL 1.17.9b Break colocation in a colocated-shared enrollment set (2 activity offerings)
     Given I create two colocated activity offerings (shared enrolment) with waitlists enabled
     And I make changes to the default waitlist configuration for one of the activity offerings
