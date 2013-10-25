@@ -1,3 +1,4 @@
+@nightly
 Feature: SA.ELIG8-18 View changes made to AO or CO Requisites on Schedule of Classes
   ELIG 8.18 : As a Central Administrator I want to have Rules display in the Schedule of Classes so that students are
   able to see whether or not they will qualify for enrolment in a course prior to trying to enrol
@@ -6,7 +7,6 @@ Feature: SA.ELIG8-18 View changes made to AO or CO Requisites on Schedule of Cla
     Given I am logged in as admin
 
   #ELIG8.18.EB1 (KSENROLL-9795)
-  @pending
   Scenario: Test that the Schedule of Classes shows the ref data when no changes are made to the CO Requisites
     Given I am using the schedule of classes page
     When I search for course offerings by course
@@ -14,7 +14,6 @@ Feature: SA.ELIG8-18 View changes made to AO or CO Requisites on Schedule of Cla
     Then the course offering requisites should be displayed with the course data
 
   #ELIG8.18.EB2 (KSENROLL-9795)
-  @pending
   Scenario: Test that adding an AO Requisite will add detail to the SoC AO table
     Given I add a text rule to the Antirequisite section
     And I am using the schedule of classes page
@@ -23,7 +22,6 @@ Feature: SA.ELIG8-18 View changes made to AO or CO Requisites on Schedule of Cla
     Then the activity offering requisites should be displayed with the correct activity
 
   #ELIG8.18.EB3 (KSENROLL-9795)
-  @pending
   Scenario: Test that suppressing the Corequisite rule for AO A is displayed on the Schedule of Classes
     Given I suppress the rule in the Corequisite section
     And I am using the schedule of classes page
@@ -33,7 +31,6 @@ Feature: SA.ELIG8-18 View changes made to AO or CO Requisites on Schedule of Cla
     But any un-suppressed requisites should be visible
 
   #ELIG8.18.EB4 (KSENROLL-9795)
-  @pending
   Scenario: Test that editing the SE & Prerequisite rule is displayed on the Schedule of Classes
     Given I edit the Prerequisite section by adding a new text statement
     And I am using the schedule of classes page
@@ -42,7 +39,6 @@ Feature: SA.ELIG8-18 View changes made to AO or CO Requisites on Schedule of Cla
     Then the edited activity offering requisites should be displayed with the correct activity
 
   #ELIG8.18.EB5 (KSENROLL-9795)
-  @pending
   Scenario: Test that adding CO Requisites is displayed on the Schedule of Classes
     Given I add a new text statement to the Recommended Preparation section
     And I am using the schedule of classes page
