@@ -602,7 +602,8 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                         courseOfferingTerm.setCourseComments(courseComments);
                         courseOfferingTerm.setCurriculumComments(curriculumComments);
                         courseOfferingTerm.setInstituteCode(courseOfferingInstitution.getCode());
-                        courseOfferingTerm.setCoursePlanType(getPlanType(getPlanItem(course.getVersion().getVersionIndId(), yt.toATP())));
+                        boolean isCrossListedCourse = getCourseHelper().isCrossListedCourse(course.getCode());
+                        courseOfferingTerm.setCoursePlanType(getPlanType(getPlanItem(course.getVersion().getVersionIndId(), isCrossListedCourse ? course.getCode() : null, yt.toATP())));
                         courseOfferingTermList.add(courseOfferingTerm);
                     }
 
@@ -1062,9 +1063,9 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      * @param atpId
      * @return
      */
-    public PlanItemInfo getPlanItem(String refObjId, String atpId) {
+    public PlanItemInfo getPlanItem(String refObjId, String atpId, String courseCd) {
         try {
-            PlanItemInfo planItem = getPlanHelper().getPlannedOrBackupPlanItem(refObjId, atpId);
+            PlanItemInfo planItem = getPlanHelper().getPlannedOrBackupPlanItem(refObjId, courseCd, atpId);
             if (planItem != null) {
                 return planItem;
             }

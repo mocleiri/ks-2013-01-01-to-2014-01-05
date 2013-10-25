@@ -47,4 +47,10 @@ public class AcademicPlanServiceConstants {
     /*External Identifier*/
     public static final String EXTERNAL_IDENTIFIER = "ksap.persist.externalIdentifier";
 
+    /*Dynamic Attributes*/
+    public static final String CROSS_LISTED_COURSE_ATTR_KEY = "crossListed";
+
+    /*Regex to Split Digits and alphabets Eg: COM 348 --> COM  348*/
+    public static final String SPLIT_DIGITS_ALPHABETS = "(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)";
+
 }

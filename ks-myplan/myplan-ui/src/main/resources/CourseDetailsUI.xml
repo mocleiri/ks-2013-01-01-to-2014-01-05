@@ -106,7 +106,7 @@
                       p:id="@{dataObject.courseSummaryDetails.courseId}_addSavedCourse"
                       p:render="@{!dataObject.plannedCourseSummary.inSavedCourseList}">
                     <property name="actionScript" value="
-                        var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'addSavedCourse', courseId:'@{dataObject.courseSummaryDetails.courseId}'};
+                        var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'addSavedCourse', courseId:'@{dataObject.courseSummaryDetails.courseId}', code:'@{dataObject.courseSummaryDetails.code}'};
                         submitHiddenForm('plan', additionalFormData, e);
                     "/>
                 </bean>

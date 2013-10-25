@@ -55,10 +55,12 @@ public interface CourseHelper {
      * @return
      */
     public boolean isCourseInOfferingIds(String subjectArea, String courseNumber, Set<String> courseOfferingIds);
-    
+
     public boolean isValidCourseLevel(String division, String level);
 
     public String getKeyForCourseOffering(String courseId, String subject, String number);
 
-    public boolean isCrossListedCourse (String courseCd);
+    public boolean isCrossListedCourse(String courseCd);
+
+    public boolean isSimilarCourses(String courseCd1, String courseCd2);
 }

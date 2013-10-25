@@ -175,7 +175,7 @@ public class SingleQuarterInquiryHelperImpl extends KualiInquirableImpl {
                             plannedCourse.setProposed(PlanConstants.LEARNING_PLAN_ITEM_PROPOSED_STATE_KEY.equals(planItemInfo.getStateKey()));
                         } else {
                             String atpId = planItemInfo.getPlanPeriods().get(0);
-                            PlanItemInfo recommendedPlanItem = getPlanHelper().getPlanItemByAtpAndType(planItemInfo.getLearningPlanId(), planItemInfo.getRefObjectId(), atpId, PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED);
+                            PlanItemInfo recommendedPlanItem = getPlanHelper().getPlanItemByAtpAndType(planItemInfo.getLearningPlanId(), planItemInfo.getRefObjectId(), atpId, PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED, getPlanHelper().getCrossListedCourse(planItemInfo.getAttributes()));
                             plannedCourse.setAdviserRecommended(recommendedPlanItem != null && PlanConstants.LEARNING_PLAN_ITEM_ACCEPTED_STATE_KEY.equals(recommendedPlanItem.getStateKey()));
                         }
 
@@ -265,7 +265,7 @@ public class SingleQuarterInquiryHelperImpl extends KualiInquirableImpl {
                         plannedCourse.setProposed(PlanConstants.LEARNING_PLAN_ITEM_PROPOSED_STATE_KEY.equals(planItemInfo.getStateKey()));
                     } else {
                         String atpId = planItemInfo.getPlanPeriods().get(0);
-                        PlanItemInfo recommendedPlanItem = getPlanHelper().getPlanItemByAtpAndType(planItemInfo.getLearningPlanId(), planItemInfo.getRefObjectId(), atpId, PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED);
+                        PlanItemInfo recommendedPlanItem = getPlanHelper().getPlanItemByAtpAndType(planItemInfo.getLearningPlanId(), planItemInfo.getRefObjectId(), atpId, PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED, getPlanHelper().getCrossListedCourse(planItemInfo.getAttributes()));
                         plannedCourse.setAdviserRecommended(recommendedPlanItem != null && PlanConstants.LEARNING_PLAN_ITEM_ACCEPTED_STATE_KEY.equals(recommendedPlanItem.getStateKey()));
                     }
                     plannedCoursesList.add(plannedCourse);
@@ -288,7 +288,7 @@ public class SingleQuarterInquiryHelperImpl extends KualiInquirableImpl {
                         plannedCourse.setProposed(PlanConstants.LEARNING_PLAN_ITEM_PROPOSED_STATE_KEY.equals(planItemInfo.getStateKey()));
                     } else {
                         String atpId = planItemInfo.getPlanPeriods().get(0);
-                        PlanItemInfo recommendedPlanItem = getPlanHelper().getPlanItemByAtpAndType(planItemInfo.getLearningPlanId(), planItemInfo.getRefObjectId(), atpId, PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED);
+                        PlanItemInfo recommendedPlanItem = getPlanHelper().getPlanItemByAtpAndType(planItemInfo.getLearningPlanId(), planItemInfo.getRefObjectId(), atpId, PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED, getPlanHelper().getCrossListedCourse(planItemInfo.getAttributes()));
                         plannedCourse.setAdviserRecommended(recommendedPlanItem != null && PlanConstants.LEARNING_PLAN_ITEM_ACCEPTED_STATE_KEY.equals(recommendedPlanItem.getStateKey()));
                     }
                     plannedCoursesList.add(plannedCourse);

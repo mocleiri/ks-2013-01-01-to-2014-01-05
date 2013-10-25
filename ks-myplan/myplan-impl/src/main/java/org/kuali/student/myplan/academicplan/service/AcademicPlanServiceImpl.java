@@ -685,6 +685,22 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
         String planItemId = planItem.getLearningPlanId();
         String courseId = planItem.getRefObjectId();
         String planItemType = planItem.getTypeKey();
+        String crossListedCourse = null;
+        String crossListedSubject = null;
+        String crossListedNumber = null;
+        for (AttributeInfo attributeInfo : planItem.getAttributes()) {
+            if (AcademicPlanServiceConstants.CROSS_LISTED_COURSE_ATTR_KEY.equals(attributeInfo.getKey())) {
+                crossListedCourse = attributeInfo.getValue();
+                break;
+            }
+        }
+
+        if (StringUtils.hasText(crossListedCourse)) {
+            String[] str = crossListedCourse.split(AcademicPlanServiceConstants.SPLIT_DIGITS_ALPHABETS);
+            crossListedSubject = str[0].trim();
+            crossListedNumber = str[1].trim();
+        }
+
 
         /**
          * See if a duplicate item exits in the plan. If the type is wishlist then only the course id has to match to make
@@ -696,8 +712,22 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
                 if (AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED.equals(planItemType) || AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP.equals(planItemType) || AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED.equals(planItemType)) {
                     for (String atpId : planItem.getPlanPeriods()) {
                         if (p.getPlanPeriods().contains(atpId)) {
-                            throw new AlreadyExistsException(String.format("A plan item for plan [%s], course id [%s], and term [%s] already exists.",
-                                    p.getLearningPlan().getId(), courseId, atpId));
+                            /*If the course is a crossListed then we should check against the crossListed items in the planItemEntity for perfect validation*/
+                            if (!CollectionUtils.isEmpty(p.getAttributes()) && StringUtils.hasText(crossListedCourse)) {
+                                for (PlanItemAttributeEntity attributeEntity : p.getAttributes()) {
+                                    if (AcademicPlanServiceConstants.CROSS_LISTED_COURSE_ATTR_KEY.equals(attributeEntity.getKey())) {
+                                        String crossListed = attributeEntity.getValue();
+                                        String[] str = crossListed.split(AcademicPlanServiceConstants.SPLIT_DIGITS_ALPHABETS);
+                                        if (crossListedSubject.equals(str[0].trim()) && crossListedNumber.equals(str[1].trim())) {
+                                            throw new AlreadyExistsException(String.format("A plan item for plan [%s], course id [%s], course Cd [%s], and term [%s] already exists.",
+                                                    p.getLearningPlan().getId(), courseId, crossListedCourse, atpId));
+                                        }
+                                    }
+                                }
+                            } else if (CollectionUtils.isEmpty(p.getAttributes())) {
+                                throw new AlreadyExistsException(String.format("A plan item for plan [%s], course id [%s], and term [%s] already exists.",
+                                        p.getLearningPlan().getId(), courseId, atpId));
+                            }
                         }
                     }
                 } else {

@@ -637,6 +637,23 @@ public class CourseHelperImpl implements CourseHelper {
         return CourseAssemblerConstants.COURSE_CROSSLISTING_IDENT_TYPE.equals(identType);
     }
 
+    /**
+     * Checks if the courseCd's given are similar or not , either they might be in formatted or unFormatted form
+     *
+     * @param courseCd1
+     * @param courseCd2
+     * @return true if subject and numbers matched for the two courses else false
+     */
+    @Override
+    public boolean isSimilarCourses(String courseCd1, String courseCd2) {
+        if (!StringUtils.isEmpty(courseCd1) && !StringUtils.isEmpty(courseCd2)) {
+            DeconstructedCourseCode courseCode1 = getCourseDivisionAndNumber(courseCd1);
+            DeconstructedCourseCode courseCode2 = getCourseDivisionAndNumber(courseCd2);
+            return courseCode1.getSubject().equals(courseCode2.getSubject()) && courseCode1.getNumber().equals(courseCode2.getNumber());
+        }
+        return false;
+    }
+
     protected CluService getLuService() {
         if (luService == null) {
             luService = (CluService) GlobalResourceLoader.getService(new QName(CluServiceConstants.CLU_NAMESPACE, "CluService"));

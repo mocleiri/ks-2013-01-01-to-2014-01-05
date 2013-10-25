@@ -16,9 +16,9 @@ import java.util.List;
  */
 public interface PlanHelper {
 
-    public PlanItemInfo getPlanItemByAtpAndType(String learningPlanId, String refObjId, String atpId, String planItemType);
+    public PlanItemInfo getPlanItemByAtpAndType(String learningPlanId, String refObjId, String atpId, String planItemType, String courseCd);
 
-    public PlanItemInfo getPlannedOrBackupPlanItem(String courseId, String atpId);
+    public PlanItemInfo getPlannedOrBackupPlanItem(String courseId, String courseCd, String atpId);
 
     public List<PlanItemInfo> getPlanItemsByTypes(String studentId, List<String> planItemTypes);
 

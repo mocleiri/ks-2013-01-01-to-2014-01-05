@@ -97,8 +97,6 @@ public class PlanConstants extends AcademicPlanServiceConstants {
     public static final String GENERAL_TYPE = "general";
     public static final String COURSE_PLACEHOLDER_REGEX = "^[1-9](?i)XX$";
 
-    public static final String CROSS_LISTED_COURSE = "crossListed";
-
     public static final String PLAN = " plan";
     public static final String BACKUP = " backup";
 
