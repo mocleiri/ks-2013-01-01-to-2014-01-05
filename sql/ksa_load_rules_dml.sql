@@ -159,13 +159,13 @@ global List holdIssueNames;
 ')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (8, 'Block 1', 3, 0, null,
- '(Account ID is "user1" and Permission is "CREATE_PAYMENT, CREATE_CHARGE" and Transaction Type is "cash, finaid")', 'Apply block')!
+ '(Account ID is "user1" and Permission is "CREATE_PAYMENT, CREATE_CHARGE" and Transaction type is "cash, finaid")', 'Apply block')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (9, 'Block 2', 3, 0, null,
- '(ATP is "20002001HOLIDAYCALENDAR" and Hold Issue is "Unpaid Library Fine")', 'Apply block')!
+ '(ATP is "20002001HOLIDAYCALENDAR" and Hold issue is "Unpaid Library Fine")', 'Apply block')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (10, 'Block 3', 3, 0, null,
- '(ATP is "20122" and Hold Issue is "Disciplinary Suspension" and Permission is "CREATE_REFUND")', 'Apply block')!
+ '(ATP is "20122" and Hold issue is "Disciplinary Suspension" and Permission is "CREATE_REFUND")', 'Apply block')!
 
 
 -----------------------------------------------------------------------------------------------------------------------
@@ -197,13 +197,21 @@ global BigDecimal transactionAmount;
 ')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (11, 'Bounce 1', 3, 0, null,
- '(Account ID is "user1" and Permission is "CREATE_PAYMENT, CREATE_CHARGE" and Transaction Type is "cash, finaid")', 'Apply block')!
+'(Transaction type is "cash, finaid" and Transaction amount > 2000)',
+'Use flag type "OverLimit", access level "DEF_FLAG_LEVEL_CD", severity 10 to create flag expiring in 90 days')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (12, 'Bounce 2', 3, 0, null,
- '(ATP is "20002001HOLIDAYCALENDAR" and Hold Issue is "Unpaid Library Fine")', 'Apply block')!
+'(Hold issue is "Unpaid Library Fine")',
+'Use access level "DEF_MEMO_LEVEL_CD" to create memo "Pay Library Fine" expiring in 30 days
+ Use access level "DEF_ALERT_LEVEL_CD" to create alert "Library Fine Alert" expiring in 60 days
+ Use hold issue type "kuali.hold.issue.type.financial", hold issue name "Collections" to create hold "Library Fine" with description "Unpaid Library Fine" expiring in 14 days
+')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (13, 'Bounce 3', 3, 0, null,
- '(ATP is "20122" and Hold Issue is "Disciplinary Suspension" and Permission is "CREATE_REFUND")', 'Apply block')!
+'(Account type is "Undergraduate Student" and Transaction amount < 100)',
+'Use flag type "BadCheck", access level "DEF_FLAG_LEVEL_CD", severity 1 to create flag expiring in 5 days
+ Use hold issue type "kuali.hold.issue.type.financial", hold issue name "Unpaid Tuition Prior Term" to create hold "Unpaid Tuition" with description "" expiring in 17 days
+')!
 
 
 --- PA associations

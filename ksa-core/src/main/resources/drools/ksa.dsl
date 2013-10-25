@@ -9,10 +9,10 @@
 
 [when][]Account ID is "{userId}" = account.id == "{userId}"
 [when][]ATP is "{atpIds}" = CommonUtils.containsAny(atpIds, "{atpIds}", ",")
-[when][]Transaction Type is "{transactionTypeIds}" = CommonUtils.containsAny(transactionTypeIds, "{transactionTypeIds}", ",")
-[when][]Hold Issue is "{holdIssueNames}" = CommonUtils.containsAny(holdIssueNames, "{holdIssueNames}", ",")
+[when][]Transaction type is "{transactionTypeIds}" = CommonUtils.containsAny(transactionTypeIds, "{transactionTypeIds}", ",")
+[when][]Hold issue is "{holdIssueNames}" = CommonUtils.containsAny(holdIssueNames, "{holdIssueNames}", ",")
 [when][]Permission is "{permissionNames}" = CommonUtils.containsAny(permissionNames, "{permissionNames}", ",")
-[when][]Account Type is "{accountTypeNames}" = CommonUtils.containsAny(accountTypeNames, "{accountTypeNames}", ",")
+[when][]Account type is "{accountTypeNames}" = CommonUtils.containsAny(accountTypeNames, "{accountTypeNames}", ",")
 [when][]Transaction amount is "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) == 0
 [when][]Transaction amount > "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) > 0
 [when][]Transaction amount < "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) < 0
@@ -55,9 +55,12 @@
 [then][]Apply block = blockNames.add(drools.getRule().getName());
 
 # PAYMENT BOUNCING DSL definitions
-[then][]Use "{flagTypeCode}" type, "{accessLevelCode}" access level, {severity} severity to create flag expiring in {days} days = context.getInformationService().createFlag(context.getAccount().getId(), "{flagTypeCode}", "{accessLevelCode}", {severity}, new Date(), CalendarUtils.addCalendarDays(new Date(), {days}));
-[then][]Use "{accessLevelCode}" access level to create alert "{alertText}" expiring in {days} days = context.getInformationService().createAlert(context.getAccount().getId(), "{alertText}", "{accessLevelCode}", new Date(), CalendarUtils.addCalendarDays(new Date(), {days}));
-[then][]Use "{accessLevelCode}" access level to create memo "{memoText}" expiring in {days} days = context.getInformationService().createMemo(context.getAccount().getId(), "{memoText}", "{accessLevelCode}", new Date(), CalendarUtils.addCalendarDays(new Date(), {days}), null);
+
+# RHS definitions
+[then][]Use flag type "{flagTypeCode}", access level "{accessLevelCode}", severity {severity} to create flag expiring in {days} days = context.getInformationService().createFlag(context.getAccount().getId(), "{flagTypeCode}", "{accessLevelCode}", {severity}, new Date(), CalendarUtils.addCalendarDays(new Date(), {days}));
+[then][]Use access level "{accessLevelCode}" to create alert "{alertText}" expiring in {days} days = context.getInformationService().createAlert(context.getAccount().getId(), "{alertText}", "{accessLevelCode}", new Date(), CalendarUtils.addCalendarDays(new Date(), {days}));
+[then][]Use access level "{accessLevelCode}" to create memo "{memoText}" expiring in {days} days = context.getInformationService().createMemo(context.getAccount().getId(), "{memoText}", "{accessLevelCode}", new Date(), CalendarUtils.addCalendarDays(new Date(), {days}), null);
+[then][]Use hold issue type "{holdIssueType}", hold issue name "{holdIssueName}" to create hold "{holdName}" with description "{holdDescription}" expiring in {days} days = context.getHoldService().createAppliedHold(context.getAccount().getId(), "{holdIssueType}", "{holdIssueName}", "{holdName}", "{holdDescription}", new Date(), CalendarUtils.addCalendarDays(new Date(), {days}));
 
 # PAYMENT APPLICATION DSL definitions
 
