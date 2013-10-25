@@ -394,40 +394,39 @@ function disabledCheck(disableCompId, disableCompType, condition) {
  #################################################################
  */
 function planItemTemplate(data) {
-    var itemId = data.planItemType + "_" + data.atpId + "_" + data.planItemId;
+    var itemId = data.planItemType + "-" + data.atpId + "-" + data.planItemId;
     var image = jQuery("<img/>").attr("src", getConfigParam("ksapImageLocation") + "pixel.gif");
-    var actionGroup = jQuery("<div/>").attr("class", "uif-horizontalBoxLayout");
-    var itemGroup = jQuery("<div/>").attr("class", "uif-horizontalBoxLayout");
+    var actionGroup = jQuery("<div/>").attr("class", "uif-horizontalBoxLayout clearfix");
+    var itemGroup = jQuery("<div/>").attr("class", "uif-horizontalBoxLayout clearfix");
 
     var item = jQuery("<div/>").attr({
-        "id": itemId + "_group",
-        "class": "uif-verticalBoxGroup uif-collectionItem"
+        "id": itemId + "-group",
+        "class": "planItem"
     });
 
-    var title = jQuery("<div/>").attr("class", "itemTitle uif-boxLayoutHorizontalItem").append(data.planItemShortTitle);
+    var title = jQuery("<div/>").attr("class", "planItem__title uif-boxLayoutHorizontalItem").append(data.planItemShortTitle);
     actionGroup.append(title);
 
     if (data.sections != null && data.sections != "") {
-        var sections = jQuery("<div/>").attr("class", "itemActivities myplan-text-ellipsis uif-boxLayoutHorizontalItem").append(data.sections);
+        var sections = jQuery("<div/>").attr("class", "planItem__activities ellipsisItem uif-boxLayoutHorizontalItem").append(data.sections);
         actionGroup.append(sections);
     }
 
     if (data.credit != null && data.credit != "") {
-        var credit = jQuery("<div/>").attr("class", "itemCredit uif-boxLayoutHorizontalItem").append("(" + data.credit + ")");
+        var credit = jQuery("<div/>").attr("class", "planItem__credit uif-boxLayoutHorizontalItem").append("(" + data.credit + ")");
         actionGroup.append(credit);
     }
 
     var action = jQuery("<div/>").attr("id", itemId).attr({
         "title": data.planItemShortTitle + " " + ((data.sections != null && data.sections != "") ? data.sections + " " : "") + "'" + data.planItemLongTitle + "'",
-        "class": "uif-horizontalFieldGroup itemAction uif-tooltip uif-boxLayoutHorizontalItem",
+        "class": "uif-horizontalFieldGroup planItem__action uif-tooltip uif-boxLayoutHorizontalItem" + ((data.note) ? " planItem__action--hasNote":""),
         "data-atpid": data.atpId.replace(/-/g, "."),
         "data-planitemid": data.planItemId,
-        "data-placeholder": data.placeHolder,
-        "style": "width:" + ((data.note) ? "99px; padding-right: 16px;" : "115px;")
+        "data-placeholder": data.placeHolder
     });
 
     if (data.placeHolder == "true") {
-        item.addClass("placeholder");
+        item.addClass("planItem--placeholder");
     } else {
         action.attr({
             "data-courseid": data.courseId,
@@ -440,70 +439,71 @@ function planItemTemplate(data) {
     if (data.showAlert == "true") {
         var alert = jQuery("<div/>").attr({
             "title": data.statusAlert,
-            "class": "itemAlert uif-boxLayoutHorizontalItem"
+            "class": "planItem__alert uif-boxLayoutHorizontalItem"
         }).append(image.clone().attr("alt", data.statusAlert));
         itemGroup.append(alert);
-        item.addClass("alert");
     }
 
     itemGroup.append(action);
 
-    var script = jQuery("<input/>").attr({
+    var menuScript = jQuery("<input/>").attr({
         "type": "hidden",
         "name": "script",
-        "data-role": "script"
-    }).val("jQuery('#" + itemId + "').click(function(e) { openMenu('" + data.planItemId + "_" + data.planItemType + "','" + data.planItemType + "_" + ((data.placeHolder == "true") ? "placeholder" : "course" ) + "_menu','" + data.atpId.replace(/-/g, ".") + "',e,'.uif-collectionItem','fl-container-150 uif-boxLayoutHorizontalItem',{tail:{align:'top'},align:'top',position:'right'},false); });")
+        "data-role": "script",
+        "data-for": itemId
+    }).val("jQuery('#" + itemId + "').on('click', function(e) {openMenu('" + data.planItemId + "-" + data.planItemType + "','" + data.planItemType + "_" + ((data.placeHolder == "true") ? "placeholder" : "course" ) + "_menu','" + data.atpId.replace(/-/g, ".") + "',e,null,'popover__menu popover__menu--large',{tail:{align:'top'},align:'top',position:'right'},false); });");
+
+    itemGroup.append(menuScript);
 
     if (data.note) {
         var note = jQuery("<div/>").attr({
-            "id": itemId + "_note",
-            "class": "itemNote uif-boxLayoutHorizontalItem uif-tooltip"
+            "id": itemId + "-note",
+            "class": "planItem__note uif-boxLayoutHorizontalItem uif-tooltip"
         }).append(image.clone());
         itemGroup.append(note);
         var decoded = jQuery("<div/>").html(data.note).text();
-        var createTooltip = " createTooltip('" + itemId + "_note', ' <p>" + decoded + "</p><p><a data-planitemtype=" + data.planItemType + " data-planitemid=" + data.planItemId + " data-atpid=" + data.atpId.replace(/-/g, ".") + " onclick=editNote(jQuery(this),event);>Edit Note</a></p> ', {position:'top',align:'left',alwaysVisible:false,tail:{align:'left',hidden:false},themePath:'../ks-myplan/jquery-popover/jquerypopover-theme/',themeName:'ksap-notes',selectable:true,width:'250px',openingSpeed:50,closingSpeed:50,openingDelay:500,closingDelay:0,themeMargins:{total:'17px',difference:'10px'},distance:'0px'},true,true);";
-        script.val(script.val() + createTooltip);
+        var noteScript = jQuery("<input/>").attr({
+            "type": "hidden",
+            "name": "script",
+            "data-role": "script",
+            "data-for": itemId + "-note"
+        }).val("createTooltip('" + itemId + "-note', ' <p>" + decoded + "</p><p><a data-planitemtype=" + data.planItemType + " data-planitemid=" + data.planItemId + " data-atpid=" + data.atpId.replace(/-/g, ".") + " onclick=editNote(jQuery(this),event);>Edit Note</a></p> ', {position:'top',align:'left',alwaysVisible:false,tail:{align:'left',hidden:false},themePath:'../themes/ksap/images/popover-theme/',themeName:'note',selectable:true,width:'250px',openingSpeed:50,closingSpeed:50,openingDelay:500,closingDelay:0,themeMargins:{total:'17px',difference:'10px'},distance:'0px'},true,true);");
+        itemGroup.append(noteScript);
     }
 
-    itemGroup.append(script);
-
-    itemGroup.clone().appendTo(item).wrap('<div class="uif-horizontalBoxGroup"/>');
+    itemGroup.clone().appendTo(item);
 
     return item;
 }
 
-function fnAddPlanItem(data) {
-    var itemId = data.planItemType + "_" + data.atpId + "_" + data.planItemId;
-    var collection = jQuery("." + data.atpId + ".myplan-term-" + data.planItemType);
+function addPlanItem(data) {
+    var itemId = data.planItemType + "-" + data.atpId + "-" + data.planItemId;
+    var collection = jQuery("#" + data.planItemType + "-" + data.atpId);
 
     var size = parseFloat(collection.attr("data-size")) + 1;
     collection.attr("data-size", size);
 
     if (collection.attr("data-limit") != "false") {
-        fnShowHideQuickAddLink(data.atpId, data.planItemType, size);
+        toggleAddPlanItem(data.atpId, data.planItemType, size);
     }
 
-    planItemTemplate(data).prependTo("." + data.atpId + ".myplan-term-" + data.planItemType + " .uif-stackedCollectionLayout");
-    runHiddenScripts(itemId + "_group");
-    jQuery("#" + itemId + "_group").css({backgroundColor: "#faf5ca"}).animate({backgroundColor: "#ffffff"}, 1500, "linear", function () {
-        jQuery(this).removeAttr("style");
-    });
-    truncateField(itemId + "_group", true);
+    planItemTemplate(data).prependTo(collection.find(".planYear__items"));
+    runHiddenScripts(itemId + "-group");
+    animateHighlight(jQuery("#" + itemId + "-group"));
+    truncateField(itemId + "-group", true);
 }
 
-function fnUpdatePlanItem(data) {
-    var itemId = data.planItemType + "_" + data.atpId + "_" + data.planItemId;
-    jQuery("#" + itemId + "_group").replaceWith(planItemTemplate(data));
-    runHiddenScripts(itemId + "_group");
-    jQuery("#" + itemId + "_group").css({backgroundColor: "#faf5ca"}).animate({backgroundColor: "#ffffff"}, 1500, "linear", function () {
-        jQuery(this).removeAttr("style");
-    });
-    truncateField(itemId + "_group", true);
+function updatePlanItem(data) {
+    var itemId = data.planItemType + "-" + data.atpId + "-" + data.planItemId;
+    jQuery("#" + itemId + "-group").replaceWith(planItemTemplate(data));
+    runHiddenScripts(itemId + "-group");
+    animateHighlight(jQuery("#" + itemId + "-group"));
+    truncateField(itemId + "-group", true);
 }
-function fnUpdateNote(data) {
-    var noteId = data.planItemType + "_" + data.atpId + "_" + data.planItemId + "_note";
+function updateNote(data) {
+    var noteId = data.planItemType + "-" + data.atpId + "-" + data.planItemId + "-note";
     jQuery("#" + noteId).off();
-    var createTooltip = "createTooltip('" + noteId + "', ' <p>" + data.note + "</p><p><a data-planitemtype=" + data.planItemType + " data-planitemid=" + data.planItemId + " data-atpid=" + data.atpId.replace(/-/g, ".") + " onclick=editNote(jQuery(this),event);>Edit Note</a></p> ', {position:'top',align:'left',alwaysVisible:false,tail:{align:'left',hidden:false},themePath:'../ks-myplan/jquery-popover/jquerypopover-theme/',themeName:'ksap-notes',selectable:true,width:'250px',openingSpeed:50,closingSpeed:50,openingDelay:500,closingDelay:0,themeMargins:{total:'17px',difference:'10px'},distance:'0px'},true,true);";
+    var createTooltip = "createTooltip('" + noteId + "', ' <p>" + data.note + "</p><p><a data-planitemtype=" + data.planItemType + " data-planitemid=" + data.planItemId + " data-atpid=" + data.atpId.replace(/-/g, ".") + " onclick=editNote(jQuery(this),event);>Edit Note</a></p> ', {position:'top',align:'left',alwaysVisible:false,tail:{align:'left',hidden:false},themePath:'../themes/ksap/images/popover-theme/',themeName:'note',selectable:true,width:'250px',openingSpeed:50,closingSpeed:50,openingDelay:500,closingDelay:0,themeMargins:{total:'17px',difference:'10px'},distance:'0px'},true,true);";
     var noteScript = jQuery("input[data-for='" + noteId + "'][data-role='script']")[0];
     jQuery(noteScript).attr("name", "script").removeAttr("script").val(createTooltip);
     evalHiddenScript(jQuery(noteScript));
@@ -513,19 +513,19 @@ function fnUpdateNote(data) {
  Function: remove course from quarter plan view
  #################################################################
  */
-function fnRemovePlanItem(data) {
-    var itemId = data.planItemType + "_" + data.atpId + "_" + data.planItemId;
-    var collection = jQuery("." + data.atpId + ".myplan-term-" + data.planItemType);
-    jQuery("#" + itemId).unbind('click');
+function removePlanItem(data) {
+    var itemId = data.planItemType + "-" + data.atpId + "-" + data.planItemId;
+    var collection = jQuery("#" + data.planItemType + "-" + data.atpId);
+    jQuery("#" + itemId).off("click");
 
     var size = parseFloat(collection.attr("data-size")) - 1;
     collection.attr("data-size", size);
 
     if (collection.attr("data-limit") != "false") {
-        fnShowHideQuickAddLink(data.atpId, data.planItemType, size);
+        toggleAddPlanItem(data.atpId, data.planItemType, size);
     }
 
-    collection.find("#" + itemId + "_group").fadeOut(250, function () {
+    collection.find("#" + itemId + "-group").fadeOut(250, function () {
         jQuery(this).remove();
     });
 
@@ -534,6 +534,35 @@ function fnRemovePlanItem(data) {
             jQuery(this).remove();
         });
     }
+}
+/*
+ #################################################################
+ Function: show or hide the quick add link
+ #################################################################
+ */
+function toggleAddPlanItem(atpId, type, size) {
+    var addPlanItem = jQuery("#" + type + "-" + atpId + " .planYear__items .planItem.planItem--add");
+    if (size < 8) {
+        addPlanItem.fadeIn(250);
+    } else {
+        addPlanItem.fadeOut(250);
+    }
+}
+/*
+ #################################################################
+ Function: update style from recommended item
+ #################################################################
+ */
+function updateRecommendedItem(data) {
+    var itemId = data.planItemType + "-" + data.atpId + "-" + data.planItemId;
+    jQuery("#" + itemId + "-group").removeClass("planItem--recommendedProposed").addClass("planItem--recommendedAccepted");
+    animateHighlight(jQuery("#" + itemId + "-group"));
+}
+
+function animateHighlight(obj) {
+    obj.css({backgroundColor: "#faf5ca"}).animate({backgroundColor: "#ffffff"}, 1500, "linear", function () {
+        jQuery(this).removeAttr("style");
+    });
 }
 /*
  #################################################################
@@ -560,8 +589,8 @@ function fnUpdateSavedCount(savedItemCount) {
  Function: update the credits total in the quarter plan view
  #################################################################
  */
-function fnUpdateCredits(atpId, termCredits) {
-    jQuery("." + atpId + ".myplan-term-planned .myplan-carousel-term-total .credits.uif-messageField").fadeOut(250, function () {
+function updateCredits(atpId, termCredits) {
+    jQuery("#planned-" + atpId + " .planYear__creditTotal .planYear__creditValue").fadeOut(250, function () {
         jQuery(this).html(termCredits).fadeIn(250);
     });
 }
@@ -650,19 +679,6 @@ function restoreDetailsBookmarkButton(courseId) {
         jQuery(this).replaceWith(button);
         jQuery("#" + courseId + "_addSavedCourse").fadeIn(250);
     });
-}
-
-/*
- #################################################################
- Function: show or hide the quick add link
- #################################################################
- */
-function fnShowHideQuickAddLink(atpId, type, size) {
-    if (size < 8) {
-        jQuery("." + atpId + ".myplan-term-" + type + " .uif-stackedCollectionLayout .addItemAction").fadeIn(250);
-    } else {
-        jQuery("." + atpId + ".myplan-term-" + type + " .uif-stackedCollectionLayout .addItemAction").fadeOut(250);
-    }
 }
 
 function fnToggleSectionAction(actionId, regId, action, data, primaryPlan) {
