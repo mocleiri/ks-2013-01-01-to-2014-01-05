@@ -138,9 +138,12 @@ When /^I search for course offerings by course by entering a course offering cod
   @schedule_of_classes.expand_course_details
 end
 
-When /^I search for course offerings by course to view the course offering requisites$/ do
+When /^I search for course offerings by course$/ do
   @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "PHYS272", :exp_course_list => ["PHYS272","PHYS272H"],
                               :term => "Fall 2012"
+end
+
+When /^I select a course that has existing course offering requisites$/ do
   @schedule_of_classes.display
   @schedule_of_classes.expand_course_details
 end
@@ -160,9 +163,22 @@ When /^I search for course offerings by course in the CHEM subject group to view
   @schedule_of_classes.expand_course_details
 end
 
-Then /^the course offering requisites should be displayed stating "([^"]+)"$/ do |exp_msg|
+Then /^the course offering requisites should be displayed with the course data$/ do
   on DisplayScheduleOfClasses do |page|
-    page.get_requisites_message_text.should match /#{exp_msg}/m
+    page.get_requisites_message_text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*BSCI399.*Corequisite.*ENGL101 and HIST106/m
+  end
+end
+
+Then /^the newly added course offering requisites should be displayed with the course data$/ do
+  on DisplayScheduleOfClasses do |page|
+    page.get_requisites_message_text.should match /Recommended Preparation.*Added Recommended Prep on CO level/m
+  end
+end
+
+Then /^the suppressed requisite should not be visible$/ do
+  on DisplayScheduleOfClasses do |page|
+    page.get_requisites_message_text.should_not match /Corequisite: ENGL101 and HIST106/m
+    page.details_table.rows[2].text.should_not match /Corequisite: ENGL101 and HIST106/m
   end
 end
 
@@ -172,12 +188,22 @@ Then /^the course offering requisites should be displayed not stating "([^"]+)"$
   end
 end
 
-Then /^the Activity A of the Course Offering has Activity Offering Requisites displayed stating "([^"]+)"$/ do |exp_msg|
+Then /^the activity offering requisites should be displayed with the correct activity$/ do
   on DisplayScheduleOfClasses do |page|
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      page.details_table.rows[2].text.should match /#{exp_msg}/m
+      page.details_table.rows[2].text.should match /Antirequisite: Add Antirequisite specific to AO A/m
+    end
+  end
+end
+
+Then /^the edited activity offering requisites should be displayed with the correct activity$/ do
+  on DisplayScheduleOfClasses do |page|
+    if !page.details_table.exists?
+      raise "activities table not found"
+    else
+      page.details_table.rows[4].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399.*And Changed the SE & Prerequisite on AO B only/m
     end
   end
 end
@@ -192,12 +218,12 @@ Then /^the Activity A of the Course Offering has Activity Offering Requisites di
   end
 end
 
-Then /^the Activity B of the Course Offering has Activity Offering Requisites displayed stating "([^"]+)"$/ do |exp_msg|
+Then /^any un-suppressed requisites should be visible$/ do
   on DisplayScheduleOfClasses do |page|
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      page.details_table.rows[4].text.should match /#{exp_msg}/m
+      page.details_table.rows[4].text.should match /Corequisite: ENGL101 and HIST106/m
     end
   end
 end
