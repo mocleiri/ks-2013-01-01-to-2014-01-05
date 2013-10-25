@@ -2,6 +2,8 @@ class ManualSocStateChangePage < BasePage
 
   wrapper_elements
 
+  expected_element :change_soc_state_termCode
+
   element(:frm) { |b| b.frame(id: /easyXDM/).frame(id: "iframeportlet") }
 
   element(:change_soc_state_termCode) { |b| b.frm.text_field(name: "termCodeForSocStateChange") }
