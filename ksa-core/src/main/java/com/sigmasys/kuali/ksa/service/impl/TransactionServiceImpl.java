@@ -2118,9 +2118,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new IllegalStateException(errMsg);
         }
 
+        BigDecimal absoluteReversalAmount = reversalAmount.abs();
+
         if (transactionStatus != TransactionStatus.ACTIVE) {
 
-            if (reversalAmount.abs().compareTo(transaction.getAmount().abs()) != 0) {
+            if (absoluteReversalAmount.compareTo(transaction.getAmount().abs()) != 0) {
                 String errMsg = "Reversal amount must equal transaction amount";
                 logger.error(errMsg);
                 throw new IllegalStateException(errMsg);
@@ -2170,7 +2172,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             }
         }
 
-        if (reversalAmount.compareTo(transaction.getUnallocatedAmount()) > 0) {
+        if (absoluteReversalAmount.compareTo(transaction.getUnallocatedAmount()) > 0) {
 
             // Removing all regular allocations which the transaction is involved in
             removeAllAllocations(transaction.getId());
@@ -2179,7 +2181,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             transaction = getTransaction(transaction.getId());
 
             // Checking the unallocated amount again
-            if (reversalAmount.compareTo(transaction.getUnallocatedAmount()) > 0) {
+            if (absoluteReversalAmount.compareTo(transaction.getUnallocatedAmount()) > 0) {
                 String errMsg = "Reversal amount cannot be greater than transaction unallocated amount";
                 logger.error(errMsg);
                 throw new IllegalStateException(errMsg);
@@ -2187,9 +2189,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         // If the given Transaction Type is the same as Original Transaction's type then we have to negate
-        // the reversal amount
+        // the reversal amount only if the reversal amount and transaction amount have different signs
         if (reversalTransactionType.getTypeValue().equals(transaction.getTransactionType().getTypeValue())) {
-            reversalAmount = reversalAmount.negate();
+            if ((transaction.getAmount().compareTo(BigDecimal.ZERO) > 0 && reversalAmount.compareTo(BigDecimal.ZERO) > 0) ||
+                    (transaction.getAmount().compareTo(BigDecimal.ZERO) < 0 && reversalAmount.compareTo(BigDecimal.ZERO) < 0)) {
+                reversalAmount = reversalAmount.negate();
+            }
         }
 
         // Creating a new reverse transaction with the negated amount of the original transaction
@@ -2224,7 +2229,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         // Creating a locked allocation between the original and reversed transactions
-        createLockedAllocation(transaction.getId(), reverseTransaction.getId(), reversalAmount.abs());
+        createLockedAllocation(transaction.getId(), reverseTransaction.getId(), absoluteReversalAmount);
 
         // Creating memo
         if (StringUtils.isNotBlank(memoText)) {
