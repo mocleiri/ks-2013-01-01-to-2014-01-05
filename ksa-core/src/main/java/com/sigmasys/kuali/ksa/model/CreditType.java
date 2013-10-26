@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.model;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * CreditType
@@ -32,6 +33,22 @@ public class CreditType extends TransactionType {
 
     private String glOperationCode;
 
+
+    @Override
+    @Transient
+    @XmlTransient
+    public String getTypeValue() {
+        return TransactionType.CREDIT_TYPE;
+    }
+
+    /**
+     * Allows TransactionTypeVisitor to access this CreditType
+     *
+     * @param visitor TransactionTypeVisitor instance
+     */
+    public void accept(TransactionTypeVisitor visitor) {
+        visitor.visit(this);
+    }
 
     @PostLoad
     protected void populateTransientFields() {

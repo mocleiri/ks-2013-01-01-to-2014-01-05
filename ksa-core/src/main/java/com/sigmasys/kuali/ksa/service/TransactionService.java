@@ -100,21 +100,17 @@ public interface TransactionService {
      *                          based on the effective date
      * @param effectiveDate     Transaction Effective Date
      * @return TransactionType instance
-     * @throws InvalidTransactionTypeException
-     *
      */
-    TransactionType getTransactionType(String transactionTypeId, Date effectiveDate) throws InvalidTransactionTypeException;
+    TransactionType getTransactionType(String transactionTypeId, Date effectiveDate);
 
     /**
      * Returns the transaction type instance for the given TransactionTypeId instance
      *
      * @param transactionTypeId TransactionTypeId instance
      * @return TransactionType instance
-     * @throws InvalidTransactionTypeException
-     *
      */
     @WebMethod(exclude = true)
-    TransactionType getTransactionType(TransactionTypeId transactionTypeId) throws InvalidTransactionTypeException;
+    TransactionType getTransactionType(TransactionTypeId transactionTypeId);
 
     /**
      * Returns the list of transaction type instances for the given string pattern.

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 /**
@@ -44,6 +45,23 @@ public abstract class TransactionType extends AuditableEntity<TransactionTypeId>
      * The default rollup
      */
     protected Rollup rollup;
+
+
+    /**
+     * Allows TransactionTypeVisitor to access this TransactionType
+     *
+     * @param visitor TransactionTypeVisitor instance
+     */
+    public abstract void accept(TransactionTypeVisitor visitor);
+
+    /**
+     * Returns the actual type value "C" or "D"
+     *
+     * @return Transaction type value
+     */
+    @Transient
+    @XmlTransient
+    public abstract String getTypeValue();
 
 
     @Override

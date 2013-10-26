@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.model;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * DebitType
@@ -11,6 +12,7 @@ import javax.persistence.*;
  * <p/>
  * <p/>
  * <p/>
+ *
  * @author Michael Ivanov
  */
 @Entity
@@ -20,6 +22,23 @@ public class DebitType extends TransactionType {
     private String cancellationRule;
 
 
+    @Override
+    @Transient
+    @XmlTransient
+    public String getTypeValue() {
+        return TransactionType.DEBIT_TYPE;
+    }
+
+    /**
+     * Allows TransactionTypeVisitor to access this DebitType
+     *
+     * @param visitor TransactionTypeVisitor instance
+     */
+    public void accept(TransactionTypeVisitor visitor) {
+        visitor.visit(this);
+    }
+
+
     @Column(name = "CANCELLATION_RULE", length = 2000)
     public String getCancellationRule() {
         return cancellationRule;
@@ -27,11 +46,6 @@ public class DebitType extends TransactionType {
 
     public void setCancellationRule(String cancellationRule) {
         this.cancellationRule = cancellationRule;
-    }
-
-    @Transient
-    public TransactionTypeValue getTransactionTypeValue() {
-        return TransactionTypeValue.CHARGE;
     }
 
 }

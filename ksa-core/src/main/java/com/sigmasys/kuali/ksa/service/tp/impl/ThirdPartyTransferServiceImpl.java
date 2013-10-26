@@ -623,6 +623,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
             BigDecimal totalUnallocatedAmount = BigDecimal.ZERO;
 
+            final List<Charge> matchedCharges = new LinkedList<Charge>();
+
             for (Charge charge : charges) {
 
                 String chargeTypeId = charge.getTransactionType().getId().getId();
@@ -634,6 +636,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                         totalUnallocatedAmount = totalUnallocatedAmount.add(unallocatedAmount);
                     }
 
+                    matchedCharges.add(charge);
                 }
             }
 
@@ -653,7 +656,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
                 // Doing non-divided funding
 
-                for (Charge charge : charges) {
+                for (Charge charge : matchedCharges) {
 
                     Date effectiveDate = thirdPartyPlan.getEffectiveDate();
                     if (effectiveDate == null) {
@@ -722,7 +725,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                         throw new IllegalStateException(errMsg);
                 }
 
-                for (Charge charge : charges) {
+                for (Charge charge : matchedCharges) {
 
                     if (maxDividedFund.compareTo(BigDecimal.ZERO) <= 0 ||
                             (remainingFund != null && remainingFund.compareTo(BigDecimal.ZERO) <= 0)) {

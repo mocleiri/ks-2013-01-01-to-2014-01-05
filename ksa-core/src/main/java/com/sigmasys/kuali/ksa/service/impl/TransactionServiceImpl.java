@@ -212,17 +212,17 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *                          based on the effective date
      * @param date              Transaction effective or recognition Date
      * @return TransactionType instance
-     * @throws InvalidTransactionTypeException
-     *
      */
     @Override
-    public TransactionType getTransactionType(String transactionTypeId, Date date) throws InvalidTransactionTypeException {
+    public TransactionType getTransactionType(String transactionTypeId, Date date) {
 
         PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
 
         date = CalendarUtils.removeTime(date);
 
         Query query = em.createQuery("select t from TransactionType t " +
+                "left outer join fetch t.rollup " +
+                "left outer join fetch t.tags " +
                 " where t.id.id = :transactionTypeId and :date >= t.startDate and " +
                 " (t.endDate is null or t.endDate >= :date)");
 
@@ -230,13 +230,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         query.setParameter("date", date, TemporalType.DATE);
 
         List<TransactionType> transactionTypes = query.getResultList();
-        if (CollectionUtils.isNotEmpty(transactionTypes)) {
-            return transactionTypes.get(0);
-        }
 
-        String errMsg = "Cannot find TransactionType for ID = " + transactionTypeId + " and date = " + date;
-        logger.error(errMsg);
-        throw new InvalidTransactionTypeException(errMsg);
+        return (CollectionUtils.isNotEmpty(transactionTypes)) ? transactionTypes.get(0) : null;
     }
 
     /**
@@ -244,28 +239,23 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *
      * @param transactionTypeId TransactionTypeId instance
      * @return TransactionType instance
-     * @throws InvalidTransactionTypeException
-     *
      */
     @Override
     @WebMethod(exclude = true)
-    public TransactionType getTransactionType(TransactionTypeId transactionTypeId) throws InvalidTransactionTypeException {
+    public TransactionType getTransactionType(TransactionTypeId transactionTypeId) {
 
         PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
 
-        Query query = em.createQuery("select t from TransactionType t where t.id = :transactionTypeId");
+        Query query = em.createQuery("select t from TransactionType t " +
+                "left outer join fetch t.rollup " +
+                "left outer join fetch t.tags " +
+                "where t.id = :transactionTypeId");
 
         query.setParameter("transactionTypeId", transactionTypeId);
 
         List<TransactionType> transactionTypes = query.getResultList();
 
-        if (CollectionUtils.isNotEmpty(transactionTypes)) {
-            return transactionTypes.get(0);
-        }
-
-        String errMsg = "Cannot find TransactionType with ID = " + transactionTypeId;
-        logger.error(errMsg);
-        throw new InvalidTransactionTypeException(errMsg);
+        return (CollectionUtils.isNotEmpty(transactionTypes)) ? transactionTypes.get(0) : null;
     }
 
     /**
@@ -573,6 +563,23 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new CurrencyNotFoundException(errMsg);
         }
 
+
+        final Pair<CreditType, DebitType> transactionTypes = new Pair<CreditType, DebitType>();
+
+        TransactionTypeVisitor transactionTypeVisitor = new TransactionTypeVisitor() {
+            @Override
+            public void visit(CreditType creditType) {
+                transactionTypes.setA(creditType);
+            }
+
+            @Override
+            public void visit(DebitType debitType) {
+                transactionTypes.setB(debitType);
+            }
+        };
+
+        transactionType.accept(transactionTypeVisitor);
+
         String creatorId = userSessionManager.getUserId();
 
         if (overrideBlocks) {
@@ -589,7 +596,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         Transaction transaction;
-        if (transactionType instanceof CreditType) {
+        if (transactionType.getTypeValue().equals(TransactionType.CREDIT_TYPE)) {
             transaction = (expirationDate != null) ? new Deferment() : new Payment();
         } else {
             transaction = new Charge();
@@ -648,7 +655,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         if (transaction instanceof Payment) {
-            CreditType creditType = (CreditType) transactionType;
+            CreditType creditType = transactionTypes.getA();
             Payment payment = (Payment) transaction;
             int clearPeriod = (creditType.getClearPeriod() != null) ? creditType.getClearPeriod() : 0;
             payment.setClearDate(CalendarUtils.addCalendarDays(effectiveDate, clearPeriod));
@@ -659,7 +666,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             deferment.setExpirationDate(expirationDate);
             deferment.setOriginalAmount(amount);
         } else {
-            DebitType debitType = (DebitType) transactionType;
+            DebitType debitType = transactionTypes.getB();
             Charge charge = (Charge) transaction;
             String cancellationRule = (debitType.getCancellationRule() != null) ?
                     debitType.getCancellationRule() : getDefaultChargeCancellationRule();
@@ -1090,8 +1097,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         // Check if Transaction1 can pay Transaction2
         if (!canPay(transactionId1, transactionId2)) {
-            String errMsg = "Transaction1 [ID = " + transactionId1 + "] cannot pay Transaction2 [ID = " +
-                    transactionId2 + "]";
+            String errMsg = "Transaction1 [ID = " + transactionId1 +
+                    ", type = " + transaction1.getTransactionType().getId().getId() +
+                    ", amount = " + transaction1.getAmount() +
+                    "] cannot pay Transaction2 [ID = " + transactionId2 +
+                    ", type = " + transaction2.getTransactionType().getId().getId() +
+                    ", amount = " + transaction2.getAmount() + "]";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
@@ -1162,16 +1173,11 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         BigDecimal transactionAmount1 = transaction1.getAmount();
         BigDecimal transactionAmount2 = transaction2.getAmount();
 
-        boolean canAllocate = false;
+        boolean canAllocate;
 
-        if ((transactionType1 instanceof DebitType && transactionType2 instanceof CreditType) ||
-                (transactionType1 instanceof CreditType && transactionType2 instanceof DebitType)) {
-
-            canAllocate = (transactionAmount1.compareTo(BigDecimal.ZERO) > 0 && transactionAmount2.compareTo(BigDecimal.ZERO) > 0);
-
-        } else if ((transactionType1 instanceof DebitType && transactionType2 instanceof DebitType) ||
-                (transactionType1 instanceof CreditType && transactionType2 instanceof CreditType)) {
-
+        if (!transactionType1.getTypeValue().equals(transactionType2.getTypeValue())) {
+            canAllocate = transactionAmount1.compareTo(BigDecimal.ZERO) > 0 && transactionAmount2.compareTo(BigDecimal.ZERO) > 0;
+        } else {
             canAllocate = (transactionAmount1.compareTo(BigDecimal.ZERO) > 0 && transactionAmount2.compareTo(BigDecimal.ZERO) < 0) ||
                     (transactionAmount1.compareTo(BigDecimal.ZERO) < 0 && transactionAmount2.compareTo(BigDecimal.ZERO) > 0);
         }
@@ -1213,8 +1219,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         } else {
             String errMsg = "Illegal allocation. Transaction IDs: " + transactionId1 + ", " + transactionId2 +
-                    "; Transaction types: " + transaction1.getTransactionType().getId().getId() + ", " +
-                    transaction1.getTransactionType().getId().getId() + "; Amount: " + newAmount;
+                    "; Transaction types: " + transactionType1.getId().getId() + ", " +
+                    transactionType2.getId().getId() + "; Transaction amounts: " + transactionAmount1 + ", " +
+                    transactionAmount2 + "; Allocation Amount: " + newAmount;
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
@@ -1246,8 +1253,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         Pair<GlTransaction, GlTransaction> pair = new Pair<GlTransaction, GlTransaction>();
 
-        if ((transactionType1 instanceof DebitType && transactionType2 instanceof CreditType) ||
-                (transactionType1 instanceof CreditType && transactionType2 instanceof DebitType)) {
+        if (!transactionType1.getTypeValue().equals(transactionType2.getTypeValue())) {
 
             final Credit creditTransaction;
             final Debit debitTransaction;
@@ -2114,7 +2120,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         if (transactionStatus != TransactionStatus.ACTIVE) {
 
-            if (reversalAmount.compareTo(transaction.getAmount()) != 0) {
+            if (reversalAmount.abs().compareTo(transaction.getAmount().abs()) != 0) {
                 String errMsg = "Reversal amount must equal transaction amount";
                 logger.error(errMsg);
                 throw new IllegalStateException(errMsg);
@@ -2182,7 +2188,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         // If the given Transaction Type is the same as Original Transaction's type then we have to negate
         // the reversal amount
-        if (reversalTransactionType.getClass().equals(transaction.getTransactionType().getClass())) {
+        if (reversalTransactionType.getTypeValue().equals(transaction.getTransactionType().getTypeValue())) {
             reversalAmount = reversalAmount.negate();
         }
 
@@ -2508,43 +2514,51 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         boolean compatible = false;
 
-        if (transaction1 instanceof Credit && transaction2 instanceof Debit) {
-            if (transaction1.getAmount() != null && transaction1.getAmount().compareTo(BigDecimal.ZERO) > 0 &&
-                    transaction2.getAmount() != null && transaction2.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-                compatible = true;
-            }
-        } else if (transaction1 instanceof Credit && transaction2 instanceof Credit) {
-            if (transaction1.getAmount() != null && transaction1.getAmount().compareTo(BigDecimal.ZERO) > 0 &&
-                    transaction2.getAmount() != null && transaction2.getAmount().compareTo(BigDecimal.ZERO) < 0) {
-                compatible = true;
-            }
-        } else if (transaction1 instanceof Debit && transaction2 instanceof Debit) {
-            if (transaction1.getAmount() != null && transaction1.getAmount().compareTo(BigDecimal.ZERO) > 0 &&
-                    transaction2.getAmount() != null && transaction2.getAmount().compareTo(BigDecimal.ZERO) < 0) {
-                return true;
-            }
-        }
+        TransactionType transactionType1 = transaction1.getTransactionType();
+        TransactionType transactionType2 = transaction2.getTransactionType();
 
-        if (!compatible) {
-            return false;
-        }
-
-        TransactionTypeId creditTypeId = transaction1.getTransactionType().getId();
-        TransactionTypeId debitTypeId = transaction2.getTransactionType().getId();
-
-        List<CreditPermission> creditPermissions = getCreditPermissions(creditTypeId, priorityFrom, priorityTo);
-
-        if (CollectionUtils.isNotEmpty(creditPermissions)) {
-            for (CreditPermission creditPermission : creditPermissions) {
-                String debitTypeMask = creditPermission.getAllowableDebitType();
-                logger.info("Debit type mask: " + debitTypeMask);
-                if (debitTypeMask != null && Pattern.matches(debitTypeMask, debitTypeId.getId())) {
-                    return true;
+        if (transaction1.getAmount() != null && transaction2.getAmount() != null) {
+            if (!transactionType1.getTypeValue().equals(transactionType2.getTypeValue())) {
+                if (transaction1.getAmount().compareTo(BigDecimal.ZERO) > 0 && transaction2.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                    compatible = true;
+                }
+            } else {
+                if (transaction1.getAmount().compareTo(BigDecimal.ZERO) > 0 && transaction2.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+                    compatible = true;
                 }
             }
         }
 
-        return false;
+        if (!compatible) {
+            logger.warn("Transactions " + transaction1.getId() + " and " + transaction2.getId() + " have incompatible amounts");
+            return false;
+        }
+
+        if (transactionType1.getTypeValue().equals(TransactionType.CREDIT_TYPE) &&
+                transactionType2.getTypeValue().equals(TransactionType.DEBIT_TYPE)) {
+
+            TransactionTypeId creditTypeId = transactionType1.getId();
+            TransactionTypeId debitTypeId = transactionType2.getId();
+
+            List<CreditPermission> creditPermissions = getCreditPermissions(creditTypeId, priorityFrom, priorityTo);
+
+            if (CollectionUtils.isNotEmpty(creditPermissions)) {
+                for (CreditPermission creditPermission : creditPermissions) {
+                    String debitTypeMask = creditPermission.getAllowableDebitType();
+                    logger.info("Debit type mask: " + debitTypeMask);
+                    if (debitTypeMask != null && Pattern.matches(debitTypeMask, debitTypeId.getId())) {
+                        return true;
+                    }
+                }
+            }
+
+            logger.warn("Credit Type '" + creditTypeId.getId() +
+                    "' does not have appropriate credit permissions for Debit Type '" + debitTypeId.getId() + "'");
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -2707,19 +2721,10 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     public boolean isTransactionAllowed(String accountId, String transactionTypeId, Date effectiveDate) {
 
-        boolean transactionTypeExists = false;
-
-        try {
-            transactionTypeExists = (getTransactionType(transactionTypeId, effectiveDate) != null);
-        } catch (InvalidTransactionTypeException e) {
-            logger.warn(e.getMessage(), e);
-        }
-
         String userId = userSessionManager.getUserId();
 
-        return accountService.accountExists(accountId) && transactionTypeExists &&
+        return accountService.accountExists(accountId) && transactionTypeExists(transactionTypeId) &&
                 getAccessControlService().isTransactionTypeAllowed(userId, transactionTypeId);
-
     }
 
     /**

@@ -508,14 +508,13 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
             transactionTransfer.setDestTransaction(destTransaction);
         }
 
-
         // Creating a new reversal for the destination transaction
-        Transaction sourceReciprocalTransaction =
+        Transaction destReciprocalTransaction =
                 transactionService.reverseTransaction(destTransaction.getId(), memoText, reversalAmount, null);
 
         // Creating a new reversal for the offset transaction
-        Transaction destReciprocalTransaction =
-                transactionService.reverseTransaction(destTransaction.getId(), memoText, reversalAmount, null);
+        Transaction sourceReciprocalTransaction =
+                transactionService.reverseTransaction(offsetTransaction.getId(), memoText, reversalAmount, null);
 
         transactionTransfer.setSourceReciprocalTransaction(sourceReciprocalTransaction);
         transactionTransfer.setDestReciprocalTransaction(destReciprocalTransaction);
