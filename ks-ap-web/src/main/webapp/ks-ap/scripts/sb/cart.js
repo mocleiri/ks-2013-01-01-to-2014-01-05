@@ -79,7 +79,24 @@ function ksapCartSubmitDialog(e) {
 }
 
 function ksapCartUpdateEvent(response, textStatus, jqXHR) {
-	if (response.success) {
+	if (response.multi) {
+
+		for (var key in response.cartRequests) {
+			var req = response.cartRequests[key];
+			var res = jQuery("#sb_cart_request_"+req.uniqueId+"_span");
+			if (req.message != null) {
+				res.text(req.message);
+				res.addClass("ksap-sb-cart-result-"+(req.error?"error":"info"));
+				res.show();
+			}
+		}
+
+		if (!response.error || true) {
+			jQuery("#sb_cart_update_cart_button").hide();
+			jQuery("#sb_cart_go_to_cart_button").show();
+		}
+
+	} else if (response.success) {
 		for (var key in response) {
 			if (!response.hasOwnProperty(key))
 				continue;
@@ -103,6 +120,8 @@ function ksapCartUpdateEvent(response, textStatus, jqXHR) {
 			}
 		}
 		
+				// <bean parent="Uif-Message" p:id="sb_cart_request_@{#line.uniqueId}" p:hidden="true" />
+
 		if (response.message != null)
 			showGrowl(response.message);
 		
