@@ -7,7 +7,7 @@ Feature: SA.ELIG8-18 View changes made to AO or CO Requisites on Schedule of Cla
     Given I am logged in as admin
 
   #ELIG8.18.EB1 (KSENROLL-9795)
-  Scenario: Test that the Schedule of Classes shows the ref data when no changes are made to the CO Requisites
+  Scenario: Verify that the Schedule of Classes shows the ref data when no changes are made to the CO Requisites
     Given I am using the schedule of classes page
     When I search for course offerings by course
     And I select a course that has existing course offering requisites
@@ -18,30 +18,32 @@ Feature: SA.ELIG8-18 View changes made to AO or CO Requisites on Schedule of Cla
     Given I add a text rule to the Antirequisite section
     And I am using the schedule of classes page
     When I search for course offerings by course
-    And I select a course that has existing course offering requisites
+    And I select a course that has existing activity offering level requisites
     Then the activity offering requisites should be displayed with the correct activity
 
   #ELIG8.18.EB3 (KSENROLL-9795)
   Scenario: Test that suppressing the Corequisite rule for AO A is displayed on the Schedule of Classes
-    Given I suppress the rule in the Corequisite section
+    Given I suppress a course offering rule for a specific activity in a course
     And I am using the schedule of classes page
     When I search for course offerings by course
     And I select a course that has existing course offering requisites
-    Then the suppressed requisite should not be visible
-    But any un-suppressed requisites should be visible
+    Then the suppressed requisite should not be visible for the changed activity
+    But the suppressed requisite should be visible for any unchanged activity
+    And any un-suppressed course offering requisites should be visible with the course data
 
   #ELIG8.18.EB4 (KSENROLL-9795)
   Scenario: Test that editing the SE & Prerequisite rule is displayed on the Schedule of Classes
-    Given I edit the Prerequisite section by adding a new text statement
+    Given I edit a course offering requisite at the AO level by adding a new text statement
     And I am using the schedule of classes page
     When I search for course offerings by course
     And I select a course that has existing course offering requisites
-    Then the edited activity offering requisites should be displayed with the correct activity
+    Then the edited course offering requisite should be displayed with the affected activity offering
+    But the unedited course offering requisite should be displayed with any un-affected activity offerings
 
   #ELIG8.18.EB5 (KSENROLL-9795)
   Scenario: Test that adding CO Requisites is displayed on the Schedule of Classes
-    Given I add a new text statement to the Recommended Preparation section
+    Given I add a new course offering requisite to a course
     And I am using the schedule of classes page
     When I search for course offerings by course
     And I select a course that has existing course offering requisites
-    Then the newly added course offering requisites should be displayed with the course data
+    Then the newly added course offering requisite should be displayed with the course data

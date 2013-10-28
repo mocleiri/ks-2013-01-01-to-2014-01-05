@@ -149,7 +149,7 @@ When /^I search for course offerings by course$/ do
                               :term => "Fall 2012"
 end
 
-When /^I select a course that has existing course offering requisites$/ do
+When /^I select a course that has existing (?:course offering|activity offering level) requisites$/ do
   @schedule_of_classes.display
   @schedule_of_classes.expand_course_details
 end
@@ -175,13 +175,19 @@ Then /^the course offering requisites should be displayed with the course data$/
   end
 end
 
-Then /^the newly added course offering requisites should be displayed with the course data$/ do
+Then /^the newly added course offering requisite should be displayed with the course data$/ do
   on DisplayScheduleOfClasses do |page|
     page.get_requisites_message_text.should match /Recommended Preparation.*Added Recommended Prep on CO level/m
   end
 end
 
-Then /^the suppressed requisite should not be visible$/ do
+Then /^any un-suppressed course offering requisites should be visible with the course data$/ do
+  on DisplayScheduleOfClasses do |page|
+    puts page.get_requisites_message_text #.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+  end
+end
+
+Then /^the suppressed requisite should not be visible for the changed activity$/ do
   on DisplayScheduleOfClasses do |page|
     page.get_requisites_message_text.should_not match /Corequisite: ENGL101 and HIST106/m
     page.details_table.rows[2].text.should_not match /Corequisite: ENGL101 and HIST106/m
@@ -204,12 +210,23 @@ Then /^the activity offering requisites should be displayed with the correct act
   end
 end
 
-Then /^the edited activity offering requisites should be displayed with the correct activity$/ do
+Then /^the edited course offering requisite should be displayed with the affected activity offering$/ do
   on DisplayScheduleOfClasses do |page|
     if !page.details_table.exists?
       raise "activities table not found"
     else
       page.details_table.rows[4].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399.*And Changed the SE & Prerequisite on AO B only/m
+    end
+  end
+end
+
+Then /^the unedited course offering requisite should be displayed with any un-affected activity offerings$/ do
+  on DisplayScheduleOfClasses do |page|
+    if !page.details_table.exists?
+      raise "activities table not found"
+    else
+      page.details_table.rows[2].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+      page.details_table.rows[2].text.should_not match /And Changed the SE & Prerequisite on AO B only/m
     end
   end
 end
@@ -224,7 +241,7 @@ Then /^the Activity A of the Course Offering has Activity Offering Requisites di
   end
 end
 
-Then /^any un-suppressed requisites should be visible$/ do
+Then /^the suppressed requisite should be visible for any unchanged activity$/ do
   on DisplayScheduleOfClasses do |page|
     if !page.details_table.exists?
       raise "activities table not found"

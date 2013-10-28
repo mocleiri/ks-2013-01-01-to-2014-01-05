@@ -146,7 +146,7 @@ When /^I compare the added rule with the CO and CLU rules in the Student Eligibi
   @prereq.sepr_compare_new_ao_to_clu_co_rule
 end
 
-When /^I edit the Prerequisite section by adding a new text statement$/ do
+When /^I edit a course offering requisite at the AO level by adding a new text statement$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "B"
   @prereq = make AOPreparationPrerequisiteRule, :activity => "B", :term => "201208", :course => "PHYS272"
   @prereq.navigate_to_ao_requisites
@@ -308,7 +308,7 @@ When /^I add a text rule to the Antirequisite section$/ do
 end
 
 #Corequisite
-When /^I suppress the rule in the Corequisite section$/ do
+When /^I suppress a course offering rule for a specific activity in a course$/ do
   @activityOR = make AORequisitesData, :section => "Corequisite"
   @coreq = make AOCorequisiteRule, :term => "201208", :course => "PHYS272"
   @coreq.cr_suppress_co_rule

@@ -623,7 +623,7 @@ When /^I want to compare the CO to the CLU for the Student Eligibility & Prerequ
   end
 end
 
-When /^I add a new text statement to the Recommended Preparation section$/ do
+When /^I add a new course offering requisite to a course$/ do
   @courseOR = make CORequisitesData
   @prereq = make PreparationPrerequisiteRule, :section => "Recommended Preparation", :term => "201208", :course => "PHYS272"
   @prereq.navigate_to_mco_requisites
