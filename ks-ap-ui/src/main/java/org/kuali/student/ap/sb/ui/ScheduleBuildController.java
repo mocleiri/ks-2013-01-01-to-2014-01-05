@@ -1,9 +1,6 @@
 package org.kuali.student.ap.sb.ui;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -414,12 +411,11 @@ public class ScheduleBuildController extends UifControllerBase {
 						addEvents(
 								form.getTerm(),
 								meeting,
-								pso.getDescription().getPlain()
-										+ " - "
-										+ ao.getCourseOfferingCode()
+								ao.getCourseOfferingCode()
 										+ (meeting.getLocation() == null ? ""
 												: " (" + meeting.getLocation()
-														+ ")"), ao, cssClass,
+														+ ") - " + pso.getDescription().getPlain()
+										), ao, cssClass,
 								jevents, aggregate);
 
 			jpso.add("weekends", aggregate.weekends);
@@ -461,12 +457,11 @@ public class ScheduleBuildController extends UifControllerBase {
 						addEvents(
 								form.getTerm(),
 								meeting,
-								sso.getDescription().getPlain()
-										+ " - "
-										+ ao.getCourseOfferingCode()
+								ao.getCourseOfferingCode()
 										+ (meeting.getLocation() == null ? ""
 												: " (" + meeting.getLocation()
-														+ ")"), ao, cssClass,
+														+ ") - " + sso.getDescription().getPlain()),
+								ao, cssClass,
 								jevents, aggregate);
 
 			jsso.add("weekends", aggregate.weekends);

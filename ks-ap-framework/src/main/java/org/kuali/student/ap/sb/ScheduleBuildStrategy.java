@@ -3,6 +3,7 @@ package org.kuali.student.ap.sb;
 import java.util.List;
 
 import org.kuali.student.ap.framework.context.PlanConstants;
+import org.kuali.student.ap.sb.infc.ActivityOption;
 import org.kuali.student.ap.sb.infc.CourseOption;
 import org.kuali.student.ap.sb.infc.PossibleScheduleOption;
 import org.kuali.student.ap.sb.infc.ReservedTime;
@@ -71,7 +72,8 @@ public interface ScheduleBuildStrategy {
 	 *            See {@link #getLearningPlan(String)}.
 	 * @return The reserved times related to the current learning plan.
 	 */
-	List<ReservedTime> getReservedTimes(String requestedLearningPlanId) throws PermissionDeniedException;
+	List<ReservedTime> getReservedTimes(String requestedLearningPlanId)
+			throws PermissionDeniedException;
 
 	/**
 	 * Add a new reserved time on the current learning plan.
@@ -79,7 +81,8 @@ public interface ScheduleBuildStrategy {
 	 * @param reservedTime
 	 *            The reserved time to add.
 	 */
-	void createReservedTime(String requestedLearningPlanId, ReservedTime reservedTime) throws PermissionDeniedException;
+	void createReservedTime(String requestedLearningPlanId, ReservedTime reservedTime)
+			throws PermissionDeniedException;
 
 	/**
 	 * Add a new reserved time on the current learning plan.
@@ -87,7 +90,8 @@ public interface ScheduleBuildStrategy {
 	 * @param reservedTime
 	 *            The reserved time to add.
 	 */
-	void updateReservedTime(String requestedLearningPlanId, ReservedTime reservedTime) throws PermissionDeniedException;
+	void updateReservedTime(String requestedLearningPlanId, ReservedTime reservedTime)
+			throws PermissionDeniedException;
 
 	/**
 	 * Add a new reserved time on the current learning plan.
@@ -95,7 +99,8 @@ public interface ScheduleBuildStrategy {
 	 * @param reservedTimeId
 	 *            The ID of the reserved time to delete.
 	 */
-	void deleteReservedTime(String requestedLearningPlanId, String reservedTimeId) throws PermissionDeniedException;
+	void deleteReservedTime(String requestedLearningPlanId, String reservedTimeId)
+			throws PermissionDeniedException;
 
 	/**
 	 * Get saved schedules related to the current learning plan.
@@ -104,7 +109,8 @@ public interface ScheduleBuildStrategy {
 	 *            See {@link #getLearningPlan(String)}.
 	 * @return The saved schedules related to the current learning plan.
 	 */
-	List<PossibleScheduleOption> getSchedules(String requestedLearningPlanId) throws PermissionDeniedException;
+	List<PossibleScheduleOption> getSchedules(String requestedLearningPlanId)
+			throws PermissionDeniedException;
 
 	/**
 	 * Add a new reserved time on the current learning plan.
@@ -112,7 +118,8 @@ public interface ScheduleBuildStrategy {
 	 * @param reservedTime
 	 *            The reserved time to add.
 	 */
-	PossibleScheduleOption createSchedule(String requestedLearningPlanId, PossibleScheduleOption schedule) throws PermissionDeniedException;
+	PossibleScheduleOption createSchedule(String requestedLearningPlanId,
+			PossibleScheduleOption schedule) throws PermissionDeniedException;
 
 	/**
 	 * Add a new saved schedule on the current learning plan.
@@ -120,7 +127,8 @@ public interface ScheduleBuildStrategy {
 	 * @param schedule
 	 *            The schedule to add.
 	 */
-	void updateSchedule(String requestedLearningPlanId, PossibleScheduleOption schedule) throws PermissionDeniedException;
+	void updateSchedule(String requestedLearningPlanId, PossibleScheduleOption schedule)
+			throws PermissionDeniedException;
 
 	/**
 	 * Add a new saved schedule on the current learning plan.
@@ -128,7 +136,8 @@ public interface ScheduleBuildStrategy {
 	 * @param scheduleId
 	 *            The ID of the schedule to delete.
 	 */
-	void deleteSchedule(String requestedLearningPlanId, String scheduleId) throws PermissionDeniedException;
+	void deleteSchedule(String requestedLearningPlanId, String scheduleId)
+			throws PermissionDeniedException;
 
 	/**
 	 * Get the initial shopping cart form.
@@ -136,5 +145,20 @@ public interface ScheduleBuildStrategy {
 	 * @return The initial shopping cart form.
 	 */
 	ShoppingCartForm getInitialCartForm();
-	
+
+	/**
+	 * Get a populated activity option for a given term, course, and
+	 * registration code.
+	 * 
+	 * @param termId
+	 *            The term ID.
+	 * @param courseId
+	 *            The course ID.
+	 * @param regCode
+	 *            The registration code.
+	 * @return A populated activity option for a given term, course, and
+	 *         registration code. Returns null if data is missing.
+	 */
+	ActivityOption getActivityOption(String termId, String courseId, String regCode);
+
 }

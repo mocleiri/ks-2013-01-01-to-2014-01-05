@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -18,7 +19,7 @@ import org.kuali.student.r2.common.infc.RichText;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "course", "term", "primaryRegistrationCode",
+@XmlType(propOrder = { "uniqueId", "course", "term", "primaryRegistrationCode",
 		"secondaryRegistrationCode", "credits", "addToCart", "processed",
 		"error", "message", "_futureElements" })
 public class ShoppingCartRequestInfo implements ShoppingCartRequest,
@@ -26,6 +27,8 @@ public class ShoppingCartRequestInfo implements ShoppingCartRequest,
 
 	private static final long serialVersionUID = 4958010630613010777L;
 
+	@XmlAttribute
+	private String uniqueId;
 	@XmlElement
 	private CourseInfo course;
 	@XmlElement
@@ -49,9 +52,11 @@ public class ShoppingCartRequestInfo implements ShoppingCartRequest,
 	private List<?> _futureElements;
 
 	public ShoppingCartRequestInfo() {
+		uniqueId = UUID.randomUUID().toString();
 	}
 
 	public ShoppingCartRequestInfo(ShoppingCartRequest copy) {
+		setUniqueId(copy.getUniqueId());
 		setCourse(new CourseInfo(copy.getCourse()));
 		setTerm(new TermInfo(copy.getTerm()));
 		setPrimaryRegistrationCode(copy.getPrimaryRegistrationCode());
@@ -62,6 +67,15 @@ public class ShoppingCartRequestInfo implements ShoppingCartRequest,
 		setProcessed(copy.isProcessed());
 		setError(copy.isError());
 		setMessage(copy.getMessage());
+	}
+
+	@Override
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
 	}
 
 	@Override

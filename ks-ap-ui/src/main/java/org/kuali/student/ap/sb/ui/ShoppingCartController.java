@@ -378,6 +378,7 @@ public class ShoppingCartController extends UifControllerBase {
 			}
 
 			JsonObjectBuilder jresult = Json.createObjectBuilder();
+			jresult.add("uniqueId", cartRequest.getUniqueId());
 			jresult.add("courseId", cartRequest.getCourse().getId());
 			jresult.add("termId", cartRequest.getTerm().getId());
 			if (cartRequest.isError()) {
@@ -414,6 +415,8 @@ public class ShoppingCartController extends UifControllerBase {
 		}
 		JsonObjectBuilder json = PlanEventUtils.getEventsBuilder();
 		json.add("cartRequests", jresults);
+		if (form.getPossibleScheduleId() != null)
+			json.add("multi", true);
 		PlanEventUtils.sendJsonEvents(success, message.toString(), response);
 		return null;
 	}

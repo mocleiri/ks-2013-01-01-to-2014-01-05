@@ -319,6 +319,156 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 		return meeting;
 	}
 
+	private ActivityOptionInfo getActivityOption(Term term, ActivityOfferingDisplayInfo aodi,
+			int courseIndex, String courseId, String campusCode, StringBuilder msg,
+			DateFormat tdf, DateFormat udf, DateFormat ddf, Calendar sdcal, Calendar edcal,
+			Calendar tcal) {
+
+		ActivityOptionInfo activityOption = new ActivityOptionInfo();
+		activityOption.setCourseIndex(courseIndex);
+		activityOption.setUniqueId(UUID.randomUUID().toString());
+		activityOption.setCourseId(courseId);
+		activityOption.setActivityOfferingId(aodi.getId());
+		activityOption.setActivityTypeDescription(aodi.getTypeName());
+		activityOption.setCourseOfferingCode((campusCode == null ? ""
+				: campusCode + " ") + aodi.getCourseOfferingCode());
+		activityOption.setActivityName(aodi.getName());
+		activityOption.setRegistrationCode(aodi
+				.getActivityOfferingCode());
+		activityOption
+				.setClosed(!LuiServiceConstants.LUI_AO_STATE_OFFERED_KEY
+						.equals(aodi.getStateKey()));
+		activityOption.setTotalSeats(aodi.getMaximumEnrollment());
+		if (msg != null)
+			msg.append("\nActivity ")
+					.append(activityOption.getUniqueId()).append(": ")
+					.append(activityOption.getCourseOfferingCode())
+					.append(" ")
+					.append(activityOption.getRegistrationCode());
+
+		boolean enrollmentGroup = false;
+		String instructor = aodi.getInstructorName();
+		String primaryOfferingId = null;
+
+		String sessionDescr = term.getName();
+		Date sessionStartDate = term.getStartDate();
+		Date sessionEndDate = term.getEndDate();
+		BigDecimal minCredits = BigDecimal.ZERO;
+		BigDecimal maxCredits = BigDecimal.ZERO;
+		for (AttributeInfo attrib : aodi.getAttributes()) {
+			String key = attrib.getKey();
+			String value = attrib.getValue();
+			if ("PrimaryActivityOfferingId".equalsIgnoreCase(key)) {
+				primaryOfferingId = value;
+				activityOption.setPrimary(aodi.getId().equals(
+						primaryOfferingId));
+			}
+			if ("PermissionRequired".equalsIgnoreCase(key)) {
+				activityOption.setRequiresPermission("true"
+						.equals(value));
+			}
+			if ("BlockEnrollment".equalsIgnoreCase(key)) {
+				enrollmentGroup = "true".equals(value);
+			}
+			if ("Closed".equalsIgnoreCase(key)) {
+				activityOption.setClosed("true".equals(value));
+			}
+			if ("enrollOpen".equalsIgnoreCase(key)) {
+				activityOption.setOpenSeats(Integer.parseInt(value));
+			}
+			if ("SessionDescr".equalsIgnoreCase(key)) {
+				sessionDescr = value;
+			}
+			if ("SessionStartDate".equalsIgnoreCase(key)) {
+				try {
+					sessionStartDate = udf.parse(value);
+				} catch (ParseException e) {
+					throw new IllegalArgumentException(
+							"Invalid session start date "
+									+ sessionStartDate);
+				}
+			}
+			if ("SessionEndDate".equalsIgnoreCase(key)) {
+				try {
+					sessionEndDate = udf.parse(value);
+				} catch (ParseException e) {
+					throw new IllegalArgumentException(
+							"Invalid session start date "
+									+ sessionEndDate);
+				}
+			}
+
+			if ("CourseCode".equalsIgnoreCase(key)) {
+				activityOption.setCourseOfferingCode((campusCode == null ? ""
+						: campusCode + " ") + value);
+			}
+
+			// TODO: Add getResultValuesGroup() to
+			// ActivityOfferingDisplayInfo and use it instead.
+			if ("minUnits".equalsIgnoreCase(key)) {
+				minCredits = new BigDecimal(value);
+			}
+			if ("maxUnits".equalsIgnoreCase(key)) {
+				maxCredits = new BigDecimal(value);
+			}
+
+		}
+		sessionDescr += " " + ddf.format(sessionStartDate) + " - "
+				+ ddf.format(sessionEndDate);
+		activityOption.setAcademicSessionDescr(sessionDescr);
+		activityOption.setMinCredits(minCredits);
+		activityOption.setMaxCredits(maxCredits);
+
+		List<ClassMeetingTime> meetingTimes = new java.util.LinkedList<ClassMeetingTime>();
+		ScheduleDisplayInfo sdi = aodi.getScheduleDisplay();
+		for (ScheduleComponentDisplay scdi : sdi
+				.getScheduleComponentDisplays())
+			for (TimeSlot timeSlot : scdi.getTimeSlots())
+				meetingTimes.add(adaptClassMeeting(timeSlot, scdi,
+						tcal, sdcal, edcal, tdf, ddf, instructor,
+						sessionStartDate, sessionEndDate));
+		activityOption.setClassMeetingTimes(meetingTimes);
+		activityOption.setEnrollmentGroup(enrollmentGroup);
+
+		return activityOption;
+	}
+
+	@Override
+	public ActivityOption getActivityOption(String termId, String courseId, String regCode) {
+		if (regCode == null)
+			return null;
+
+		CourseHelper courseHelper = KsapFrameworkServiceLocator.getCourseHelper();
+		Course course = courseHelper.getCourseInfo(courseId);
+		if (course == null)
+			return null;
+
+		String campusCode = null;
+		for (Attribute ca : course.getAttributes())
+			if ("campusCode".equals(ca.getKey()))
+				campusCode = ca.getValue();
+
+		Term term = KsapFrameworkServiceLocator.getTermHelper().getTerm(termId);
+		if (term == null)
+			return null;
+
+		for (ActivityOfferingDisplayInfo aodi : courseHelper
+				.getActivityOfferingDisplaysByCourseAndTerm(courseId,
+						termId))
+			if (regCode.equals(aodi.getActivityOfferingCode())) {
+				DateFormat tdf = new SimpleDateFormat("h:mm a");
+				DateFormat udf = new SimpleDateFormat("MM/dd/yyyy");
+				DateFormat ddf = new SimpleDateFormat("M/d");
+				Calendar sdcal = Calendar.getInstance();
+				Calendar edcal = Calendar.getInstance();
+				Calendar tcal = Calendar.getInstance();
+				return getActivityOption(term, aodi, 0, courseId, campusCode, null, tdf, udf, ddf,
+						sdcal, edcal, tcal);
+			}
+		
+		return null;
+	}
+
 	@Override
 	public List<CourseOption> getCourseOptions(List<String> courseIds,
 			String termId) {
@@ -351,7 +501,7 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 					code.append(campusCode = ca.getValue()).append(" ");
 			if (!cartStrategy.isCartAvailable(termId, campusCode))
 				continue;
-			
+
 			code.append(c.getCode());
 			courseOption.setCourseCode(code.toString());
 
@@ -365,112 +515,21 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 			for (ActivityOfferingDisplayInfo aodi : courseHelper
 					.getActivityOfferingDisplaysByCourseAndTerm(courseId,
 							termId)) {
-
-				ActivityOptionInfo activityOption = new ActivityOptionInfo();
-				activityOption.setCourseIndex(courseIndex);
-				activityOption.setUniqueId(UUID.randomUUID().toString());
-				activityOption.setCourseId(courseId);
-				activityOption.setActivityOfferingId(aodi.getId());
-				activityOption.setActivityTypeDescription(aodi.getTypeName());
-				activityOption.setCourseOfferingCode((campusCode == null ? ""
-						: campusCode + " ") + aodi.getCourseOfferingCode());
-				activityOption.setActivityName(aodi.getName());
-				activityOption.setRegistrationCode(aodi
-						.getActivityOfferingCode());
-				activityOption
-						.setClosed(!LuiServiceConstants.LUI_AO_STATE_OFFERED_KEY
-								.equals(aodi.getStateKey()));
-				activityOption.setTotalSeats(aodi.getMaximumEnrollment());
-				if (msg != null)
-					msg.append("\nActivity ")
-							.append(activityOption.getUniqueId()).append(": ")
-							.append(activityOption.getCourseOfferingCode())
-							.append(" ")
-							.append(activityOption.getRegistrationCode());
+				ActivityOptionInfo activityOption = getActivityOption(term, aodi, courseIndex,
+						courseId, campusCode, msg, tdf, udf, ddf, sdcal, edcal, tcal);
 
 				boolean enrollmentGroup = false;
-				String instructor = aodi.getInstructorName();
 				String primaryOfferingId = null;
-
-				String sessionDescr = term.getName();
-				Date sessionStartDate = term.getStartDate();
-				Date sessionEndDate = term.getEndDate();
-				BigDecimal minCredits = BigDecimal.ZERO;
-				BigDecimal maxCredits = BigDecimal.ZERO;
 				for (AttributeInfo attrib : aodi.getAttributes()) {
 					String key = attrib.getKey();
 					String value = attrib.getValue();
-					if ("PrimaryActivityOfferingId".equalsIgnoreCase(key)) {
+
+					if ("PrimaryActivityOfferingId".equalsIgnoreCase(key))
 						primaryOfferingId = value;
-						activityOption.setPrimary(aodi.getId().equals(
-								primaryOfferingId));
-					}
-					if ("PermissionRequired".equalsIgnoreCase(key)) {
-						activityOption.setRequiresPermission("true"
-								.equals(value));
-					}
-					if ("BlockEnrollment".equalsIgnoreCase(key)) {
+
+					if ("BlockEnrollment".equalsIgnoreCase(key))
 						enrollmentGroup = "true".equals(value);
-					}
-					if ("Closed".equalsIgnoreCase(key)) {
-						activityOption.setClosed("true".equals(value));
-					}
-					if ("enrollOpen".equalsIgnoreCase(key)) {
-						activityOption.setOpenSeats(Integer.parseInt(value));
-					}
-					if ("SessionDescr".equalsIgnoreCase(key)) {
-						sessionDescr = value;
-					}
-					if ("SessionStartDate".equalsIgnoreCase(key)) {
-						try {
-							sessionStartDate = udf.parse(value);
-						} catch (ParseException e) {
-							throw new IllegalArgumentException(
-									"Invalid session start date "
-											+ sessionStartDate);
-						}
-					}
-					if ("SessionEndDate".equalsIgnoreCase(key)) {
-						try {
-							sessionEndDate = udf.parse(value);
-						} catch (ParseException e) {
-							throw new IllegalArgumentException(
-									"Invalid session start date "
-											+ sessionEndDate);
-						}
-					}
-
-					if ("CourseCode".equalsIgnoreCase(key)) {
-						activityOption.setCourseOfferingCode((campusCode == null ? ""
-								: campusCode + " ") + value);
-					}
-
-					// TODO: Add getResultValuesGroup() to
-					// ActivityOfferingDisplayInfo and use it instead.
-					if ("minUnits".equalsIgnoreCase(key)) {
-						minCredits = new BigDecimal(value);
-					}
-					if ("maxUnits".equalsIgnoreCase(key)) {
-						maxCredits = new BigDecimal(value);
-					}
-
 				}
-				sessionDescr += " " + ddf.format(sessionStartDate) + " - "
-						+ ddf.format(sessionEndDate);
-				activityOption.setAcademicSessionDescr(sessionDescr);
-				activityOption.setMinCredits(minCredits);
-				activityOption.setMaxCredits(maxCredits);
-
-				List<ClassMeetingTime> meetingTimes = new java.util.LinkedList<ClassMeetingTime>();
-				ScheduleDisplayInfo sdi = aodi.getScheduleDisplay();
-				for (ScheduleComponentDisplay scdi : sdi
-						.getScheduleComponentDisplays())
-					for (TimeSlot timeSlot : scdi.getTimeSlots())
-						meetingTimes.add(adaptClassMeeting(timeSlot, scdi,
-								tcal, sdcal, edcal, tdf, ddf, instructor,
-								sessionStartDate, sessionEndDate));
-				activityOption.setClassMeetingTimes(meetingTimes);
-				activityOption.setEnrollmentGroup(enrollmentGroup);
 
 				if (activityOption.isPrimary()) {
 					activityOption

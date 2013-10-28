@@ -3,6 +3,7 @@ package org.kuali.student.ap.sb;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.kuali.student.ap.common.infc.HasUniqueId;
 import org.kuali.student.enrollment.acal.infc.Term;
 import org.kuali.student.r2.common.infc.RichText;
 import org.kuali.student.r2.lum.course.infc.Course;
@@ -14,7 +15,7 @@ import org.kuali.student.r2.lum.course.infc.Course;
  * @author Mark Fyffe <mwfyffe@iu.edu>
  * @version 1.1
  */
-public interface ShoppingCartRequest {
+public interface ShoppingCartRequest extends HasUniqueId {
 
 	/**
 	 * Determine if the indicated course should be added or removed from the
