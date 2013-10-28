@@ -2243,5 +2243,94 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void createCharge() throws Exception {
+
+        String typeId = "1020";
+
+        Charge charge1 = transactionService.createCharge(typeId, TEST_USER_ID, new Date(), new BigDecimal(999.879));
+
+        notNull(charge1);
+        notNull(charge1.getId());
+        notNull(charge1.getAmount());
+        notNull(charge1.getEffectiveDate());
+        notNull(charge1.getAccountId());
+
+        isTrue(charge1.getAccountId().equals(TEST_USER_ID));
+        isTrue(charge1.getAmount().compareTo(new BigDecimal(999.879)) == 0);
+        isTrue(charge1.getAmount().compareTo(charge1.getUnallocatedAmount()) == 0);
+        isTrue(!new Date().before(charge1.getEffectiveDate()));
+
+        Charge charge2 = transactionService.getCharge(charge1.getId());
+
+        notNull(charge2);
+        notNull(charge2.getId());
+
+        isTrue(charge1.getId().equals(charge2.getId()));
+
+    }
+
+    @Test
+    public void createPayment() throws Exception {
+
+        String typeId = "cash";
+
+        Payment payment1 = transactionService.createPayment(typeId, TEST_USER_ID, new Date(), new BigDecimal(200.11));
+
+        notNull(payment1);
+        notNull(payment1.getId());
+        notNull(payment1.getAmount());
+        notNull(payment1.getEffectiveDate());
+        notNull(payment1.getAccountId());
+
+        isTrue(payment1.getAccountId().equals(TEST_USER_ID));
+        isTrue(payment1.getAmount().compareTo(new BigDecimal(200.11)) == 0);
+        isTrue(payment1.getAmount().compareTo(payment1.getUnallocatedAmount()) == 0);
+        isTrue(!new Date().before(payment1.getEffectiveDate()));
+
+        Payment payment2 = transactionService.getPayment(payment1.getId());
+
+        notNull(payment2);
+        notNull(payment2.getId());
+
+        isTrue(payment1.getId().equals(payment2.getId()));
+
+    }
+
+    @Test
+    public void createDeferment1() throws Exception {
+
+        String typeId = "finaid";
+
+        String expDateValue = "01/01/2015";
+
+        Date expirationDate = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse(expDateValue);
+
+        Deferment deferment1 = transactionService.createDeferment(typeId, TEST_USER_ID, new Date(), expirationDate, new BigDecimal(200.11));
+
+        notNull(deferment1);
+        notNull(deferment1.getId());
+        notNull(deferment1.getAmount());
+        notNull(deferment1.getEffectiveDate());
+        notNull(deferment1.getExpirationDate());
+        notNull(deferment1.getAccountId());
+        notNull(deferment1.getTransactionType());
+
+        isTrue(deferment1.getTransactionType().getTypeValue().equals(TransactionType.CREDIT_TYPE));
+        isTrue(deferment1.getAccountId().equals(TEST_USER_ID));
+        isTrue(deferment1.getAmount().compareTo(new BigDecimal(200.11)) == 0);
+        isTrue(deferment1.getAmount().compareTo(deferment1.getUnallocatedAmount()) == 0);
+        isTrue(!new Date().before(deferment1.getEffectiveDate()));
+
+        Deferment deferment2 = transactionService.getDeferment(deferment1.getId());
+
+        notNull(deferment2);
+        notNull(deferment2.getId());
+        notNull(deferment2.getExpirationDate());
+
+        isTrue(deferment1.getId().equals(deferment2.getId()));
+        isTrue(deferment1.getExpirationDate().equals(deferment2.getExpirationDate()));
+
+    }
 
 }

@@ -123,6 +123,85 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
+     * Creates and persists a new charge based on the given parameters.
+     *
+     * @param debitTypeId   The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
+     *                      based on the effective date
+     * @param userId        Account ID
+     * @param effectiveDate Charge Effective Date
+     * @param amount        Charge amount
+     * @return Charge instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Charge createCharge(String debitTypeId, String userId, Date effectiveDate, BigDecimal amount) {
+
+        TransactionType transactionType = getTransactionType(debitTypeId, effectiveDate);
+        if (transactionType == null || !transactionType.getTypeValue().equals(TransactionType.DEBIT_TYPE)) {
+            String errMsg = "Debit type '" + debitTypeId + "' does not exist for effective date = " + effectiveDate;
+            logger.error(errMsg);
+            throw new TransactionTypeNotFoundException(errMsg);
+        }
+
+        return (Charge) createTransaction(transactionType.getId(), null, userId, effectiveDate, null, null, amount, false);
+    }
+
+    /**
+     * Creates and persists a new payment based on the given parameters.
+     *
+     * @param creditTypeId  The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
+     *                      based on the effective date
+     * @param userId        Account ID
+     * @param effectiveDate Payment Effective Date
+     * @param amount        Payment amount
+     * @return Payment instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Payment createPayment(String creditTypeId, String userId, Date effectiveDate, BigDecimal amount) {
+
+        TransactionType transactionType = getTransactionType(creditTypeId, effectiveDate);
+        if (transactionType == null || !transactionType.getTypeValue().equals(TransactionType.CREDIT_TYPE)) {
+            String errMsg = "Credit type '" + creditTypeId + "' does not exist for effective date = " + effectiveDate;
+            logger.error(errMsg);
+            throw new TransactionTypeNotFoundException(errMsg);
+        }
+
+        return (Payment) createTransaction(transactionType.getId(), null, userId, effectiveDate, null, null, amount, false);
+    }
+
+    /**
+     * Creates and persists a new deferment based on the given parameters.
+     *
+     * @param creditTypeId   The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
+     *                       based on the effective date
+     * @param userId         Account ID
+     * @param effectiveDate  Deferment Effective Date
+     * @param expirationDate Deferment Expiration Date
+     * @param amount         Deferment amount
+     * @return Deferment instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Deferment createDeferment(String creditTypeId, String userId, Date effectiveDate, Date expirationDate, BigDecimal amount) {
+
+        if (expirationDate == null) {
+            String errMsg = "Expiration date is required for deferments";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        TransactionType transactionType = getTransactionType(creditTypeId, effectiveDate);
+        if (transactionType == null || !transactionType.getTypeValue().equals(TransactionType.CREDIT_TYPE)) {
+            String errMsg = "Credit type '" + creditTypeId + "' does not exist for effective date = " + effectiveDate;
+            logger.error(errMsg);
+            throw new TransactionTypeNotFoundException(errMsg);
+        }
+
+        return (Deferment) createTransaction(transactionType.getId(), null, userId, effectiveDate, null, expirationDate, amount, false);
+    }
+
+    /**
      * Creates a new transaction based on the given parameters
      *
      * @param transactionTypeId The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
@@ -465,7 +544,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         List<T> results = query.getResultList();
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
-
 
     /**
      * Checks if the transaction type exists.

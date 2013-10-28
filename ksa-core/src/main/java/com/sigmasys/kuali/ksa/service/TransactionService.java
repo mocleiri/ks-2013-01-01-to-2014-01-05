@@ -32,7 +32,44 @@ public interface TransactionService {
 
 
     /**
-     * Creates a new transaction based on the given parameters
+     * Creates and persists a new charge based on the given parameters.
+     *
+     * @param debitTypeId   The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
+     *                      based on the effective date
+     * @param userId        Account ID
+     * @param effectiveDate Charge Effective Date
+     * @param amount        Charge amount
+     * @return Charge instance
+     */
+    Charge createCharge(String debitTypeId, String userId, Date effectiveDate, BigDecimal amount);
+
+    /**
+     * Creates and persists a new payment based on the given parameters.
+     *
+     * @param creditTypeId  The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
+     *                      based on the effective date
+     * @param userId        Account ID
+     * @param effectiveDate Payment Effective Date
+     * @param amount        Payment amount
+     * @return Payment instance
+     */
+    Payment createPayment(String creditTypeId, String userId, Date effectiveDate, BigDecimal amount);
+
+    /**
+     * Creates and persists a new deferment based on the given parameters.
+     *
+     * @param creditTypeId   The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
+     *                       based on the effective date
+     * @param userId         Account ID
+     * @param effectiveDate  Deferment Effective Date
+     * @param expirationDate Deferment Expiration Date
+     * @param amount         Deferment amount
+     * @return Deferment instance
+     */
+    Deferment createDeferment(String creditTypeId, String userId, Date effectiveDate, Date expirationDate, BigDecimal amount);
+
+    /**
+     * Creates and persists a new transaction based on the given parameters
      *
      * @param transactionTypeId The first part of TransactionTypeId PK, the second part (sub-code) will be calculated
      *                          based on the effective date
