@@ -2,12 +2,15 @@ package com.sigmasys.kuali.ksa.krad.model;
 
 import com.sigmasys.kuali.ksa.model.Memo;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
+import com.sigmasys.kuali.ksa.model.TransactionTransfer;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * User: tbornholtz
@@ -23,6 +26,7 @@ public class ThirdPartyMemberModel {
     private ThirdPartyTransferDetail transferDetail;
 
     private MemoModel memo;
+    private List<TransactionTransfer> transactionTransfers;
 
     public ThirdPartyPlanMember getPlanMember() {
         return planMember;
@@ -101,5 +105,23 @@ public class ThirdPartyMemberModel {
 
     public void setMemo(MemoModel memo) {
         this.memo = memo;
+    }
+
+    public List<TransactionTransfer> getTransactionTransfers() {
+        if(transactionTransfers == null) {
+            transactionTransfers = new ArrayList<TransactionTransfer>();
+        }
+        return transactionTransfers;
+    }
+
+    public void setTransactionTransfers(List<TransactionTransfer> transactionTransfers) {
+        this.transactionTransfers = transactionTransfers;
+    }
+
+    public String getDirectChargeAccountName() {
+        if(transferDetail != null && transferDetail.getDirectChargeAccount() != null) {
+            return transferDetail.getDirectChargeAccount().getCompositeDefaultPersonName();
+        }
+        return "";
     }
 }

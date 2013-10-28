@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.krad.form.UserPaymentPlanForm;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.Account;
+import com.sigmasys.kuali.ksa.model.TransactionTransfer;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
@@ -274,7 +275,13 @@ public class UserPaymentPlanController extends GenericSearchController {
 
             if(member.isExecuted()) {
                 ThirdPartyTransferDetail transferDetail = thirdPartyTransferService.getThirdPartyTransferDetail(plan.getId(), userId);
+                transferDetail.getDirectChargeAccount().getCompositeDefaultPersonName();
                 model.setTransferDetail(transferDetail);
+
+                if(transferDetail != null) {
+                    List<TransactionTransfer> transactionTransfers = transactionTransferService.getTransactionTransfersByGroupId(transferDetail.getTransferGroupId());
+                    model.setTransactionTransfers(transactionTransfers);
+                }
             }
 
             memberModels.add(model);

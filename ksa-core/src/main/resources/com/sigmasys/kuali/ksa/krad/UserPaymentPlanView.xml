@@ -141,6 +141,9 @@
                                                 </list>
                                             </property>
                                         </bean>
+                                        <bean parent="Uif-ImageField" p:source="../images/transaction_transfer_list.png" p:style="cursor:pointer;" p:altText="View the Transaction Transfer List" p:title=""
+                                              p:onClickScript="showLightboxComponent('transactionTransferLightbox@{#lineSuffix}');"/>
+                                        <ref bean="transactionTransferLightbox"/>
                                         <bean parent="Uif-ImageField" p:source="../images/delete.png" p:style="cursor:pointer;" p:altText="Reverse the Third Party Payment Plan" p:title=""
                                               p:onClickScript="showLightboxComponent('reverseLightbox@{#lineSuffix}');" p:render="@{#line.transferDetailId > 0}"/>
                                         <bean id="reverseLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
@@ -199,6 +202,76 @@
             </list>
         </property>
     </bean>
+
+    <bean id="transactionTransferLightbox" parent="Uif-VerticalBoxSection">
+        <property name="headerText" value="Transaction Transfer List"/>
+        <property name="hidden" value="true"/>
+        <property name="items">
+            <list>
+                <ref bean="userThirdPartyPaymentPlanDescription"/>
+                <bean parent="Uif-InputField" p:propertyName="directChargeAccountName" p:label="Member Name" p:labelPlacement="TOP" p:readOnly="true"/>
+                <ref bean="userThirdPartyTransactionTransferTable"/>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="userThirdPartyPaymentPlanDescription" parent="Uif-VerticalBoxSection">
+        <property name="readOnly" value="true"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
+                    <bean parent="Uif-InputField" p:propertyName="plan.code" p:label="Code"/>
+                    <bean parent="Uif-InputField" p:propertyName="plan.name" p:label="Name"/>
+                </list></property></bean>
+                <bean parent="Uif-Space"/>
+                <bean parent="Uif-InputField" p:propertyName="plan.description" p:label="Description" p:labelPlacement="TOP">
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+
+
+
+    <bean id="userThirdPartyTransactionTransferTable" parent="Uif-VerticalBoxSection">
+        <property name="headerText" value="Transaction Transfers"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-Message" p:messageText="No transaction transfers" p:render="@{#line.transactionTransfers.size() == 0}"/>
+                <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:width="85%">
+                    <property name="readOnly" value="true"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.TransactionTransfer"/>
+                    <property name="propertyName" value="transactionTransfers"/>
+                    <property name="layoutManager.sequencePropertyName" value="name"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="false"/>
+                            <entry key="bInfo" value="false"/>
+                            <entry key="bFilter" value="false"/>
+                            <entry key="bSort" value="false" />
+                        </map>
+                    </property>
+
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:label="Transfer Date" p:propertyName="creationDate"/>
+                            <bean parent="Uif-InputField" p:label="Source Transaction Description" p:propertyName="sourceTransaction.statementText"/>
+                            <bean parent="Uif-InputField" p:label="Offset Transaction Description" p:propertyName="offsetTransaction.statementText"/>
+                            <bean parent="Uif-InputField" p:label="Destination Transaction Description" p:propertyName="destTransaction.statementText"/>
+                            <bean parent="Uif-InputField" p:label="Transfer Amount" p:propertyName="transferAmount"/>
+                            <bean parent="Uif-InputField" p:label="Transaction Type" p:propertyName="transferType.name"/>
+                            <bean parent="Uif-InputField" p:label="Reversal Amount" p:propertyName="reversalAmount"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+
 
     <bean id="availablePaymentBillingPlansSection" parent="Uif-Disclosure-VerticalBoxSection">
         <property name="headerText" value="Available"/>
