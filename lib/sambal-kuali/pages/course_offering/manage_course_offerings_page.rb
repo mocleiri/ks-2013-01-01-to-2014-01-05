@@ -59,16 +59,16 @@ class ManageCourseOfferings < BasePage
   action(:approve_activity){ |b| b.approve_activity_button.click; b.loading.wait_while_present}
 
   element(:cancel_ao_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Cancel-AO-ClusterTab") }
-  action(:cancel_ao) { |b| b.cancel_ao_button.click}
+  action(:cancel_ao) { |b| b.cancel_ao_button.click; b.loading.wait_while_present }
 
   element(:suspend_ao_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Suspend-AO-ClusterTab") }
-  action(:suspend_ao) { |b| b.suspend_ao_button.click}
+  action(:suspend_ao) { |b| b.suspend_ao_button.click; b.loading.wait_while_present }
 
   element(:reinstate_ao_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Reinstate-AO-ClusterTab") }
-  action(:reinstate_ao) { |b| b.reinstate_ao_button.click}
+  action(:reinstate_ao) { |b| b.reinstate_ao_button.click; b.loading.wait_while_present }
 
   element(:delete_aos_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-Delete-AO-ClusterTab") }
-  action(:delete_aos) { |b| b.delete_aos_button.click}
+  action(:delete_aos) { |b| b.delete_aos_button.click; b.loading.wait_while_present }
 
   element(:add_cluster_button) { |b| b.frm.button(id: "KS-CourseOfferingManagement-ToolBar-AddCluster-AO-ClusterTab") }
   action(:add_cluster) { |b| b.add_cluster_button.click; b.loading.wait_while_present }
