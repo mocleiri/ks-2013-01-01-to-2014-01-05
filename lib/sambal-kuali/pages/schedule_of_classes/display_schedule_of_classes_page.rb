@@ -152,8 +152,11 @@ class DisplayScheduleOfClasses < BasePage
     details_table.rows[1..-1].each do |row|
       reg_group_list << row[REG_GROUP_COLUMN].text
     end
-    reg_group_list.pop  #remove last element, as it will be an empty string
-    reg_group_list
+
+    # remove empty-strings
+    # Note: the last row in the table will be an empty-string, but empty-strings also result if a reg-group has multiple
+    # rows (ie: AO-Codes)
+    reg_group_list = reg_group_list.reject{ |x| x == '' || x.nil? }
   end
 
   def ao_information_target_row(course_code,activity_offering_code)
