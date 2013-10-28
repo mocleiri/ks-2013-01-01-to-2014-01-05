@@ -250,7 +250,7 @@ public class PlanHelperImpl implements PlanHelper {
      */
     public String getCrossListedCourse(List<AttributeInfo> attributeInfoList) {
         for (AttributeInfo attributeInfo : attributeInfoList) {
-            if (PlanConstants.CROSS_LISTED_COURSE_ATTR_KEY.equals(attributeInfo.getKey())) {
+            if (PlanConstants.CROSS_LISTED_COURSE_ATTR_KEY.equals(attributeInfo.getKey()) && !StringUtils.isEmpty(attributeInfo.getValue())) {
                 return attributeInfo.getValue();
             }
         }

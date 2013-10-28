@@ -4,6 +4,7 @@ import edu.uw.kuali.student.lib.client.studentservice.ServiceException;
 import org.dom4j.DocumentException;
 import org.kuali.student.myplan.plan.dataobject.DeconstructedCourseCode;
 import org.kuali.student.myplan.plan.util.AtpHelper;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public interface CourseHelper {
 
     public String getKeyForCourseOffering(String courseId, String subject, String number);
 
-    public boolean isCrossListedCourse(String courseCd);
+    public boolean isCrossListedCourse(CourseInfo courseInfo, String courseCd) throws DoesNotExistException;
 
     public boolean isSimilarCourses(String courseCd1, String courseCd2);
 }

@@ -1263,7 +1263,12 @@ public class PlanController extends UifControllerBase {
                 return doOperationFailedError(form, "Course CD was missing.", null);
             }
 
-            isCrossListedCourse = getCourseHelper().isCrossListedCourse(code);
+            CourseInfo courseInfo = getCourseHelper().getCourseInfo(courseId);
+            try {
+                isCrossListedCourse = getCourseHelper().isCrossListedCourse(courseInfo, code);
+            } catch (DoesNotExistException e) {
+                return doErrorPage(form, "Course not found", PlanConstants.COURSE_NOT_FOUND, new String[]{code}, null);
+            }
 
             courseDetails = getVersionVerifiedCourseDetails(courseId, code);
 
@@ -1382,7 +1387,7 @@ public class PlanController extends UifControllerBase {
         if (!addPlaceHolder) {
             if (!isRecommendedItem) {
                 //  See if a wishList item exists for the course. If so, then update it. Otherwise create a new plan item.
-                planItem = getWishlistPlanItem(courseDetails.getVersionIndependentId());
+                planItem = getWishlistPlanItem(courseDetails.getVersionIndependentId(), isCrossListedCourse ? code : null);
             }
             if (planItem == null && addCourse) {
                 try {
@@ -1697,8 +1702,13 @@ public class PlanController extends UifControllerBase {
 
                         } else {
                             String courseId = getCourseHelper().getCourseId(subject, number);
-                            isCrossListedCourse = getCourseHelper().isCrossListedCourse(form.getCourseCd());
                             if (!hasText(courseId)) {
+                                return doErrorPage(form, "Course not found", PlanConstants.COURSE_NOT_FOUND, new String[]{form.getCourseCd()}, null);
+                            }
+                            CourseInfo courseInfo = getCourseHelper().getCourseInfo(courseId);
+                            try {
+                                isCrossListedCourse = getCourseHelper().isCrossListedCourse(courseInfo, form.getCourseCd());
+                            } catch (DoesNotExistException e) {
                                 return doErrorPage(form, "Course not found", PlanConstants.COURSE_NOT_FOUND, new String[]{form.getCourseCd()}, null);
                             }
                             courseSummaryDetails = getCourseDetailsInquiryService().retrieveCourseSummaryByIdAndCd(courseId, isCrossListedCourse ? form.getCourseCd() : null);
@@ -1765,9 +1775,6 @@ public class PlanController extends UifControllerBase {
                 richTextInfo.setFormatted(note);
                 richTextInfo.setPlain(note);
                 planItemInfo.setDescr(richTextInfo);
-
-
-
 
 
                 String[] params = {};
@@ -1922,7 +1929,7 @@ public class PlanController extends UifControllerBase {
         */
         boolean isDuplicate = false;
         if (planItemType.equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST)) {
-            if (getWishlistPlanItem(refObjId) != null) {
+            if (getWishlistPlanItem(refObjId, courseCd) != null) {
                 isDuplicate = true;
             }
         } else {
@@ -2007,7 +2014,13 @@ public class PlanController extends UifControllerBase {
             return doOperationFailedError(form, "Course CD was missing.", null);
         }
 
-        boolean isCrossListedCourse = getCourseHelper().isCrossListedCourse(courseCd);
+        boolean isCrossListedCourse = false;
+        CourseInfo courseInfo = getCourseHelper().getCourseInfo(courseId);
+        try {
+            isCrossListedCourse = getCourseHelper().isCrossListedCourse(courseInfo, courseCd);
+        } catch (DoesNotExistException e) {
+            return doErrorPage(form, "Course not found", PlanConstants.COURSE_NOT_FOUND, new String[]{courseCd}, null);
+        }
 
         String studentId = getUserSessionHelper().getStudentId();
         LearningPlan plan = getSynchronizedLearningPlan(studentId);
@@ -2016,7 +2029,7 @@ public class PlanController extends UifControllerBase {
         }
 
         // Retrieve courseDetails based on the passed in CourseId and then update courseDetails based on the version independent Id
-        CourseSummaryDetails courseDetails = getVersionVerifiedCourseDetails(courseId, courseCd);
+        CourseSummaryDetails courseDetails = getVersionVerifiedCourseDetails(courseId, isCrossListedCourse ? courseCd : null);
         if (courseDetails == null) {
             return doOperationFailedError(form, "Unable to retrieve Course Details.", null);
         }
@@ -2025,7 +2038,7 @@ public class PlanController extends UifControllerBase {
         try {
             planItem = addPlanItem(plan, courseDetails.getVersionIndependentId(), PlanConstants.COURSE_TYPE, null, PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST, null, null, isCrossListedCourse ? courseCd : null);
         } catch (DuplicateEntryException e) {
-            return doDuplicatePlanItem(form, null, courseDetails.getCode());
+            return doDuplicateBookmarkItem(form, courseDetails.getCode());
         } catch (Exception e) {
             return doOperationFailedError(form, "Unable to add plan item.", e);
         }
@@ -2387,6 +2400,14 @@ public class PlanController extends UifControllerBase {
         return doErrorPage(form, PlanConstants.ERROR_KEY_PLANNED_ITEM_ALREADY_EXISTS, params);
     }
 
+    /**
+     * Blow-up response for all plan item actions.
+     */
+    private ModelAndView doDuplicateBookmarkItem(PlanForm form, String code) {
+        String[] params = {code};
+        return doErrorPage(form, PlanConstants.ERROR_KEY_BOOKMARKED_ITEM_ALREADY_EXISTS, params);
+    }
+
 
     /**
      * Success response for all plan item actions.
@@ -2536,7 +2557,7 @@ public class PlanController extends UifControllerBase {
      * @param courseId The id of the course.
      * @return A PlanItem of type wishlist.
      */
-    protected PlanItemInfo getWishlistPlanItem(String courseId) {
+    protected PlanItemInfo getWishlistPlanItem(String courseId, String courseCd) {
 
         if (StringUtils.isEmpty(courseId)) {
             throw new RuntimeException("Course Id was empty.");
@@ -2561,8 +2582,19 @@ public class PlanController extends UifControllerBase {
 
         for (PlanItemInfo p : planItems) {
             if (p.getRefObjectId().equals(courseId)) {
-                item = p;
-                break;
+                /*Multiple PlanItems with same refObjId can be present which are crossListed courses in same term,
+                So filtering them by using the given crossListed courseCd to get the exact planItemInfo*/
+                String crossListedCourse = getPlanHelper().getCrossListedCourse(p.getAttributes());
+                //Planned parent course returned
+                if (StringUtils.isEmpty(courseCd) && StringUtils.isEmpty(crossListedCourse)) {
+                    item = p;
+                    break;
+                }
+                //Planned crossListed course returned
+                else if (!StringUtils.isEmpty(courseCd) && getCourseHelper().isSimilarCourses(courseCd, crossListedCourse)) {
+                    item = p;
+                    break;
+                }
             }
         }
 

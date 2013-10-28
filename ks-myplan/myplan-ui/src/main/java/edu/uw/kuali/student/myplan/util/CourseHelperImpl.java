@@ -609,32 +609,25 @@ public class CourseHelperImpl implements CourseHelper {
 
 
     /**
-     * Method used to know f the given courseCd is a alias or a regular parent course
+     * Method used to know if the given courseCd is a alias/CrossListed or a regular parent course
      *
+     * @param courseInfo
      * @param courseCd
      * @return
      */
     @Override
-    public boolean isCrossListedCourse(String courseCd) {
+    public boolean isCrossListedCourse(CourseInfo courseInfo, String courseCd) throws DoesNotExistException {
         DeconstructedCourseCode courseCode = getCourseDivisionAndNumber(courseCd);
-        SearchRequestInfo request = new SearchRequestInfo("myplan.course.ident.type");
-        request.addParam("division", courseCode.getSubject().trim());
-        request.addParam("number", courseCode.getNumber().trim());
-        request.addParam("lastScheduledTerm", AtpHelper.getLastScheduledAtpId());
-
-        SearchResultInfo searchResult = new SearchResultInfo();
-        try {
-            searchResult = getLuService().search(request, CourseSearchConstants.CONTEXT_INFO);
-        } catch (Exception e) {
-            logger.error("Failed to get courseId for given subject and number", e);
+        if (courseCode.getSubject().trim().equals(courseInfo.getSubjectArea().trim()) && courseCode.getNumber().trim().equals(courseInfo.getCourseNumberSuffix().trim())) {
+            return false;
+        } else {
+            for (CourseCrossListingInfo crossListingInfo : courseInfo.getCrossListings()) {
+                if (courseCode.getSubject().trim().equals(crossListingInfo.getSubjectArea().trim()) && courseCode.getNumber().equals(crossListingInfo.getCourseNumberSuffix().trim())) {
+                    return true;
+                }
+            }
         }
-        String identType = null;
-        for (SearchResultRow row : searchResult.getRows()) {
-            identType = SearchHelper.getCellValue(row, "course.ident.type");
-            break;
-        }
-
-        return CourseAssemblerConstants.COURSE_CROSSLISTING_IDENT_TYPE.equals(identType);
+        throw new DoesNotExistException();
     }
 
     /**

@@ -34,6 +34,7 @@ import org.kuali.student.myplan.utils.TimeStringMillisConverter;
 import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.TimeOfDayInfo;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.r2.core.atp.service.AtpService;
 import org.kuali.student.r2.core.enumerationmanagement.dto.EnumeratedValueInfo;
@@ -410,6 +411,15 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         // Planned, backup and Saved Item
         AcademicPlanService academicPlanService = getAcademicPlanService();
 
+        boolean isCrossListedCourse = false;
+        CourseInfo courseInfo = getCourseHelper().getCourseInfo(course.getId());
+        try {
+            isCrossListedCourse = getCourseHelper().isCrossListedCourse(courseInfo, course.getCode());
+        } catch (DoesNotExistException e) {
+            logger.error("Could not find courseOffering for courseCd" + course.getCode());
+        }
+
+
         //   Get the first learning plan. There should only be one ...
         String planTypeKey = AcademicPlanServiceConstants.LEARNING_PLAN_TYPE_PLAN;
         try {
@@ -421,16 +431,20 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                 List<PlanItemInfo> planItemsInPlan = academicPlanService.getPlanItemsInPlan(plan.getId(), PlanConstants.CONTEXT_INFO);
 
                 //  Iterate through the plan items and set flags to indicate whether the item is a planned/backup or saved course.
-                for (PlanItem planItemInPlanTemp : planItemsInPlan) {
+                for (PlanItemInfo planItemInPlanTemp : planItemsInPlan) {
                     if (planItemInPlanTemp.getRefObjectId().equals(course.getVersion().getVersionIndId())) {
                         //  Assuming type is planned or backup if not wishList.
                         String typeKey = planItemInPlanTemp.getTypeKey();
-                        if (typeKey.equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST)) {
+                        String crossListedCourseCd = getPlanHelper().getCrossListedCourse(planItemInPlanTemp.getAttributes());
+                        CourseInfo info = getCourseHelper().getCourseInfo(planItemInPlanTemp.getRefObjectId());
+                        if (typeKey.equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST) && getCourseHelper().isSimilarCourses(course.getCode(), StringUtils.hasText(crossListedCourseCd) ? crossListedCourseCd : info.getCode())) {
+
                             plannedCourseSummary.setSavedItemId(planItemInPlanTemp.getId());
                             String dateStr = planItemInPlanTemp.getMeta().getCreateTime().toString();
                             dateStr = DateFormatHelper.getDateFomatted(dateStr);
                             plannedCourseSummary.setSavedItemDateCreated(dateStr);
-                        } else {
+
+                        } else if (getCourseHelper().isSimilarCourses(course.getCode(), StringUtils.hasText(crossListedCourseCd) ? crossListedCourseCd : info.getCode())) {
                             PlanItemDataObject planItem = PlanItemDataObject.build(planItemInPlanTemp);
                             if (typeKey.equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED)) {
                                 plannedCourseSummary.getPlannedList().add(planItem);
@@ -438,6 +452,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                                 plannedCourseSummary.getBackupList().add(planItem);
                             }
                         }
+
                     }
                 }
             }
@@ -602,7 +617,13 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
                         courseOfferingTerm.setCourseComments(courseComments);
                         courseOfferingTerm.setCurriculumComments(curriculumComments);
                         courseOfferingTerm.setInstituteCode(courseOfferingInstitution.getCode());
-                        boolean isCrossListedCourse = getCourseHelper().isCrossListedCourse(course.getCode());
+                        boolean isCrossListedCourse = false;
+                        CourseInfo courseInfo = getCourseHelper().getCourseInfo(course.getId());
+                        try {
+                            isCrossListedCourse = getCourseHelper().isCrossListedCourse(courseInfo, course.getCode());
+                        } catch (DoesNotExistException e) {
+                            logger.error("Could not find courseOffering for courseCd" + course.getCode());
+                        }
                         courseOfferingTerm.setCoursePlanType(getPlanType(getPlanItem(course.getVersion().getVersionIndId(), isCrossListedCourse ? course.getCode() : null, yt.toATP())));
                         courseOfferingTermList.add(courseOfferingTerm);
                     }

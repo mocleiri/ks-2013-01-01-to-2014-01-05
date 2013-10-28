@@ -1105,7 +1105,7 @@
                 <bean parent="Uif-Link" p:linkText="View more details">
                     <property name="title" value="View more details about @{courseSummaryDetails.code}"/>
                     <property name="href"
-                              value="inquiry?methodToCall=start&amp;viewId=CourseDetails-InquiryView&amp;courseId=@{courseSummaryDetails.courseId}"/>
+                              value="inquiry?methodToCall=start&amp;viewId=CourseDetails-InquiryView&amp;courseId=@{courseSummaryDetails.courseId}&amp;courseCd=@{courseSummaryDetails.code}"/>
                 </bean>
             </list>
         </property>
@@ -1349,7 +1349,7 @@
         <property name="title"
                   value="@{courseSummaryDetails.code} @{courseSummaryDetails.courseTitle} (@{courseSummaryDetails.credit})"/>
         <property name="href"
-                  value="inquiry?methodToCall=start&amp;viewId=CourseDetails-InquiryView&amp;courseId=@{courseSummaryDetails.courseId}"/>
+                  value="inquiry?methodToCall=start&amp;viewId=CourseDetails-InquiryView&amp;courseId=@{courseSummaryDetails.courseId}&amp;courseCd=@{courseSummaryDetails.code}"/>
         <property name="cssClasses">
             <list merge="true">
                 <value>fl-text-bold</value>
