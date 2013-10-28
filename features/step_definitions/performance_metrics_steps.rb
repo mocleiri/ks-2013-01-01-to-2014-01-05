@@ -7,10 +7,13 @@ When /^I log in as a Schedule Coordinator$/ do
     page.password_field.set "martha"
     @performance_test.start
     page.login_button.click
-    page.logout_button.wait_until_present
+
+  on KSFunctionalHome do |page|
+    page.enrollment_link.wait_until_present
     @performance_test.end
   end
 
+  end
 end
 
 Then /^the transaction takes less than "([^"]*)" seconds$/ do |time_requirement|
@@ -363,10 +366,14 @@ When /^I add Delivery Logistics and save$/ do
 
   on ActivityOfferingMaintenance do |page|
     page.add_days.set "MWF"
-    page.add_start_time.set "10:00"
-    page.add_start_time_ampm.select "am"
-    page.add_end_time.set "11:00"
-    page.add_end_time_ampm.select "am"
+    page.add_start_time.click
+    page.add_start_time.set "10:00 AM"
+    page.add_start_time.fire_event "onblur"
+    page.add_end_time.click
+    page.loading.wait_while_present
+    page.add_end_time.set "11:00 AM"
+    page.add_facility.click
+    page.loading.wait_while_present
     page.add_facility.set "IPT"
     page.add_room.set "1116"
     page.add_new_delivery_logistics
