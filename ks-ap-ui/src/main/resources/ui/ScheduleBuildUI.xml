@@ -29,6 +29,7 @@
 				<value>ks-ap/scripts/sb/fullcalendar/fullcalendar.css</value>
 				<value>ks-ap/css/sb.calendar.css</value>
 				<value>ks-ap/css/sb.base.css</value>
+				<value>ks-ap/css/sb.cart.css</value>
 			</list>
 		</property>
 		<property name="additionalScriptFiles">
@@ -130,7 +131,7 @@
 			<list>
 				<ref bean="sb_possible_options" />
 				<bean parent="Uif-Message" p:id="sb_possible_noschedules" p:style="display : none"
-						p:additionalCssClasses="ksap-sb-noschedules" p:messageText="No schedules found. Adjust your class selections to find more options." />
+						p:additionalCssClasses="ksap-sb-noschedules" p:messageText="No schedules found. Adjust your class selections or time reservations to find more options." />
 				<bean parent="Uif-ActionLink" p:id="sb_possible_morelink" p:style="display : none"
 						p:additionalCssClasses="ksap-sb-morelink" p:actionLabel="More..." p:actionScript="moreSchedules();" />
 			</list>
