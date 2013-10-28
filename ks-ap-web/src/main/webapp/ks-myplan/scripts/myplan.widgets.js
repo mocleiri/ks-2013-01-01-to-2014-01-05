@@ -3,7 +3,20 @@ function ksapAddPostOptionsToForm(tempForm) {
 	return tempForm;
 }
 
+/**
+ * Override at the institution level to specify additional parameters to append
+ * to the query string for in-KSAP navigation links.
+ */
 function ksapAddGetParameters() {
+	return '';
+}
+
+/**
+ * Override at the institution level to specify additional parameters to append
+ * to the query string for linking to other non-KSAP applicaitons in the same
+ * enterprise environment.
+ */
+function ksapAddGetParametersExternal() {
 	return '';
 }
 
