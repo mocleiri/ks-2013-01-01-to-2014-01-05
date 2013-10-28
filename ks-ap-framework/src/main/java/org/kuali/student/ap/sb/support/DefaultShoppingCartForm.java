@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
 import org.kuali.student.ap.framework.context.CourseHelper;
@@ -164,6 +165,11 @@ public class DefaultShoppingCartForm extends AbstractPlanItemForm implements Sho
 			keepInCart.add(coi);
 		}
 
+	}
+
+	@Override
+	public String getShoppingCartUrl() {
+		return ConfigContext.getCurrentContextConfig().getProperty("ks.ap.sb.cart.url");
 	}
 
 	@Override

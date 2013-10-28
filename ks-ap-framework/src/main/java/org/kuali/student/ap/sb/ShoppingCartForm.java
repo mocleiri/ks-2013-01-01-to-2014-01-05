@@ -21,6 +21,13 @@ public interface ShoppingCartForm extends PlanItemForm {
 			+ ".scheduleOptions";
 
 	/**
+	 * Get the URL for the main shopping cart application.
+	 * 
+	 * @return The URL for the main shopping cart application.
+	 */
+	String getShoppingCartUrl();
+	
+	/**
 	 * Get the requested activity offering ID, if applicable.
 	 * 
 	 * @return The requested activity offering ID.
