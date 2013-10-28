@@ -365,7 +365,7 @@ class ActivityOfferingMaintenance < BasePage
   #break colo dialog
   element(:break_colocation_dialog_div)  { |b| b.frm.div(class: /fancybox-opened/) }
   value(:break_colocation_dialog_text) { |b| b.break_colocation_dialog_div.div(index: 2).text } #TODO
-  action(:break_colocation) { |b| b.break_colocation_dialog_div.button(id: "edit_ao_breakcolo").click}
+  action(:break_colocation) { |b| b.break_colocation_dialog_div.button(id: "edit_ao_breakcolo").click; b.loading.wait_while_present}
   action(:cancel_break_colocation) { |b| b.break_colocation_dialog_div.link(id: "button_close").click}
   #validation break colo dialog
 end
