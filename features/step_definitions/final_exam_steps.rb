@@ -637,6 +637,16 @@ Then /^no warning in the Final Exam section is displayed$/ do
   on(EditAcademicTerms).exam_warning_message( @term.term_type).present?.should be_false
 end
 
+Then /^an error in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
+  on EditAcademicTerms do |page|
+    page.get_exam_error_message( @term.term_type).should match /#{exp_msg}/
+  end
+end
+
+Then /^no error in the Final Exam section is displayed$/ do
+  on(EditAcademicTerms).exam_error_message( @term.term_type).present?.should be_false
+end
+
 Then /^the final exam for the Fall Term is listed when I view the Academic Calendar$/ do
   @calendar.search
 
