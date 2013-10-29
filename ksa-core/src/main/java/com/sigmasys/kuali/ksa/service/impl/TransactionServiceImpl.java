@@ -2303,16 +2303,19 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         if (reversalStatus != null) {
             reverseTransaction.setStatus(reversalStatus);
         } else {
-            reverseTransaction.setStatus(
-                    transactionStatus == TransactionStatus.ACTIVE ?
-                            TransactionStatus.REVERSING :
-                            TransactionStatus.RECIPROCAL_OFFSET);
+            if (transactionStatus == TransactionStatus.ACTIVE) {
+                reverseTransaction.setStatus(TransactionStatus.REVERSING);
+            } else {
+                reverseTransaction.setStatus(TransactionStatus.RECIPROCAL_OFFSET);
+                reverseTransaction.setInternal(true);
+            }
         }
 
         if (transactionStatus == TransactionStatus.ACTIVE) {
             transaction.setOffset(true);
         } else {
             transaction.setStatus(TransactionStatus.RECIPROCAL_OFFSET);
+            transaction.setInternal(true);
         }
 
         // Creating a locked allocation between the original and reversed transactions
