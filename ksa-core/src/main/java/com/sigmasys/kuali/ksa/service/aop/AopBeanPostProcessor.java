@@ -29,15 +29,16 @@ public class AopBeanPostProcessor implements BeanPostProcessor, BeanFactoryAware
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (bean instanceof AopProxy && !bean.getClass().isAnnotationPresent(WebService.class)) {
+        if (bean instanceof AopProxy) {
             List<Advice> advices = ((AopProxy) bean).getAdvices(beanFactory);
-            if (advices != null) {
+            if (advices != null && !advices.isEmpty()) {
                 Advised advised;
                 if (bean instanceof Advised) {
                     advised = (Advised) bean;
                 } else {
                     ProxyFactory proxyFactory = new ProxyFactory(bean);
                     proxyFactory.setProxyTargetClass(true);
+                    proxyFactory.setTargetClass(bean.getClass());
                     advised = proxyFactory;
                 }
                 for (Advice advice : advices) {

@@ -3656,7 +3656,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         Account account = payment.getAccount();
 
-         // Calling BrmService with account blocking rules
+        // Calling BrmService with account blocking rules
         BrmContext brmContext = new BrmContext();
         brmContext.setAccount(account);
 
@@ -3676,7 +3676,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         List<String> accountTypeNames = new LinkedList<String>();
         AccountType accountType = account.getAccountType();
-        if ( accountType != null ) {
+        if (accountType != null) {
             accountTypeNames.add(accountType.getName());
         }
 
@@ -3684,10 +3684,10 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         List<Flag> flags = informationService.getFlags(account.getId());
         Set<String> flagTypeCodes = new HashSet<String>();
-        for ( Flag flag : flags) {
+        for (Flag flag : flags) {
             FlagType flagType = flag.getType();
-            if ( flagType != null ) {
-              flagTypeCodes.add(flagType.getCode());
+            if (flagType != null) {
+                flagTypeCodes.add(flagType.getCode());
             }
         }
 
@@ -4039,7 +4039,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     public List<Payment> getPotentialRefunds(String accountId, Date startDate, Date endDate) {
 
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
+        //PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
 
         StringBuilder queryBuilder = new StringBuilder("select t from Payment t ");
 

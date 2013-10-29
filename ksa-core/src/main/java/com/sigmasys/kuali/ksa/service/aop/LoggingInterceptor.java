@@ -1,7 +1,6 @@
 package com.sigmasys.kuali.ksa.service.aop;
 
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
-import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,7 +18,7 @@ import java.lang.reflect.Method;
  */
 @Service
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class LoggingInterceptor implements MethodInterceptor {
+public class LoggingInterceptor extends AbstractMethodInterceptor {
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -28,29 +27,16 @@ public class LoggingInterceptor implements MethodInterceptor {
     @Autowired
     private UserSessionManager userSessionManager;
 
-    private Object targetObject;
-
-    public LoggingInterceptor() {
-    }
-
-    public LoggingInterceptor(Object targetObject) {
-        this.targetObject = targetObject;
-    }
-
-    public void setTargetObject(Object target) {
-        this.targetObject = target;
-    }
-
-
+    @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Method targetMethod = invocation.getMethod();
-        for (Method method : targetObject.getClass().getMethods()) {
+        for (Method method : getTargetObject().getClass().getMethods()) {
             if (methodsMatch(targetMethod, method)) {
                 log(invocation);
                 break;
             }
         }
-        return invocation.proceed();
+        return super.invoke(invocation);
     }
 
     private boolean methodsMatch(Method method1, Method method2) {

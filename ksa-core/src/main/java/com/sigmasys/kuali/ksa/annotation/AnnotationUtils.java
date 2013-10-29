@@ -31,6 +31,18 @@ public class AnnotationUtils {
      * Searches for class-level annotation on the given instance
      *
      * @param annotationClass annotation to look for
+     * @param method          method to look at
+     * @return annotation instance or null if not found
+     */
+    public static <A extends Annotation> A getAnnotation(Class<A> annotationClass, Method method) {
+        return org.springframework.core.annotation.AnnotationUtils.getAnnotation(method, annotationClass);
+    }
+
+    /**
+     * Wrapper method for Spring to avoid having to import Spring's implementation
+     * Searches for class-level annotation on the given instance
+     *
+     * @param annotationClass annotation to look for
      * @param object          instance to look in
      * @return annotation instance or null if not found
      */
@@ -50,8 +62,10 @@ public class AnnotationUtils {
     public static <A extends Annotation> A getAnnotation(Class<A> annotationClass, Object object, String propertyName) {
 
         A annotation = null;
+
         // Check to see if either class or method has annotation
         Method method = findGetterMethod(object.getClass(), propertyName);
+
         if (method != null) {
             annotation = org.springframework.core.annotation.AnnotationUtils.findAnnotation(method, annotationClass);
         }
@@ -64,12 +78,6 @@ public class AnnotationUtils {
                 // This just means that there is no field annotation
             }
         }
-
-        /*if (annotation == null) {
-            // Neither accessor method nor field have the annotation, so check
-            // the class hierarchy
-            annotation = org.springframework.core.annotation.AnnotationUtils.findAnnotation(object.getClass(), annotationClass);
-        }*/
 
         return annotation;
     }

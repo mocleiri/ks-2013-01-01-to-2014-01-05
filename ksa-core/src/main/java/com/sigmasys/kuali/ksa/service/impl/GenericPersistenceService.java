@@ -1,7 +1,13 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowedAnnotationResolver;
+import com.sigmasys.kuali.ksa.model.security.Permission;
+import com.sigmasys.kuali.ksa.service.aop.AbstractMethodInterceptor;
+import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import org.aopalliance.aop.Advice;
+import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -105,7 +111,7 @@ public class GenericPersistenceService implements PersistenceService, BeanFactor
      */
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Advice> getAdvices(BeanFactory beanFactory) {
+    public List<Advice> getAdvices(final BeanFactory beanFactory) {
         LinkedList<Advice> advices = new LinkedList<Advice>();
         if (configService != null && Boolean.valueOf(configService.getParameter(Constants.LOGGING_OPERATION))) {
             // Setting up the logging interceptor
@@ -113,6 +119,22 @@ public class GenericPersistenceService implements PersistenceService, BeanFactor
             loggingInterceptor.setTargetObject(this);
             advices.add(loggingInterceptor);
         }
+        // Adding @PermissionsAllowed annotation processor
+        advices.add(new AbstractMethodInterceptor() {
+            @Override
+            public Object invoke(MethodInvocation invocation) throws Throwable {
+                setTargetObject(GenericPersistenceService.this);
+                PermissionsAllowedAnnotationResolver resolver = beanFactory.getBean(PermissionsAllowedAnnotationResolver.class);
+                PermissionsAllowed permissionsAllowed = resolver.resolve(getTargetObject(), invocation.getMethod());
+                if (permissionsAllowed != null) {
+                    Permission[] permissions = permissionsAllowed.value();
+                    if (permissions != null && permissions.length > 0) {
+                        PermissionUtils.checkPermissions(permissions);
+                    }
+                }
+                return super.invoke(invocation);
+            }
+        });
         return advices;
     }
 

@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 
 /**
  * ProxyEntitiesAnnotationResolver.
- * It resolves ProxyEntity annotations of the given object and method.
+ * Resolves @ProxyEntity annotations of the given object and method.
  * <p/>
  *
  * @author Michael Ivanov
@@ -42,9 +42,11 @@ public class ProxyEntityAnnotationResolver {
             if (proxyAnnotation != null) {
                 proxyEntities = proxyAnnotation.value();
             }
+
         } catch (NoSuchMethodException e) {
             logger.error("Internal error, unable to find method on implementation class: " + method, e);
         }
+
         return proxyEntities;
     }
 

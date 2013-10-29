@@ -19,6 +19,7 @@ import com.sigmasys.kuali.ksa.jaxb.ElectronicContact;
 import com.sigmasys.kuali.ksa.jaxb.Irs1098T;
 import com.sigmasys.kuali.ksa.jaxb.PersonName;
 import com.sigmasys.kuali.ksa.jaxb.PostalAddress;
+import com.sigmasys.kuali.ksa.service.aop.AbstractMethodInterceptor;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -100,9 +101,10 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         if (advices == null) {
             advices = new LinkedList<Advice>();
         }
-        MethodInterceptor methodInterceptor = new MethodInterceptor() {
+        MethodInterceptor methodInterceptor = new AbstractMethodInterceptor() {
             @Override
             public Object invoke(MethodInvocation invocation) throws Throwable {
+                setTargetObject(ReportServiceImpl.this);
                 Method method = invocation.getMethod();
                 if (method.getReturnType() != null && method.getReturnType().equals(String.class)) {
                     String reportXml = (String) invocation.proceed();
@@ -114,7 +116,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                     }
                     return reportXml;
                 }
-                return invocation.proceed();
+                return super.invoke(invocation);
             }
         };
         advices.add(methodInterceptor);

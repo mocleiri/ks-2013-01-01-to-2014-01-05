@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.service.BrmPaymentService;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
+import com.sigmasys.kuali.ksa.service.aop.AbstractMethodInterceptor;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.aopalliance.aop.Advice;
@@ -61,9 +62,10 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
         if (advices == null) {
             advices = new LinkedList<Advice>();
         }
-        MethodInterceptor methodInterceptor = new MethodInterceptor() {
+        MethodInterceptor methodInterceptor = new AbstractMethodInterceptor() {
             @Override
             public Object invoke(MethodInvocation invocation) throws Throwable {
+                setTargetObject(BrmPaymentServiceImpl.this);
                 Method method = invocation.getMethod();
                 int brmContextIndex = Arrays.asList(method.getParameterTypes()).indexOf(BrmContext.class);
                 if (brmContextIndex >= 0) {
@@ -89,7 +91,7 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
                         }
                     }
                 }
-                return invocation.proceed();
+                return super.invoke(invocation);
             }
         };
         advices.add(methodInterceptor);
