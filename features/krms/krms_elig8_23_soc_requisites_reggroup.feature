@@ -30,5 +30,5 @@ Feature: SA.ELIG8-23 Ensure that changes made to AO or CO Requisites displays di
     Given I add a new text statement to the Antirequisite section
     And I am using the schedule of classes page
     When I search for course offerings by course in the CHEM subject group to view the registration group
-    Then the course offering requisites should be displayed stating "Antirequisite.*Added Antirequisite on CO level"
+    Then the added course offering requisite should be displayed with the course data
     And Activity J in the Registration Group has Activity Offering Requisites displayed not stating "Antirequisite.*Added Antirequisite on CO level"

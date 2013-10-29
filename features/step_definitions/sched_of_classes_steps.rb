@@ -179,6 +179,12 @@ Then /^the newly added course offering requisite should be displayed with the co
   end
 end
 
+Then /^the added course offering requisite should be displayed with the course data$/ do
+  on DisplayScheduleOfClasses do |page|
+    page.get_requisites_message_text.should match /Antirequisite.*Added Antirequisite on CO level/m
+  end
+end
+
 Then /^any un-suppressed course offering requisites should be visible with the course data$/ do
   on DisplayScheduleOfClasses do |page|
     puts page.get_requisites_message_text #.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
