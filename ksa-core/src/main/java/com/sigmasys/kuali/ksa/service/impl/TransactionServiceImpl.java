@@ -16,6 +16,9 @@ import com.sigmasys.kuali.ksa.exception.*;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
+import com.sigmasys.kuali.ksa.service.brm.BrmContext;
+import com.sigmasys.kuali.ksa.service.brm.BrmService;
+import com.sigmasys.kuali.ksa.service.hold.HoldService;
 import com.sigmasys.kuali.ksa.service.security.AccessControlService;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.*;
@@ -64,6 +67,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
     @Autowired
     private GeneralLedgerService glService;
+
+    @Autowired
+    private HoldService holdService;
+
+    @Autowired
+    private BrmService brmService;
 
 
     private AccessControlService getAccessControlService() {
@@ -3643,7 +3652,54 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         // Creating a payment reversal with the original payment type and the whole payment amount
         reverseTransaction(payment, paymentTypeId, memoText, payment.getAmount(), null, TransactionStatus.BOUNCING);
 
-        // TODO: Use business rules to decide if a charge is to be made for the bounced transaction
+        // Preparing BRM context and executing Payment Bouncing rules
+
+        Account account = payment.getAccount();
+
+         // Calling BrmService with account blocking rules
+        BrmContext brmContext = new BrmContext();
+        brmContext.setAccount(account);
+
+        Map<String, Object> globalParams = new HashMap<String, Object>();
+
+        Set<String> permissions = getAccessControlService().getUserPermissions(account.getId());
+
+        globalParams.put(Constants.BRM_PERMISSION_NAMES, new ArrayList<String>(permissions));
+
+        List<String> holdIssueNames = holdService.getHoldIssueNamesByUserId(account.getId());
+
+        globalParams.put(Constants.BRM_HOLD_ISSUE_NAMES, holdIssueNames);
+
+        List<String> paymentTypeIds = Arrays.asList(payment.getTransactionType().getId().getId());
+
+        globalParams.put(Constants.BRM_TRANSACTION_TYPE_IDS, paymentTypeIds);
+
+        List<String> accountTypeNames = new LinkedList<String>();
+        AccountType accountType = account.getAccountType();
+        if ( accountType != null ) {
+            accountTypeNames.add(accountType.getName());
+        }
+
+        globalParams.put(Constants.BRM_ACCOUNT_TYPE_NAMES, accountTypeNames);
+
+        List<Flag> flags = informationService.getFlags(account.getId());
+        Set<String> flagTypeCodes = new HashSet<String>();
+        for ( Flag flag : flags) {
+            FlagType flagType = flag.getType();
+            if ( flagType != null ) {
+              flagTypeCodes.add(flagType.getCode());
+            }
+        }
+
+        globalParams.put(Constants.BRM_FLAG_TYPE_CODES, new ArrayList<String>(flagTypeCodes));
+
+        globalParams.put(Constants.BRM_TRANSACTION_AMOUNT, payment.getAmount());
+
+        // Adding global variables to BRM context
+        brmContext.setGlobalVariables(globalParams);
+
+        // Firing Account Blocking rules
+        brmService.fireRules(Constants.BRM_PB_RULE_SET_NAME, brmContext);
 
         return payment;
     }

@@ -44,17 +44,21 @@ public interface Constants {
     String BRM_FM_RULE_SET_NAME = "Fee Management";
     String BRM_PA_RULE_SET_NAME = "Payment Application";
     String BRM_AB_RULE_SET_NAME = "Account Blocking";
+    String BRM_PB_RULE_SET_NAME = "Payment Bouncing";
 
     // DB transaction parameters
     String TRANSACTION_BATCH_ENABLED = "ksa.transaction.batch.enabled";
     String TRANSACTION_BATCH_SIZE = "ksa.transaction.batch.size";
 
-    // BRM account blocking parameter names
-    String BRM_AB_BLOCK_NAMES = "blockNames";
-    String BRM_AB_PERMISSION_NAMES = "permissionNames";
-    String BRM_AB_HOLD_ISSUE_NAMES = "holdIssueNames";
-    String BRM_AB_ATP_IDS = "atpIds";
-    String BRM_AB_TRANSACTION_TYPE_IDS = "transactionTypeIds";
+    // BRM parameter names
+    String BRM_BLOCK_NAMES = "blockNames";
+    String BRM_PERMISSION_NAMES = "permissionNames";
+    String BRM_HOLD_ISSUE_NAMES = "holdIssueNames";
+    String BRM_ATP_IDS = "atpIds";
+    String BRM_TRANSACTION_TYPE_IDS = "transactionTypeIds";
+    String BRM_ACCOUNT_TYPE_NAMES = "accountTypeNames";
+    String BRM_FLAG_TYPE_CODES = "flagTypeCodes";
+    String BRM_TRANSACTION_AMOUNT = "transactionAmount";
 
     // Quick View parameters
     String QUICKVIEW_INFORMATION_COUNT = "ksa.quickview.information.count";

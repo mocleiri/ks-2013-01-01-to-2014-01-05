@@ -138,6 +138,27 @@ public class HoldServiceDecorator extends HoldServiceImpl implements HoldService
     }
 
     /**
+     * Retrieves HoldIssue names by User ID and ContextInfo.
+     *
+     * @param userId User ID
+     * @return list of HoldIssue names
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getHoldIssueNamesByUserId(String userId) {
+
+        List<HoldIssueInfo> holdIssues = getHoldIssuesByUserId(userId);
+
+        List<String> holdIssueNames = new ArrayList<String>(holdIssues.size());
+
+        for (HoldIssueInfo holdIssue : holdIssues) {
+            holdIssueNames.add(holdIssue.getName());
+        }
+
+        return holdIssueNames;
+    }
+
+    /**
      * Creates and persists a new AppliedHoldInfo entity based on the given parameters.
      *
      * @param userId          User ID

@@ -183,13 +183,10 @@ import org.apache.commons.lang.*;
 
 expander ksa.dsl
 
-global Set blockNames;
-
 global List permissionNames;
 global List transactionTypeIds;
-global List atpIds;
 global List holdIssueNames;
-global List flagCodes;
+global List flagTypeCodes;
 global List accountTypeNames;
 global BigDecimal transactionAmount;
 
@@ -197,8 +194,10 @@ global BigDecimal transactionAmount;
 ')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (11, 'Bounce 1', 3, 0, null,
-'(Transaction type is "cash, finaid" and Transaction amount > 2000)',
-'Use flag type "OverLimit", access level "DEF_FLAG_LEVEL_CD", severity 10 to create flag expiring in 90 days')!
+'(Transaction type is "cash, finaid" and Transaction amount > $2000)',
+'Use flag type "OverLimit", access level "DEF_FLAG_LEVEL_CD", severity 10 to create flag expiring in 90 days
+ Use code "1020" to charge $850.45
+ ')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (12, 'Bounce 2', 3, 0, null,
 '(Hold issue is "Unpaid Library Fine")',
@@ -208,7 +207,7 @@ Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) va
 ')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (13, 'Bounce 3', 3, 0, null,
-'(Account type is "Undergraduate Student" and Transaction amount < 100)',
+'(Account type is "Undergraduate Student" and Transaction amount < $100)',
 'Use flag type "BadCheck", access level "DEF_FLAG_LEVEL_CD", severity 1 to create flag expiring in 5 days
  Use hold issue type "kuali.hold.issue.type.financial", hold issue name "Unpaid Tuition Prior Term" to create hold "Unpaid Tuition" with description "" expiring in 17 days
 ')!

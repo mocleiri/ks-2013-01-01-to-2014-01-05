@@ -264,41 +264,41 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
             return;
         }
 
-        // Calling BrmService with payment application rules
+        // Calling BrmService with account blocking rules
         BrmContext brmContext = new BrmContext();
         brmContext.setAccount(account);
 
         Map<String, Object> globalParams = new HashMap<String, Object>();
 
-        globalParams.put(Constants.BRM_AB_BLOCK_NAMES, new HashSet<String>());
+        globalParams.put(Constants.BRM_BLOCK_NAMES, new HashSet<String>());
 
         List<String> permissionNames = new ArrayList<String>(permissions.length);
         for ( Permission permission : permissions) {
             permissionNames.add(permission.name());
         }
 
-        globalParams.put(Constants.BRM_AB_PERMISSION_NAMES, permissionNames);
+        globalParams.put(Constants.BRM_PERMISSION_NAMES, permissionNames);
 
-        List<String> atpIds = (List<String>) attributes.get(Constants.BRM_AB_ATP_IDS);
+        List<String> atpIds = (List<String>) attributes.get(Constants.BRM_ATP_IDS);
         if (atpIds == null) {
             atpIds = Collections.emptyList();
         }
 
-        globalParams.put(Constants.BRM_AB_ATP_IDS, atpIds);
+        globalParams.put(Constants.BRM_ATP_IDS, atpIds);
 
-        List<String> holdIssueNames = (List<String>) attributes.get(Constants.BRM_AB_HOLD_ISSUE_NAMES);
+        List<String> holdIssueNames = (List<String>) attributes.get(Constants.BRM_HOLD_ISSUE_NAMES);
         if (holdIssueNames == null) {
             holdIssueNames = Collections.emptyList();
         }
 
-        globalParams.put(Constants.BRM_AB_HOLD_ISSUE_NAMES, holdIssueNames);
+        globalParams.put(Constants.BRM_HOLD_ISSUE_NAMES, holdIssueNames);
 
-        List<String> transactionTypeIds = (List<String>) attributes.get(Constants.BRM_AB_TRANSACTION_TYPE_IDS);
+        List<String> transactionTypeIds = (List<String>) attributes.get(Constants.BRM_TRANSACTION_TYPE_IDS);
         if (transactionTypeIds == null) {
             transactionTypeIds = Collections.emptyList();
         }
 
-        globalParams.put(Constants.BRM_AB_TRANSACTION_TYPE_IDS, transactionTypeIds);
+        globalParams.put(Constants.BRM_TRANSACTION_TYPE_IDS, transactionTypeIds);
 
 
         // Adding global variables to BRM context
@@ -311,7 +311,7 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
         brmService.fireRules(Constants.BRM_AB_RULE_SET_NAME, brmContext);
 
         // Getting the affected block names from the global parameters
-        Set<String> blockNames = (Set<String>) globalParams.get(Constants.BRM_AB_BLOCK_NAMES);
+        Set<String> blockNames = (Set<String>) globalParams.get(Constants.BRM_BLOCK_NAMES);
 
         if (CollectionUtils.isNotEmpty(blockNames)) {
 

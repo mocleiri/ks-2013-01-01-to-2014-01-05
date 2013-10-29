@@ -7,26 +7,26 @@
 
 # LHS definitions
 
+[when][]\({constraints}\) = context : BrmContext({constraints})
 [when][]Account ID is "{userId}" = account.id == "{userId}"
 [when][]ATP is "{atpIds}" = CommonUtils.containsAny(atpIds, "{atpIds}", ",")
 [when][]Transaction type is "{transactionTypeIds}" = CommonUtils.containsAny(transactionTypeIds, "{transactionTypeIds}", ",")
 [when][]Hold issue is "{holdIssueNames}" = CommonUtils.containsAny(holdIssueNames, "{holdIssueNames}", ",")
 [when][]Permission is "{permissionNames}" = CommonUtils.containsAny(permissionNames, "{permissionNames}", ",")
 [when][]Account type is "{accountTypeNames}" = CommonUtils.containsAny(accountTypeNames, "{accountTypeNames}", ",")
-[when][]Transaction amount is "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) == 0
-[when][]Transaction amount > "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) > 0
-[when][]Transaction amount < "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) < 0
-[when][]Transaction amount < "{transactionAmount}" = transactionAmount.compareTo({transactionAmount}) < 0
-[when][]Flag is "{flagCodes}" = CommonUtils.containsAny(flagCodes, "{flagCodes}")
+[when][]Transaction amount is ${amount} = new BigDecimal({amount}).toString().equals(transactionAmount.toString())
+[when][]Transaction amount > ${amount} = transactionAmount.doubleValue() > {amount}
+[when][]Transaction amount < ${amount} = transactionAmount.doubleValue() < {amount}
+[when][]Flag type is "{flagTypeCodes}" = CommonUtils.containsAny(flagTypeCodes, "{flagTypeCodes}")
 
 # RHS definitions
-[then][]Use code "{transactionTypeId}" to charge ${amount} = context.getTransactionService().createTransaction("{transactionTypeId}",context.getAccount().getId(), new Date(), new BigDecimal({amount}));
+[then][]Use code "{debitTypeId}" to charge ${debitAmount} = context.getTransactionService().createCharge("{debitTypeId}",context.getAccount().getId(), new Date(), new BigDecimal({debitAmount}));
+[then][]Use code "{creditTypeId}" to credit ${creditAmount} = context.getTransactionService().createPayment("{creditTypeId}",context.getAccount().getId(), new Date(), new BigDecimal({creditAmount}));
 
 
 # FEE MANAGEMENT DSL definitions
 
 # LHS definitions
-[when][]\({constraints}\) = context : BrmContext({constraints})
 [when][]Student account ID is "{userId}" = account.id == "{userId}"
 [when][]Student is resident = feeManagementService.isResident(feeBase)
 [when][]Student is not resident = !feeManagementService.isResident(feeBase)

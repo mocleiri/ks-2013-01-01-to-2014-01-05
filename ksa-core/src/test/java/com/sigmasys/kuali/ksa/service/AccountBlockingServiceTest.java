@@ -50,7 +50,7 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
 
         List<String> transactionTypeIds = Arrays.asList(transactionTypeId1, transactionTypeId2, transactionTypeId3);
 
-        attributes.put(Constants.BRM_AB_TRANSACTION_TYPE_IDS, transactionTypeIds);
+        attributes.put(Constants.BRM_TRANSACTION_TYPE_IDS, transactionTypeIds);
 
         try {
 
@@ -90,9 +90,9 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
         Map<String, Object> attributes = new HashMap<String, Object>();
 
 
-        attributes.put(Constants.BRM_AB_TRANSACTION_TYPE_IDS, Arrays.asList(transactionTypeId1, transactionTypeId2));
-        attributes.put(Constants.BRM_AB_ATP_IDS, Arrays.asList(atpId1, atpId2));
-        attributes.put(Constants.BRM_AB_HOLD_ISSUE_NAMES, Arrays.asList(holdIssueName1, holdIssueName2));
+        attributes.put(Constants.BRM_TRANSACTION_TYPE_IDS, Arrays.asList(transactionTypeId1, transactionTypeId2));
+        attributes.put(Constants.BRM_ATP_IDS, Arrays.asList(atpId1, atpId2));
+        attributes.put(Constants.BRM_HOLD_ISSUE_NAMES, Arrays.asList(holdIssueName1, holdIssueName2));
 
         try {
 
@@ -141,7 +141,7 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
 
         Map<String, Object> attributes = new HashMap<String, Object>();
 
-        attributes.put(Constants.BRM_AB_TRANSACTION_TYPE_IDS, Arrays.asList(transactionTypeId1));
+        attributes.put(Constants.BRM_TRANSACTION_TYPE_IDS, Arrays.asList(transactionTypeId1));
 
         // No AccountBlockingException should be thrown because "isBlockingEnabled" is false
         accountBlockingService.checkBlock(userId, attributes, Permission.CREATE_PAYMENT, Permission.CREATE_CHARGE);

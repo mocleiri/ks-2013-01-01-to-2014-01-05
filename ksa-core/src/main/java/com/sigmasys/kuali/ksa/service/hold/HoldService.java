@@ -30,6 +30,14 @@ public interface HoldService extends org.kuali.student.r2.core.hold.service.Hold
     List<HoldIssueInfo> getHoldIssuesByUserId(String userId);
 
     /**
+     * Retrieves HoldIssue names by User ID and ContextInfo.
+     *
+     * @param userId User ID
+     * @return list of HoldIssue names
+     */
+    List<String> getHoldIssueNamesByUserId(String userId);
+
+    /**
      * Creates and persists a new AppliedHoldInfo entity based on the given parameters.
      *
      * @param userId          User ID
