@@ -160,7 +160,7 @@
 									<bean parent="Uif-CheckboxControl"/>
 								</property>
 							</bean>
-                            <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="effectiveDate" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:label="Effective" p:propertyName="effectiveDate" p:readOnly="true"/>
 							<bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 50%;">
 								<property name="items">
 									<list>
@@ -171,7 +171,7 @@
 								</property>
 							</bean>
                             <bean parent="Uif-InputField" p:label="Override Description" p:propertyName="overrideDescription" p:readOnly="false"/>
-                            <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payments" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payment" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
                             <bean parent="Uif-InputField" p:propertyName="allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
                             <bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
                             <bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Amount to Refund" p:readOnly="false"/>
@@ -187,11 +187,129 @@
 				</bean>
 				
 				<!-- The Request Refund button -->
-				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Request Refund" p:actionScript="alert('Display potential refund information');"/>
+				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Request Refund" p:ajaxSubmit="true" p:methodToCall="requestRefund" 
+						p:onClickScript="writeHiddenToForm('userId', '@{account.id}');"
+						p:successCallback="showLightboxComponent('potentialRefundRequestRefundLightbox');"
+						p:errorCallback="alert('There was an error requesting refunds for the selected Potential Refunds. See log for details.');"/>
+				<ref bean="potentialRefundRequestRefundLightbox"/>
 			</list>
 		</property>
 	</bean>
 	
+	<!--
+	
+	******************************* Request Refund lightbox *********************************
+	
+	-->
+	<bean id="potentialRefundRequestRefundLightbox" parent="Uif-VerticalBoxSection" p:headerText="Potential Refunds" p:hidden="true">
+		<property name="items">
+			<list>
+				<!-- The table of Refunds Eligible for Refund Request -->
+				<bean parent="Uif-Disclosure-VerticalBoxSection" p:headerText="Eligible for Refund Request">
+					<property name="items">
+						<list>
+							<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="6" p:displayCollectionSize="10">
+								<property name="title" value="Eligible for Refund Request"/>
+								<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel"/>
+								<property name="propertyName" value="requestRefundSummary.eligiblePotentialRefunds" />
+								<property name="layoutManager.generateAutoSequence" value="false" />
+								<property name="layoutManager.richTable.render" value="true"/>
+								<property name="layoutManager.renderSequenceField" value="false"/>
+								<property name="renderAddBlankLineButton" value="false"/>
+								<property name="renderAddLine" value="false"/>
+								<property name="renderLineActions" value="false"/>
+								<property name="layoutManager.applyDefaultCellWidths" value="false"/>
+								<property name="layoutManager.richTable.disableTableSort" value="true"/>
+								<property name="items">
+									<list>
+										<bean parent="Uif-InputField" p:label="Effective" p:propertyName="effectiveDate" p:readOnly="true"/>
+										<bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 50%;">
+											<property name="items">
+												<list>
+													<bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" 
+															p:linkText="@{#line.description}" p:style="width: 100%;"/>
+													<ref bean="transactionDetailLightboxRunningTotal"/>
+												</list>
+											</property>
+										</bean>
+										<bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payment" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+										<bean parent="Uif-InputField" p:propertyName="allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+										<bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+										<bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Amount to Refund" p:readOnly="true"/>
+									</list>
+								</property>
+							</bean>
+							
+							<!-- Totals -->
+							<bean parent="Uif-VerticalBoxSection" p:readOnly="true" p:render="@{requestRefundSummary.eligiblePotentialRefunds != null and requestRefundSummary.eligiblePotentialRefunds.size() > 0}">
+								<property name="items">
+									<list>
+										<bean parent="Uif-InputField" p:label="Total Payment: " p:propertyName="requestRefundSummary.totalEligiblePayment" p:style="padding-left: 150px; padding-top: 30px;"/>
+										<bean parent="Uif-InputField" p:label="Total Allocated: " p:propertyName="requestRefundSummary.totalEligibleAllocated" p:style="padding-left: 150px;"/>
+										<bean parent="Uif-InputField" p:label="Total Unallocated: " p:propertyName="requestRefundSummary.totalEligibleUnallocated" p:style="padding-left: 150px;"/>
+										<bean parent="Uif-InputField" p:label="Total Refund: " p:propertyName="requestRefundSummary.totalEligibleRefundAmount" p:style="padding-left: 150px;"/>
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+				
+				<!-- The table of Refunds Eligible for Refund Request -->
+				<bean parent="Uif-Disclosure-VerticalBoxSection" p:headerText="Not Eligible for Refund Request">
+					<property name="items">
+						<list>
+							<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="6" p:displayCollectionSize="10">
+								<property name="title" value="Not Eligible for Refund Request"/>
+								<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel"/>
+								<property name="propertyName" value="requestRefundSummary.notEligiblePotentialRefunds" />
+								<property name="layoutManager.generateAutoSequence" value="false" />
+								<property name="layoutManager.richTable.render" value="true"/>
+								<property name="layoutManager.renderSequenceField" value="false"/>
+								<property name="renderAddBlankLineButton" value="false"/>
+								<property name="renderAddLine" value="false"/>
+								<property name="renderLineActions" value="false"/>
+								<property name="layoutManager.applyDefaultCellWidths" value="false"/>
+								<property name="layoutManager.richTable.disableTableSort" value="true"/>
+								<property name="items">
+									<list>
+										<bean parent="Uif-InputField" p:label="Effective" p:propertyName="effectiveDate" p:readOnly="true"/>
+										<bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 50%;">
+											<property name="items">
+												<list>
+													<bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" 
+															p:linkText="@{#line.description}" p:style="width: 100%;"/>
+													<ref bean="transactionDetailLightboxRunningTotal"/>
+												</list>
+											</property>
+										</bean>
+										<bean parent="Uif-InputField" p:propertyName="paymentAmount" p:label="Payment" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+										<bean parent="Uif-InputField" p:propertyName="allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+										<bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
+										<bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Amount to Refund" p:readOnly="true"/>
+									</list>
+								</property>
+							</bean>
+							
+							<!-- Totals -->
+							<bean parent="Uif-VerticalBoxSection" p:readOnly="true" p:render="@{requestRefundSummary.notEligiblePotentialRefunds != null and requestRefundSummary.notEligiblePotentialRefunds.size() > 0}">
+								<property name="items">
+									<list>
+										<bean parent="Uif-InputField" p:label="Total Payment: " p:propertyName="requestRefundSummary.totalNotEligiblePayment" p:style="padding-left: 150px; padding-top: 30px;"/>
+										<bean parent="Uif-InputField" p:label="Total Allocated: " p:propertyName="requestRefundSummary.totalNotEligibleAllocated" p:style="padding-left: 150px;"/>
+										<bean parent="Uif-InputField" p:label="Total Unallocated: " p:propertyName="requestRefundSummary.totalNotEligibleUnallocated" p:style="padding-left: 150px;"/>
+										<bean parent="Uif-InputField" p:label="Total Refund: " p:propertyName="requestRefundSummary.totalNotEligibleRefundAmount" p:style="padding-left: 150px;"/>
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+
 	
 	<!--
 	

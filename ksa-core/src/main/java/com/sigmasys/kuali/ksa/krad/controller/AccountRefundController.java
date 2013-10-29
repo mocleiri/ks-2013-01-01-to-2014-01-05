@@ -3,12 +3,10 @@ package com.sigmasys.kuali.ksa.krad.controller;
 import com.sigmasys.kuali.ksa.krad.form.AccountRefundForm;
 import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
+import com.sigmasys.kuali.ksa.krad.model.RequestPotentialRefundSummaryModel;
 import com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.service.AccountService;
-import com.sigmasys.kuali.ksa.service.AuditableEntityService;
-import com.sigmasys.kuali.ksa.service.InformationService;
-import com.sigmasys.kuali.ksa.service.RefundService;
+import com.sigmasys.kuali.ksa.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +36,6 @@ import java.util.List;
 public class AccountRefundController extends DownloadController {
 
     @Autowired
-    private AuditableEntityService auditableEntityService;
-
-    @Autowired
     private AccountService accountService;
 
     @Autowired
@@ -48,6 +43,9 @@ public class AccountRefundController extends DownloadController {
 
     @Autowired
     private InformationService informationService;
+
+    @Autowired
+    private PaymentService paymentService;
 
 
     /**
@@ -120,6 +118,30 @@ public class AccountRefundController extends DownloadController {
     }
 
     /**
+     * This method is called when the "Request Refund" button on the "Potential Refunds" tab is pressed.
+     *
+     *
+     * @param form The form object associated with the Account Refund page.
+     * @param userId Current Account ID.
+     * @return ModelAndView.
+     * @throws Exception If an error occurs.
+     */
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=requestRefund")
+    public ModelAndView requestRefund(@ModelAttribute("KualiForm") AccountRefundForm form,
+                                      @RequestParam("userId") String userId) throws Exception {
+
+        // Process Refund request for all selected Potential Refunds:
+        processRequestPotentialRefund(form);
+
+        // Run Payment Application, if selected:
+        if (form.isRunPaymentApplication() && form.isRunPaymentApplicationEnabled()) {
+            paymentService.paymentApplication(userId);
+        }
+
+        return getUIFModelAndView(form);
+    }
+
+    /**
      * TEST METHOD: Creates a bunch of test refunds. This method will be deleted when demo data includes
      * test refunds.
      *
@@ -180,16 +202,6 @@ public class AccountRefundController extends DownloadController {
    * Helper methods.
    *
    * ********************************************************************/
-
-    /**
-     * Returns all entities of the Tag type.
-     *
-     * @return All Tag entities.
-     */
-    private List<Tag> getAllTags() {
-        // Get all Tags from the AuditableEntityService:
-        return auditableEntityService.getAuditableEntities(Tag.class);
-    }
 
 
     /**
@@ -270,5 +282,133 @@ public class AccountRefundController extends DownloadController {
         }
 
         return potentialRefundModels;
+    }
+
+    /**
+     * Processes the "Request Refund" action for all selected Potential Refunds.
+     *
+     * @param form The form object.
+     */
+    private void processRequestPotentialRefund(AccountRefundForm form) {
+
+        // Figure out the eligibility for a Refund Request:
+        List<PotentialRefundModel> selectedPotentialRefunds = getSelectedPotentialRefunds(form);
+        List<PotentialRefundModel> eligibleForRefund = new ArrayList<PotentialRefundModel>();
+        List<PotentialRefundModel> notEligibleForRefund = new ArrayList<PotentialRefundModel>();
+
+        for (PotentialRefundModel potentialRefund : selectedPotentialRefunds) {
+            Long paymentId = potentialRefund.getId();
+
+            try {
+                // Generate a Refund:
+                Refund refund = refundService.checkForRefund(paymentId, potentialRefund.getRefundAmount());
+
+                // If Refund generated without errors, add to eligible:
+                if (refund != null) {
+                    logger.info(String.format("Successfully generated a Refund for Payment with ID %d", paymentId));
+                    eligibleForRefund.add(potentialRefund);
+                } else {
+                    // If no Refund was generated, log an error and add to ineligible:
+                    logger.error(String.format("Error generating refund for Payment ID %d", paymentId));
+                    notEligibleForRefund.add(potentialRefund);
+                }
+            } catch (Exception e) {
+                // Log an error and add to ineligible:
+                logger.error(String.format("Error generating refund for Payment ID %d", paymentId), e);
+                notEligibleForRefund.add(potentialRefund);
+            }
+        }
+
+        // Set the eligible an ineligible Potential Refunds:
+        RequestPotentialRefundSummaryModel summary = form.getRequestRefundSummary();
+
+        summary.setEligiblePotentialRefunds(eligibleForRefund);
+        summary.setNotEligiblePotentialRefunds(notEligibleForRefund);
+
+        // Calculate the totals for the Request Refund summary:
+        calculateRefundRequestSummaryTotals(summary);
+    }
+
+    /**
+     * Returns only the selected potential refund list.
+     * @param form The form
+     * @return Only the selected Potential Refunds.
+     */
+    List<PotentialRefundModel> getSelectedPotentialRefunds(AccountRefundForm form) {
+
+        List<PotentialRefundModel> allPotentialRefunds = form.getPotentialRefunds();
+        List<PotentialRefundModel> selectedRefunds = new ArrayList<PotentialRefundModel>();
+
+        if (allPotentialRefunds != null) {
+            for (PotentialRefundModel refund : allPotentialRefunds) {
+                if (refund.isSelected()) {
+                    selectedRefunds.add(refund);
+                }
+            }
+        }
+
+        return selectedRefunds;
+    }
+
+    /**
+     * Calculates totals for the Refund Request summary.
+     *
+     * @param summary The summary object.
+     */
+    private void calculateRefundRequestSummaryTotals(RequestPotentialRefundSummaryModel summary) {
+
+        // All totals:
+        BigDecimal totalEligiblePayment = new BigDecimal(0);
+        BigDecimal totalEligibleAllocated = new BigDecimal(0);
+        BigDecimal totalEligibleUnallocated = new BigDecimal(0);
+        BigDecimal totalEligibleRefundAmount = new BigDecimal(0);
+        BigDecimal totalNotEligiblePayment = new BigDecimal(0);
+        BigDecimal totalNotEligibleAllocated = new BigDecimal(0);
+        BigDecimal totalNotEligibleUnallocated = new BigDecimal(0);
+        BigDecimal totalNotEligibleRefundAmount = new BigDecimal(0);
+
+        // Go through the list of Eligible Refunds:
+        for (PotentialRefundModel refund : summary.getEligiblePotentialRefunds()) {
+            // Adjust the totals:
+            totalEligibleAllocated = safeAdd(totalEligibleAllocated, refund.getAllocatedAmount());
+            totalEligiblePayment = safeAdd(totalEligiblePayment, refund.getPaymentAmount());
+            totalEligibleRefundAmount = safeAdd(totalEligibleRefundAmount, refund.getRefundAmount());
+            totalEligibleUnallocated = safeAdd(totalEligibleUnallocated, refund.getUnallocatedAmount());
+        }
+
+        // Set the Eligible totals:
+        summary.setTotalEligibleAllocated(totalEligibleAllocated);
+        summary.setTotalEligiblePayment(totalEligiblePayment);
+        summary.setTotalEligibleUnallocated(totalEligibleUnallocated);
+        summary.setTotalEligibleRefundAmount(totalEligibleRefundAmount);
+
+        // Go through the list of Ineligible Refunds:
+        for (PotentialRefundModel refund : summary.getNotEligiblePotentialRefunds()) {
+            // Adjust the totals:
+            totalNotEligibleAllocated = safeAdd(totalNotEligibleAllocated, refund.getAllocatedAmount());
+            totalNotEligiblePayment = safeAdd(totalNotEligiblePayment, refund.getPaymentAmount());
+            totalNotEligibleRefundAmount = safeAdd(totalNotEligibleRefundAmount, refund.getRefundAmount());
+            totalNotEligibleUnallocated = safeAdd(totalNotEligibleUnallocated, refund.getUnallocatedAmount());
+        }
+
+        // Set the Not Eligible totals:
+        summary.setTotalNotEligibleAllocated(totalNotEligibleAllocated);
+        summary.setTotalNotEligiblePayment(totalNotEligiblePayment);
+        summary.setTotalNotEligibleRefundAmount(totalNotEligibleRefundAmount);
+        summary.setTotalNotEligibleUnallocated(totalNotEligibleUnallocated);
+    }
+
+    /**
+     * Safely adds one BigDecimal to another. Ignores null.
+     *
+     * @param bd1 First operand
+     * @param bd2 Second operand
+     * @return Result of addition.
+     */
+    private static BigDecimal safeAdd(BigDecimal bd1, BigDecimal bd2) {
+        if ((bd1 != null) && (bd2 != null)) {
+            bd1 = bd1.add(bd2);
+        }
+        return bd1;
     }
 }

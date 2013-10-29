@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
+import com.sigmasys.kuali.ksa.krad.model.RequestPotentialRefundSummaryModel;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.RefundStatus;
 
@@ -35,6 +36,11 @@ public class AccountRefundForm extends TransactionForm {
     private List<PotentialRefundModel> potentialRefunds;
 
     /**
+     * Start of the filtering date range. (Optional)
+     */
+    private Date filterDateFrom;
+
+    /**
      * A list of all Refunds displayed on the "Refund Status" tab.
      */
     private List<RefundModel> allRefunds;
@@ -56,20 +62,20 @@ public class AccountRefundForm extends TransactionForm {
     private String dateRangeType;
 
     /**
-     * Start of the filtering date range. (Optional)
+     * Potential Refund requets summary.
      */
-    private Date filterDateFrom;
+    private RequestPotentialRefundSummaryModel requestRefundSummary;
 
     /**
      * End of the filter date range
      */
     private Date filterDateTo;
 
-
-
     public String getDateRangeType() {
         return dateRangeType;
     }
+
+
 
     public void setDateRangeType(String dateRangeType) {
         this.dateRangeType = dateRangeType;
@@ -137,5 +143,16 @@ public class AccountRefundForm extends TransactionForm {
 
     public void setFilterDateTo(Date filterDateTo) {
         this.filterDateTo = filterDateTo;
+    }
+
+    public RequestPotentialRefundSummaryModel getRequestRefundSummary() {
+        if (requestRefundSummary == null) {
+            requestRefundSummary = new RequestPotentialRefundSummaryModel();
+        }
+        return requestRefundSummary;
+    }
+
+    public void setRequestRefundSummary(RequestPotentialRefundSummaryModel requestRefundSummary) {
+        this.requestRefundSummary = requestRefundSummary;
     }
 }
