@@ -258,9 +258,7 @@ public class UserPaymentPlanController extends GenericSearchController {
     private void populateFormForThirdParty(UserPaymentPlanForm form) {
         String userId = form.getAccount().getId();
 
-        form.setAlertObjects(informationService.getAlerts(userId));
-        form.setFlagObjects(informationService.getFlags(userId));
-        form.setHolds(AccountUtils.getHolds(userId));
+        AccountUtils.populateTransactionHeading(form, userId);
 
         List<ThirdPartyMemberModel> memberModels = new ArrayList<ThirdPartyMemberModel>();
 
@@ -294,9 +292,7 @@ public class UserPaymentPlanController extends GenericSearchController {
     private void populateFormForPaymentBilling(UserPaymentPlanForm form) {
         String userId = form.getAccount().getId();
 
-        form.setAlertObjects(informationService.getAlerts(userId));
-        form.setFlagObjects(informationService.getFlags(userId));
-        form.setHolds(AccountUtils.getHolds(userId));
+        AccountUtils.populateTransactionHeading(form, userId);
 
         List<PaymentBillingPlan> paymentPlans = paymentBillingService.getPaymentBillingPlansByAccountId(userId);
 

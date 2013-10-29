@@ -345,10 +345,7 @@ public class QuickViewController extends GenericSearchController {
 
         form.setOutstandingAmount(outstandingBalance);
 
-
-        form.setAlertObjects(informationService.getAlerts(userId));
-        form.setFlagObjects(informationService.getFlags(userId));
-        form.setHolds(AccountUtils.getHolds(userId));
+        AccountUtils.populateTransactionHeading(form, userId);
 
         List<Memo> memos = informationService.getMemos(userId);
 

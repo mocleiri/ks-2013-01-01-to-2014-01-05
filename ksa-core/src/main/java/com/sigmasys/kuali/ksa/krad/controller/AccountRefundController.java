@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.krad.form.AccountRefundForm;
 import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RequestPotentialRefundSummaryModel;
+import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
@@ -78,8 +79,7 @@ public class AccountRefundController extends DownloadController {
         form.setAllRefunds(new ArrayList<RefundModel>());
 
         // Set statistics:
-        form.setFlagObjects(informationService.getFlags(userId));
-        form.setAlertObjects(informationService.getAlerts(userId));
+        AccountUtils.populateTransactionHeading(form, userId);
 
         return form;
     }

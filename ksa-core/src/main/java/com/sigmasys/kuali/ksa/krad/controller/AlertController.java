@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.AlertForm;
+import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Alert;
 import com.sigmasys.kuali.ksa.service.InformationService;
@@ -77,7 +78,7 @@ public class AlertController extends GenericSearchController {
             throw new IllegalArgumentException("'userId' request parameter must be specified");
          }
 
-         form.setAlertObjects(informationService.getAlerts(userId));
+          AccountUtils.populateTransactionHeading(form, userId);
 
       } else if (pageId != null && pageId.equals("ViewAlertPage")) {
          if (userId == null || userId.isEmpty()) {

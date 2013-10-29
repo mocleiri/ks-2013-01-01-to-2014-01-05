@@ -262,11 +262,9 @@ public class TransactionController extends GenericSearchController {
             return;
         }
 
-        form.setZeroBalanceDates(new HashSet<Date>());
+        AccountUtils.populateTransactionHeading(form, userId);
 
-        form.setAlertObjects(informationService.getAlerts(userId));
-        form.setFlagObjects(informationService.getFlags(userId));
-        form.setHolds(AccountUtils.getHolds(userId));
+        form.setZeroBalanceDates(new HashSet<Date>());
 
         Boolean showInternal = form.getShowInternal();
         Date startDate = form.getStartingDate();

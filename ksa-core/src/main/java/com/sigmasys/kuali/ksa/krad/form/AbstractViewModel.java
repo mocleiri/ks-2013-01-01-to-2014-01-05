@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.krad.form;
 import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.service.UserPreferenceService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
@@ -49,6 +50,7 @@ public abstract class AbstractViewModel extends UifFormBase {
     private List<InformationModel> flags;
     private List<InformationModel> holds;
     private List<Memo> memos;
+    private List<ThirdPartyPlan> thirdPartyPlans;
 
 
     private static final KeyValuesBase searchTypeValuesFinder = new KeyValuesBase() {
@@ -331,4 +333,45 @@ public abstract class AbstractViewModel extends UifFormBase {
     }
 
 
+    public List<ThirdPartyPlan> getThirdPartyPlansForTooltip() {
+        if(thirdPartyPlans == null) {
+            thirdPartyPlans = new ArrayList<ThirdPartyPlan>();
+        }
+        return thirdPartyPlans;
+    }
+
+    public void setThirdPartyPlansForTooltip(List<ThirdPartyPlan> thirdPartyPlans) {
+        this.thirdPartyPlans = thirdPartyPlans;
+    }
+
+    public String getThirdPartyTooltip() {
+        StringBuilder html = new StringBuilder();
+
+        html.append("<b>Current Active Third Party Payment Plans (");
+        List<ThirdPartyPlan> plans = getThirdPartyPlansForTooltip();
+        int size = plans.size();
+        int itemsPerPage = getItemsPerPage();
+
+        if(size == 0) {
+            html.append("0/0)</b><br/><p>No third party plans</p>");
+            return html.toString();
+        }
+        if(size > itemsPerPage) {
+            html.append(itemsPerPage).append("/").append(size);
+        } else {
+            html.append(size).append("/").append(size);
+        }
+        html.append(")</b><br/><p>");
+
+        for(int i = 0; i < size && i < itemsPerPage; i++) {
+            html.append(plans.get(i).getName()).append("<br/>");
+        }
+        html.append("</p>");
+
+        return html.toString();
+    }
+
+
 }
+
+
