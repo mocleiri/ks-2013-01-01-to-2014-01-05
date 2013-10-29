@@ -22,7 +22,9 @@ import org.kuali.student.ap.plan.support.PlanItemControllerHelper;
 import org.kuali.student.ap.plan.util.PlanEventUtils;
 import org.kuali.student.ap.sb.ShoppingCartForm;
 import org.kuali.student.ap.sb.ShoppingCartRequest;
+import org.kuali.student.ap.sb.ShoppingCartRequestInfo;
 import org.kuali.student.ap.sb.ShoppingCartStrategy;
+import org.kuali.student.ap.sb.infc.ActivityOption;
 import org.kuali.student.ap.sb.infc.CourseOption;
 import org.kuali.student.ap.sb.infc.PossibleScheduleOption;
 import org.kuali.student.enrollment.acal.infc.Term;
@@ -374,6 +376,18 @@ public class ShoppingCartController extends UifControllerBase {
 						throw new IllegalStateException("LP service failure", e);
 					}
 
+				}
+			}
+			
+			// Tie in validation results related to keep requests
+			if (cartRequest.getUniqueId() == null) {
+				for (CourseOption co : form.getKeepInCart()) {
+					for (ActivityOption ao : co.getActivityOptions()) {
+						String reg = ao.getRegistrationCode();
+						if (reg.equals(cartRequest.getPrimaryRegistrationCode())) {
+							((ShoppingCartRequestInfo) cartRequest).setUniqueId(ao.getUniqueId());
+						}
+					}
 				}
 			}
 

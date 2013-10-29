@@ -216,18 +216,21 @@ public class DefaultShoppingCartForm extends AbstractPlanItemForm implements Sho
 		keepInCart = null;
 	}
 
+	@Override
 	public List<CourseOption> getRemoveFromCart() {
 		if (removeFromCart == null)
 			createActivityLists();
 		return removeFromCart;
 	}
 
+	@Override
 	public List<CourseOption> getAddToCart() {
 		if (addToCart == null)
 			createActivityLists();
 		return addToCart;
 	}
 
+	@Override
 	public List<CourseOption> getKeepInCart() {
 		if (keepInCart == null)
 			createActivityLists();

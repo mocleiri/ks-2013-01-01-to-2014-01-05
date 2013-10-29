@@ -628,6 +628,15 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 				msg.append("\nSelections :");
 				msg.append(courseIdsActivityCodes);
 			}
+			
+			for (CourseOption co : rv) {
+				if (courseIdsActivityCodes.containsKey(co.getCourseId())) {
+					if (msg != null)
+						msg.append("\n  Skipping pre-built course options ").append(co.getCourseCode());
+					courseIdsActivityCodes.remove(co.getCourseId());
+				}
+			}
+			
 			Queue<ActivityOptionInfo> toCourseLockIn = courseLockIn
 					? new LinkedList<ActivityOptionInfo>() : null;
 			for (CourseOption co : getCourseOptions(new ArrayList<String>(

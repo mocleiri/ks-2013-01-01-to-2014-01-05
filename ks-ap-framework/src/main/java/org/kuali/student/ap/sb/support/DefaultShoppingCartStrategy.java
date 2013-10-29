@@ -4,13 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
 import org.kuali.student.ap.framework.context.CourseHelper;
 import org.kuali.student.ap.framework.context.PlanConstants;
@@ -26,6 +27,7 @@ import org.kuali.student.ap.sb.infc.PossibleScheduleOption;
 import org.kuali.student.ap.sb.infc.SecondaryActivityOptions;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.infc.Term;
+import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingDisplayInfo;
 import org.kuali.student.myplan.academicplan.dto.PlanItemInfo;
 import org.kuali.student.myplan.academicplan.infc.PlanItem;
 import org.kuali.student.myplan.academicplan.service.AcademicPlanService;
@@ -40,6 +42,8 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 		Serializable {
 
 	private static final long serialVersionUID = -5919246688332396604L;
+
+	private static final Logger LOG = Logger.getLogger(DefaultShoppingCartStrategy.class);
 
 	@Override
 	public boolean isCartAvailable(String termId, String campusCode) {
@@ -155,8 +159,10 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 			TermInfo termInfo, Map<String, ShoppingCartRequestInfo> rmap) {
 		AcademicPlanService academicPlanService = KsapFrameworkServiceLocator
 				.getAcademicPlanService();
+		CourseHelper courseHelper = KsapFrameworkServiceLocator.getCourseHelper();
 		ContextInfo context = KsapFrameworkServiceLocator.getContext()
 				.getContextInfo();
+
 		List<PlanItemInfo> planItems;
 		try {
 			planItems = academicPlanService.getPlanItemsInPlanByType(
@@ -172,38 +178,95 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 			throw new IllegalArgumentException("CO lookup failure", e);
 		}
 
-		for (PlanItemInfo planItem : planItems) {
-			if (!PlanConstants.COURSE_TYPE.equals(planItem.getRefObjectType()))
+		StringBuilder msg = null;
+		if (LOG.isDebugEnabled())
+			msg = new StringBuilder("Existing cart options");
+		List<String> courseIds = new ArrayList<String>(planItems.size());
+		Iterator<PlanItemInfo> planItemIter = planItems.iterator();
+		while (planItemIter.hasNext()) {
+			PlanItemInfo planItem = planItemIter.next();
+			if (!PlanConstants.COURSE_TYPE.equals(planItem.getRefObjectType())) {
+				planItemIter.remove();
 				continue;
+			}
 
 			List<String> periods = planItem.getPlanPeriods();
-			if (periods == null || !periods.contains(termInfo.getId()))
+			if (periods == null || !periods.contains(termInfo.getId())) {
+				planItemIter.remove();
 				continue;
-
-			String acodeattr = planItem.getAttributeValue("activityCode");
-			List<String> acodes;
-			if (acodeattr == null || acodeattr.isEmpty())
-				continue;
-			else
-				acodes = Arrays.asList(acodeattr.split(","));
+			}
 
 			String courseId = planItem.getRefObjectId();
-			ShoppingCartRequestInfo cartRequest = new ShoppingCartRequestInfo();
-			cartRequest.setAddToCart(false);
-			cartRequest.setCourse(KsapFrameworkServiceLocator.getCourseHelper()
-					.getCourseInfo(courseId));
-			cartRequest.setPrimaryRegistrationCode(acodes.get(0));
-			if (acodes.size() > 1)
-				cartRequest.setSecondaryRegistrationCodes(acodes.subList(1,
-						acodes.size()));
-			else
-				cartRequest.setSecondaryRegistrationCodes(Collections
-						.<String> emptyList());
-			cartRequest.setTerm(termInfo);
-			
-			rmap.put(courseId, cartRequest);
+			if (msg != null)
+				msg.append("\n  Course ").append(courseId);
+
+			String acodeattr = planItem.getAttributeValue("activityCode");
+			if (acodeattr == null || acodeattr.isEmpty()) {
+				if (msg != null)
+					msg.append(" no activity codes");
+
+				planItemIter.remove();
+				continue;
+			}
+
+			if (msg != null)
+				msg.append(" activity codes ").append(acodeattr);
+
+			if (!courseIds.contains(courseId))
+				courseIds.add(courseId);
 		}
 
+		courseHelper.frontLoad(courseIds, termInfo.getId());
+
+		Map<String, String> primaryRegCode = new HashMap<String, String>();
+		for (String courseId : courseIds) {
+			for (ActivityOfferingDisplayInfo aodi : courseHelper
+					.getActivityOfferingDisplaysByCourseAndTerm(courseId, termInfo.getId()))
+				primaryRegCode.put(aodi.getActivityOfferingCode(),
+						aodi.getAttributeValue("PrimaryActivityOfferingCode"));
+		}
+
+		for (PlanItemInfo planItem : planItems) {
+			List<String> acodes = Arrays.asList(
+					planItem.getAttributeValue("activityCode").split(","));
+
+			for (String acode : acodes) {
+				String primaryCode = primaryRegCode.get(acode);
+				assert primaryCode != null : acode;
+
+				if (msg != null)
+					msg.append("\n  Activity ").append(acode).append(" primary ")
+							.append(primaryCode);
+
+				ShoppingCartRequestInfo cartRequest = rmap.get(primaryCode);
+				if (cartRequest == null) {
+					cartRequest = new ShoppingCartRequestInfo();
+					cartRequest.setAddToCart(false);
+					cartRequest.setCourse(KsapFrameworkServiceLocator.getCourseHelper()
+							.getCourseInfo(planItem.getRefObjectId()));
+					cartRequest.setPrimaryRegistrationCode(primaryCode);
+					cartRequest.setTerm(termInfo);
+					rmap.put(primaryCode, cartRequest);
+					if (msg != null)
+						msg.append(" created");
+				}
+
+				List<String> sec = cartRequest.getSecondaryRegistrationCodes();
+				if (sec == null)
+					cartRequest.setSecondaryRegistrationCodes(sec = new ArrayList<String>());
+				if (!primaryCode.equals(acode)) {
+					if (msg != null)
+						msg.append(" added secondary");
+					sec.add(acode);
+					rmap.put(acode, cartRequest);
+				} else if (msg != null)
+					msg.append(" reused");
+			}
+
+		}
+
+		if (msg != null)
+			LOG.debug(msg);
 	}
 
 	@Override
@@ -213,65 +276,85 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 		Map<String, ShoppingCartRequestInfo> rmap = new LinkedHashMap<String, ShoppingCartRequestInfo>();
 		buildExistingCartOptions(learningPlanId, termInfo, rmap);
 
-		Map<String, List<ActivityOption>> aomap = new LinkedHashMap<String, List<ActivityOption>>();
+		StringBuilder msg = null;
+		if (LOG.isDebugEnabled())
+			msg = new StringBuilder("Cart requests for schedule");
+		List<String> courseIds = new ArrayList<String>(schedule.getActivityOptions().size());
+		Map<String, ActivityOption> aomap = new LinkedHashMap<String, ActivityOption>();
 		for (ActivityOption ao : schedule.getActivityOptions()) {
 			if (ao.isCourseLockedIn())
 				continue;
-			List<ActivityOption> aol = aomap.get(ao.getCourseId());
-			if (aol == null)
-				aomap.put(ao.getCourseId(),
-						aol = new ArrayList<ActivityOption>());
-			aol.add(ao);
+
+			if (msg != null)
+				msg.append("\n    Activity ").append(ao.getRegistrationCode());
+			aomap.put(ao.getRegistrationCode(), ao);
+			if (!rmap.containsKey(ao.getRegistrationCode())
+					&& !courseIds.contains(ao.getCourseId()))
+				courseIds.add(ao.getCourseId());
 		}
 
+		CourseHelper courseHelper = KsapFrameworkServiceLocator.getCourseHelper();
+		courseHelper.frontLoad(courseIds, termInfo.getId());
+		Map<String, String> primaryRegCode = new HashMap<String, String>();
+		for (String courseId : courseIds) {
+			for (ActivityOfferingDisplayInfo aodi : courseHelper
+					.getActivityOfferingDisplaysByCourseAndTerm(courseId, termInfo.getId()))
+				primaryRegCode.put(aodi.getActivityOfferingCode(),
+						aodi.getAttributeValue("PrimaryActivityOfferingCode"));
+		}
+
+		Map<String, ShoppingCartRequestInfo> amap = new LinkedHashMap<String, ShoppingCartRequestInfo>();
 		List<ShoppingCartRequest> rv = new ArrayList<ShoppingCartRequest>(
 				aomap.size() + rmap.size());
-		for (Entry<String, List<ActivityOption>> aoe : aomap.entrySet()) {
-			String courseId = aoe.getKey();
+		for (Entry<String, ActivityOption> aoe : aomap.entrySet()) {
+			String regCode = aoe.getKey();
+			ActivityOption ao = aoe.getValue();
 
-			ShoppingCartRequestInfo cartRequest = rmap.remove(courseId);
-			if (cartRequest != null) {
-				Set<String> acodes = new HashSet<String>();
-				acodes.add(cartRequest.getPrimaryRegistrationCode());
-				for (String regcode : cartRequest
-						.getSecondaryRegistrationCodes())
-					acodes.add(regcode);
-				if (acodes.size() != aoe.getValue().size()) {
+			if (rmap.remove(regCode) == null) {
+				String primaryCode = primaryRegCode.get(regCode);
+				assert primaryCode != null : regCode;
+
+				if (msg != null)
+					msg.append("\n    Add ").append(regCode).append(" primary ")
+							.append(primaryCode);
+
+				ShoppingCartRequestInfo cartRequest = amap.get(primaryCode);
+				if (cartRequest == null) {
+					cartRequest = new ShoppingCartRequestInfo();
+					cartRequest.setAddToCart(true);
+					cartRequest.setCourse(courseHelper.getCourseInfo(ao.getCourseId()));
+					cartRequest.setPrimaryRegistrationCode(primaryCode);
+					cartRequest.setTerm(termInfo);
+					amap.put(primaryCode, cartRequest);
 					rv.add(cartRequest);
-					cartRequest = null;
-				} else
-					aoloop: for (ActivityOption ao : aoe.getValue()) {
-						if (!acodes.contains(ao.getRegistrationCode())) {
-							rv.add(cartRequest);
-							cartRequest = null;
-							break aoloop;
-						} else
-							acodes.remove(ao.getRegistrationCode());
-					}
-			}
+					if (msg != null)
+						msg.append(" created");
+				}
 
-			if (cartRequest == null) {
-				cartRequest = new ShoppingCartRequestInfo();
-				cartRequest.setAddToCart(true);
-				cartRequest.setCourse(KsapFrameworkServiceLocator
-						.getCourseHelper().getCourseInfo(courseId));
-				List<ActivityOption> aol = aoe.getValue();
-				cartRequest.setPrimaryRegistrationCode(aol.get(0)
-						.getRegistrationCode());
-				if (aol.size() > 1) {
-					List<String> scodes = new ArrayList<String>(aol.size() - 1);
-					for (ActivityOption ao : aol.subList(1, aol.size()))
-						scodes.add(ao.getRegistrationCode());
-					cartRequest.setSecondaryRegistrationCodes(scodes);
-				} else
-					cartRequest.setSecondaryRegistrationCodes(Collections
-							.<String> emptyList());
-				cartRequest.setTerm(termInfo);
-				rv.add(cartRequest);
+				List<String> sec = cartRequest.getSecondaryRegistrationCodes();
+				if (sec == null)
+					cartRequest.setSecondaryRegistrationCodes(sec = new ArrayList<String>());
+				if (!primaryCode.equals(regCode)) {
+					if (msg != null)
+						msg.append(" added secondary");
+					sec.add(regCode);
+				} else if (msg != null)
+					msg.append(" reused");
+
+			} else if (msg != null)
+				msg.append("\n    Keep ").append(regCode);
+		}
+
+		for (Entry<String, ShoppingCartRequestInfo> re : rmap.entrySet()) {
+			if (re.getKey().equals(re.getValue().getPrimaryRegistrationCode())) {
+				rv.add(re.getValue());
+				if (msg != null)
+					msg.append("\n    Remove ").append(re.getKey());
 			}
 		}
-		
-		rv.addAll(rmap.values());
+
+		if (msg != null)
+			LOG.debug(msg);
 
 		return rv;
 	}

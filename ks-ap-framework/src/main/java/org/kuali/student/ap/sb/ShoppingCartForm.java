@@ -71,4 +71,25 @@ public interface ShoppingCartForm extends PlanItemForm {
 	 */
 	void setShoppingCartRequests(List<ShoppingCartRequest> shoppingCartRequest);
 
+	/**
+	 * Get the course options representing classes to remove from the shopping cart.
+	 * 
+	 * @return The course options representing classes to remove from the shopping cart.
+	 */
+	List<CourseOption> getRemoveFromCart();
+
+	/**
+	 * Get the course options representing classes to add to the shopping cart.
+	 * 
+	 * @return The course options representing classes to add to the shopping cart.
+	 */
+	List<CourseOption> getAddToCart();
+
+	/**
+	 * Get the course options representing classes to keep in the shopping cart.
+	 * 
+	 * @return The course options representing classes to keep in the shopping cart.
+	 */
+	List<CourseOption> getKeepInCart();
+
 }
