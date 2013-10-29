@@ -13,10 +13,16 @@
 				<value>ks-plan-View</value>
 			</list>
 		</property>
+		<property name="additionalCssFiles">
+			<list>
+				<value>ks-ap/css/sb.cart.css</value>
+			</list>
+		</property>
 		<property name="additionalScriptFiles">
 			<list>
 				<value>ks-myplan/plugins/jcarousellite.js</value>
 				<value>ks-ap/scripts/plan/planner.js</value>
+				<value>ks-ap/scripts/sb/cart.js</value>
 			</list>
 		</property>
 		<property name="items">
@@ -426,6 +432,18 @@
 		<property name="layoutManager.lineGroupPrototype.style"
 			value="width:@{588/T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTermHelper().getNumberOfTermsInAcademicYear()}px;
                   margin:0 @{20/T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTermHelper().getNumberOfTermsInAcademicYear()}px;" />
+        <property name="layoutManager.lineGroupPrototype.header.rightGroup">
+            <bean parent="Uif-HeaderRightGroup" p:cssClasses="ks-plan-Bucket ks-plan-Bucket--secondary"
+                p:render="@{#line.cartAvailable}">
+                <property name="items">
+                    <list>
+                        <bean parent="Uif-ActionLink" p:actionLabel="Build Schedule"
+                            p:actionScript="window.location='sb?termId=@{#line.termId}&amp;reset=true'+ksapAddGetParameters()"
+                            p:cssClasses="ks-Button ks-Button--small" />
+                    </list>
+                </property>
+            </bean>
+        </property>
 		<property name="layoutManager.lineGroupPrototype.header.lowerGroup">
 			<bean parent="Uif-HorizontalBoxGroup" p:additionalCssClasses="ks-plan-TermNote">
 				<property name="items">
