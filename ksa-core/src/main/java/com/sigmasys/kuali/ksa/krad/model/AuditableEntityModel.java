@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import java.util.Date;
 
@@ -148,5 +149,47 @@ public class AuditableEntityModel extends AuditableEntity<Long> {
             ((Tag)parentEntity).setAdministrative(administrative);
         }
     }
+
+    public String getGlAccountId() {
+        if(parentEntity instanceof GeneralLedgerType) {
+            return ((GeneralLedgerType)parentEntity).getGlAccountId();
+        }
+        return null;
+    }
+
+    public void setGlAccountId(String glAccountId) {
+        if(parentEntity instanceof GeneralLedgerType) {
+            ((GeneralLedgerType)parentEntity).setGlAccountId(glAccountId);
+        }
+    }
+
+    public String getGlOperationCode() {
+        if(parentEntity instanceof GeneralLedgerType) {
+            GlOperationType optionType = ((GeneralLedgerType)parentEntity).getGlOperationOnCharge();
+            if(optionType != null) {
+                return optionType.getId();
+            }
+        }
+        return null;
+    }
+
+    public void setGlOperationCode(String glOperationCode) {
+        if(parentEntity instanceof GeneralLedgerType) {
+            GlOperationType glOperationOnCharge = EnumUtils.findById(GlOperationType.class, glOperationCode);
+
+            ((GeneralLedgerType)parentEntity).setGlOperationOnCharge(glOperationOnCharge);
+        }
+    }
+
+    public String getGlOperation() {
+        if(parentEntity instanceof GeneralLedgerType) {
+            GlOperationType optionType = ((GeneralLedgerType)parentEntity).getGlOperationOnCharge();
+            if(optionType != null) {
+                return optionType.toString();
+            }
+        }
+        return null;
+    }
+
 
 }

@@ -204,12 +204,16 @@ public class SettingsController extends GenericSearchController {
                 String name = parentEntity.getName();
                 String description = parentEntity.getDescription();
 
-                AuditableEntity value = auditableEntityService.createAuditableEntity(code, name, description, parentEntity.getClass());
-                if (value instanceof Tag) {
-                    ((Tag) value).setAdministrative(entity.getAdministrative());
-                    auditableEntityService.persistAuditableEntity(value);
-                }
+                if(parentEntity instanceof GeneralLedgerType) {
+                    auditableEntityService.persistAuditableEntity(parentEntity);
+                } else {
 
+                    AuditableEntity value = auditableEntityService.createAuditableEntity(code, name, description, parentEntity.getClass());
+                    if (value instanceof Tag) {
+                        ((Tag) value).setAdministrative(entity.getAdministrative());
+                        auditableEntityService.persistAuditableEntity(value);
+                    }
+                }
 
                 form.setAuditableEntities(auditableEntityService.getAuditableEntities(parentEntity.getClass()));
 

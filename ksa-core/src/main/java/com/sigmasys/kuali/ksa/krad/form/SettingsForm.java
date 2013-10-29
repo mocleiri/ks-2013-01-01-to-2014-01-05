@@ -96,6 +96,7 @@ public class SettingsForm extends AbstractViewModel {
         else if(parent instanceof LatePeriod) { return "Late Period Type"; }
         else if(parent instanceof Rollup){ return "Rollup Type"; }
         else if(parent instanceof TaxType) { return "Tax Type"; }
+        else if(parent instanceof GeneralLedgerType) { return "General Ledger Type"; }
 
         return this.getSimpleType();
     }
