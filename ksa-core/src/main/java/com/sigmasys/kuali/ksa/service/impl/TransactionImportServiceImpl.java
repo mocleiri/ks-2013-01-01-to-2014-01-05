@@ -8,8 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.Account;
@@ -39,6 +37,7 @@ import java.util.*;
 @WebService(serviceName = TransactionImportService.SERVICE_NAME, portName = TransactionImportService.PORT_NAME,
         targetNamespace = Constants.WS_NAMESPACE)
 @SuppressWarnings("unchecked")
+@Transactional(timeout = 3600)
 public class TransactionImportServiceImpl extends GenericPersistenceService implements TransactionImportService {
 
     private static final Log logger = LogFactory.getLog(TransactionImportServiceImpl.class);
@@ -65,14 +64,10 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
     private XmlSchemaValidator schemaValidator;
 
-    private DefaultTransactionDefinition transactionDefinition;
-
 
     @PostConstruct
     private void postConstruct() {
         schemaValidator = new XmlSchemaValidator(XML_SCHEMA_LOCATION, IMPORT_SCHEMA_LOCATION);
-        transactionDefinition = new DefaultTransactionDefinition();
-        transactionDefinition.setTimeout(3600);
     }
 
     /**
@@ -97,7 +92,7 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
      * @return XML response
      */
     @Override
-    public synchronized String processTransactions(String xml) {
+    public String processTransactions(String xml) {
 
         // Validate XML against the schema
         String errorMessage = schemaValidator.validateXmlAndGetErrorMessage(xml);
@@ -242,14 +237,6 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
             if (batchReceiptStatus != BatchReceiptStatus.FAILED && (batchIsQualified || !singleBatchFailure)) {
 
-                final int transactionBatchSize = getTransactionBatchSize();
-
-                int transactionCommitCount = 0;
-
-                transactionDefinition.setPropagationBehavior(getTransactionBatchPropagation());
-
-                TransactionStatus userTransaction = getTransaction(transactionDefinition);
-
                 for (KsaTransaction ksaTransaction : acceptedKsaTransactionList) {
 
                     try {
@@ -283,12 +270,6 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
                         accepted.getKsaTransactionAndTransactionDetails().add(transactionDetails);
 
-                        if (++transactionCommitCount > transactionBatchSize) {
-                            commit(userTransaction);
-                            userTransaction = getTransaction(transactionDefinition);
-                            transactionCommitCount = 0;
-                        }
-
                     } catch (Exception e) {
 
                         logger.error(e.getMessage(), e);
@@ -304,10 +285,6 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                         // add the reason to the KsaTransactionAndReason
                         failed.getKsaTransactionAndReason().add(ErrorUtils.getMessage(e).replaceAll("\\[|\\]", ""));
                     }
-                }
-
-                if (transactionCommitCount != 0) {
-                    commit(userTransaction);
                 }
 
             } else {
@@ -342,44 +319,30 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
 
         // log the batch summary statics and values
 
-        TransactionStatus userTransaction = getTransaction(transactionDefinition);
+        String responseXml = JaxbUtils.toXml(ksaBatchTransactionResponse);
 
-        try {
+        // Create a new BatchReceipt and persist
+        BatchReceipt batchReceipt = new BatchReceipt();
+        batchReceipt.setAccount(currentAccount);
+        batchReceipt.setBatchDate(new Date());
+        batchReceipt.setCreditOfAcceptedTransactions(totalValueCredit);
+        batchReceipt.setDebitOfAcceptedTransactions(totalValueDebits);
+        batchReceipt.setExternalId(batchIdentifier);
+        batchReceipt.setNumberOfAcceptedTransactions(numberOfAccepted);
+        batchReceipt.setNumberOfRejectedTransactions(numberOfFailed);
+        batchReceipt.setNumberOfTransactions(batchSize);
+        batchReceipt.setReceiptDate(new Date());
+        batchReceipt.setStatus(batchReceiptStatus);
+        batchReceipt.setTotalVolume(totalValue);
+        batchReceipt.setVolumeOfRejectedTransactions(failedValue);
 
-            String responseXml = JaxbUtils.toXml(ksaBatchTransactionResponse);
+        batchReceipt.setIncomingXml(createXmlDocument(xml));
 
-            // Create a new BatchReceipt and persist
-            BatchReceipt batchReceipt = new BatchReceipt();
-            batchReceipt.setAccount(currentAccount);
-            batchReceipt.setBatchDate(new Date());
-            batchReceipt.setCreditOfAcceptedTransactions(totalValueCredit);
-            batchReceipt.setDebitOfAcceptedTransactions(totalValueDebits);
-            batchReceipt.setExternalId(batchIdentifier);
-            batchReceipt.setNumberOfAcceptedTransactions(numberOfAccepted);
-            batchReceipt.setNumberOfRejectedTransactions(numberOfFailed);
-            batchReceipt.setNumberOfTransactions(batchSize);
-            batchReceipt.setReceiptDate(new Date());
-            batchReceipt.setStatus(batchReceiptStatus);
-            batchReceipt.setTotalVolume(totalValue);
-            batchReceipt.setVolumeOfRejectedTransactions(failedValue);
+        batchReceipt.setOutgoingXml(createXmlDocument(responseXml));
 
-            batchReceipt.setIncomingXml(createXmlDocument(xml));
+        persistEntity(batchReceipt);
 
-            batchReceipt.setOutgoingXml(createXmlDocument(responseXml));
-
-            persistEntity(batchReceipt);
-
-            commit(userTransaction);
-
-            return responseXml;
-
-        } catch (Exception e) {
-
-            rollback(userTransaction);
-
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return responseXml;
     }
 
     private XmlDocument createXmlDocument(String xml) {
