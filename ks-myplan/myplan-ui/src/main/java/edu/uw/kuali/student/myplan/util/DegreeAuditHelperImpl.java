@@ -20,6 +20,7 @@ import org.kuali.student.myplan.course.util.CourseSearchConstants;
 import org.kuali.student.myplan.course.util.CreditsFormatter;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.util.AtpHelper;
+import org.kuali.student.myplan.plan.util.PlanHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.lum.course.service.CourseService;
@@ -51,6 +52,8 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
     private transient CourseOfferingService courseOfferingService;
 
     private CourseHelper courseHelper;
+
+    private PlanHelper planHelper;
 
     public enum Campus {
         CAMPUS_306("0"),
@@ -211,19 +214,20 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                 for (PlanItemInfo planItem : planItemInfos) {
                     if (planItem.getRefObjectType().equalsIgnoreCase(PlanConstants.COURSE_TYPE)) {
                         String courseId = getCourseHelper().getCourseVersionIdByTerm(planItem.getRefObjectId(), atpId);
+                        String crossListedCourse = getPlanHelper().getCrossListedCourse(planItem.getAttributes());
                         boolean ignore = false;
                         if (courseId != null) {
                             CourseInfo courseInfo = null;
-                            courseInfo = getCourseService().getCourse(courseId, DegreeAuditConstants.CONTEXT_INFO);
+                            courseInfo = getCourseHelper().getCourseInfoByIdAndCd(courseId, crossListedCourse);
                             Set<Choice> choices = new HashSet<Choice>();
                             if (isTermPublished) {
                                 List<ActivityOfferingItem> activities = new ArrayList<ActivityOfferingItem>();
-
-                                if (plannedActivitiesMap.containsKey(courseInfo.getId())) {
+                                String activitiesMapKey = String.format("%s:%s:%s", courseInfo.getId(), courseInfo.getSubjectArea().trim(), courseInfo.getCourseNumberSuffix().trim());
+                                if (plannedActivitiesMap.containsKey(activitiesMapKey)) {
 
                                     List<ActivityOfferingItem> withdrawnSections = new ArrayList<ActivityOfferingItem>();
                                     List<ActivityOfferingItem> nonWithdrawnSections = new ArrayList<ActivityOfferingItem>();
-                                    for (ActivityOfferingItem activityOfferingItem : plannedActivitiesMap.get(courseInfo.getId())) {
+                                    for (ActivityOfferingItem activityOfferingItem : plannedActivitiesMap.get(activitiesMapKey)) {
                                         if (PlanConstants.WITHDRAWN_STATE.equalsIgnoreCase(activityOfferingItem.getStateKey())) {
                                             withdrawnSections.add(activityOfferingItem);
                                         } else {
@@ -387,6 +391,8 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                                         CourseItem item = new CourseItem();
                                         item.setAtpId(atpId);
                                         item.setCourseCode(courseInfo.getCode());
+                                        item.setSubject(courseInfo.getSubjectArea().trim());
+                                        item.setNumber(courseInfo.getCourseNumberSuffix().trim());
                                         item.setCourseId(courseInfo.getVersion().getVersionIndId());
                                         item.setCredit(credits);
                                         item.setSectionCode(StringUtils.hasText(section) ? section : "");
@@ -404,6 +410,8 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
 
                                     MessyItem item = new MessyItem();
                                     item.setCourseCode(courseInfo.getCode());
+                                    item.setSubject(courseInfo.getSubjectArea().trim());
+                                    item.setNumber(courseInfo.getCourseNumberSuffix().trim());
                                     item.setCourseTitle(courseInfo.getCourseTitle());
                                     item.setCourseId(courseInfo.getId());
                                     item.setVersionIndependentId(versionIndependentId);
@@ -420,11 +428,13 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                         if (ignore) {
                             String course = getCourseHelper().getVerifiedCourseId(planItem.getRefObjectId());
                             if (course != null) {
-                                CourseInfo courseInfo = getCourseService().getCourse(course, CourseSearchConstants.CONTEXT_INFO);
+                                CourseInfo courseInfo = getCourseHelper().getCourseInfoByIdAndCd(course, crossListedCourse);
                                 //Adding course to ignore list if courseId not found
                                 CourseItem item = new CourseItem();
                                 item.setAtpId(atpId);
                                 item.setCourseCode(courseInfo.getCode());
+                                item.setSubject(courseInfo.getSubjectArea().trim());
+                                item.setNumber(courseInfo.getCourseNumberSuffix().trim());
                                 item.setTitle(courseInfo.getCourseTitle());
                                 item.setCourseId(courseInfo.getVersion().getVersionIndId());
                                 item.setCredit(CreditsFormatter.formatCredits(courseInfo));
@@ -514,7 +524,7 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
     }
 
     /**
-     * populates the Map with courseId as key and list Of activities that are planned and associated to that course.
+     * populates the Map with courseId:subject:number as key and list Of activities that are planned and associated to that course.
      *
      * @param planItemInfos
      * @return
@@ -547,13 +557,14 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
                         logger.error("Could not retrieve CourseOffering data for" + courseOfferingId, e);
                     }
                     ActivityOfferingItem activityOfferingItem = buildActivityOfferingItemSummary(activityDisplayInfo, courseOfferingInfo);
-                    if (plannedActivitiesMap.containsKey(activityOfferingItem.getCourseId())) {
-                        plannedActivitiesMap.get(activityOfferingItem.getCourseId()).add(activityOfferingItem);
+                    String key = String.format("%s:%s:%s", activityOfferingItem.getCourseId(), courseOfferingInfo.getSubjectArea().trim(), courseOfferingInfo.getCourseNumberSuffix().trim());
+                    if (plannedActivitiesMap.containsKey(key)) {
+                        plannedActivitiesMap.get(key).add(activityOfferingItem);
 
                     } else {
                         List<ActivityOfferingItem> activityOfferingItems = new ArrayList<ActivityOfferingItem>();
                         activityOfferingItems.add(activityOfferingItem);
-                        plannedActivitiesMap.put(activityOfferingItem.getCourseId(), activityOfferingItems);
+                        plannedActivitiesMap.put(key, activityOfferingItems);
                     }
 
                 }
@@ -743,5 +754,16 @@ public class DegreeAuditHelperImpl implements DegreeAuditHelper {
 
     public void setCourseHelper(CourseHelper courseHelper) {
         this.courseHelper = courseHelper;
+    }
+
+    public PlanHelper getPlanHelper() {
+        if (planHelper == null) {
+            planHelper = new PlanHelperImpl();
+        }
+        return planHelper;
+    }
+
+    public void setPlanHelper(PlanHelper planHelper) {
+        this.planHelper = planHelper;
     }
 }

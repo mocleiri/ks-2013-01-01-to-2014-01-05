@@ -530,7 +530,7 @@
                         <list>
                             <bean parent="Uif-Message"
                                   p:messageText="Advisers are unable to add or bookmark courses and sections."/>
-                            <bean parent="Uif-Link" p:target="">
+                            <bean parent="Uif-Link">
                                 <property name="linkText" value="Learn more about Adviser View."/>
                                 <property name="href"
                                           value="javascript:openHelpWindow('https://depts.washington.edu/myplan/adviser-help/#view');"/>
@@ -563,7 +563,7 @@
                         <list>
                             <bean parent="Uif-Message"
                                   p:messageText="Advisers are unable to run degree audits."/>
-                            <bean parent="Uif-Link" p:target="">
+                            <bean parent="Uif-Link">
                                 <property name="linkText" value="Learn more about Adviser View."/>
                                 <property name="href"
                                           value="javascript:openHelpWindow('https://depts.washington.edu/myplan/adviser-help/#view');"/>
@@ -596,7 +596,7 @@
                         <list>
                             <bean parent="Uif-Message"
                                   p:messageText="Advisers are unable to edit bookmarked courses."/>
-                            <bean parent="Uif-Link" p:target="">
+                            <bean parent="Uif-Link">
                                 <property name="linkText" value="Learn more about Adviser View."/>
                                 <property name="href"
                                           value="javascript:openHelpWindow('https://depts.washington.edu/myplan/adviser-help/#view');"/>
@@ -756,6 +756,9 @@
         <property name="scrollpane">
             <null/>
         </property>
+        <property name="cssClasses">
+            <list merge="false"/>
+        </property>
     </bean>
 
     <!-- KSAP Fmpty footer for lookup criteria -->
@@ -763,14 +766,6 @@
          <property name="items">
              <list merge="false"/>
          </property>
-    </bean>
-
-    <bean id="KSAP-VerticalBoxGroup-NoMargin" parent="KSAP-VerticalBoxGroup">
-        <property name="cssClasses">
-            <list merge="true">
-                <value>ksap-noMargin</value>
-            </list>
-        </property>
     </bean>
 
     <bean id="KSAP-HorizontalBoxGroup" parent="Uif-HorizontalBoxGroup">
@@ -786,12 +781,8 @@
         <property name="scrollpane">
             <null/>
         </property>
-    </bean>
-    <bean id="KSAP-HorizontalBoxGroup-NoMargin" parent="KSAP-HorizontalBoxGroup">
         <property name="cssClasses">
-            <list merge="true">
-                <value>ksap-noMargin</value>
-            </list>
+            <list merge="false"/>
         </property>
     </bean>
 
@@ -807,14 +798,6 @@
             <bean parent="KSAP-VerticalBoxGroup"/>
         </property>
     </bean>
-    <bean id="KSAP-VerticalFieldGroup-NoMargin" parent="KSAP-VerticalFieldGroup">
-        <property name="cssClasses">
-            <list merge="true">
-                <value>ksap-noMargin</value>
-            </list>
-        </property>
-    </bean>
-
 
     <bean id="KSAP-HorizontalFieldGroup" parent="Uif-HorizontalFieldGroup">
         <property name="template" value="/ks-myplan/WEB-INF/ftl/components/field/fieldGroup.ftl"/>
@@ -827,11 +810,9 @@
         <property name="group">
             <bean parent="KSAP-HorizontalBoxGroup"/>
         </property>
-    </bean>
-    <bean id="KSAP-HorizontalFieldGroup-NoMargin" parent="KSAP-HorizontalFieldGroup">
         <property name="cssClasses">
-            <list merge="true">
-                <value>ksap-noMargin</value>
+            <list merge="false">
+                <value>uif-horizontalFieldGroup</value>
             </list>
         </property>
     </bean>
@@ -841,7 +822,7 @@
             <null/>
         </property>
         <property name="header">
-            <bean parent="KSAP-HeaderSix"/>
+            <bean parent="KSAP-HeaderDiv" p:cssClasses="popover__header" p:headerTagCssClasses="popover__headerText"/>
         </property>
         <property name="width" value="300px"/>
     </bean>

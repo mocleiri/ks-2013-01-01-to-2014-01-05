@@ -1081,7 +1081,7 @@
             var selected = @{#line.planActivities.size()};
 
             if (selected &gt; 0) {
-                getActivityEnrollment('/student/myplan/plan/enroll', {'courseId':'@{#line.courseDetails.courseId}', 'atpId':'@{dataObject.atpId}', 'courseCd':'@{dataObject.courseSummaryDetails.code}'}, '@{#line.courseDetails.courseId}_sections_collection');
+                getActivityEnrollment('/student/myplan/plan/enroll', {'courseId':'@{#line.courseDetails.courseId}', 'atpId':'@{dataObject.atpId}', 'courseCd':'@{#line.courseDetails.code}'}, '@{#line.courseDetails.courseId}_sections_collection');
 
                 var tableHead = jQuery('table#@{#line.courseDetails.courseId}_sections thead');
                 tableHead.before('
@@ -1277,8 +1277,8 @@
 
     <!-- Delete Button -->
     <bean id="activityActionDelete" parent="section_button">
-        <property name="label" value=""/>
-        <property name="altText" value="Delete"/>
+        <!--<property name="label" value=""/>-->
+        <!--<property name="altText" value="Delete"/>-->
         <property name="style" value="margin:8px 0 0 0;"/>
         <property name="onClickScript" value="
             var additionalFormData = {

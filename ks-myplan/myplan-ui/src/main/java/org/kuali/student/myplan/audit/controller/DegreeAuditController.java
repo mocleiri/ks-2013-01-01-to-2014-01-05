@@ -18,6 +18,7 @@ package org.kuali.student.myplan.audit.controller;
 import edu.uw.kuali.student.myplan.util.CourseHelperImpl;
 import edu.uw.kuali.student.myplan.util.DegreeAuditHelperImpl;
 import edu.uw.kuali.student.myplan.util.DegreeAuditHelperImpl.Choice;
+import edu.uw.kuali.student.myplan.util.PlanHelperImpl;
 import edu.uw.kuali.student.myplan.util.UserSessionHelperImpl;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
@@ -45,11 +46,13 @@ import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.service.PlannedTermsHelperBase;
 import org.kuali.student.myplan.plan.util.AtpHelper;
+import org.kuali.student.myplan.plan.util.PlanHelper;
 import org.kuali.student.myplan.utils.UserSessionHelper;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Controller;
@@ -101,6 +104,9 @@ public class DegreeAuditController extends UifControllerBase {
 
     @Autowired
     private UserSessionHelper userSessionHelper;
+
+    @Autowired
+    private PlanHelper planHelper;
 
     private DegreeAuditHelper degreeAuditHelper;
 
@@ -415,15 +421,17 @@ public class DegreeAuditController extends UifControllerBase {
                 boolean isPlanned =
                         AcademicPlanServiceConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED.equalsIgnoreCase(item.getTypeKey());
                 if (isCourse && isPlanned) {
+                    String crossListedCourse = getPlanHelper().getCrossListedCourse(item.getAttributes());
+                    CourseInfo courseInfo = getCourseHelper().getCourseInfoByIdAndCd(item.getRefObjectId(), crossListedCourse);
                     // Version independent id + term = key
-                    String key = item.getRefObjectId() + item.getPlanPeriods().get(0);
+                    String key = item.getRefObjectId() + item.getPlanPeriods().get(0) + courseInfo.getSubjectArea().trim() + courseInfo.getCourseNumberSuffix().trim();
                     planItemInfoMap.put(key, item);
                 }
             }
 
             for (MessyTermDataObject messyTerm : form.getMessyItems()) {
                 for (MessyItem item : messyTerm.getMessyItemList()) {
-                    String key = item.getVersionIndependentId() + item.getAtpId();
+                    String key = item.getVersionIndependentId() + item.getAtpId() + item.getSubject() + item.getNumber();
                     PlanItemInfo planItem = planItemInfoMap.get(key);
                     if (planItem != null) {
                         String choiceKey = item.getSelectedCredit();
@@ -444,7 +452,7 @@ public class DegreeAuditController extends UifControllerBase {
             }
 
             for (CourseItem item : form.getCleanList()) {
-                PlanItemInfo planItem = planItemInfoMap.get(item.getCourseId() + item.getAtpId());
+                PlanItemInfo planItem = planItemInfoMap.get(item.getCourseId() + item.getAtpId() + item.getSubject() + item.getNumber());
                 if (planItem != null) {
                     List<AttributeInfo> list = planItem.getAttributes();
 
@@ -599,7 +607,7 @@ public class DegreeAuditController extends UifControllerBase {
      * @param studentId
      * @return
      */
-    private String  getRecentPlanAudit(String studentId) {
+    private String getRecentPlanAudit(String studentId) {
         String recentPlanAuditId = null;
         try {
             List<LearningPlanInfo> learningPlanList =
@@ -637,6 +645,17 @@ public class DegreeAuditController extends UifControllerBase {
                     new QName("http://student.kuali.org/wsdl/courseOffering", "coService"));
         }
         return this.courseOfferingService;
+    }
+
+    public PlanHelper getPlanHelper() {
+        if (planHelper == null) {
+            planHelper = new PlanHelperImpl();
+        }
+        return planHelper;
+    }
+
+    public void setPlanHelper(PlanHelper planHelper) {
+        this.planHelper = planHelper;
     }
 
     public CourseHelper getCourseHelper() {

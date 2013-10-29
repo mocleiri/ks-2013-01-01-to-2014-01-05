@@ -60,7 +60,7 @@
                     <property name="items">
                         <list>
                             <bean parent="courseTitleLink"/>
-                            <bean id="course_popover_group" parent="KSAP-HorizontalBoxGroup-NoMargin" p:width="300px">
+                            <bean id="course_popover_group" parent="KSAP-HorizontalBoxGroup" p:width="300px">
                                 <property name="items">
                                     <list>
                                         <!-- Course View and Actions -->
@@ -100,10 +100,10 @@
                             <bean parent="courseTermSelection"/>
                             <bean parent="planItemNote"/>
                             <bean parent="courseMarkAsBackup"/>
-                            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
+                            <bean parent="KSAP-VerticalBoxGroup" p:id="actionButtonsGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
+                                        <bean parent="KSAP-HorizontalBoxGroup">
                                             <property name="items">
                                                 <list>
                                                     <bean p:id="addUpdatePlanItem"
@@ -116,10 +116,10 @@
                                                         <property name="onDocumentReadyScript" value="
                                                             jQuery('#addUpdatePlanItem').on('PLAN_ITEM_ADDED', function(event, data){
                                                                 if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                                    fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
+                                                                    actionFeedback('actionButtonsGroup', false, null, data.cssClasses, data.message);
                                                                 }
                                                             }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true,'errorPlaceholder');
+                                                                actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                             });
                                                         "/>
                                                     </bean>
@@ -128,10 +128,10 @@
                                             </property>
                                         </bean>
                                         <bean parent="errorPlaceholder"/>
+                                        <ref bean="recommendation_info"/>
                                     </list>
                                 </property>
                             </bean>
-                            <ref bean="recommendation_info"/>
                         </list>
                     </property>
                 </bean>
@@ -144,39 +144,19 @@
                         <list>
                             <ref bean="courseTermsScheduled"/>
                             <ref bean="courseTermSelection"/>
-                            <bean parent="KSAP-HorizontalBoxGroup"
-                                  p:render="@{planActivities ne null AND planActivities.size() gt 0}">
-                                <property name="cssClasses">
-                                    <list merge="true">
-                                        <value>myplan-status</value>
-                                        <value>info</value>
-                                    </list>
-                                </property>
+                            <bean parent="KSAP-VerticalBoxGroup" p:id="actionButtonsGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="MyPlanMessagingIcon"/>
-                                        <bean id="move_sections_info" parent="KSAP-SimpleDataField"
-                                              p:propertyName="this" p:escapeHtmlInPropertyValue="false">
+                                        <bean id="move_sections_info" parent="KSAP-SimpleDataField">
+                                            <property name="propertyName" value="this"/>
+                                            <property name="render" value="@{planActivities ne null AND planActivities.size() gt 0}"/>
+                                            <property name="escapeHtmlInPropertyValue" value="false"/>
                                             <property name="propertyEditor" ref="move_planned_sections_formatter"/>
-                                            <property name="onDocumentReadyScript" value="
-                                                jQuery('#move_sections_info').on('PLAN_ITEM_ADDED', function(event, data){
-                                                    jQuery(this).parents().find('.myplan-status.info').fadeOut(250);
-                                                });"/>
-                                            <property name="cssClasses">
-                                                <list merge="true">
-                                                    <value>message</value>
-                                                </list>
-                                            </property>
+                                            <property name="cssClasses" value="alert alert-info"/>
                                         </bean>
-                                    </list>
-                                </property>
-                            </bean>
-                            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
+                                        <bean parent="KSAP-HorizontalBoxGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
-                                            <property name="items">
-                                                <list>
                                                     <bean p:id="movePlannedCourse"
                                                           parent="KSAP-PrimaryActionButton-Small"
                                                           p:actionLabel="Move">
@@ -187,10 +167,10 @@
                                                         <property name="onDocumentReadyScript" value="
                                                             jQuery('#movePlannedCourse').on('PLAN_ITEM_ADDED', function(event, data){
                                                                 if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                                    fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
+                                                                    actionFeedback('actionButtonsGroup', false, null, data.cssClasses, data.message);
                                                                 }
                                                             }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
+                                                                actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                             });
                                                         "/>
                                                     </bean>
@@ -214,39 +194,19 @@
                         <list>
                             <ref bean="courseTermsScheduled"/>
                             <ref bean="courseTermSelection"/>
-                            <bean parent="KSAP-HorizontalBoxGroup"
-                                  p:render="@{planActivities ne null AND planActivities.size() gt 0}">
-                                <property name="cssClasses">
-                                    <list merge="true">
-                                        <value>myplan-status</value>
-                                        <value>info</value>
-                                    </list>
-                                </property>
+                            <bean parent="KSAP-VerticalBoxGroup" p:id="actionButtonsGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="MyPlanMessagingIcon"/>
-                                        <bean id="copy_sections_info" parent="KSAP-SimpleDataField"
-                                              p:propertyName="this" p:escapeHtmlInPropertyValue="false">
+                                        <bean id="copy_sections_info" parent="KSAP-SimpleDataField">
+                                            <property name="propertyName" value="this"/>
+                                            <property name="render" value="@{planActivities ne null AND planActivities.size() gt 0}"/>
+                                            <property name="escapeHtmlInPropertyValue" value="false"/>
                                             <property name="propertyEditor" ref="copy_planned_sections_formatter"/>
-                                            <property name="onDocumentReadyScript" value="
-                                                jQuery('#copy_sections_info').on('PLAN_ITEM_ADDED', function(event, data){
-                                                    jQuery(this).parents().find('.myplan-status.info').fadeOut(250);
-                                                });"/>
-                                            <property name="cssClasses">
-                                                <list merge="true">
-                                                    <value>message</value>
-                                                </list>
-                                            </property>
+                                            <property name="cssClasses" value="alert alert-info"/>
                                         </bean>
-                                    </list>
-                                </property>
-                            </bean>
-                            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
+                                        <bean parent="KSAP-HorizontalBoxGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
-                                            <property name="items">
-                                                <list>
                                                     <bean p:id="copyPlannedCourse"
                                                           parent="KSAP-PrimaryActionButton-Small"
                                                           p:render="@{setToPlanning}"
@@ -258,10 +218,10 @@
                                                         <property name="onDocumentReadyScript" value="
                                                             jQuery('#copyPlannedCourse').on('PLAN_ITEM_ADDED', function(event, data){
                                                                 if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                                    fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
+                                                                    actionFeedback('actionButtonsGroup', false, null, data.cssClasses, data.message);
                                                                 }
                                                             }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
+                                                                actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                             });
                                                         "/>
                                                     </bean>
@@ -276,10 +236,10 @@
                                                         <property name="onDocumentReadyScript" value="
                                                             jQuery('#copyPastPlannedCourse').on('PLAN_ITEM_ADDED', function(event, data){
                                                                 if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                                    fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
+                                                                    actionFeedback('actionButtonsGroup', false, null, data.cssClasses, data.message);
                                                                 }
                                                             }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
+                                                                actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                             });
                                                         "/>
                                                     </bean>
@@ -294,10 +254,10 @@
                                                         <property name="onDocumentReadyScript" value="
                                                             jQuery('#copyAcademicCourse').on('PLAN_ITEM_ADDED', function(event, data){
                                                                 if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                                    fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
+                                                                    actionFeedback('actionButtonsGroup', false, null, data.cssClasses, data.message);
                                                                 }
                                                             }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true, 'errorPlaceholder');
+                                                                actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                             });
                                                         "/>
                                                     </bean>
@@ -322,33 +282,16 @@
                               value="Are you sure that you want to delete [b]@{generalPlaceholder EQ null ? courseCd EQ null ?courseSummaryDetails.code:courseCd : placeholderCode}[/b]? Once deleted, you cannot undo."/>
                     <property name="items">
                         <list>
-                            <bean parent="KSAP-HorizontalBoxGroup"
-                                  p:render="@{planActivities ne null AND planActivities.size() gt 0}">
-                                <property name="cssClasses">
-                                    <list merge="true">
-                                        <value>myplan-status</value>
-                                        <value>info</value>
-                                    </list>
-                                </property>
+                            <bean parent="KSAP-VerticalBoxGroup" p:id="actionButtonsGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="MyPlanMessagingIcon"/>
-                                        <bean id="delete_sections_info" parent="KSAP-SimpleDataField"
-                                              p:propertyName="this" p:escapeHtmlInPropertyValue="false">
+                                        <bean id="delete_sections_info" parent="KSAP-SimpleDataField">
+                                            <property name="render" value="@{planActivities ne null AND planActivities.size() gt 0}"/>
+                                            <property name="propertyName" value="this"/>
+                                            <property name="escapeHtmlInPropertyValue" value="false"/>
                                             <property name="propertyEditor" ref="delete_planned_sections_formatter"/>
-                                            <property name="onDocumentReadyScript" value="
-                                                jQuery('#delete_sections_info').on('PLAN_ITEM_DELETED', function(event, data){
-                                                    jQuery(this).parents().find('.myplan-status.info').fadeOut(250);
-                                                });"/>
-                                            <property name="cssClasses">
-                                                <list merge="true">
-                                                    <value>message</value>
-                                                </list>
-                                            </property>
+                                            <property name="cssClasses" value="alert alert-info defaultTopMargin"/>
                                         </bean>
-                                    </list>
-                                </property>
-                            </bean>
                             <bean parent="KSAP-HorizontalBoxGroup">
                                 <property name="items">
                                     <list>
@@ -365,9 +308,9 @@
                                             "/>
                                             <property name="onDocumentReadyScript" value="
                                                 jQuery('#deletePlannedCourse').on('PLAN_ITEM_DELETED', function(event, data){
-                                                    fnDisplayMessage(data.message, data.cssClass, 'deletePlannedCourse', true, true);
+                                                                actionFeedback('actionButtonsGroup', false, null, data.cssClasses + ' defaultTopMargin', data.message);
                                                 }).on('ERROR', function(event, data) {
-                                                    fnDisplayMessage(data.message, data.cssClass, 'deletePlannedCourse', true, true);
+                                                                actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                 });
                                             "/>
                                         </bean>
@@ -375,6 +318,10 @@
                                     </list>
                                 </property>
                             </bean>
+                                        <bean parent="errorPlaceholder"/>
+                        </list>
+                    </property>
+                </bean>
                         </list>
                     </property>
                 </bean>
@@ -385,122 +332,19 @@
                       p:width="325px">
                     <property name="items">
                         <list>
-                            <bean parent="KSAP-VerticalBoxGroup">
-                                <property name="cssClasses">
-                                    <list merge="true">
-                                        <value>myplan-remove-margin</value>
-                                    </list>
-                                </property>
-                                <property name="items">
-                                    <list>
-                                        <!--TODO: https://jira.kuali.org/browse/KULRICE-9846 disabled expressions are evaluated before the defaultValue is set, workaround is to set the value on the backend -->
-                                        <bean parent="Uif-InputField" p:propertyName="type" p:defaultValue="course">
-                                            <property name="control">
-                                                <bean parent="Uif-VerticalRadioControl">
-                                                    <property name="options">
-                                                        <list>
-                                                            <bean parent="Uif-KeyLabelPair" p:key="course"
-                                                                  p:value="Course or course placeholder [css='ksap-text-gray fl-font-size-90'](e.g. ENGL 3xx)[/css]"/>
-                                                        </list>
-                                                    </property>
-                                                </bean>
-                                            </property>
-                                        </bean>
-                                        <bean parent="KSAP-HorizontalBoxGroup" p:style="margin-left:2em;"
-                                              p:id="courseOptions"
-                                              p:progressiveRender="#form.type EQ 'course'">
-                                            <property name="items">
-                                                <list>
-                                                    <bean parent="Uif-InputField" p:propertyName="courseCd"
-                                                          p:id="courseCode" p:width="70%">
-                                                        <property name="control">
-                                                            <bean parent="Uif-TextControl" p:style="width:180px;">
-                                                                <property name="onDocumentReadyScript"
-                                                                          value="jQuery('#courseCode_control').focus();"/>
-                                                                <property name="watermarkText" value="e.g. BIOL 180"/>
-                                                                <property name="maxLength" value="10"/>
-                                                            </bean>
-                                                        </property>
-                                                    </bean>
-                                                    <bean parent="Uif-InputField" p:propertyName="credit"
-                                                          p:id="creditsCourse" p:hidden="true"
-                                                          p:defaultValue="@{#form.type EQ 'course' AND #form.credit NE null ? #form.credit : ''}">
-                                                        <property name="control">
-                                                            <bean parent="dropdownPlaceholderCredits"/>
-                                                        </property>
-                                                        <property name="onDocumentReadyScript" value="
-                                                            var condition = function () {
-                                                                return ( /([0-9]xx)/i.test( coerceValue('courseCd') ) );
-                                                            };
-                                                            setupProgressiveCheck('courseCd', 'creditsCourse', 'creditsCourse', condition, false, '', true)
-                                                        "/>
-                                                    </bean>
-                                                </list>
-                                            </property>
-                                        </bean>
-                                    </list>
-                                </property>
-                            </bean>
-                            <bean parent="KSAP-VerticalBoxGroup">
-                                <property name="cssClasses">
-                                    <list merge="true">
-                                        <value>myplan-remove-margin</value>
-                                    </list>
-                                </property>
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-InputField" p:propertyName="type" p:defaultValue="course">
-                                            <property name="control">
-                                                <bean parent="Uif-VerticalRadioControl">
-                                                    <property name="options">
-                                                        <list>
-                                                            <bean parent="Uif-KeyLabelPair" p:key="general"
-                                                                  p:value="General placeholder [css='ksap-text-gray fl-font-size-90'](e.g. Elective, VLPA, Other, etc)[/css]"/>
-                                                        </list>
-                                                    </property>
-                                                </bean>
-                                            </property>
-                                        </bean>
-                                        <bean parent="KSAP-HorizontalBoxGroup" p:style="margin-left:2em;"
-                                              p:id="placeholderOptions"
-                                              p:progressiveRender="#form.type EQ 'general'">
-                                            <property name="items">
-                                                <list>
-                                                    <bean parent="KSAP-SimpleInputField"
-                                                          p:propertyName="generalPlaceholder"
-                                                          p:width="70%">
-                                                        <property name="control">
-                                                            <bean parent="Uif-DropdownControl" p:style="width:90%;"/>
-                                                        </property>
-                                                        <property name="optionsFinder">
-                                                            <bean class="org.kuali.student.myplan.plan.util.PlaceHoldersBuilder"/>
-                                                        </property>
-                                                    </bean>
-                                                    <bean parent="KSAP-SimpleInputField" p:propertyName="credit"
-                                                          p:id="creditsGeneral"
-                                                          p:defaultValue="@{#form.type EQ 'general' AND #form.credit NE null ? #form.credit : ''}">
-                                                        <property name="control">
-                                                            <bean parent="dropdownPlaceholderCredits"/>
-                                                        </property>
-                                                    </bean>
-                                                </list>
-                                            </property>
-                                        </bean>
-                                    </list>
-                                </property>
-                            </bean>
-                            <bean parent="planItemNote" p:style="margin: 10px 0 20px;"
-                                  p:label="Notes"/>
+                            <bean parent="addItemCourse"/>
+                            <bean parent="addItemPlaceholder"/>
+                            <bean parent="planItemNote" p:label="Notes"/>
                             <bean parent="KSAP-SimpleInputField" p:propertyName="planItemId"
                                   p:hidden="true" p:render="@{#form.planItemId NE null}">
                                 <property name="control">
                                     <bean parent="Uif-HiddenControl"/>
                                 </property>
                             </bean>
-                            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
+                            <bean parent="KSAP-VerticalBoxGroup" p:id="actionButtonsGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
+                                        <bean parent="KSAP-HorizontalBoxGroup">
                                             <property name="items">
                                                 <list>
                                                     <bean id="actionCoursePlaceholder" p:id="actionCoursePlaceholder"
@@ -523,7 +367,7 @@
                                                             jQuery('#actionCoursePlaceholder').on('PLAN_ITEM_ADDED PLAN_ITEM_UPDATED', function(event, data){
                                                                 fnCloseAllPopups();
                                                             }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true,'errorPlaceholder');
+                                                                actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                             });
                                                         "/>
                                                     </bean>
@@ -531,7 +375,7 @@
                                                 </list>
                                             </property>
                                         </bean>
-                                        <bean parent="KSAP-VerticalBoxGroup" p:id="errorPlaceholder" p:hidden="true"/>
+                                        <bean parent="errorPlaceholder"/>
                                     </list>
                                 </property>
                             </bean>
@@ -547,11 +391,6 @@
                     <property name="items">
                         <list>
                             <bean parent="planItemNote">
-                                <!--<property name="required" value="@{#form.generalPlaceholder EQ 'uw.academicplan.placeholder.other|uw.academicplan.placeholder'}"/>
-                                <property name="fieldLabel.requiredMessagePlacement" value="RIGHT"/>
-                                <property name="fieldLabel.requiredMessage">
-                                    <bean parent="KSAP-Message" p:messageText="(Required)"/>
-                                </property>-->
                                 <property name="label"
                                           value="Notes@{#form.generalPlaceholder EQ 'uw.academicplan.placeholder.other|uw.academicplan.placeholder' ? ' (Required)':''}"/>
                             </bean>
@@ -561,10 +400,10 @@
                                     <bean parent="Uif-HiddenControl"/>
                                 </property>
                             </bean>
-                            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
+                            <bean parent="KSAP-VerticalBoxGroup" p:id="actionButtonsGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
+                                        <bean parent="KSAP-HorizontalBoxGroup">
                                             <property name="items">
                                                 <list>
                                                     <bean id="actionSaveNote" p:id="actionSaveNote"
@@ -588,7 +427,7 @@
                                                             jQuery('#actionSaveNote').on('PLAN_ITEM_UPDATED', function(event, data){
                                                                 fnCloseAllPopups();
                                                             }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true,'errorPlaceholder');
+                                                                actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                             });
                                                         "/>
                                                     </bean>
@@ -596,7 +435,7 @@
                                                 </list>
                                             </property>
                                         </bean>
-                                        <bean parent="KSAP-VerticalBoxGroup" p:id="errorPlaceholder" p:hidden="true"/>
+                                        <bean parent="errorPlaceholder"/>
                                     </list>
                                 </property>
                             </bean>
@@ -610,117 +449,14 @@
                       p:width="325px">
                     <property name="items">
                         <list>
-                            <bean parent="KSAP-VerticalBoxGroup">
-                                <property name="cssClasses">
-                                    <list merge="true">
-                                        <value>myplan-remove-margin</value>
-                                    </list>
-                                </property>
-                                <property name="items">
-                                    <list>
-                                        <!--TODO: https://jira.kuali.org/browse/KULRICE-9846 disabled expressions are evaluated before the defaultValue is set, workaround is to set the value on the backend -->
-                                        <bean parent="Uif-InputField" p:propertyName="type" p:defaultValue="course">
-                                            <property name="control">
-                                                <bean parent="Uif-VerticalRadioControl">
-                                                    <property name="options">
-                                                        <list>
-                                                            <bean parent="Uif-KeyLabelPair" p:key="course"
-                                                                  p:value="Course or course placeholder [css='ksap-text-gray fl-font-size-90'](e.g. ENGL 3xx)[/css]"/>
-                                                        </list>
-                                                    </property>
-                                                </bean>
-                                            </property>
-                                        </bean>
-                                        <bean parent="KSAP-HorizontalBoxGroup" p:style="margin-left:2em;"
-                                              p:id="courseOptions"
-                                              p:progressiveRender="#form.type EQ 'course'">
-                                            <property name="items">
-                                                <list>
-                                                    <bean parent="Uif-InputField" p:propertyName="courseCd"
-                                                          p:id="courseCode" p:width="70%">
-                                                        <property name="control">
-                                                            <bean parent="Uif-TextControl" p:style="width:180px;">
-                                                                <property name="onDocumentReadyScript"
-                                                                          value="jQuery('#courseCode_control').focus();"/>
-                                                                <property name="watermarkText" value="e.g. BIOL 180"/>
-                                                                <property name="maxLength" value="10"/>
-                                                            </bean>
-                                                        </property>
-                                                    </bean>
-                                                    <bean parent="Uif-InputField" p:propertyName="credit"
-                                                          p:id="creditsCourse" p:hidden="true"
-                                                          p:defaultValue="@{#form.type EQ 'course' AND #form.credit NE null ? #form.credit : ''}">
-                                                        <property name="control">
-                                                            <bean parent="dropdownPlaceholderCredits"/>
-                                                        </property>
-                                                        <property name="onDocumentReadyScript" value="
-                                                            var condition = function () {
-                                                                return ( /([0-9]xx)/i.test( coerceValue('courseCd') ) );
-                                                            };
-                                                            setupProgressiveCheck('courseCd', 'creditsCourse', 'creditsCourse', condition, false, '', true)
-                                                        "/>
-                                                    </bean>
-                                                </list>
-                                            </property>
-                                        </bean>
-                                    </list>
-                                </property>
-                            </bean>
-                            <bean parent="KSAP-VerticalBoxGroup">
-                                <property name="cssClasses">
-                                    <list merge="true">
-                                        <value>myplan-remove-margin</value>
-                                    </list>
-                                </property>
-                                <property name="items">
-                                    <list>
-                                        <bean parent="Uif-InputField" p:propertyName="type" p:defaultValue="course">
-                                            <property name="control">
-                                                <bean parent="Uif-VerticalRadioControl">
-                                                    <property name="options">
-                                                        <list>
-                                                            <bean parent="Uif-KeyLabelPair" p:key="general"
-                                                                  p:value="General placeholder [css='ksap-text-gray fl-font-size-90'](e.g. Elective, VLPA, Other, etc)[/css]"/>
-                                                        </list>
-                                                    </property>
-                                                </bean>
-                                            </property>
-                                        </bean>
-                                        <bean parent="KSAP-HorizontalBoxGroup" p:style="margin-left:2em;"
-                                              p:id="placeholderOptions"
-                                              p:progressiveRender="#form.type EQ 'general'">
-                                            <property name="items">
-                                                <list>
-                                                    <bean parent="KSAP-SimpleInputField"
-                                                          p:propertyName="generalPlaceholder"
-                                                          p:width="70%">
-                                                        <property name="control">
-                                                            <bean parent="Uif-DropdownControl" p:style="width:90%;"/>
-                                                        </property>
-                                                        <property name="optionsFinder">
-                                                            <bean class="org.kuali.student.myplan.plan.util.PlaceHoldersBuilder"/>
-                                                        </property>
-                                                    </bean>
-                                                    <bean parent="KSAP-SimpleInputField" p:propertyName="credit"
-                                                          p:id="creditsGeneral"
-                                                          p:defaultValue="@{#form.type EQ 'general' AND #form.credit NE null ? #form.credit : ''}">
-                                                        <property name="control">
-                                                            <bean parent="dropdownPlaceholderCredits"/>
-                                                        </property>
-                                                    </bean>
-                                                </list>
-                                            </property>
-                                        </bean>
-                                    </list>
-                                </property>
-                            </bean>
-                            <bean parent="planItemNote" p:style="margin: 10px 0 20px;"
-                                  p:label="Describe recommendation reason"
+                            <bean parent="addItemCourse"/>
+                            <bean parent="addItemPlaceholder"/>
+                            <bean parent="planItemNote" p:label="Describe recommendation reason"
                                   p:control.watermarkText="Enter a short description (500 characters max)"/>
-                            <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
+                            <bean parent="KSAP-VerticalBoxGroup" p:id="actionButtonsGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
+                                        <bean parent="KSAP-HorizontalBoxGroup">
                                             <property name="items">
                                                 <list>
                                                     <bean id="actionRecommendedItem" p:id="actionRecommendedItem"
@@ -742,7 +478,7 @@
                                                             jQuery('#actionRecommendedItem').on('PLAN_ITEM_ADDED', function(event, data){
                                                                 fnCloseAllPopups();
                                                             }).on('ERROR', function(event, data){
-                                                                fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true,'errorPlaceholder');
+                                                                actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                             });
                                                         "/>
                                                     </bean>
@@ -750,7 +486,7 @@
                                                 </list>
                                             </property>
                                         </bean>
-                                        <bean parent="KSAP-VerticalBoxGroup" p:id="errorPlaceholder" p:hidden="true"/>
+                                        <bean parent="errorPlaceholder"/>
                                     </list>
                                 </property>
                             </bean>
@@ -763,7 +499,7 @@
                       p:headerText="Adviser Recommendation for @{termName}">
                     <property name="items">
                         <list>
-                            <bean id="recommended_popover_group" parent="KSAP-HorizontalBoxGroup-NoMargin"
+                            <bean id="recommended_popover_group" parent="KSAP-HorizontalBoxGroup"
                                   p:width="300px">
                                 <property name="items">
                                     <list>
@@ -786,6 +522,9 @@
                               value="Are you sure that you want to delete [b]@{generalPlaceholder EQ null ? courseCd EQ null ? courseSummaryDetails.code:courseCd : placeholderCode}[/b] recommendation? Recommendation withdrawal notification will be sent immediately."/>
                     <property name="items">
                         <list>
+                            <bean parent="KSAP-VerticalBoxGroup" p:id="actionButtonsGroup">
+                                <property name="items">
+                                    <list>
                             <bean parent="KSAP-HorizontalBoxGroup">
                                 <property name="items">
                                     <list>
@@ -802,9 +541,9 @@
                                             "/>
                                             <property name="onDocumentReadyScript" value="
                                                 jQuery('#deleteRecommendedItem').on('PLAN_ITEM_DELETED', function(event, data){
-                                                    fnDisplayMessage(data.message, data.cssClass, 'deleteRecommendedItem', true, true);
+                                                                actionFeedback('actionButtonsGroup', false, null, data.cssClasses + ' defaultTopMargin', data.message);
                                                 }).on('ERROR', function(event, data) {
-                                                    fnDisplayMessage(data.message, data.cssClass, 'deleteRecommendedItem', true, true);
+                                                                actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                 });
                                             "/>
                                         </bean>
@@ -812,9 +551,13 @@
                                     </list>
                                 </property>
                             </bean>
+                                        <bean parent="errorPlaceholder"/>
                         </list>
                     </property>
                 </bean>
+            </list>
+        </property>
+    </bean>
             </list>
         </property>
     </bean>
@@ -833,33 +576,21 @@
                 <bean id="recommended_item_adviser_note" parent="KSAP-SimpleDataField" p:propertyName="adviserNote">
                     <property name="render" value="@{adviserNote NE '' AND adviserNote NE null AND !setToPlanning}"/>
                     <property name="fieldLabel.render" value="false"/>
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>myplan-recommendation-message</value>
-                        </list>
-                    </property>
+                    <property name="cssClasses" value="popover__recommendedMessage popover__recommendedMessage--bubble"/>
                 </bean>
                 <bean id="recommended_item_note" parent="KSAP-SimpleDataField" p:propertyName="note">
                     <property name="render" value="@{note NE '' AND note NE null AND setToPlanning}"/>
                     <property name="fieldLabel.render" value="false"/>
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>myplan-recommendation-message</value>
-                        </list>
-                    </property>
+                    <property name="cssClasses" value="popover__recommendedMessage popover__recommendedMessage--bubble"/>
                 </bean>
                 <bean parent="KSAP-Message"
                       p:messageText="@{adviserName} recommended this @{courseSummaryDetails.courseId EQ null ? 'placeholder' : 'course'} on @{T(org.kuali.student.myplan.plan.util.DateFormatHelper).getDateFomatted(dateAdded.toString())}">
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>myplan-recommendation-meta</value>
-                        </list>
-                    </property>
+                    <property name="cssClasses" value="popover__recommendedData"/>
                 </bean>
-                <bean parent="KSAP-VerticalBoxGroup-NoMargin">
+                <bean parent="KSAP-VerticalBoxGroup">
                     <property name="items">
                         <list>
-                            <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
+                            <bean parent="KSAP-HorizontalBoxGroup">
                                 <property name="items">
                                     <list>
                                         <bean id="removeRecommendedItem" p:id="removeRecommendedItem"
@@ -899,7 +630,7 @@
                                                                     jQuery('#acceptRecommendedItem').on('PLAN_ITEM_ADDED', function(event, data){
                                                                         fnCloseAllPopups();
                                                                     }).on('ERROR', function(event, data){
-                                                                        fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false,true,'errorPlaceholder');
+                                                    actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                                     });
                                                                 "/>
                                         </bean>
@@ -907,7 +638,7 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="KSAP-VerticalBoxGroup" p:id="errorPlaceholder" p:hidden="true"/>
+                            <bean parent="errorPlaceholder"/>
                         </list>
                     </property>
                 </bean>
@@ -964,80 +695,52 @@
         </property>
     </bean>
 
-    <bean id="course_summary_messages" parent="KSAP-HorizontalBoxGroup-NoMargin"
-          p:render="@{(plannedCourseSummary.backupList.size() GT 0 OR plannedCourseSummary.plannedList.size() GT 0 OR plannedCourseSummary.savedItemId NE null OR plannedCourseSummary.academicTerms.size() GT 0)}">
-        <property name="cssClasses">
-            <list merge="true">
-                <value>myplan-status</value>
-                <value>info</value>
-            </list>
-        </property>
-        <property name="items">
-            <list>
-                <bean parent="MyPlanMessagingIcon"/>
-                <bean parent="KSAP-SimpleDataField" p:propertyName="courseAndPlanSummary"
-                      p:escapeHtmlInPropertyValue="false">
+    <bean id="course_summary_messages" parent="KSAP-SimpleDataField">
+        <property name="render" value="@{(plannedCourseSummary.backupList.size() GT 0 OR plannedCourseSummary.plannedList.size() GT 0 OR plannedCourseSummary.savedItemId NE null OR plannedCourseSummary.academicTerms.size() GT 0)}"/>
+        <property name="propertyName" value="courseAndPlanSummary"/>
+        <property name="escapeHtmlInPropertyValue" value="false"/>
                     <property name="propertyEditor" ref="crud_message_matrix_formatter"/>
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>myplan-data-list</value>
-                            <value>message</value>
-                        </list>
-                    </property>
+        <property name="cssClasses" value="alert alert-info"/>
                 </bean>
-            </list>
-        </property>
-    </bean>
 
-    <bean id="course_summary_excluded_recommended_messages" parent="course_summary_messages">
-        <property name="items">
-            <list>
-                <bean parent="MyPlanMessagingIcon"/>
-                <bean parent="KSAP-SimpleDataField" p:propertyName="courseAndPlanSummary"
-                      p:escapeHtmlInPropertyValue="false">
+    <bean id="course_summary_excluded_recommended_messages" parent="KSAP-SimpleDataField">
+        <property name="render" value="@{(plannedCourseSummary.backupList.size() GT 0 OR plannedCourseSummary.plannedList.size() GT 0 OR plannedCourseSummary.savedItemId NE null OR plannedCourseSummary.academicTerms.size() GT 0)}"/>
+        <property name="propertyName" value="courseAndPlanSummary"/>
+        <property name="escapeHtmlInPropertyValue" value="false"/>
                     <property name="propertyEditor">
                         <bean parent="crud_message_matrix_formatter">
                             <property name="excludeRecommendations" value="true"/>
                         </bean>
                     </property>
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>myplan-data-list</value>
-                            <value>message</value>
-                        </list>
-                    </property>
+        <property name="cssClasses" value="alert alert-info"/>
                 </bean>
-            </list>
-        </property>
-    </bean>
 
-    <bean id="course_summary_recommended_note" parent="KSAP-VerticalBoxGroup-NoMargin"
+    <bean id="course_summary_recommended_note" parent="KSAP-VerticalBoxGroup"
           p:render="@{termRecommendation.adviserName NE null}">
         <property name="items">
             <list>
-                <bean parent="KSAP-Message"
-                      p:messageText="@{termRecommendation.adviserName} recommended this course for @{T(org.kuali.student.myplan.plan.util.AtpHelper).atpIdToTermName(termRecommendation.atpId)} on @{T(org.kuali.student.myplan.plan.util.DateFormatHelper).getDateFomatted(termRecommendation.dateAdded)}"/>
+                <bean parent="KSAP-Message">
+                    <property name="messageText" value="@{termRecommendation.adviserName} recommended this course for [0] on @{T(org.kuali.student.myplan.plan.util.DateFormatHelper).getDateFomatted(termRecommendation.dateAdded)}"/>
+                    <property name="inlineComponents">
+                        <list>
+                            <bean parent="Uif-Link" p:linkText="@{T(org.kuali.student.myplan.plan.util.AtpHelper).atpIdToTermName(termRecommendation.atpId)}" p:cssClasses="">
+                                <property name="title" value="@{T(org.kuali.student.myplan.plan.util.AtpHelper).atpIdToTermName(termRecommendation.atpId)}"/>
+                                <property name="href"
+                                          value="inquiry?methodToCall=start&amp;viewId=SingleTerm-InquiryView&amp;term_atp_id=@{termRecommendation.atpId}"/>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
                 <bean parent="KSAP-SimpleDataField" p:propertyName="termRecommendation.note">
                     <property name="render"
                               value="@{termRecommendation.note NE '' AND termRecommendation.note NE null}"/>
-                    <property name="labelPlacement" value="TOP"/>
-                    <property name="fieldLabel.render" value="false"/>
-                    <property name="fieldLabel.cssClasses">
-                        <list merge="true">
-                            <value>ksap-text-normal</value>
-                        </list>
-                    </property>
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>myplan-adviser-recommendation</value>
-                        </list>
-                    </property>
+                    <property name="cssClasses" value="popover__recommendedMessage popover__recommendedMessage--dashed"/>
                 </bean>
             </list>
         </property>
     </bean>
 
-    <bean id="course_details_summary_info" parent="KSAP-VerticalBoxGroup-NoMargin"
+    <bean id="course_details_summary_info" parent="KSAP-VerticalBoxGroup"
           p:render="@{courseSummaryDetails.courseId NE null}">
         <property name="items">
             <list>
@@ -1049,7 +752,7 @@
                     <property name="fieldLabel">
                         <bean parent="Uif-Label"/>
                     </property>
-                    <property name="fieldLabel.cssClasses" value="fl-font-size-90 fl-text-gray myplan-text-normal"/>
+                    <property name="fieldLabel.cssClasses" value="normalLightText"/>
                     <property name="render"
                               value="@{courseSummaryDetails.lastOffered NE null AND courseSummaryDetails.scheduledTerms.size() EQ 0}"/>
                 </bean>
@@ -1060,20 +763,14 @@
                     <property name="fieldLabel">
                         <bean parent="Uif-Label"/>
                     </property>
-                    <property name="fieldLabel.cssClasses" value="fl-font-size-90 fl-text-gray myplan-text-normal"/>
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>myplan-data-list</value>
-                        </list>
-                    </property>
-                    <property name="render"
-                              value="@{courseSummaryDetails.termsOffered.size() GT 0}"/>
+                    <property name="fieldLabel.cssClasses" value="normalLightText"/>
+                    <property name="render" value="@{courseSummaryDetails.termsOffered.size() GT 0}"/>
                 </bean>
                 <bean parent="KSAP-MessageField" p:label="Projected for">
                     <property name="fieldLabel">
                         <bean parent="Uif-Label"/>
                     </property>
-                    <property name="fieldLabel.cssClasses" value="fl-font-size-90 fl-text-gray myplan-text-normal"/>
+                    <property name="fieldLabel.cssClasses" value="normalLightText"/>
                     <property name="messageText"
                               value="Check with the department or your adviser for more information about this course."/>
                     <property name="render" value="@{courseSummaryDetails.termsOffered.size() EQ 0}"/>
@@ -1081,13 +778,7 @@
                 <!-- Requisites -->
                 <bean parent="Uif-ListDataField" p:label="Course Requisites"
                       p:propertyName="courseSummaryDetails.requisites" p:escapeHtmlInPropertyValue="false">
-                    <property name="fieldLabel.cssClasses" value="fl-font-size-90 fl-text-gray myplan-text-normal"/>
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>myplan-data-list</value>
-                            <value>myplan-multiline-ellipsis</value>
-                        </list>
-                    </property>
+                    <property name="fieldLabel.cssClasses" value="normalLightText"/>
                     <property name="render"
                               value="@{courseSummaryDetails.requisites.size() GT 0}"/>
                 </bean>
@@ -1095,14 +786,12 @@
                     <property name="fieldLabel">
                         <bean parent="Uif-Label"/>
                     </property>
-                    <property name="fieldLabel.cssClasses" value="fl-font-size-90 fl-text-gray myplan-text-normal"/>
-                    <property name="message">
-                        <bean parent="Uif-Message" p:messageText="None"/>
-                    </property>
+                    <property name="fieldLabel.cssClasses" value="normalLightText"/>
+                    <property name="messageText" value="None"/>
                     <property name="render" value="@{courseSummaryDetails.requisites.size() EQ 0}"/>
                 </bean>
                 <!-- Link to view more details (course details view) -->
-                <bean parent="Uif-Link" p:linkText="View more details">
+                <bean parent="Uif-Link" p:linkText="View more details" p:cssClasses="blockLink">
                     <property name="title" value="View more details about @{courseSummaryDetails.code}"/>
                     <property name="href"
                               value="inquiry?methodToCall=start&amp;viewId=CourseDetails-InquiryView&amp;courseId=@{courseSummaryDetails.courseId}&amp;courseCd=@{courseSummaryDetails.code}"/>
@@ -1119,13 +808,12 @@
             <list>
                 <bean parent="courseTermsScheduled" p:render="@{courseSummaryDetails.code NE null}"/>
                 <bean parent="courseTermSelection"/>
-                <!-- TODO: plan item note is 1.5 functionality, do not commit to 1.4 -->
                 <bean parent="planItemNote"/>
                 <bean parent="courseMarkAsBackup"/>
-                <bean parent="KSAP-VerticalBoxGroup-NoMargin" p:id="actionButtonsGroup">
+                <bean parent="KSAP-VerticalBoxGroup" p:id="actionButtonsGroup">
                     <property name="items">
                         <list>
-                            <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
+                            <bean parent="KSAP-HorizontalBoxGroup">
                                 <property name="items">
                                     <list>
                                         <bean p:id="addUpdatePlanItem" parent="KSAP-PrimaryActionButton-Small"
@@ -1137,10 +825,10 @@
                                             <property name="onDocumentReadyScript" value="
                                                 jQuery('#addUpdatePlanItem').on('PLAN_ITEM_ADDED', function(event, data){
                                                     if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                                                         fnDisplayMessage(data.message, data.cssClass, 'actionButtonsGroup', true, false);
+                                                         actionFeedback('actionButtonsGroup', false, null, data.cssClasses, data.message);
                                                     }
                                                 }).on('ERROR', function(event, data){
-                                                    fnDisplayMessage(data.message, data.cssClass, 'errorPlaceholder', true, false, true, 'errorPlaceholder');
+                                                    actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                                 });
                                             "/>
                                         </bean>
@@ -1161,31 +849,13 @@
         </property>
     </bean>
 
-    <bean id="recommendation_info" parent="KSAP-HorizontalBoxGroup-NoMargin"
-          p:render="@{plannedCourseSummary NE null AND plannedCourseSummary.recommendedItemDataObjects.size() GT 0}"
-          p:style="margin-top: 10px;">
-        <property name="cssClasses">
-            <list merge="true">
-                <value>myplan-status</value>
-                <value>info</value>
-            </list>
-        </property>
-        <property name="items">
-            <list>
-                <bean parent="MyPlanMessagingIcon"/>
-                <bean parent="KSAP-SimpleDataField" p:propertyName="coursePlanSummary"
-                      p:escapeHtmlInPropertyValue="false">
+    <bean id="recommendation_info" parent="KSAP-SimpleDataField">
+        <property name="render" value="@{plannedCourseSummary NE null AND plannedCourseSummary.recommendedItemDataObjects.size() GT 0}"/>
+        <property name="propertyName" value="coursePlanSummary"/>
+        <property name="escapeHtmlInPropertyValue" value="false"/>
                     <property name="propertyEditor" ref="recommendation_formatter"/>
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>myplan-data-list</value>
-                            <value>message</value>
-                        </list>
-                    </property>
+        <property name="cssClasses" value="alert alert-info"/>
                 </bean>
-            </list>
-        </property>
-    </bean>
 
     <!-- Delete from courses list confirmation -->
     <bean id="delete_from_list_confirmation" parent="KSAP-VerticalBoxGroup" p:hidden="true" p:width="300px">
@@ -1200,9 +870,12 @@
                     </property>
                 </bean>
                 <!-- Container for buttons -->
-                <bean parent="KSAP-HorizontalBoxGroup-NoMargin">
+                <bean parent="KSAP-VerticalBoxGroup" p:id="actionButtonsGroup">
                     <property name="items">
                         <list>
+                            <bean parent="KSAP-HorizontalBoxGroup">
+                                <property name="items">
+                                    <list>
                             <bean p:id="deleteCourseYesButton" parent="KSAP-PrimaryActionButton-Small"
                                   p:actionLabel="Delete">
                                 <property name="actionScript" value="
@@ -1211,9 +884,9 @@
                                 "/>
                                 <property name="onDocumentReadyScript" value="
                                    jQuery('#deleteCourseYesButton').on('PLAN_ITEM_DELETED', function(event, data) {
-                                       fnDisplayMessage(data.message, data.cssClass, 'deleteCourseYesButton', true, true);
+                                                   actionFeedback('actionButtonsGroup', false, null, data.cssClasses + ' defaultTopMargin', data.message);
                                    }).on('ERROR', function(event, data) {
-                                       fnDisplayMessage(data.message, data.cssClass, 'deleteCourseYesButton', true, true);
+                                                   actionFeedback('errorPlaceholder', false, null, data.cssClasses, data.message);
                                    });"/>
                             </bean>
                             <bean p:id="deleteCourseNoButton" parent="KSAP-SecondaryActionButton-Small"
@@ -1224,6 +897,10 @@
                         </list>
                     </property>
                 </bean>
+                            <bean parent="errorPlaceholder"/>
+            </list>
+        </property>
+    </bean>
             </list>
         </property>
     </bean>
@@ -1250,21 +927,28 @@
                     </property>
                     <property name="items">
                         <list>
-                            <bean parent="KSAP-VerticalBoxGroup" p:style="border-bottom: dotted 1px #cfcfcf;">
+                            <bean parent="KSAP-VerticalBoxGroup" p:cssClasses="popover__groupSeparator">
                                 <property name="items">
                                     <list>
                                         <bean parent="Uif-Link" p:linkText="Messages (@{messagesCount})">
                                             <property name="href"
                                                       value="lookup?methodToCall=search&amp;viewId=MessagesDetail-LookupView"/>
                                             <property name="render" value="@{messagesCount NE 0}"/>
+                                            <property name="cssClasses" value="blockLink"/>
                                         </bean>
-                                        <bean parent="Uif-MessageField" p:messageText="Messages (0)"
-                                              p:cssClasses="myplan-text-gray">
+                                        <bean parent="Uif-MessageField" p:messageText="Messages (0)">
                                             <property name="render" value="@{messagesCount EQ 0}"/>
+                                            <property name="cssClasses" value="normalLightText blockLink"/>
                                         </bean>
                                         <bean parent="Uif-Link" p:linkText="Bookmarked Courses (@{bookmarkedCount})">
                                             <property name="href"
                                                       value="lookup?methodToCall=search&amp;viewId=SavedCoursesDetail-LookupView"/>
+                                            <property name="render" value="@{bookmarkedCount NE 0}"/>
+                                            <property name="cssClasses" value="blockLink"/>
+                                        </bean>
+                                        <bean parent="Uif-MessageField" p:messageText="Bookmarked Courses (0)">
+                                            <property name="render" value="@{bookmarkedCount EQ 0}"/>
+                                            <property name="cssClasses" value="normalLightText blockLink"/>
                                         </bean>
                                     </list>
                                 </property>
@@ -1282,19 +966,20 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="KSAP-VerticalBoxGroup" p:style="border-bottom: dotted 1px #cfcfcf;">
+                            <bean parent="KSAP-VerticalBoxGroup" p:cssClasses="popover__groupSeparator">
                                 <property name="items">
                                     <list>
-                                        <bean id="plan_access" parent="Uif-InputField" p:label="MyPlan Settings"
-                                              p:labelPlacement="TOP"
-                                              p:propertyName="enableAdviserView" p:width="auto">
+                                        <bean id="plan_access" parent="KSAP-SimpleInputField" p:label="MyPlan Settings"
+                                              p:propertyName="enableAdviserView">
+                                            <property name="fieldLabel.render" value="true"/>
+                                            <property name="fieldLabel.cssClasses" value="bold block"/>
                                             <property name="instructionalMessage">
-                                                <bean parent="Uif-Message"
-                                                      p:cssClasses="myplan-text-gray fl-font-size-80"
+                                                <bean parent="KSAP-Message" p:cssClasses="tinyLightText"
                                                       p:messageText="&quot;Shared&quot; plans are viewable by all UW advisers. &quot;Private&quot; plans are only viewable by you."/>
                                             </property>
                                             <property name="control">
                                                 <bean parent="Uif-VerticalRadioControl">
+                                                    <property name="fieldsetClasses" value="popoverForm__radioSet"/>
                                                     <property name="onDocumentReadyScript" value="
                                                         jQuery('input[name=enableAdviserView]').on('change', function(e) {
                                                             var form = jQuery('#popupForm');
@@ -1316,17 +1001,19 @@
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="KSAP-VerticalBoxGroup-NoMargin">
+                            <bean parent="KSAP-VerticalBoxGroup">
                                 <property name="items">
                                     <list>
                                         <bean parent="Uif-Link" p:linkText="Help">
                                             <property name="href"
                                                       value="http://depts.washington.edu/myplan/help-site/"/>
                                             <property name="target" value="_blank"/>
+                                            <property name="cssClasses" value="blockLink"/>
                                         </bean>
                                         <bean parent="Uif-Link" p:linkText="Log out">
                                             <property name="href"
                                                       value="/@{#ConfigProperties['app.code']}/logout.do"/>
+                                            <property name="cssClasses" value="blockLink"/>
                                         </bean>
                                     </list>
                                 </property>
@@ -1342,26 +1029,20 @@
          Popover Common Components  *************************************************************************************
     -->
 
-    <bean id="courseTitleLink" parent="Uif-Link" p:width="280px" p:style="display:block;"
-          p:render="@{courseSummaryDetails.courseId NE null}">
+    <bean id="courseTitleLink" parent="Uif-Link" p:render="@{courseSummaryDetails.courseId NE null}">
         <property name="linkText"
                   value="@{courseSummaryDetails.code} @{courseSummaryDetails.courseTitle} (@{courseSummaryDetails.credit})"/>
         <property name="title"
                   value="@{courseSummaryDetails.code} @{courseSummaryDetails.courseTitle} (@{courseSummaryDetails.credit})"/>
         <property name="href"
                   value="inquiry?methodToCall=start&amp;viewId=CourseDetails-InquiryView&amp;courseId=@{courseSummaryDetails.courseId}&amp;courseCd=@{courseSummaryDetails.code}"/>
-        <property name="cssClasses">
-            <list merge="true">
-                <value>fl-text-bold</value>
-                <value>myplan-text-wrap</value>
-            </list>
-        </property>
+        <property name="cssClasses" value="popover__title"/>
     </bean>
 
     <!-- Select control for choosing a term -->
     <bean id="courseTermSelection" parent="KSAP-HorizontalFieldGroup"
           p:label="Quarter &amp; Year" p:labelPlacement="TOP">
-        <property name="fieldLabel.cssClasses" value="myplan-text-normal"/>
+        <property name="fieldLabel.render" value="true"/>
         <property name="items">
             <list>
                 <bean parent="KSAP-SimpleInputField" p:propertyName="atpId"
@@ -1375,12 +1056,7 @@
                 </bean>
                 <bean parent="KSAP-Message" p:width="160px"
                       p:messageText="Note: This course MAY NOT be offered in your selected quarter. Check back after the Time Schedule is released.">
-                    <property name="cssClasses">
-                        <list merge="true">
-                            <value>fl-font-size-80</value>
-                            <value>fl-text-gray</value>
-                        </list>
-                    </property>
+                    <property name="cssClasses" value="tinyLightText smallerLineHeight"/>
                 </bean>
             </list>
         </property>
@@ -1392,14 +1068,10 @@
         <property name="fieldLabel">
             <bean parent="Uif-Label"/>
         </property>
-        <property name="fieldLabel.cssClasses" value="fl-text-gray fl-font-size-90 myplan-text-normal"/>
+        <property name="fieldLabel.cssClasses" value="normalLightText"/>
         <property name="escapeHtmlInPropertyValue" value="false"/>
         <property name="propertyEditor" ref="scheduled_terms_list_formatter"/>
-        <property name="cssClasses">
-            <list merge="true">
-                <value>myplan-data-list</value>
-            </list>
-        </property>
+        <property name="cssClasses" value="termBadge"/>
     </bean>
 
     <!--  Backup checkbox -->
@@ -1410,9 +1082,102 @@
                       p:label="Mark as [b]'Backup'[/b] course."
                       p:labelPlacement="RIGHT">
                     <property name="fieldLabel.render" value="true"/>
-                    <property name="fieldLabel.cssClasses" value="myplan-text-normal"/>
                     <property name="control">
                         <bean parent="Uif-CheckboxControl"/>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="addItemCourse" parent="KSAP-VerticalBoxGroup">
+        <property name="items">
+            <list>
+                <!--TODO: https://jira.kuali.org/browse/KULRICE-9846 disabled expressions are evaluated before the defaultValue is set, workaround is to set the value on the backend -->
+                <bean parent="Uif-InputField" p:propertyName="type" p:defaultValue="course">
+                    <property name="control">
+                        <bean parent="Uif-VerticalRadioControl">
+                            <property name="fieldsetClasses" value="popoverForm__radioSet"/>
+                            <property name="options">
+                                <list>
+                                    <bean parent="Uif-KeyLabelPair" p:key="course"
+                                          p:value="Course or course placeholder [css='normalLightText'](e.g. ENGL 3xx)[/css]"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="KSAP-HorizontalBoxGroup" p:id="courseOptions" p:cssClasses="popoverForm--indent"
+                      p:progressiveRender="#form.type EQ 'course'">
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:propertyName="courseCd" p:cssClasses="popoverForm__field">
+                                <property name="id" value="courseCode"/>
+                                <property name="control">
+                                    <bean parent="Uif-TextControl" p:style="width: 166px;">
+                                        <property name="onDocumentReadyScript"
+                                                  value="jQuery('#courseCode_control').focus();"/>
+                                        <property name="watermarkText" value="e.g. BIOL 180"/>
+                                        <property name="maxLength" value="10"/>
+                                    </bean>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:propertyName="credit" p:width="80px"  p:cssClasses="popoverForm__field"
+                                  p:id="creditsCourse" p:hidden="true"
+                                  p:defaultValue="@{#form.type EQ 'course' AND #form.credit NE null ? #form.credit : ''}">
+                                <property name="control">
+                                    <bean parent="dropdownPlaceholderCredits"/>
+                                </property>
+                                <property name="onDocumentReadyScript" value="
+                                    var condition = function () {
+                                        return ( /([0-9]xx)/i.test( coerceValue('courseCd') ) );
+                                    };
+                                    setupProgressiveCheck('courseCd', 'creditsCourse', 'creditsCourse', condition, false, '', true)
+                                "/>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="addItemPlaceholder" parent="KSAP-VerticalBoxGroup">
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="type" p:defaultValue="course">
+                    <property name="control">
+                        <bean parent="Uif-VerticalRadioControl">
+                            <property name="fieldsetClasses" value="popoverForm__radioSet"/>
+                            <property name="options">
+                                <list>
+                                    <bean parent="Uif-KeyLabelPair" p:key="general"
+                                          p:value="General placeholder [css='normalLightText'](e.g. Elective, VLPA, Other, etc)[/css]"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="KSAP-HorizontalBoxGroup" p:id="placeholderOptions" p:cssClasses="popoverForm--indent"
+                      p:progressiveRender="#form.type EQ 'general'">
+                    <property name="items">
+                        <list>
+                            <bean parent="KSAP-SimpleInputField" p:propertyName="generalPlaceholder" p:width="180px" p:cssClasses="popoverForm__field">
+                                <property name="control">
+                                    <bean parent="Uif-DropdownControl"/>
+                                </property>
+                                <property name="optionsFinder">
+                                    <bean class="org.kuali.student.myplan.plan.util.PlaceHoldersBuilder"/>
+                                </property>
+                            </bean>
+                            <bean parent="KSAP-SimpleInputField" p:propertyName="credit" p:width="80px" p:cssClasses="popoverForm__field">
+                                <property name="id" value="creditsGeneral"/>
+                                <property name="defaultValue" value="@{#form.type EQ 'general' AND #form.credit NE null ? #form.credit : ''}"/>
+                                <property name="control">
+                                    <bean parent="dropdownPlaceholderCredits"/>
+                                </property>
+                            </bean>
+                        </list>
                     </property>
                 </bean>
             </list>
@@ -1424,31 +1189,18 @@
           p:defaultValue="@{#form.planItemId NE null ? #form.note : ''}">
         <property name="label" value="Notes"/>
         <property name="fieldLabel.render" value="true"/>
-        <property name="fieldLabel.cssClasses">
-            <list merge="true">
-                <value>myplan-text-normal</value>
-            </list>
-        </property>
         <property name="labelPlacement" value="TOP"/>
         <property name="control">
             <bean parent="Uif-TextAreaControl"
                   p:watermarkText="Enter a short note (500 characters max)" p:maxLength="500"
                   p:style="resize:none; width:97%">
-                <property name="cssClasses">
-                    <list merge="true">
-                        <value>ksap-characterCount</value>
-                    </list>
-                </property>
+                <property name="cssClasses" value="popover__characterCount"/>
             </bean>
         </property>
         <property name="constraintMessage">
             <bean parent="KSAP-Message" p:messageText="characters remaining">
-                <property name="onDocumentReadyScript" value="jQuery('.ksap-characterCount').characterCount();"/>
-                <property name="cssClasses">
-                    <list merge="true">
-                        <value>counter</value>
-                    </list>
-                </property>
+                <property name="onDocumentReadyScript" value="jQuery('.popover__characterCount').characterCount();"/>
+                <property name="cssClasses" value="popover__counter counter"/>
             </bean>
         </property>
     </bean>
@@ -1488,12 +1240,14 @@
     </bean>
 
     <!-- Placeholder DIV for error messages after submission failure -->
-    <bean id="errorPlaceholder" parent="KSAP-SimpleInputField" p:id="errorPlaceholder" p:hidden="true"
+    <!--<bean id="errorPlaceholder" parent="KSAP-SimpleInputField" p:id="errorPlaceholder" p:hidden="true"
           p:propertyName="courseSummaryDetails.courseId">
         <property name="control">
             <bean parent="Uif-HiddenControl"/>
         </property>
-    </bean>
+    </bean>-->
+
+    <bean id="errorPlaceholder" parent="KSAP-VerticalBoxGroup" p:id="errorPlaceholder" p:hidden="true"/>
 
     <!--
          Popover Action Buttons  *************************************************************************************

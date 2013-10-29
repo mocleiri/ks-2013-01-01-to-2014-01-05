@@ -153,6 +153,7 @@ public class SingleQuarterInquiryHelperImpl extends KualiInquirableImpl {
                         plannedCourse.setNote(planItemInfo.getDescr().getPlain());
                     }
                     String courseID = planItemInfo.getRefObjectId();
+                    String crossListedCode = getPlanHelper().getCrossListedCourse(planItemInfo.getAttributes());
                     //  Only create a data object for the specified type.
                     if (planItemInfo.getTypeKey().equals(planItemType)) {
 
@@ -161,7 +162,7 @@ public class SingleQuarterInquiryHelperImpl extends KualiInquirableImpl {
                         //  If the course info lookup fails just log the error and omit the item.
                         try {
 
-                            plannedCourse.setCourseDetails(getCourseDetailsInquiryHelper().retrieveCourseSummaryByIdAndCd(courseID, null));
+                            plannedCourse.setCourseDetails(getCourseDetailsInquiryHelper().retrieveCourseSummaryByIdAndCd(courseID, crossListedCode));
 
                             // TODO: Add Plan activities to this view
 

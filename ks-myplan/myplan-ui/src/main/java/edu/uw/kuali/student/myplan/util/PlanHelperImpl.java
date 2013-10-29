@@ -77,16 +77,22 @@ public class PlanHelperImpl implements PlanHelper {
 
         for (PlanItemInfo p : planItems) {
             if (p.getRefObjectId().equals(refObjId) && p.getTypeKey().equals(planItemType)) {
+
+                if (PlanConstants.COURSE_TYPE.equals(p.getRefObjectType())) {
                 /*Multiple PlanItems with same refObjId can be present which are crossListed courses in same term,
                 So filtering them by using the given crossListed courseCd to get the exact planItemInfo*/
-                String crossListedCourse = getCrossListedCourse(p.getAttributes());
-                //Planned parent course returned
-                if (StringUtils.isEmpty(courseCd) && StringUtils.isEmpty(crossListedCourse)) {
-                    item = p;
-                    break;
-                }
-                //Planned crossListed course returned
-                else if (!StringUtils.isEmpty(courseCd) && getCourseHelper().isSimilarCourses(courseCd, crossListedCourse)) {
+                    String crossListedCourse = getCrossListedCourse(p.getAttributes());
+                    //Planned parent course returned
+                    if (StringUtils.isEmpty(courseCd) && StringUtils.isEmpty(crossListedCourse)) {
+                        item = p;
+                        break;
+                    }
+                    //Planned crossListed course returned
+                    else if (!StringUtils.isEmpty(courseCd) && getCourseHelper().isSimilarCourses(courseCd, crossListedCourse)) {
+                        item = p;
+                        break;
+                    }
+                } else {
                     item = p;
                     break;
                 }

@@ -455,18 +455,21 @@ public class AcademicPlanServiceImpl implements AcademicPlanService {
         //  Update attributes.
         if (planItem.getAttributes() != null) {
             Set<PlanItemAttributeEntity> attributeEntities = new HashSet<PlanItemAttributeEntity>();
+            Set<PlanItemAttributeEntity> tempAttributeEntities = new HashSet<PlanItemAttributeEntity>();
 
             for (PlanItemAttributeEntity planItemAttributeEntity : planItemEntity.getAttributes()) {
                 planItemAttributeEntity.setValue("");
-                attributeEntities.add(planItemAttributeEntity);
+                tempAttributeEntities.add(planItemAttributeEntity);
             }
 
 
             for (AttributeInfo attributeInfo : planItem.getAttributes()) {
-                for (PlanItemAttributeEntity planItemAttributeEntity : attributeEntities) {
+                for (PlanItemAttributeEntity planItemAttributeEntity : tempAttributeEntities) {
                     if (planItemAttributeEntity.getKey().equals(attributeInfo.getKey())) {
                         planItemAttributeEntity.setValue(attributeInfo.getValue());
-                        break;
+                        attributeEntities.add(planItemAttributeEntity);
+                    }else{
+                        attributeEntities.add(new PlanItemAttributeEntity(attributeInfo,planItemEntity));
                     }
                 }
 

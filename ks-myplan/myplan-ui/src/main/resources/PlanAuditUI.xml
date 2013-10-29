@@ -863,6 +863,16 @@
                         <bean parent="Uif-HiddenControl"/>
                     </property>
                 </bean>
+                <bean p:id="hidden_courseItem_subject" parent="KSAP-SimpleInputField" p:propertyName="subject">
+                    <property name="control">
+                        <bean parent="Uif-HiddenControl"/>
+                    </property>
+                </bean>
+                <bean p:id="hidden_courseItem_number" parent="KSAP-SimpleInputField" p:propertyName="number">
+                    <property name="control">
+                        <bean parent="Uif-HiddenControl"/>
+                    </property>
+                </bean>
                 <bean p:id="hidden_courseItem_section_code" parent="KSAP-SimpleInputField" p:propertyName="sectionCode">
                     <property name="control">
                         <bean parent="Uif-HiddenControl"/>
@@ -953,7 +963,7 @@
                             </bean>
 
                             <!-- Adviser with null credit selection -->
-                            <bean parent="KSAP-HorizontalFieldGroup-NoMargin" p:style="line-height: 18px;"
+                            <bean parent="KSAP-HorizontalFieldGroup" p:style="line-height: 18px;"
                                   p:render="@{T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser() AND #line.selectedCredit EQ null}">
                                 <property name="items">
                                     <list>
@@ -1042,6 +1052,16 @@
                 </bean>
                 <bean p:id="hidden_course_code" parent="KSAP-SimpleInputField" p:propertyName="courseCode"
                       p:hidden="true">
+                    <property name="control">
+                        <bean parent="Uif-HiddenControl"/>
+                    </property>
+                </bean>
+                <bean p:id="hidden_course_subject" parent="KSAP-SimpleInputField" p:propertyName="subject">
+                    <property name="control">
+                        <bean parent="Uif-HiddenControl"/>
+                    </property>
+                </bean>
+                <bean p:id="hidden_course_number" parent="KSAP-SimpleInputField" p:propertyName="number">
                     <property name="control">
                         <bean parent="Uif-HiddenControl"/>
                     </property>
