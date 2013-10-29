@@ -741,7 +741,7 @@ Then /^the option for the Use Final Exam Matrix should only be available for a c
     page.use_exam_matrix_div.present?.should == false
     page.final_exam_option_none
     page.use_exam_matrix_div.present?.should == false
-    #page.create_offering
+    page.cancel
   end
 end
 
