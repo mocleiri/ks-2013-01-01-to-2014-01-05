@@ -35,6 +35,7 @@ class CourseOfferingEdit < BasePage
 
   element(:credit_type_option_fixed) { |b| b.frm.radio(id: "KS-CourseOfferingEdit-CreditType_OptionTypeSelector_control_0") }
   element(:credit_type_option_multiple) { |b| b.frm.radio(id: "KS-CourseOfferingEdit-CreditType_OptionTypeSelector_control_1") }
+  #TODO: needs to be dynamic
   element(:multiple_credit_checkbox_1_0) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"1.0") }
   element(:multiple_credit_checkbox_1_5) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"1.5") }
   element(:multiple_credit_checkbox_2_0) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"2.0") }
@@ -49,6 +50,7 @@ class CourseOfferingEdit < BasePage
   value(:delivery_assessment_warning) { |b| b.delivery_assessment_section.li( class: "uif-warningMessageItem").text}
 
   element(:final_exam_option_div) { |b| b.frm.div(id: "finalExamType") }
+  #TODO:: need elements for AZ here
   action(:final_exam_option_standard) { |b| b.frm.radio(value: "STANDARD").set; b.loading.wait_while_present}
   action(:final_exam_option_alternate) { |b| b.frm.radio(value: "ALTERNATE").set; b.loading.wait_while_present }
   action(:final_exam_option_none) { |b| b.frm.radio(value: "NONE").set; b.loading.wait_while_present }
@@ -58,13 +60,15 @@ class CourseOfferingEdit < BasePage
   element(:cross_listed_co_check_box) { |b| b.checkbox(id: "KS-COEditListed-Checkbox-Group_control_0") }
   action(:cross_listed_co_set) {|b| b.cross_listed_co_check_box.set; b.loading.wait_while_present   }
   action(:cross_listed_co_clear) {|b| b.cross_listed_co_check_box.clear; b.loading.wait_while_present   }
+#TODO: need element for AZ
+  action(:final_exam_driver_select) { |driver,b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control").select driver; b.loading.wait_while_present }
 
   element(:delivery_formats_table) { |b| b.frm.div(id: "KS-CourseOffering-FormatOfferingSubSection").table }
   FORMAT_COLUMN = 0
   GRADE_ROSTER_LEVEL_COLUMN = 1
   FINAL_EXAM_DRIVER_COLUMN = 2
   FINAL_EXAM_ACTIVITY_COLUMN = 3
-  ACTIONS_COLUMN = 3
+  ACTIONS_COLUMN = 4
 
   element(:select_format_type_div) {|b| b.frm.div(id: "KS-CourseOffering-FormatOfferingSubSection") }
   element(:select_format_type_add) {|b| b.select_format_type_div.select(index: 0) }
@@ -72,13 +76,23 @@ class CourseOfferingEdit < BasePage
   element(:select_final_exam_activity_add) {|b| b.select_format_type_div.select(index: 2) }
   element(:delivery_format_add_element) {|b| b.button(id: "KS-CourseOffering-FormatOfferingSubSection_add")  }
   action(:delivery_format_add) {|b| b.delivery_format_add_element.click; b.loading.wait_while_present   }
+  #TODO: need to look up row by key value
   element(:delivery_format_delete_element_0)  { |b| b.link(id: "KS-CourseOffering-FormatOfferingSubSection_del_line0") }
   element(:delivery_format_delete_element_1)  { |b| b.link(id: "KS-CourseOffering-FormatOfferingSubSection_del_line1") }
   action(:delivery_format_delete_0) {|b| b.delivery_format_delete_element_0.click; b.loading.wait_while_present   }
   action(:delivery_format_delete_1) {|b| b.delivery_format_delete_element_1.click; b.loading.wait_while_present   }
   value(:final_exam_driver_value_0) { |b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_DRIVER_COLUMN].text}
   value(:final_exam_driver_value_1) { |b| b.delivery_formats_table.rows[2].cells[FINAL_EXAM_DRIVER_COLUMN].text}
-  action(:final_exam_driver_select) { |driver,b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control").select driver; b.loading.wait_while_present }
+
+  def delivery_format_row(format)
+    delivery_formats_table.rows[1..-1].each do |row|
+      return row if row.cells[FORMAT_COLUMN].text == format
+    end
+  end
+
+  def delete_delivery_format(format)
+    delivery_format_row(format).cells[ACTIONS_COLUMN].link(text: "delete").click
+  end
 
   def edit_random_delivery_format
     selected_options = {:del_format => delivery_formats_table.rows[2].cells[FORMAT_COLUMN].text, :grade_format => select_random_option(delivery_formats_table[2].cells[GRADE_ROSTER_LEVEL_COLUMN]), :final_exam_activity => select_random_option(delivery_formats_table[2].cells[FINAL_EXAM_ACTIVITY_COLUMN])}
@@ -122,7 +136,7 @@ class CourseOfferingEdit < BasePage
   def select_fixed_credits(credits)
     fixed_credit_select_menu.select(credits)
   end
-
+  #TODO: should not need case stmt here
   def set_multiple_credit_count(credits)
     case credits
       when "1.0" then multiple_credit_checkbox_1_0.set
@@ -132,7 +146,7 @@ class CourseOfferingEdit < BasePage
       when "3.0" then multiple_credit_checkbox_3_0.set
     end
   end
-
+  #TODO: should not need case stmt here
   def clear_multiple_credit_count(credits)
     case credits
       when "1.0" then multiple_credit_checkbox_1_0.clear
@@ -230,7 +244,4 @@ class CourseOfferingEdit < BasePage
     personnel_table.row(text: /#{Regexp.escape(id.to_s)}/)
   end
 
-  def delivery_format_row(format)
-    delivery_formats_table.row(text: /#{Regexp.escape(format)}/)
-  end
 end

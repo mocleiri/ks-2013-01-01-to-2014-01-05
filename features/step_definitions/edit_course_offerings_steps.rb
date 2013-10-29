@@ -146,7 +146,7 @@ Then /^I delete the added delivery format option$/ do
     page.edit_course_offering
   end
   on CourseOfferingEdit do |page|
-    page.delivery_format_delete_1
+    page.delete_delivery_format("Lecture Only")
   end
 end
 Then /^I can submit and the course offering is updated$/ do
