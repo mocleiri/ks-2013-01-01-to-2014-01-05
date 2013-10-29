@@ -78,9 +78,9 @@ class FEMatrixView < BasePage
 
   def edit( requirements, exam_type)
     if exam_type == "Standard"
-      standard_fe_target_row( requirements).link(text: "Edit").click
+      standard_fe_target_row( requirements).a(text: "Edit").click
     else
-      common_fe_target_row( requirements).link(text: "Edit").click
+      common_fe_target_row( requirements).a(text: "Edit").click
     end
     loading.wait_while_present
   end
@@ -89,9 +89,9 @@ class FEMatrixView < BasePage
     loading.wait_while_present
     sleep 10
     if exam_type == "Standard"
-      standard_fe_target_row( requirements).link(text: "Delete").click
+      standard_fe_target_row( requirements).a(text: "Delete").click
     else
-      common_fe_target_row( requirements).link(text: "Delete").click
+      common_fe_target_row( requirements).a(text: "Delete").click
     end
     loading.wait_while_present
   end

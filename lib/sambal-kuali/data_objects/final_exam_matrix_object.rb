@@ -16,7 +16,7 @@ class FinalExamMatrix
     defaults = {
       :term_type => "Fall Term",
       :exam_type => "Standard",
-      :rule_requirements => "TH at 06:00 AM",
+      :rule_requirements => "TH at 11:00 AM",
       :rule => "If Course meets on <timeslot>",
       :days => "MWF",
       :start_time => "05:00",
