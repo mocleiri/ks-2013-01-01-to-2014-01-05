@@ -4047,7 +4047,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     public List<Payment> getPotentialRefunds(String accountId, Date startDate, Date endDate) {
 
-        //PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
+        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
 
         StringBuilder queryBuilder = new StringBuilder("select t from Payment t ");
 

@@ -85,20 +85,22 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         if (isRefundRuleValid(refundRule)) {
 
-            // Check the clearing period from the refund rule.
-            // Add it to the effectiveDate of the transaction and compare to the current date:
-            String clearingPeriodStr = StringUtils.substringBetween(refundRule, "(", ")");
-            int clearingPeriod = Integer.parseInt(clearingPeriodStr);
+            if (!processAsCash) {
 
-            if (clearingPeriod != 0) {
-                Calendar effectiveDate = Calendar.getInstance();
+                // Check the clearing period from the refund rule.
+                // Add it to the effectiveDate of the transaction and compare to the current date:
+                String clearingPeriodStr = StringUtils.substringBetween(refundRule, "(", ")");
 
-                effectiveDate.setTime(payment.getEffectiveDate());
-                effectiveDate.add(Calendar.DAY_OF_YEAR, clearingPeriod);
+                int clearingPeriod = Integer.parseInt(clearingPeriodStr);
 
-                // Uncleared payments can only be credited to the same source:
-                if (effectiveDate.getTimeInMillis() < System.currentTimeMillis()) {
-                    processAsCash = true;
+                if (clearingPeriod != 0) {
+
+                    Date effectiveDate = CalendarUtils.addCalendarDays(payment.getEffectiveDate(), clearingPeriod);
+
+                    // Uncleared payments can only be credited to the same source:
+                    if (effectiveDate.before(new Date())) {
+                        processAsCash = true;
+                    }
                 }
             }
 
@@ -365,14 +367,17 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = false)
     public Refund doAccountRefund(Long refundId, String batch) {
+
         // Get the Refund object and check that it's in the VERIFIED status:
         Refund refund = getRefund(refundId, true);
 
         // Check that it's an Account refund type using the Refund's "attribute" attribute:
         String refundRule = refund.getAttribute();
 
-        if (!StringUtils.startsWith(refundRule, "A")) {
-            throw new InvalidRefundTypeException("Invalid Refund type for an Account refund. Refund rule (attribute) is [" + refundRule + "].");
+        if (StringUtils.isBlank(refundRule) || !StringUtils.startsWith(refundRule, "A")) {
+            String errMsg = "Invalid Refund type for an Account refund. Refund rule (attribute) is [" + refundRule + "]";
+            logger.error(errMsg);
+            throw new InvalidRefundTypeException(errMsg);
         }
 
         // Validate the refund rule:
