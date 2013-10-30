@@ -10,6 +10,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.pb.*;
 import com.sigmasys.kuali.ksa.model.tp.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.PersistenceService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
@@ -54,6 +55,9 @@ public class PaymentPlanController extends GenericSearchController {
 
     @Autowired
     private AuditableEntityService auditableEntityService;
+
+    @Autowired
+    private PersistenceService persistenceService;
 
     /**
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
@@ -811,6 +815,30 @@ public class PaymentPlanController extends GenericSearchController {
 
         String message = "Third Pary Payment Plan saved";
         GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, message);
+
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=updateThirdParty")
+    public ModelAndView updateThirdParty(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+        String planString = request.getParameter("actionParameters[planId]");
+        Long planId = Long.parseLong(planString);
+
+        List<ThirdPartyPlanModel> plans = form.getThirdPartyPlans();
+        for(ThirdPartyPlanModel model : plans) {
+            ThirdPartyPlan plan = model.getParent();
+            if(plan != null && planId.equals(plan.getId())) {
+                if(plan.getCode().length() > 20) {
+                    plan.setCode(plan.getCode().substring(0, 20));
+                }
+
+
+                persistenceService.persistEntity(plan);
+
+                GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Third Party Plan updated");
+            }
+        }
 
 
         return getUIFModelAndView(form);

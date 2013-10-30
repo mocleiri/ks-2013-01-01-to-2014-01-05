@@ -808,7 +808,7 @@
                                         </bean>
                                         <bean parent="Uif-ImageField" p:source="../images/settings.png" p:style="cursor:pointer;" p:altText="View Plan Settings" p:title=""
                                               p:onClickScript="showLightboxComponent('planSettingsLightbox@{#lineSuffix}');"/>
-                                        <bean id="planSettingsLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                        <bean id="planSettingsLightbox" parent="Uif-VerticalBoxSection">
                                             <property name="headerText" value="Third Party Payment Plan Settings"/>
                                             <property name="hidden" value="true"/>
                                             <property name="readOnly" value="false"/>
@@ -820,7 +820,9 @@
                                                     <ref bean="thirdPartyChargePeriod"/>
                                                     <ref bean="thirdPartyCharges"/>
                                                     <ref bean="thirdPartyTransferredTransactions"/>
-                                                    <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="updateThirdParty" p:actionLabel="Submit" p:actionParameters="planId:@{#line.parent.id}"/>
+                                                    <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="updateThirdParty"
+                                                          p:actionLabel="Submit" p:actionParameters="planId:@{#line.parent.id}"
+                                                          p:preSubmitCall="jQuery.fancybox.close(); return true;"/>
                                                 </list>
                                             </property>
                                         </bean>
