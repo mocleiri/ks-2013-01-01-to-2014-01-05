@@ -233,16 +233,45 @@ class ActivityOffering
     delivery_days = ao_table_row.cells[ManageCourseOfferings::AO_DAYS].text
     if delivery_days != "" then
       #there are delivery logistics
-      dl_object = make DeliveryLogistics
-      dl_object.init_existing(ao_table_row)
-      if dl_object.isRDL then
-        @requested_delivery_logistics_list[dl_object.dl_key] = dl_object
+      dl_list = get_existing_delivery_logistics (ao_table_row)
+      if dl_list[0].isRDL then
+        @requested_delivery_logistics_list = dl_list
       else
-        @actual_delivery_logistics_list[dl_object.dl_key] = dl_object
+        @actual_delivery_logistics_list = dl_list
       end
     end
     @aoc_private_name = cluster_name
     @parent_course_offering = parent_co
+  end
+
+  def get_existing_delivery_logistics(ao_table_row)
+    dl_list = []
+    is_rdl = ao_table_row.cells[ManageCourseOfferings::AO_DAYS].span(index: 1).present? and ao_table_row.cells[ManageCourseOfferings::AO_DAYS].span(index: 1).attribute_value("class") == "uif-scheduled-dl"
+    dl_days = ao_table_row.cells[ManageCourseOfferings::AO_DAYS].text.split("\n")
+    st_times = ao_table_row.cells[ManageCourseOfferings::AO_ST_TIME].text.split("\n")
+    end_times = ao_table_row.cells[ManageCourseOfferings::AO_END_TIME].text.split("\n")
+    fac_names = ao_table_row.cells[ManageCourseOfferings::AO_BLDG].text.split("\n")
+    rooms = ao_table_row.cells[ManageCourseOfferings::AO_ROOM].text.split("\n")
+
+    i=0
+    dl_days.each do |day|
+      st, st_ampm = st_times[i].split
+      et, et_ampm = end_times[i].split
+      dl = make DeliveryLogistics,
+                :isRDL => is_rdl,
+                :days => dl_days[i],
+                :start_time => st,
+                :start_time_ampm => st_ampm,
+                :end_time => et,
+                :end_time_ampm => et_ampm,
+                :facility => "",
+                :facility_long_name => fac_names[i],
+                :room => rooms[i]
+      dl_list << dl
+      i += 1
+    end
+
+    dl_list
   end
 
   #navigates activity offering edit page and updates activity offering based on class attributes
@@ -1218,7 +1247,10 @@ class DeliveryLogistics
         end
 
         if opts[:days] != nil then
+          page.add_start_time.click
+          page.loading.wait_while_present
           page.add_days.set opts[:days]
+          sleep 2
         end
 
         if opts[:start_time] != nil then
@@ -1228,9 +1260,10 @@ class DeliveryLogistics
         end
 
         if opts[:end_time] != nil then
+          page.add_end_time.click
+          sleep 1
+          page.loading.wait_while_present
           if opts[:std_ts] then
-            page.add_end_time.click
-            page.loading.wait_while_present
             page.add_end_time.set opts[:end_time].to_s[0]
             page.loading.wait_while_present
             hr,min = opts[:end_time].split(":")
@@ -1266,6 +1299,7 @@ class DeliveryLogistics
 
   def target_row_by_dl_key
     on ActivityOfferingMaintenance do |page|
+      page.view_requested_delivery_logistics
       page.requested_logistics_table.rows.each do |row|
         row_key = "#{row.cells[ActivityOfferingMaintenance::DAYS_COLUMN].text}#{row.cells[ActivityOfferingMaintenance::ST_TIME_COLUMN].text}".delete(' ')
         return row unless row_key != dl_key
@@ -1279,14 +1313,23 @@ class DeliveryLogistics
   # generally called from ActivityOffering class - see ActivityOffering
   #
   # @param row
-  def delete_rdl
-    row = target_row_by_dl_key
+  def delete_rdl (key)
     on ActivityOfferingMaintenance do |page|
-      page.delete_requested_logistics_features(row)
-      page.save_request
+      row = page.target_rdl_row (key)
+      page.delete_rdl_row(row)
+      page.submit
     end
   end
 
+  def normalize_start_and_end_times
+    st_hr,st_min = @start_time.split(":")
+    st_hr = "0"+st_hr if st_hr.length==1
+    st = "#{st_hr}:#{st_min}"
+    et_hr,et_min = @end_time.split(":")
+    et_hr = "0"+et_hr if et_hr.length==1
+    et = "#{et_hr}:#{et_min}"
+    return st, et
+  end
 end
 
 # stores test data for creating/editing and validating waitlist data and provides convenience methods for navigation and data entry

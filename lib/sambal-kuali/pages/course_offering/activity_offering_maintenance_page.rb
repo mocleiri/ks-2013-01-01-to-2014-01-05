@@ -180,13 +180,22 @@ class ActivityOfferingMaintenance < BasePage
     select_ao_menu.select(ao_name)
   end
 
+  def target_rdl_row (key)
+    view_requested_delivery_logistics
+    requested_logistics_table.rows.each do |row|
+      row_key = "#{row.cells[DAYS_COLUMN].text.upcase.delete(' ')}#{row.cells[ST_TIME_COLUMN].text.upcase.delete(' ')}#{row.cells[END_TIME_COLUMN].text.upcase.delete(' ')}"
+      return row unless row_key != key
+    end
+    return nil
+  end
+
   def edit_rdl_row(row)
     row.cells[ACTIONS].link(text: "Edit").click
     loading.wait_while_present(120)
   end
 
   def delete_rdl_row(row)
-    row.cells[ACTIONS].button(text: "Delete").click
+    row.cells[LOGISTICS_ACTION_COLUMN].button(text: "delete").click
   end
 
   def get_inst_effort(id)
