@@ -41,9 +41,9 @@ Then /^the "(ADL|RDL)s" are successfully copied as RDLs in the new AO$/ do |sour
   course_offering = @ao_source.parent_course_offering
   course_offering.manage_and_init
   if source_delivery_logistics_type == "ADL"
-    source_delivery_logistics = course_offering.get_ao_obj_by_code(@ao_source.code).actual_delivery_logistics_list.values[0]
+    source_delivery_logistics = course_offering.get_ao_obj_by_code(@ao_source.code).actual_delivery_logistics_list[0]
   else
-    source_delivery_logistics = course_offering.get_ao_obj_by_code(@ao_source.code).requested_delivery_logistics_list.values[0]
+    source_delivery_logistics = course_offering.get_ao_obj_by_code(@ao_source.code).requested_delivery_logistics_list[0]
   end
   source_delivery_logistics.nil?.should be_false
 

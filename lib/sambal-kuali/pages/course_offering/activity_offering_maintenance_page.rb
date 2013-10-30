@@ -181,9 +181,9 @@ class ActivityOfferingMaintenance < BasePage
   end
 
   def target_rdl_row (key)
-    view_requested_delivery_logistics
+    #view_requested_delivery_logistics
     requested_logistics_table.rows.each do |row|
-      row_key = "#{row.cells[DAYS_COLUMN].text.upcase.delete(' ')}#{row.cells[ST_TIME_COLUMN].text.upcase.delete(' ')}#{row.cells[END_TIME_COLUMN].text.upcase.delete(' ')}"
+      row_key = "#{row.cells[DAYS_COLUMN].text.upcase.delete(' ')}#{row.cells[ST_TIME_COLUMN].text.upcase.delete(' ')}"
       return row unless row_key != key
     end
     return nil

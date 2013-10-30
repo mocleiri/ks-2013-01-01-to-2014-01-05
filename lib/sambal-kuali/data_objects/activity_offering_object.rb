@@ -234,10 +234,12 @@ class ActivityOffering
     if delivery_days != "" then
       #there are delivery logistics
       dl_list = get_existing_delivery_logistics (ao_table_row)
-      if dl_list[0].isRDL then
-        @requested_delivery_logistics_list = dl_list
-      else
-        @actual_delivery_logistics_list = dl_list
+      dl_list.each do |dl_object|
+        if dl_object.isRDL then
+          @requested_delivery_logistics_list[dl_object.dl_key] = dl_object
+        else
+          @actual_delivery_logistics_list[dl_object.dl_key] = dl_object
+        end
       end
     end
     @aoc_private_name = cluster_name
@@ -264,7 +266,7 @@ class ActivityOffering
                 :start_time_ampm => st_ampm,
                 :end_time => et,
                 :end_time_ampm => et_ampm,
-                :facility => "",
+                :facility => fac_names[i],
                 :facility_long_name => fac_names[i],
                 :room => rooms[i]
       dl_list << dl
@@ -1027,6 +1029,7 @@ class DeliveryLogistics
         :isRDL => true,
         :tba  => false,
         :days  => "MWF",
+        :std_ts => false,
         :start_time  => "01:00",
         :start_time_ampm  => "pm",
         :end_time  => "02:00",
@@ -1047,28 +1050,67 @@ class DeliveryLogistics
   #
   # generally called from ActivityOffering class
   def create
-    on ActivityOfferingMaintenance do |page|
-      isRDL = true
-      if @tba
-        page.add_tba.set
-      else
-        page.add_tba.clear
-      end
+    if isRDL then
+      on ActivityOfferingMaintenance do |page|
+        #target_row = target_row_by_dl_key
+        #page.edit_rdl_row(target_row)
+        sleep 2
 
-      page.add_days.click
-      page.add_days.set @days
-      page.add_start_time.click
-      page.loading.wait_while_present
-      page.add_start_time.set "#{@start_time} #{@start_time_ampm}"
-      #page.add_start_time.fire_event "onblur"
-      page.add_end_time.click
-      page.loading.wait_while_present
-      page.add_end_time.set "#{@end_time} #{@end_time_ampm}"
-      page.add_facility.click
-      page.add_facility.set @facility
-      page.add_room.set @room
-      #page.facility_features TODO: later, facility features persistence not implemented yet
-      page.add_new_delivery_logistics
+        @end_time_ampm.upcase!
+        @start_time_ampm.upcase!
+
+        if @tba
+          page.add_tba.set
+        else
+          page.add_tba.clear
+        end
+
+        if @days != nil then
+          page.add_start_time.click
+          page.loading.wait_while_present
+          page.add_days.set @days
+          sleep 2
+        end
+
+        if @start_time != nil then
+          page.add_start_time.click
+          page.loading.wait_while_present
+          page.add_start_time.set @start_time + " " + @start_time_ampm
+          page.add_start_time.click
+          page.loading.wait_while_present
+        end
+
+        if @end_time != nil then
+          page.add_end_time.click
+          sleep 1
+          page.loading.wait_while_present
+          if @std_ts then
+            page.add_end_time.set @end_time.to_s[0]
+            page.loading.wait_while_present
+            hr,min = @end_time.split(":")
+            if hr.length == 1 then
+              hr="0"+hr
+            end
+            page.select_end_time("#{hr}:#{min} #{@end_time_ampm.upcase}")
+          else
+            page.add_end_time.set @end_time + " " + @end_time_ampm
+          end
+        end
+
+        if @facility != nil then
+          page.add_facility.set @facility
+        end
+
+        if @room != nil then
+          page.add_room.set @room
+        end
+
+        #opts["features_list"] TODO if implemented
+        page.add_new_delivery_logistics
+
+      end
+    else
+      raise "error: cannot add Actual Delivery Logistics"
     end
   end
 
@@ -1189,7 +1231,7 @@ class DeliveryLogistics
     if isRDL then
       on ActivityOfferingMaintenance do |page|
         page.view_requested_delivery_logistics
-        target_row = target_row_by_dl_key
+        target_row = page.target_rdl_row(dl_key)
         page.edit_rdl_row(target_row)
         sleep 2
 
@@ -1228,75 +1270,21 @@ class DeliveryLogistics
         page.add_new_delivery_logistics
       end
       set_options(opts)
+      @end_time_ampm.upcase!
+      @start_time_ampm.upcase!
     else
       raise "error: cannot edit Actual Delivery Logistics"
     end
   end
 
-  def add(opts)
-    if isRDL then
-      on ActivityOfferingMaintenance do |page|
-        #target_row = target_row_by_dl_key
-        #page.edit_rdl_row(target_row)
-        sleep 2
-
-        if opts[:tba]
-          page.add_tba.set
-        else
-          page.add_tba.clear
-        end
-
-        if opts[:days] != nil then
-          page.add_start_time.click
-          page.loading.wait_while_present
-          page.add_days.set opts[:days]
-          sleep 2
-        end
-
-        if opts[:start_time] != nil then
-          page.add_start_time.click
-          page.loading.wait_while_present
-          page.add_start_time.set opts[:start_time] + " " + opts[:start_time_ampm].upcase
-        end
-
-        if opts[:end_time] != nil then
-          page.add_end_time.click
-          sleep 1
-          page.loading.wait_while_present
-          if opts[:std_ts] then
-            page.add_end_time.set opts[:end_time].to_s[0]
-            page.loading.wait_while_present
-            hr,min = opts[:end_time].split(":")
-            if hr.length == 1 then
-              hr="0"+hr
-            end
-            page.select_end_time("#{hr}:#{min} #{opts[:end_time_ampm].upcase}")
-          else
-            page.add_end_time.set opts[:end_time] + " " + opts[:end_time_ampm]
-          end
-        end
-
-        if opts[:facility] != nil then
-          page.add_facility.set opts[:facility]
-        end
-
-        if opts[:room] != nil then
-          page.add_room.set opts[:room]
-        end
-
-        #opts["features_list"] TODO if implemented
-        page.add_new_delivery_logistics
-      end
-      set_options(opts)
-    else
-      raise "error: cannot edit Actual Delivery Logistics"
-    end
-  end
+  #def add(opts)
+  #end
 
   def dl_key
     "#{@days}#{@start_time}#{@start_time_ampm}"
   end
 
+  #similar method in page object?????
   def target_row_by_dl_key
     on ActivityOfferingMaintenance do |page|
       page.view_requested_delivery_logistics
