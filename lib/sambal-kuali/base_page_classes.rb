@@ -178,7 +178,6 @@ module CalendarStickyFooter
 
     acal_sticky_footer_div.button(text: "Save").click
     loading.wait_while_present(60)
-    sleep 1
     if options[:exp_success] then
       growl_msg_txt = growl_text
       raise "save was not successful - growl text: #{growl_msg_txt}" unless growl_msg_txt.match /saved successfully/

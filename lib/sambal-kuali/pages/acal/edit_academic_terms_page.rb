@@ -4,7 +4,10 @@ class EditAcademicTerms < BasePage
   frame_element
   include CalendarStickyFooter
 
-  action(:go_to_terms_tab) { |b| b.frm.a(href: "#KS-AcademicTerm-EditSection_tab").click; b.loading.wait_while_present}
+  expected_element :terms_tab_link
+
+  element(:terms_tab_link) { |b| b.frm.a(href: "#KS-AcademicTerm-EditSection_tab")}
+  action(:go_to_terms_tab) { |b| b.terms_tab_link.click; b.loading.wait_while_present}
   action(:go_to_cal_tab) { |b| b.frm.a(href: "#acal-info_tab").click; b.loading.wait_while_present}
   element(:term_type_add)  { |b| b.frm.select(id: "term_type_add_add_control") }
   element(:term_start_date_add)  { |b| b.frm.text_field(id: "term_start_date_add_add_control") }

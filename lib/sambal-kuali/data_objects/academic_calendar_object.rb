@@ -387,7 +387,7 @@ class AcademicTerm
         end
       end
     end
-
+    on(EditAcademicTerms).terms_tab_link.click #close any open date pickers
     on(EditAcademicTerms).save :exp_success => options[:exp_success] #unless options.length >= 1 #don't save if only :exp_success element
 
     set_options(options)
