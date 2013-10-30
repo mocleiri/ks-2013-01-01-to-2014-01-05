@@ -2648,6 +2648,9 @@ public class PlanController extends UifControllerBase {
 
         if (!placeHolder) {
             params.put("courseId", courseDetails.getCourseId());
+            params.put("subject", courseDetails.getSubjectArea().trim());
+            params.put("number", courseDetails.getCourseNumber().trim());
+            params.put("courseCd", courseDetails.getCode());
         }
 
         //  Only planned or backup items get an atpId attribute.
@@ -2803,6 +2806,9 @@ public class PlanController extends UifControllerBase {
         String planItemShortTitle = null;
         String planItemLongTitle = null;
         String courseId = null;
+        String courseCd = null;
+        String subject = null;
+        String number = null;
         String credit = null;
         String note = null;
         if (hasText(planItem.getDescr().getPlain())) {
@@ -2831,13 +2837,18 @@ public class PlanController extends UifControllerBase {
             planItemLongTitle = courseDetails.getCourseTitle();
             courseId = courseDetails.getCourseId();
             credit = courseDetails.getCredit();
+            subject = courseDetails.getSubjectArea().trim();
+            number = courseDetails.getCourseNumber().trim();
+            courseCd = courseDetails.getCode();
         }
 
         params.put("placeHolder", String.valueOf(placeHolder));
         params.put("planItemShortTitle", planItemShortTitle);
         params.put("planItemLongTitle", planItemLongTitle);
         params.put("courseId", courseId);
-        params.put("credit", credit);
+        params.put("courseCd", courseCd);
+        params.put("subject", subject);
+        params.put("number", number);
         params.put("note", note);
 
 

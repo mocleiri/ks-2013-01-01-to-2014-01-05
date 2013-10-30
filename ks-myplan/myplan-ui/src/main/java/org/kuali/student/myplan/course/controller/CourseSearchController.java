@@ -58,6 +58,7 @@ import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
 import org.kuali.student.r2.core.search.dto.SearchResultInfo;
 import org.kuali.student.r2.core.search.infc.SearchResultRow;
 import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.lum.course.service.assembler.CourseAssemblerConstants;
 import org.kuali.student.r2.lum.util.constants.CluServiceConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -307,8 +308,10 @@ public class CourseSearchController extends UifControllerBase {
                     subjectArea.add(course.getSubject());
                     loadTermsOffered(course);
                     loadGenEduReqs(course);
-                    if (courseStatusMap.containsKey(course.getCourseVersionIndependentId())) {
-                        course.setStatus(courseStatusMap.get(course.getCourseVersionIndependentId()));
+                    String key = String.format("%s:%s:%s", course.getCourseVersionIndependentId(), course.getSubject().trim(), course.getNumber().trim());
+                    if (courseStatusMap.containsKey(key)) {
+
+                        course.setStatus(courseStatusMap.get(key));
                     }
                     courseList.add(course);
                 }
@@ -371,14 +374,14 @@ public class CourseSearchController extends UifControllerBase {
 
             String status = "";
             String courseId = item.getCourseId();
-            String courseCd = item.getCode();
             String label = item.getStatus().getLabel();
+
             if (label.length() > 0) {
-                status = "<span id=\\\"" + courseId + "_status\\\" class=\\\"" + label.toLowerCase() + "\\\">" + label + "</span>";
+                status = String.format("<span id=\\\"%s_%s_%s_status\\\" class=\\\"%s\\\">%s</span>", courseId, item.getSubject().trim(), item.getNumber().trim(), label.toLowerCase(), label);
             } else if (getUserSessionHelper().isAdviser()) {
-                status = "<span id=\\\"" + courseId + "_status\\\">" + CourseSearchItem.EMPTY_RESULT_VALUE_KEY + "</span>";
+                status = String.format("<span id=\\\"%s_%s_%s_status\\\">%s</span>", courseId, item.getSubject().trim(), item.getNumber().trim(), CourseSearchItem.EMPTY_RESULT_VALUE_KEY);
             } else {
-                status = "<span id=\\\"" + courseId + "_status\\\"><input type=\\\"image\\\" title=\\\"Bookmark or Add to Plan\\\" src=\\\"/student/ks-myplan/images/pixel.gif\\\" alt=\\\"Bookmark or Add to Plan\\\" class=\\\"courseResults__itemAdd\\\" data-courseid= \\\"" + courseId + "\\\" data-coursecd= \\\"" + courseCd + "\\\"onclick=\\\"openMenu('" + courseId + "_add','add_course_items',null,event,null,'myplan-container-75',{tail:{align:'middle'},align:'middle',position:'right'},false);\\\" /></span>";
+                status = String.format("<span id=\\\"%s_%s_%s_status\\\"><input type=\\\"image\\\" title=\\\"Bookmark or Add to Plan\\\" src=\\\"/student/ks-myplan/images/pixel.gif\\\" alt=\\\"Bookmark or Add to Plan\\\" class=\\\"courseResults__itemAdd\\\" data-courseid= \\\"%s\\\" data-coursecd= \\\"%s\\\" data-subject= \\\"%s\\\" data-number= \\\"%s\\\" onclick=\\\"openMenu('%s_add','add_course_items',null,event,null,'myplan-container-75',{tail:{align:'middle'},align:'middle',position:'right'},false);\\\" /></span>", courseId, item.getSubject().trim(), item.getNumber().trim(), courseId, item.getCode().trim(), item.getSubject().trim(), item.getNumber().trim(), courseId);
             }
 
             String courseName = "";
@@ -669,6 +672,13 @@ public class CourseSearchController extends UifControllerBase {
         this.academicPlanService = academicPlanService;
     }
 
+    /**
+     * Courses status map (which tells if that course is planned, bookmarked or not planned)
+     *
+     * @param studentID
+     * @return
+     * @throws Exception
+     */
     private Map<String, CourseSearchItem.PlanState> getCourseStatusMap(String studentID) throws Exception {
         logger.info("Start of method getCourseStatusMap of CourseSearchController:" + System.currentTimeMillis());
 
@@ -679,18 +689,22 @@ public class CourseSearchController extends UifControllerBase {
          */
         List<String> planItemTypes = Arrays.asList(PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED, PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST, PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP);
         List<PlanItemInfo> planItemList = getPlanHelper().getPlanItemsByTypes(getUserSessionHelper().getStudentId(), planItemTypes);
-        for (PlanItem planItem : planItemList) {
-            String courseID = planItem.getRefObjectId();
-            CourseSearchItem.PlanState state;
-            if (planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST)) {
-                state = CourseSearchItem.PlanState.SAVED;
-            } else if (planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED)
-                    || planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP)) {
-                state = CourseSearchItem.PlanState.IN_PLAN;
-            } else {
-                throw new RuntimeException("Unknown plan item type.");
+        for (PlanItemInfo planItem : planItemList) {
+            if (PlanConstants.COURSE_TYPE.equals(planItem.getRefObjectType())) {
+                String courseID = planItem.getRefObjectId();
+                String crossListedCourse = getPlanHelper().getCrossListedCourse(planItem.getAttributes());
+                CourseInfo courseInfo = getCourseHelper().getCourseInfoByIdAndCd(courseID, crossListedCourse);
+                CourseSearchItem.PlanState state;
+                if (planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_WISHLIST)) {
+                    state = CourseSearchItem.PlanState.SAVED;
+                } else if (planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED)
+                        || planItem.getTypeKey().equals(PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP)) {
+                    state = CourseSearchItem.PlanState.IN_PLAN;
+                } else {
+                    throw new RuntimeException("Unknown plan item type.");
+                }
+                savedCourseSet.put(String.format("%s:%s:%s", courseID, courseInfo.getSubjectArea().trim(), courseInfo.getCourseNumberSuffix().trim()), state);
             }
-            savedCourseSet.put(courseID, state);
         }
         logger.info("End of method getCourseStatusMap of CourseSearchController:" + System.currentTimeMillis());
         return savedCourseSet;

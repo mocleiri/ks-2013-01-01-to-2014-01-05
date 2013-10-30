@@ -206,15 +206,15 @@
         <property name="onDocumentReadyScript" value="
             jQuery('#course_search_results').on('PLAN_ITEM_DELETED', function(event, data){
                 if (data.planItemType === 'wishlist') {
-                    restoreSearchAddButton(data.courseId);
+                    restoreSearchAddButton(data.courseId, data.subject, data.number, data.courseCd);
                 }
             }).on('PLAN_ITEM_ADDED', function(event, data){
                 if (data.planItemType === 'wishlist') {
-                    actionFeedback(data.courseId + '_status', false, null, 'bookmarked', 'Bookmarked');
+                    actionFeedback(data.courseId + '_' + data.subject + '_' + data.number + '_status', false, null, 'bookmarked', 'Bookmarked');
                 }
             }).on('PLAN_ITEM_ADDED', function(event, data){
                 if (data.planItemType === 'planned' || data.planItemType === 'backup') {
-                    actionFeedback(data.courseId + '_status', false, null, 'planned', 'Planned');
+                    actionFeedback(data.courseId + '_' + data.subject + '_' + data.number + '_status', false, null, 'planned', 'Planned');
                 }
             });
         "/>

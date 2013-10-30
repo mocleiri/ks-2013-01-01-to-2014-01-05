@@ -642,7 +642,7 @@ function actionFeedback(targetId, needsParent, replacementId, cssClasses, replac
  Function: restore add button for saving courses in search results
  #################################################################
  */
-function restoreSearchAddButton(courseId) {
+function restoreSearchAddButton(courseId, subject, number, courseCd) {
     var oTable = jQuery('.courseResults__table').dataTable();
     var oNodes = oTable.fnGetNodes();
     var button = jQuery("<input />").attr({
@@ -652,9 +652,12 @@ function restoreSearchAddButton(courseId) {
         "src": getConfigParam("ksapImageLocation") + "pixel.gif",
         "class": "courseResults__itemAdd",
         "data-courseid": courseId,
+        "data-coursecd": courseCd,
+        "data-subject": subject,
+        "data-number": number,
         "onclick": "openMenu('" + courseId + "_add','add_course_items',null,event,null,'popover__menu popover__menu--small',{tail:{align:'middle'},align:'middle',position:'right'},false);"
     });
-    jQuery(oNodes).find("#" + courseId + "_status").fadeOut(250, function () {
+    jQuery(oNodes).find("#" + courseId + "_" + subject + "_" + number +"_status").fadeOut(250, function () {
         jQuery(this).removeClass().html(button);
         jQuery(this).fadeIn(250);
     });
