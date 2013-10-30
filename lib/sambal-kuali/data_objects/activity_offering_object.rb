@@ -255,8 +255,8 @@ class ActivityOffering
 
     i=0
     dl_days.each do |day|
-      st, st_ampm = st_times[i].split
-      et, et_ampm = end_times[i].split
+      st, st_ampm = st_times[i].split unless st_times[i].nil?
+      et, et_ampm = end_times[i].split unless st_times[i].nil?
       dl = make DeliveryLogistics,
                 :isRDL => is_rdl,
                 :days => dl_days[i],
