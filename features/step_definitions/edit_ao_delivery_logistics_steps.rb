@@ -65,6 +65,7 @@ Then /^the AO's delivery logistics shows the new schedule$/ do
       page.get_requested_logistics_facility(row).should == del_logisitics.facility
       page.get_requested_logistics_room(row).should == del_logisitics.room
     end
+    page.cancel
   end
 end
 

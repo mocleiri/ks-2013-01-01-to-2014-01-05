@@ -102,8 +102,12 @@ class ActivityOfferingMaintenance < BasePage
   element(:add_new_delivery_logistics_button) { |b| b.button(id: "add_rdl_button") }
   action(:add_new_delivery_logistics) { |b| b.add_new_delivery_logistics_button.click; b.adding.wait_while_present }
 
+  element(:view_requested_delivery_logistics_toggle_open) { |b| b.frm.image(id: "ActivityOffering-DeliveryLogistic-Requested_toggle_exp") }
   element(:view_requested_delivery_logistics_link) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-Requested_toggle") }
-  action(:view_requested_delivery_logistics) { |b| b.view_requested_delivery_logistics_link.click; b.loading.wait_while_present }
+  def view_requested_delivery_logistics
+    view_requested_delivery_logistics_link.click unless view_requested_delivery_logistics_toggle_open.present?
+    loading.wait_while_present
+  end
 
   element(:delete_requested_delivery_logistics_button) { |b| b.requested_logistics_table.button(text: "delete") } #TODO: identify button by row (days + start_time)
   action(:delete_requested_delivery_logistics) { |b| b.delete_requested_delivery_logistics_button.click; b.loading.wait_while_present }
@@ -181,7 +185,7 @@ class ActivityOfferingMaintenance < BasePage
   end
 
   def target_rdl_row (key)
-    #view_requested_delivery_logistics
+    view_requested_delivery_logistics
     requested_logistics_table.rows.each do |row|
       row_key = "#{row.cells[DAYS_COLUMN].text.upcase.delete(' ')}#{row.cells[ST_TIME_COLUMN].text.upcase.delete(' ')}"
       return row unless row_key != key
