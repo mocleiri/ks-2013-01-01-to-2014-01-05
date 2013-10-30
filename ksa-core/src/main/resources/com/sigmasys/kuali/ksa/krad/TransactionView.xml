@@ -358,7 +358,7 @@
                         <bean id="transactionViewDescriptionField" parent="Uif-HorizontalFieldGroup" p:label="Description">
                             <property name="items">
                                 <list>
-                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />
+                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.statementText} (@{#line.allocations.size()})" />
                                     <ref bean="transactionDetailLightboxRunningTotal"/>
 
                                     <bean parent="Uif-HorizontalBoxSection" p:style="float: right;">
@@ -516,7 +516,7 @@
                         <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="width: 40%;">
                             <property name="items">
                                 <list>
-                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotalDeferment@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.transactionType.description} (@{#line.allocations.size()})" />
+                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotalDeferment@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.statementText} (@{#line.allocations.size()})" />
                                     <bean id="transactionDetailLightboxRunningTotalDeferment" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                                         <property name="hidden" value="true"/>
                                         <property name="items">
@@ -655,7 +655,7 @@
                 <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:style="white-space: nowrap;">
                     <property name="items">
                     <list>
-                        <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.transactionType.description}" />
+                        <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightbox@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');" p:linkText="@{#line.statementText}" />
                         <bean id="transactionDetailLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL"> <!-- p:progressiveRender="false">-->
                             <property name="hidden" value="true"/>
                             <property name="items">
@@ -762,7 +762,7 @@
         </property>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="allocatedTransaction.transactionType.description" p:label="Description" p:style="width: 50%"/>
+                <bean parent="Uif-InputField" p:propertyName="allocatedTransaction.statementText" p:label="Description" p:style="width: 50%"/>
                 <bean parent="Uif-InputField" p:propertyName="allocatedTransaction.status" p:label="Status" p:style="width: 30%"/>
                 <bean parent="Uif-InputField" p:propertyName="allocation.amount" p:label="Amount" p:style="text-align: right; width: 30%"/>
                 <bean parent="Uif-MessageField" p:messageText="&lt;img src='../images/@{#line.allocation.isLocked() ? 'locked' : 'unlocked'}.png' alt='@{#line.allocation.isLocked() ? 'Locked' : 'Unlocked'}'&gt;" p:label="Locked" p:style="width: 20%">
@@ -812,7 +812,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-InputField" p:label="Effective Date" p:propertyName="effectiveDate"/>
-                <bean parent="Uif-InputField" p:label="Description" p:propertyName="transactionType.description"/>
+                <bean parent="Uif-InputField" p:label="Description" p:propertyName="statementText"/>
                 <bean parent="Uif-InputField" p:label="Type" p:propertyName="transactionTypeValue"/>
                 <bean parent="Uif-InputField" p:label="Amount" p:propertyName="unallocatedAmount"/>
                 <bean parent="Uif-InputField" p:label="Mandatory Memo" p:propertyName="reverseTransactionReason" p:readOnly="false"
@@ -926,7 +926,7 @@
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.allocatedAmount" p:label="Allocated Amount"/>
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.lockedAllocatedAmount" p:label="Locked Allocated"/>
 
-                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.transactionType.description" p:label="Description"/>
+                    <bean parent="Uif-InputField" p:propertyName="parentTransaction.statementText" p:label="Description"/>
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.rollup.description" p:label="Roll-up"/>
                     <bean parent="Uif-InputField" p:propertyName="parentTransaction.generalLedgerType.description" p:label="General Ledger Type"/>
                     <bean parent="Uif-InputField" p:propertyName="glOverridden" p:label="Override GL Codes"/>
@@ -990,7 +990,7 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-InputField" p:propertyName="currentTransaction.effectiveDate" p:label="Selected Transaction" p:readOnly="true"/>
-                            <bean parent="Uif-InputField" p:propertyName="currentTransaction.transactionType.description" p:readOnly="true"/>
+                            <bean parent="Uif-InputField" p:propertyName="currentTransaction.statementText" p:readOnly="true"/>
                             <!--
                             <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('paymentDetailLightbox');writeHiddenToForm('actionParameters[currentParent]', '@{payment.id}');" p:linkText="@{payment.transactionType.description}" />
                             <bean id="paymentDetailLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
@@ -1039,7 +1039,7 @@
                                         <bean parent="Uif-HorizontalFieldGroup" p:label="Description" p:readOnly="true" >
                                             <property name="items">
                                                 <list>
-                                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:linkText="@{#line.transactionType.description}" />
+                                                    <bean parent="Uif-LinkField" p:href="javascript:void(0)" p:linkText="@{#line.statementText}" />
                                                     <!--
                                                     p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotalDeferment@{#lineSuffix}');writeHiddenToForm('actionParameters[currentParent]', '@{#line.id}');"
                                                     <bean id="allocationDetailLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
