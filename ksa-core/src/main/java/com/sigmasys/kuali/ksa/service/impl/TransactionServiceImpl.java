@@ -1342,17 +1342,17 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         if (!transactionType1.getTypeValue().equals(transactionType2.getTypeValue())) {
 
-            final Credit creditTransaction;
-            final Debit debitTransaction;
+            final Transaction creditTransaction;
+            final Transaction debitTransaction;
             final CreditType creditType;
 
             if (transactionType1 instanceof CreditType) {
-                creditTransaction = (Credit) transaction1;
-                debitTransaction = (Debit) transaction2;
+                creditTransaction = transaction1;
+                debitTransaction = transaction2;
                 creditType = (CreditType) transactionType1;
             } else {
-                creditTransaction = (Credit) transaction2;
-                debitTransaction = (Debit) transaction1;
+                creditTransaction = transaction2;
+                debitTransaction = transaction1;
                 creditType = (CreditType) transactionType2;
             }
 
