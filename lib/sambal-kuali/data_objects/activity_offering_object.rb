@@ -1301,11 +1301,10 @@ class DeliveryLogistics
   # generally called from ActivityOffering class - see ActivityOffering
   #
   # @param row
-  def delete_rdl (key)
+  def delete_rdl
     on ActivityOfferingMaintenance do |page|
-      row = page.target_rdl_row (key)
+      row = page.target_rdl_row(dl_key)
       page.delete_rdl_row(row)
-      page.submit
     end
   end
 

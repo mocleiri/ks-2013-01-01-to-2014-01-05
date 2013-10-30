@@ -115,7 +115,10 @@ end
 And /^I delete the original RDLs$/ do
   @activity_offering.parent_course_offering.manage
   @activity_offering.edit
-  @orig_rdls.delete_rdl (@orig_key)
+  rdl_key = @activity_offering.requested_delivery_logistics_list.keys[0]
+  @activity_offering.requested_delivery_logistics_list.values[0].delete_rdl
+  @activity_offering.requested_delivery_logistics_list.delete(rdl_key)
+  @activity_offering.save
 end
 
 When /^I add (standard|ad hoc) RDLs for an AO$/ do |tsType|
