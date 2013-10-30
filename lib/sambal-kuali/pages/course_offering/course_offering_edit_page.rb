@@ -130,7 +130,8 @@ class CourseOfferingEdit < BasePage
   end
 
   def select_final_exam_activity(format)
-    delivery_format_row(format).cells[FINAL_EXAM_ACTIVITY_COLUMN].select().select(format)
+    row = delivery_formats_table.row(text: /#{Regexp.escape(format)}/)
+    row.cells[FINAL_EXAM_ACTIVITY_COLUMN].select().select(format)
   end
 
   def select_fixed_credits(credits)
