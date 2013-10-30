@@ -1335,25 +1335,44 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         PermissionUtils.checkPermission(Permission.CREATE_GL_TRANSACTION);
 
 
-        TransactionType transactionType1 = transaction1.getTransactionType();
-        TransactionType transactionType2 = transaction2.getTransactionType();
+        final TransactionType transactionType1 = transaction1.getTransactionType();
+        final TransactionType transactionType2 = transaction2.getTransactionType();
 
         Pair<GlTransaction, GlTransaction> pair = new Pair<GlTransaction, GlTransaction>();
 
         if (!transactionType1.getTypeValue().equals(transactionType2.getTypeValue())) {
 
+            final Pair<CreditType, DebitType> transactionTypes = new Pair<CreditType, DebitType>();
+
+            TransactionTypeVisitor transactionTypeVisitor = new TransactionTypeVisitor() {
+                @Override
+                public void visit(CreditType creditType) {
+                    transactionTypes.setA(creditType);
+                }
+
+                @Override
+                public void visit(DebitType debitType) {
+                    transactionTypes.setB(debitType);
+                }
+            };
+
+            transactionType1.accept(transactionTypeVisitor);
+
+            if (transactionTypes.getA() == null) {
+                transactionType2.accept(transactionTypeVisitor);
+            }
+
+            final CreditType creditType = transactionTypes.getA();
+
             final Transaction creditTransaction;
             final Transaction debitTransaction;
-            final CreditType creditType;
 
-            if (transactionType1 instanceof CreditType) {
+            if (transactionType1.getTypeValue().equals(TransactionType.CREDIT_TYPE)) {
                 creditTransaction = transaction1;
                 debitTransaction = transaction2;
-                creditType = (CreditType) transactionType1;
             } else {
                 creditTransaction = transaction2;
                 debitTransaction = transaction1;
-                creditType = (CreditType) transactionType2;
             }
 
             // Calculating the appropriate GL operation for Credit
