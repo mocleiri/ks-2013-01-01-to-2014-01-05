@@ -1528,6 +1528,6 @@ INSERT into KSSA_CASH_LIMIT_PARAMETER (ID, CODE, CREATION_DATE, LAST_UPDATE, CRE
 
 -- Refund Types
 
-Insert into KSA.KSSA_REFUND_TYPE (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,CREDIT_TYPE_ID,DEBIT_TYPE_ID) values (1,'cash',to_timestamp('01-JAN-20 10.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'admin','Default "Cash" refund type.',null,null,'Cash',null,'refund');
-Insert into KSA.KSSA_REFUND_TYPE (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,CREDIT_TYPE_ID,DEBIT_TYPE_ID) values (2,'source',to_timestamp('01-JAN-20 10.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'admin','Default refund type of source refunds',null,null,'Source',null,'refund');
-Insert into KSA.KSSA_REFUND_TYPE (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,CREDIT_TYPE_ID,DEBIT_TYPE_ID) values (3,'account',to_timestamp('01-JAN-20 10.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'admin','Default refund type for account refunds',null,null,'Account','cash','refund');
+Insert into KSSA_REFUND_TYPE (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,CREDIT_TYPE_ID,DEBIT_TYPE_ID) values (1,'cash',to_timestamp('01-JAN-20 10.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'admin','Default "Cash" refund type.',null,null,'Cash',null,'refund');
+Insert into KSSA_REFUND_TYPE (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,CREDIT_TYPE_ID,DEBIT_TYPE_ID) values (2,'source',to_timestamp('01-JAN-20 10.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'admin','Default refund type of source refunds',null,null,'Source',null,'refund');
+Insert into KSSA_REFUND_TYPE (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,CREDIT_TYPE_ID,DEBIT_TYPE_ID) values (3,'account',to_timestamp('01-JAN-20 10.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'admin','Default refund type for account refunds',null,null,'Account','cash','refund');
