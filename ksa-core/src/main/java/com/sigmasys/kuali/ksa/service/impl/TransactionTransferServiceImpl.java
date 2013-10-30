@@ -316,7 +316,10 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
             newTransaction.setTags(new ArrayList<Tag>(transactionTags));
         }
 
-        String prefix = account.getDefaultPersonName().getDisplayValue() + " (" + accountId + "): ";
+        Account studentAccount = transaction.getAccount();
+
+        String prefix = studentAccount.getDefaultPersonName().getDisplayValue() + " (" + studentAccount.getId() + "): ";
+
         newTransaction.setStatementText(prefix + transaction.getStatementText());
 
         // If both transactions are payments -> copy some additional properties from one to another
