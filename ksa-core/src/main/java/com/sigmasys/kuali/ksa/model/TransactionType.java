@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.model;
 
 import com.sigmasys.kuali.ksa.annotation.Auditable;
+import com.sigmasys.kuali.ksa.service.TransactionTypeVisitor;
 
 import java.util.Date;
 import java.util.List;

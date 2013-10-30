@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.model;
 
+import com.sigmasys.kuali.ksa.service.TransactionTypeVisitor;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;

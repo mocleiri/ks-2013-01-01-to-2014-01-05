@@ -650,20 +650,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new CurrencyNotFoundException(errMsg);
         }
 
-
-        final Pair<CreditType, DebitType> transactionTypes = new Pair<CreditType, DebitType>();
-
-        TransactionTypeVisitor transactionTypeVisitor = new TransactionTypeVisitor() {
-            @Override
-            public void visit(CreditType creditType) {
-                transactionTypes.setA(creditType);
-            }
-
-            @Override
-            public void visit(DebitType debitType) {
-                transactionTypes.setB(debitType);
-            }
-        };
+        DefaultTransactionTypeVisitor transactionTypeVisitor = DefaultTransactionTypeVisitor.getInstance();
 
         transactionType.accept(transactionTypeVisitor);
 
@@ -742,7 +729,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         }
 
         if (transaction instanceof Payment) {
-            CreditType creditType = transactionTypes.getA();
+            CreditType creditType = transactionTypeVisitor.getCreditType();
             Payment payment = (Payment) transaction;
             int clearPeriod = (creditType.getClearPeriod() != null) ? creditType.getClearPeriod() : 0;
             payment.setClearDate(CalendarUtils.addCalendarDays(effectiveDate, clearPeriod));
@@ -753,7 +740,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             deferment.setExpirationDate(expirationDate);
             deferment.setOriginalAmount(amount);
         } else {
-            DebitType debitType = transactionTypes.getB();
+            DebitType debitType = transactionTypeVisitor.getDebitType();
             Charge charge = (Charge) transaction;
             String cancellationRule = (debitType.getCancellationRule() != null) ?
                     debitType.getCancellationRule() : getDefaultChargeCancellationRule();
@@ -1342,27 +1329,15 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         if (!transactionType1.getTypeValue().equals(transactionType2.getTypeValue())) {
 
-            final Pair<CreditType, DebitType> transactionTypes = new Pair<CreditType, DebitType>();
-
-            TransactionTypeVisitor transactionTypeVisitor = new TransactionTypeVisitor() {
-                @Override
-                public void visit(CreditType creditType) {
-                    transactionTypes.setA(creditType);
-                }
-
-                @Override
-                public void visit(DebitType debitType) {
-                    transactionTypes.setB(debitType);
-                }
-            };
+            DefaultTransactionTypeVisitor transactionTypeVisitor = DefaultTransactionTypeVisitor.getInstance();
 
             transactionType1.accept(transactionTypeVisitor);
 
-            if (transactionTypes.getA() == null) {
+            if (transactionTypeVisitor.getCreditType() == null) {
                 transactionType2.accept(transactionTypeVisitor);
             }
 
-            final CreditType creditType = transactionTypes.getA();
+            final CreditType creditType = transactionTypeVisitor.getCreditType();
 
             final Transaction creditTransaction;
             final Transaction debitTransaction;
@@ -2620,8 +2595,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new TransactionNotFoundException(errMsg);
         }
 
-        boolean canPay = canPayInternal(transaction1, transaction2, priorityFrom, priorityTo);
-        return (canPay || canPayInternal(transaction2, transaction1, priorityFrom, priorityTo));
+        return canPayInternal(transaction1, transaction2, priorityFrom, priorityTo);
     }
 
     protected boolean canPayInternal(Transaction transaction1, Transaction transaction2, int priorityFrom, int priorityTo) {
@@ -2631,13 +2605,18 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         TransactionType transactionType1 = transaction1.getTransactionType();
         TransactionType transactionType2 = transaction2.getTransactionType();
 
-        if (transaction1.getAmount() != null && transaction2.getAmount() != null) {
-            if (!transactionType1.getTypeValue().equals(transactionType2.getTypeValue())) {
-                if (transaction1.getAmount().compareTo(BigDecimal.ZERO) > 0 && transaction2.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+        BigDecimal transactionAmount1 = transaction1.getAmount();
+        BigDecimal transactionAmount2 = transaction2.getAmount();
+
+        if (transactionAmount1 != null && transactionAmount2 != null) {
+            double amount1 = transactionAmount1.doubleValue();
+            double amount2 = transactionAmount2.doubleValue();
+            if (transactionType1.getTypeValue().equals(transactionType2.getTypeValue())) {
+                if ((amount1 > 0 && amount2 < 0) || (amount1 < 0 && amount2 > 0)) {
                     compatible = true;
                 }
             } else {
-                if (transaction1.getAmount().compareTo(BigDecimal.ZERO) > 0 && transaction2.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+                if ((amount1 > 0 && amount2 > 0) || (amount1 < 0 && amount2 < 0)) {
                     compatible = true;
                 }
             }
@@ -2648,11 +2627,18 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             return false;
         }
 
-        if (transactionType1.getTypeValue().equals(TransactionType.CREDIT_TYPE) &&
-                transactionType2.getTypeValue().equals(TransactionType.DEBIT_TYPE)) {
+        DefaultTransactionTypeVisitor transactionTypeVisitor = DefaultTransactionTypeVisitor.getInstance();
 
-            TransactionTypeId creditTypeId = transactionType1.getId();
-            TransactionTypeId debitTypeId = transactionType2.getId();
+        transactionType1.accept(transactionTypeVisitor);
+        transactionType2.accept(transactionTypeVisitor);
+
+        final CreditType creditType = transactionTypeVisitor.getCreditType();
+        final DebitType debitType = transactionTypeVisitor.getDebitType();
+
+        if (creditType != null && debitType != null) {
+
+            TransactionTypeId creditTypeId = creditType.getId();
+            TransactionTypeId debitTypeId = debitType.getId();
 
             List<CreditPermission> creditPermissions = getCreditPermissions(creditTypeId, priorityFrom, priorityTo);
 

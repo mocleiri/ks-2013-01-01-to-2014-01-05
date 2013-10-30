@@ -1,5 +1,7 @@
 package com.sigmasys.kuali.ksa.model;
 
+import com.sigmasys.kuali.ksa.service.TransactionTypeVisitor;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 
