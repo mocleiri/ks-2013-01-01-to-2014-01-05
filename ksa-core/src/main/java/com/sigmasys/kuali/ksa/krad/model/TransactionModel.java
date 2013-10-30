@@ -678,6 +678,12 @@ public class TransactionModel extends Transaction {
     public boolean isPaymentRefundable(){
         if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
             Payment payment = (Payment) parentTransaction;
+
+            // status must be active.
+            if(! TransactionStatus.ACTIVE.equals(payment.getStatus())) {
+                return false;
+            }
+
             // No negative or zero amounts are refundable
             if(payment.getAmount().compareTo(BigDecimal.ZERO) < 1){
                 return false;
