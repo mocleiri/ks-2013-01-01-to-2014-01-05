@@ -5,21 +5,22 @@
                     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	
-	<bean id="KS-OrgPersonRelationInfoSearch-View" parent="Uif-Page" p:headerText="PersonOrgRelationInfo Lookup">
+	<bean id="KS-OrgInfoSearch-View" parent="Uif-Page">
 		<property name="items">
 			<list>
-				<ref bean="KS-OrgPersonRelationSearch-CriteriaSection" />
-				<ref bean="KS-OrgPersonRelationSearch-ResultSection" />
+				<ref bean="KS-OrgInfoSearch-CriteriaSection" />
+				<ref bean="KS-OrgInfoSearch-ResultSection" />
 			</list>
 		</property>
 	</bean>
-	<bean id="KS-OrgPersonRelationSearch-CriteriaSection" parent="Uif-HorizontalBoxSection">
+	<bean id="KS-OrgInfoSearch-CriteriaSection" parent="Uif-HorizontalBoxSection">
         <property name="disclosure.render" value="false"/>
         <property name="style" value="margin-bottom:0;"/>
         <property name="items">
             <list>
                 <bean parent="Uif-GridSubSection">
-                <property name="layoutManager.numberOfColumns" value="2"/>
+                <property name="headerText" value="Organization Information Search"/>
+                <property name="layoutManager.numberOfColumns" value="6"/>
                 <property name="layoutManager.applyDefaultCellWidths" value="false" />
                 <property name="style" value="margin-bottom:0;"/>
                 <property name="items">
@@ -28,10 +29,9 @@
                                 <property name="items">
                                     <list> 
                                         <bean parent="Uif-InputField" p:propertyName="keywordSearch"
-										      p:label="Keyword(s)" p:required="true"
-										      p:helpSummary="Please enter Organization name." >
+										      p:label="Search By">
 										      <property name="suggest">
-										          <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="longName">
+										          <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="longName"  p:style="width: 200px;" >
 										              <property name="suggestQuery">
 										                <bean parent="Uif-AttributeQueryConfig" 
 										                    p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo"
@@ -40,9 +40,25 @@
 										          </bean>
 									          </property>									          
 										</bean> 
+										<bean parent="Uif-InputField" p:propertyName="typeInfoKey">
+											<property name="control">
+			            						<bean parent="Uif-DropdownControl" p:style="width: 200px;"/>
+			          						</property>
+			          						<property name="optionsFinder">
+								            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgInfoTypeKeyValues"/>
+								          	</property>
+										</bean>
+										<bean parent="Uif-InputField" p:propertyName="stateInfoKey">
+											<property name="control">
+			            						<bean parent="Uif-DropdownControl" p:style="width: 200px;" />
+			          						</property>
+			          						<property name="optionsFinder">
+								            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgInfoStateKeyValues"/>
+								          	</property>
+										</bean>
 										<bean parent="Uif-SecondaryActionButton" p:actionLabel="Search" p:methodToCall="search"/> 
-										<bean parent="Uif-NavigationActionButton" p:actionLabel="Create" p:navigateToPageId="KS-OrgPersonRelationInfoCreate-View" 
-											p:align="right" />
+										<bean parent="Uif-NavigationActionButton" p:actionLabel="Create New" p:navigateToPageId="KS-OrgInfoCreate-View" 
+											p:align="right" p:style="float:right;" />
                                     </list>
                                 </property>
                             </bean>
@@ -52,23 +68,23 @@
             </list>
         </property>
     </bean>
-    <bean id="KS-OrgPersonRelationSearch-ResultSection" parent="Uif-VerticalBoxSection">
+    <bean id="KS-OrgInfoSearch-ResultSection" parent="Uif-VerticalBoxSection">
         <property name="headerText" value="Search Results" />
         <property name="disclosure.render" value="false"/>
         <property name="items">
             <list>
-                <ref bean="KS-OrgPersonRelationLookup-Result"/>
+                <ref bean="KS-OrgInfoLookup-Result"/>
             </list>
         </property>
     </bean>
  
-    <bean id="KS-OrgPersonRelationLookup-Result" parent="Uif-TableCollectionSection"
+    <bean id="KS-OrgInfoLookup-Result" parent="Uif-TableCollectionSection"
           p:layoutManager.numberOfColumns="6" p:renderAddLine="false">
-        <property name="collectionObjectClass" value="org.kuali.student.core.organization.ui.form.model.OrgPersonRelationUIModel" />
-        <property name="propertyName" value="orgPersonRelationUIModel" />
+        <property name="collectionObjectClass" value="org.kuali.student.core.organization.ui.form.model.OrgUIModel" />
+        <property name="propertyName" value="OrgUIModel" />
         <property name="collectionLookup.quickfinderAction.render" value="false" />
         <property name="layoutManager.renderSequenceField" value="false" />
-        <property name="layoutManager.applyDefaultCellWidths" value="true" />
+        <property name="layoutManager.applyDefaultCellWidths" value="false" />
         <property name="layoutManager.applyAlternatingRowStyles" value="false" />
         <property name="layoutManager.richTable.templateOptions">
             <map merge="true">
@@ -78,11 +94,13 @@
         </property>
         <property name="items">
             <list>               
-                <bean parent="Uif-DataField" p:propertyName="personId" p:readOnlyDisplayReplacementPropertyName="personName" p:label="Person"/>		       	   
-		        <bean parent="Uif-DataField" p:propertyName="typeKey" p:readOnlyDisplayReplacementPropertyName="typeInfo.name" p:label="Type"/>
+                <bean parent="Uif-DataField" p:propertyName="longName"  p:label="Name"/>		       	   
+                <bean parent="Uif-DataField" p:propertyName="shortName" p:label="Abbr."/>
+                <bean parent="Uif-DataField" p:propertyName="typeKey" p:readOnlyDisplayReplacementPropertyName="typeInfo.name" p:label="Type"/>
 		        <bean parent="Uif-DataField" p:propertyName="stateKey" p:readOnlyDisplayReplacementPropertyName="stateInfo.name" p:label="State"/>
 		        <bean parent="Uif-DataField" p:propertyName="effectiveDate" p:label="Effective Date"/>
 		        <bean parent="Uif-DataField" p:propertyName="expirationDate" p:label="Expiration Date"/>
+		        <bean parent="Uif-DataField" p:propertyName="longDescr.plain" p:label="Description"/>
             </list>
         </property>
         <property name="layoutManager.actionFieldPrototype">
@@ -91,7 +109,7 @@
         <property name="lineActions">
             <list>
                 <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="view" p:actionLabel="View" p:ajaxSubmit="false" 
-                    p:actionParameters="selectedOrgPersonRelationId:@{#line.id}"/>
+                    p:actionParameters="selectedOrgId:@{#line.id}"/>
                 
             </list>
         </property>

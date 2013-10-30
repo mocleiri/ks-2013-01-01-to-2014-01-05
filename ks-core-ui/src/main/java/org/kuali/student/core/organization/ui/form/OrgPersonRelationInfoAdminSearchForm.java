@@ -13,10 +13,9 @@ public class OrgPersonRelationInfoAdminSearchForm extends UifFormBase{
 	private static final long serialVersionUID = 4703388779356717776L;
 	
 	private String keywordSearch;
-	private String orgId;
 	private String selectedOrgPersonRelationId;
+	private OrgPersonRelationUIModel newOrgPersonRelation;
 	private OrgPersonRelationUIModel selectedOrgPersonRelation;
-	private OrgInfo orgInfo;
 	private ArrayList<OrgPersonRelationUIModel> orgPersonRelationUIModel;
 
 	public ArrayList<OrgPersonRelationUIModel> getOrgPersonRelationUIModel() {
@@ -35,15 +34,7 @@ public class OrgPersonRelationInfoAdminSearchForm extends UifFormBase{
 	public void setKeywordSearch(String keywordSearch) {
 		this.keywordSearch = keywordSearch;
 	}
-
-	public String getOrgId() {
-		return orgId;
-	}
-
-	public void setOrgId(String orgId) {
-		this.orgId = orgId;
-	}
-
+	
 	public String getSelectedOrgPersonRelationId() {
 		return selectedOrgPersonRelationId;
 	}
@@ -61,15 +52,12 @@ public class OrgPersonRelationInfoAdminSearchForm extends UifFormBase{
 		this.selectedOrgPersonRelation = selectedOrgPersonRelation;
 	}
 
-	public OrgInfo getOrgInfo() {
-		return orgInfo;
+	public OrgPersonRelationUIModel getNewOrgPersonRelation() {
+		return newOrgPersonRelation;
 	}
 
-	public void setOrgInfo(OrgInfo orgInfo) {
-		this.orgInfo = orgInfo;
+	public void setNewOrgPersonRelation(OrgPersonRelationUIModel newOrgPersonRelation) {
+		this.newOrgPersonRelation = newOrgPersonRelation;
 	}
-	
-	
-	
 	
 }

@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="KS-OrgPersonRelationInfoEdit-View" parent="Uif-Page" p:headerText="Organization Detail">
+    <bean id="KS-OrgPersonRelationInfoEdit-View" parent="Uif-Page" p:headerText="@{selectedOrgPersonRelation.orgInfo.longName}">
 		<property name="items">
 			<list>
 				<ref bean="KS-OrgPersonRelationInfoEdit-Section" />
@@ -23,15 +23,23 @@
 							<bean parent="Uif-InputField" p:style="align: right;"
 								p:propertyName="selectedOrgPersonRelation.personName" p:label="Person" p:readOnly="true" />
 							<bean parent="Uif-InputField"  p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.typeInfo.name" p:label="Type" p:readOnly="true">
+								p:propertyName="selectedOrgPersonRelation.typeInfo.key" p:label="Type">
 								<property name="control">
             						<bean parent="Uif-DropdownControl"/>
           						</property>
           						<property name="optionsFinder">
-					            	<bean class="org.kuali.rice.student.lookup.keyvalues.DepartmentOrgValuesFinder"/>
+					            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgPersonRelationInfoTypeKeyValues"/>
 					          	</property>
 							</bean>
-							<bean parent="Uif-InputField"  p:style="align: right;" p:propertyName="selectedOrgPersonRelation.stateInfo.name" p:label="State" />
+							<bean parent="Uif-InputField"  p:style="align: right;" 
+							p:propertyName="selectedOrgPersonRelation.stateInfo.key" p:label="State" >
+								<property name="control">
+            						<bean parent="Uif-DropdownControl"/>
+          						</property>
+          						<property name="optionsFinder">
+					            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgPersonRelationInfoStateKeyValues"/>
+					          	</property>
+							</bean>
 							<bean parent="Uif-InputField"  p:style="align: right;"	p:propertyName="selectedOrgPersonRelation.effectiveDate" p:label="Effective Date" >
 								<property name="control">
             						<bean parent="Uif-DateControl"/>

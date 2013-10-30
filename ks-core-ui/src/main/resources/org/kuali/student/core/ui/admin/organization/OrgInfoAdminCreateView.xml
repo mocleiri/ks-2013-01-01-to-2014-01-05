@@ -4,73 +4,73 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="KS-OrgPersonRelationInfoCreate-View" parent="Uif-Page" p:headerText="Create New">
+    <bean id="KS-OrgInfoCreate-View" parent="Uif-Page" p:headerText="Organization Detail">
 		<property name="items">
 			<list>
-				<ref bean="KS-OrgPersonRelationInfoCreate-Section" />
+				<ref bean="KS-OrgInfoCreate-Section" />
 			</list>
 		</property>
 	</bean>
-	<bean id="KS-OrgPersonRelationInfoCreate-Section" parent="Uif-VerticalBoxSection" p:width="500px">
+	<bean id="KS-OrgInfoCreate-Section" parent="Uif-VerticalBoxSection" p:width="550px">
 		<property name="items">
 			<list>
-				<bean id="KS-OrgPersonRelationInfoCreate-Group" parent="Uif-GridGroup">
+				<bean parent="Uif-GridGroup">
 	                <property name="layoutManager.numberOfColumns" value="2"/>
 	                <property name="layoutManager.applyDefaultCellWidths" value="false" />
 	                <property name="style" value="margin-bottom:0;"/>
 	                <property name="items">
 						<list>
-							<bean parent="Uif-InputField" p:propertyName="newOrgPersonRelation.orgId" p:label="Organization" 
-							      p:required="true" p:fieldLabel.renderColon="true" p:style="align: right;">
-							      <property name="suggest">
-							          <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="longName">
-							              <property name="suggestQuery">
-							                <bean parent="Uif-AttributeQueryConfig" 
-							                    p:dataObjectClassName="org.kuali.student.r2.core.organization.dto.OrgInfo"
-						                        p:queryMethodToCall="suggestOrganizationsByName" />									                      
-							              </property>										              
-							          </bean>
-						          </property>
-							</bean>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" 
+								p:propertyName="selectedOrg.shortName" p:label="Abbreviation" />
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.personId" p:label="Person" p:required="true">
-								<property name="quickfinder">
-									<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.rice.kim.api.identity.Person"
-									p:fieldConversions="principalId:newOrgPersonRelation.personId" />
-								</property>
-							</bean>
+								p:propertyName="selectedOrg.longName" p:label="Department">								
+							</bean>							
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.typeKey" p:label="Type" p:required="true">
+								p:propertyName="selectedOrg.typeInfo.key" p:label="Type">
 								<property name="control">
             						<bean parent="Uif-DropdownControl"/>
           						</property>
           						<property name="optionsFinder">
-					            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgPersonRelationInfoTypeKeyValues"/>
+					            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgInfoTypeKeyValues"/>
 					          	</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.stateKey" p:label="State" p:required="true">
+								p:propertyName="selectedOrg.stateInfo.key" p:label="State" >
 								<property name="control">
             						<bean parent="Uif-DropdownControl"/>
           						</property>
           						<property name="optionsFinder">
-					            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgPersonRelationInfoStateKeyValues"/>
+					            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgInfoStateKeyValues"/>
 					          	</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.effectiveDate" p:label="Effective Date" p:required="true" >
+								p:propertyName="selectedOrg.effectiveDate" p:label="Effective Date" >
 								<property name="control">
             						<bean parent="Uif-DateControl"/>
           						</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.expirationDate" p:label="Expiration Date" p:required="true" >
+								p:propertyName="selectedOrg.expirationDate" p:label="Expiration Date" >
 								<property name="control">
             						<bean parent="Uif-DateControl"/>
           						</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.id" p:label="Identifier" p:readOnly="true" />
+								p:propertyName="selectedOrg.longDescr" p:label="Description" >		
+								<property name="control">
+            						<bean parent="Uif-LargeTextAreaControl" p:watermarkText="Organization Description"/>
+          						</property>					
+							</bean>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="selectedOrg.meta.createId" p:label="Created By" p:readOnly="true"/>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="selectedOrg.meta.createTime" p:label="Date Created" p:readOnly="true"/>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="selectedOrg.meta.updateId" p:label="Last Updated By" p:readOnly="true"/>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="selectedOrg.meta.updateTime" p:label="Last Update" p:readOnly="true"/>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="selectedOrg.id" p:label="Identifier" p:readOnly="true"/>
 						</list>
 					</property>
 				</bean>				
@@ -79,7 +79,7 @@
 						<list>
 							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="save" p:actionLabel="Save" />
 							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="cancel" p:actionLabel="Cancel" 
-									p:actionParameters="returnViewName:KS-OrgPersonRelationInfoSearch-View" />
+									p:actionParameters="returnViewName:KS-OrgInfoSearch-View" />
 						</list>
 					</property>
 				</bean>	

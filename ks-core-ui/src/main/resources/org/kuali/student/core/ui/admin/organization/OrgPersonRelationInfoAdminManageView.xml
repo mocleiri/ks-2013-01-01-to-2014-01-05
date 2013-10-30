@@ -14,6 +14,10 @@
 		<property name="renderHeader" value="false" />
 		<property name="renderFooter" value="false" />		
 		<property name="formPostUrl" value="orgPersonRelationInfoAdminManage" />
+		<property name="entryPageId" value="KS-OrgPersonRelationInfoSearch-View" />
+		<property name="theme">
+      		<bean parent="KSTheme"/>
+    	</property>
 		<property name="items">
 			<list>
 				<ref bean="KS-OrgPersonRelationInfoSearch-View" />
