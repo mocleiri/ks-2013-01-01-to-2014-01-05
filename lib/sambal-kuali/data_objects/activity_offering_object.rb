@@ -1036,7 +1036,7 @@ class DeliveryLogistics
         :end_time_ampm  => "pm",
         :facility  => "ARM",
         :facility_long_name  => "Reckord Armory",
-        :room  => "126",
+        :room  => "0126",
         :features_list  => []
         #     :process => true
     }

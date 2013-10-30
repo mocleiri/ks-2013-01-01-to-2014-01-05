@@ -73,10 +73,11 @@ Then /^the AO's delivery logistics shows the new schedule as TBA$/ do
   @activity_offering.parent_course_offering.manage
   @activity_offering.edit
 
-  rdl_list = @activity_offering.requested_delivery_logistics_list.values
-  rdl_list.each do |row|
-    row.target_row_by_dl_key
-    row.tba?.should == true
+  del_logisitics = @activity_offering.requested_delivery_logistics_list[""]
+  on ActivityOfferingMaintenance do |page|
+    row = page.target_rdl_row("")
+    isTBA = page.get_requested_logistics_tba(row) == "TBA"
+    isTBA.should == del_logisitics.tba
   end
 end
 
@@ -106,7 +107,7 @@ When /^I add RDLs for an AO checking the TBA flag$/ do
   #@new_rdls = @activity_offering.requested_delivery_logistics_list.values[0]
   # add new TBA RDL row
   @activity_offering.edit
-  dl_obj = create DeliveryLogistics,  :tba => true
+  dl_obj = create DeliveryLogistics,  :tba => true, :days => "", :start_time => "", :start_time_ampm => "", :end_time => "", :end_time_ampm => ""
   @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
   @activity_offering.save
 end
