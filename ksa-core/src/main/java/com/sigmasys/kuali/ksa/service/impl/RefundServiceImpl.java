@@ -1327,7 +1327,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     private Ach produceAchTransmissionInternal(BigDecimal amount, String reference, Ach ach) {
 
         // Validate the Amount:
-        if (amount == null || amount.intValue() <= 0) {
+        if (amount == null || amount.doubleValue() <= 0) {
             String errMsg = "ACH transmission amount must be a positive number";
             logger.error(errMsg);
             throw new InvalidAchInformationException(errMsg);
