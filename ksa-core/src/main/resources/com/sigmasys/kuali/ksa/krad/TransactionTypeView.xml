@@ -43,7 +43,7 @@
                     <property name="items">
                         <list>
                             <bean parent="Uif-HeaderFour" p:headerText="View Transaction Types"/>
-                            <bean parent="Uif-Message" p:style="width: 80%" p:messageText="The transaction type is a very important type in the KSA system.  Transactions contain the fundamental information that is used to support a number of complex operations.  Once a transaction is saved to the KSA ledger, few parts of it can be altered."/>
+                            <bean parent="Uif-Message" p:style="width: 80%" p:messageText="The transaction type is a very important type in the KSA system.  Transactions contain the fundamental information that is used to support a number of complex operations."/>
                             <!--<ref bean="addSection"/>-->
                             <ref bean="transactionTypeTabs"/>
                         </list>
@@ -84,7 +84,7 @@
                             <ref bean="editTransactionTypeSection"/>
                             <ref bean="tagGroup"/>
                             <ref bean="glBreakdownList"/>
-                            <ref bean="creditPermissionList"/>
+                            <ref bean="TransactionTypeListShortPermissionList"/>
                             <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="insert" p:actionLabel="Submit" p:render="@{transactionsAffectedCount == 0}"/>
                             <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Submit"  p:render="@{transactionsAffectedCount > 0}"
                                     p:preSubmitCall="return showLightboxComponent('affectedCountLightbox');"/>
@@ -155,7 +155,6 @@
         <property name="propertyName" value="transactionTypes"/>
         <property name="layoutManager.sequencePropertyName" value="currentTransactionType.id.id"/>
         <property name="layoutManager.richTable.render" value="true"/>
-        <!--<property name="useServerPaging" value="true"/>-->
         <property name="layoutManager.renderSequenceField" value="false"/>
         <property name="layoutManager.applyDefaultCellWidths" value="false"/>
         <property name="layoutManager.richTable.disableTableSort" value="false"/>
@@ -486,6 +485,7 @@
                                     <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
                                 </property>
                             </bean>
+                            <bean parent="Uif-InputField" p:propertyName="priority" p:label="Priority"/>
                             <bean parent="Uif-InputField" p:propertyName="rollupId" p:labelPlacement="TOP" p:label="Roll-Up"
                                   p:fieldLabel.renderColon="false">
                                 <property name="control">
@@ -615,7 +615,7 @@
         </property>
     </bean>
 
-    <bean id="creditPermissionList" parent="Uif-Disclosure-VerticalBoxSection" p:style="text-decoration:underline" p:progressiveRender="@{#dp.type eq 'C'}">
+    <bean id="TransactionTypeListShortPermissionList" parent="Uif-Disclosure-VerticalBoxSection" p:style="text-decoration:underline" p:progressiveRender="@{#dp.type eq 'C'}">
         <property name="headerText" value="Credit Permission and Priority"/>
         <property name="items">
             <list>
