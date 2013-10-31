@@ -211,6 +211,12 @@ class CourseOffering
       #TODO:Add Suffix to edit method Course Offerings
     end
 
+    if options[:grade_options] != nil
+      on CourseOfferingEdit do |page|
+        page.set_grading_option(options[:grade_options])
+      end
+    end
+
     if options[:affiliated_person_list] != nil
       @affiliated_person_list = options[:affiliated_person_list]
     end
@@ -380,6 +386,13 @@ class CourseOffering
       end
     end
 
+    update_options(options)
+  end
+
+  def save
+    on CourseOfferingEdit do |page|
+      page.submit
+    end
   end
 
   def set_reg_options (options)

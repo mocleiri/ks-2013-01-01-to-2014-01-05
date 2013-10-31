@@ -27,7 +27,7 @@ class CourseOfferingEdit < BasePage
   element(:suffix) { |b| b.frm.div(data_label: "Course Number Suffix").text_field }
 
   element(:grading_option_div) { |b| b.frm.div(id: "gradingOptionId") }
-  element(:grading_option_letter) { |b| b.frm.radio(value: "kuali.resultComponent.grade.letter") }
+  action(:set_grading_option) { |option,b| b.frm.radio(value: "kuali.resultComponent.grade.#{option.downcase}").click() }
 
   element(:registration_opts_div) { |b| b.frm.div(data_label: "Student Registration Options").parent }
   element(:pass_fail_checkbox) { |b| b.registration_opts_div.checkbox(name: "document.newMaintainableObject.dataObject.passFailStudentRegOpts") }

@@ -39,7 +39,11 @@ When /^I edit a course offering with 2 format types$/ do
 end
 
 When /^I edit a course offering with multiple (\w+) options$/ do |opt|
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple")
+  if opt=="grading" then
+    @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL899", :term => "201505")
+  else
+    @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple")
+  end
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering
@@ -350,3 +354,14 @@ Then /^I can verify that the Honors Course setting is "(set|not set)"$/ do |shou
 end
 
 
+When /^I? ?change the grading option$/ do
+  @course_offering.edit_offering :grade_options => "Satisfactory"
+  @course_offering.save
+end
+
+Then /^I? ?can verify that the grading option is changed$/ do
+  @course_offering.view_course_details
+  on CourseOfferingInquiry do |page|
+    page.grading_options.should include @course_offering.grade_options
+  end
+end
