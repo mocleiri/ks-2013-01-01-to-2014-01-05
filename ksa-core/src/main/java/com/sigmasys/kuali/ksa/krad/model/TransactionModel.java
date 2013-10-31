@@ -464,6 +464,10 @@ public class TransactionModel extends Transaction {
         if (locked == null) {
             locked = BigDecimal.ZERO;
         }
+        if(amount.compareTo(BigDecimal.ZERO) < 0) {
+            alloc = alloc.multiply(new BigDecimal(-1));
+            locked = locked.multiply(new BigDecimal(-1));
+        }
 
         return alloc.add(locked);
     }

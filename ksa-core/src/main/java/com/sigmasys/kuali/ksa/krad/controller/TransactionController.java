@@ -778,6 +778,11 @@ public class TransactionController extends GenericSearchController {
                 locked = BigDecimal.ZERO;
             }
 
+            if(amount.compareTo(BigDecimal.ZERO) < 0) {
+                locked = locked.multiply(new BigDecimal(-1));
+                unallocated = unallocated.multiply(new BigDecimal(-1));
+            }
+
             if (t.getParentTransaction() instanceof Charge) {
                 form.addChargeTotal(amount);
                 balance = balance.add(amount);
