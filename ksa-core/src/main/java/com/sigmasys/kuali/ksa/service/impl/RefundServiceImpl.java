@@ -55,6 +55,18 @@ import com.sigmasys.kuali.ksa.util.RequestUtils;
 public class RefundServiceImpl extends GenericPersistenceService implements RefundService {
 
     /**
+     * The main join to select refunds.
+     */
+    private static final String GET_REFUNDS_JOIN =
+            "select r from Refund r " +
+                    " left outer join fetch r.transaction t " +
+                    " left outer join fetch r.refundType rtp " +
+                    " left outer join fetch r.requestedBy rb " +
+                    " left outer join fetch r.authorizedBy ab " +
+                    " left outer join r.refundTransaction rt " +
+                    " left outer join fetch r.refundManifest rf ";
+
+    /**
      * The logger.
      */
     private static final Log logger = LogFactory.getLog(RefundServiceImpl.class);
@@ -321,8 +333,23 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return Refund instance
      */
     @Override
+    @Transactional(readOnly = false)
     public Refund validateRefund(Long refundId) {
 
+        return validateRefundWithAmount(refundId, null);
+    }
+
+    /**
+     * Performs refund validation. Alters the refund amount.
+     * Sets the refundStatus to {@link RefundStatus#VERIFIED} and the authorizedBy to the current user.
+     *
+     * @param refundId  Refund ID
+     * @param amount    Amount to set on the Refund object.
+     * @return Refund instance
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public Refund validateRefundWithAmount(Long refundId, BigDecimal amount) {
         // Get the Refund object by its identifier:
         Refund refund = getRefund(refundId, false);
 
@@ -331,6 +358,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         refund.setStatus(RefundStatus.VERIFIED);
         refund.setAuthorizedBy(currentUserAccount);
+
+        // Alter the amount if it has been passed:
+        if (amount != null) {
+            refund.setAmount(amount);
+        }
 
         persistEntity(refund);
 
@@ -848,12 +880,67 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         return null;
     }
 
+    /**
+     * Returns all Refunds belonging to the same group with the specified Group ID (UUID).
+     *
+     * @param groupId  Refund Group id.
+     * @return A List of <code>Refund</code>s belonging to the Group with the given ID.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Refund> getRefundGroup(String groupId) {
+
+        // Create a run a query to get all refunds in the same Group as the given one
+        Query query = em.createQuery(GET_REFUNDS_JOIN + " where r.refundGroup = :refundGroup")
+                .setParameter("refundGroup", groupId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Returns a List of Refunds for the given Account ID.
+     *
+     * @param userId    ID of an Account for which to get its Refunds.
+     * @return A List of all Refund objects linked to the given Account ID.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Refund> getAccountRefunds(String userId) {
+
+        // Create a run a query to get all refunds with matching Account IDs
+        Query query = em.createQuery(GET_REFUNDS_JOIN + " where t.account.id = :accountId ")
+                .setParameter("accountId", userId);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Returns all Refunds linked to the Account with the given ID and which fall in the specified date range.
+     *
+     * @param userId    Account which Refunds to find.
+     * @param dateFrom  Start of the date range.
+     * @param dateTo    End of the date range.
+     * @return  List of Refunds in the date range for the given Account.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Refund> getAccountRefunds(String userId, Date dateFrom, Date dateTo) {
+
+        // Create a run a query to get all refunds with matching Account IDs
+        Query query = em.createQuery(GET_REFUNDS_JOIN +
+                " where t.account.id = :accountId and to_date(t.effectiveDate) between :dateFrom and :dateTo ")
+                .setParameter("accountId", userId)
+                .setParameter("dateFrom", dateFrom)
+                .setParameter("dateTo", dateTo);
+
+        return query.getResultList();
+    }
 
     /* ****************************************************************
-      *
-      * Utility methods.
-      *
-      * ****************************************************************/
+   *
+   * Utility methods.
+   *
+   * ****************************************************************/
 
     /**
      * Performs a refund to a bank account. Returns the bank account transmission object.

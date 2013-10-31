@@ -121,6 +121,16 @@ public interface RefundService {
     Refund validateRefund(Long refundId);
 
     /**
+     * Performs refund validation. Alters the refund amount.
+     * Sets the refundStatus to {@link RefundStatus#VERIFIED} and the authorizedBy to the current user.
+     *
+     * @param refundId  Refund ID
+     * @param amount    Amount to set on the Refund object.
+     * @return Refund instance
+     */
+    Refund validateRefundWithAmount(Long refundId, BigDecimal amount);
+
+    /**
      * Performs a refund to a student account. Calls <code>performRefund</code> for the actual refund action.
      *
      * @param refundId ID of a refund to apply to a student account.
@@ -309,4 +319,30 @@ public interface RefundService {
      * @return A <code>List</code> of <code>Refund</code> objects created during this operation.
      */
     List<Refund> doPayoffRefunds(String batch);
+
+    /**
+     * Returns a List of Refunds for the given Account ID.
+     *
+     * @param userId    ID of an Account for which to get its Refunds.
+     * @return A List of all Refund objects linked to the given Account ID.
+     */
+    List<Refund> getAccountRefunds(String userId);
+
+    /**
+     * Returns all Refunds linked to the Account with the given ID and which fall in the specified date range.
+     *
+     * @param userId    Account which Refunds to find.
+     * @param dateFrom  Start of the date range.
+     * @param dateTo    End of the date range.
+     * @return  List of Refunds in the date range for the given Account.
+     */
+    List<Refund> getAccountRefunds(String userId, Date dateFrom, Date dateTo);
+
+    /**
+     * Returns all Refunds belonging to the same group with the specified Group ID (UUID).
+     *
+     * @param groupId  Refund Group id.
+     * @return A List of <code>Refund</code>s belonging to the Group with the given ID.
+     */
+    List<Refund> getRefundGroup(String groupId);
 }
