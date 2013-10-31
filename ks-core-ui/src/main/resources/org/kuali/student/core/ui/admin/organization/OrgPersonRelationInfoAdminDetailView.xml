@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="KS-OrgPersonRelationInfoDetail-View" parent="Uif-Page" p:headerText="@{selectedOrgPersonRelation.orgInfo.longName}">
+    <bean id="KS-OrgPersonRelationInfoDetail-View" parent="Uif-Page" p:headerText="@{orgPersonRelation.orgInfo.longName}">
 		<property name="items">
 			<list>
 				<ref bean="KS-OrgPersonRelationInfoDetail-Section" />
@@ -21,25 +21,25 @@
 	                <property name="items">
                         <list>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.personName" p:label="Person" p:readOnly="true" />
+								p:propertyName="orgPersonRelation.personName" p:label="Person" p:readOnly="true" />
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.typeInfo.name" p:label="Type" p:readOnly="true"/>
+								p:propertyName="orgPersonRelation.typeInfo.name" p:label="Type" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.stateInfo.name" p:label="State" p:readOnly="true"/>
+								p:propertyName="orgPersonRelation.stateInfo.name" p:label="State" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.effectiveDate" p:label="Effective Date" p:readOnly="true"/>
+								p:propertyName="orgPersonRelation.effectiveDate" p:label="Effective Date" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.expirationDate" p:label="Expiration Date" p:readOnly="true"/>
+								p:propertyName="orgPersonRelation.expirationDate" p:label="Expiration Date" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.meta.createId" p:label="Created By" p:readOnly="true"/>
+								p:propertyName="orgPersonRelation.meta.createId" p:label="Created By" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.meta.createTime" p:label="Date Created" p:readOnly="true"/>
+								p:propertyName="orgPersonRelation.meta.createTime" p:label="Date Created" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.meta.updateId" p:label="Last Updated By" p:readOnly="true"/>
+								p:propertyName="orgPersonRelation.meta.updateId" p:label="Last Updated By" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.meta.updateTime" p:label="Last Update" p:readOnly="true"/>
+								p:propertyName="orgPersonRelation.meta.updateTime" p:label="Last Update" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrgPersonRelation.id" p:label="Identifier" p:readOnly="true"/>
+								p:propertyName="orgPersonRelation.id" p:label="Identifier" p:readOnly="true"/>
 						</list>
 					</property>
 				</bean>				
@@ -48,9 +48,9 @@
 						<list>
 							<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Edit" p:navigateToPageId="KS-OrgPersonRelationInfoEdit-View" />
 							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="copy" p:actionLabel="Copy" 
-							p:actionParameters="selectedOrgPersonRelationId:@{selectedOrgPersonRelation.id}" p:ajaxSubmit="false" />
+							p:actionParameters="orgPersonRelationId:@{orgPersonRelation.id}" p:ajaxSubmit="false" />
 							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="delete" p:actionLabel="Delete" 
-							p:actionParameters="selectedOrgPersonRelationId:@{selectedOrgPersonRelation.id}" p:ajaxSubmit="false" /> 
+							p:actionParameters="orgPersonRelationId:@{orgPersonRelation.id}" p:ajaxSubmit="false" /> 
 							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="cancel" p:actionLabel="Cancel" 
 							p:actionParameters="returnViewName:KS-OrgPersonRelationInfoSearch-View"/>
 						</list>

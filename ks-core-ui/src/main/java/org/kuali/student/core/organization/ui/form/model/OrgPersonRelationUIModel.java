@@ -40,6 +40,6 @@ public class OrgPersonRelationUIModel extends OrgPersonRelationInfo{
 	}
 	public void setStateInfo(StateInfo stateInfo) {
 		this.stateInfo = stateInfo;
-	}
+	}	
 	
 }

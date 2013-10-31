@@ -20,7 +20,7 @@
 	                <property name="style" value="margin-bottom:0;"/>
 	                <property name="items">
 						<list>
-							<bean parent="Uif-InputField" p:propertyName="newOrgPersonRelation.orgId" p:label="Organization" 
+							<bean parent="Uif-InputField" p:propertyName="orgPersonRelation.orgInfo.longName" p:label="Organization" 
 							      p:required="true" p:fieldLabel.renderColon="true" p:style="align: right;">
 							      <property name="suggest">
 							          <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="longName">
@@ -33,14 +33,14 @@
 						          </property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.personId" p:label="Person" p:required="true">
+								p:propertyName="orgPersonRelation.personId" p:label="Person" p:required="true">
 								<property name="quickfinder">
 									<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.rice.kim.api.identity.Person"
-									p:fieldConversions="principalId:newOrgPersonRelation.personId" />
+									p:fieldConversions="principalId:orgPersonRelation.personId" />
 								</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.typeKey" p:label="Type" p:required="true">
+								p:propertyName="orgPersonRelation.typeKey" p:label="Type" p:required="true">
 								<property name="control">
             						<bean parent="Uif-DropdownControl"/>
           						</property>
@@ -49,7 +49,7 @@
 					          	</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.stateKey" p:label="State" p:required="true">
+								p:propertyName="orgPersonRelation.stateKey" p:label="State" p:required="true">
 								<property name="control">
             						<bean parent="Uif-DropdownControl"/>
           						</property>
@@ -58,19 +58,19 @@
 					          	</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.effectiveDate" p:label="Effective Date" p:required="true" >
+								p:propertyName="orgPersonRelation.effectiveDate" p:label="Effective Date" p:required="true" >
 								<property name="control">
             						<bean parent="Uif-DateControl"/>
           						</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.expirationDate" p:label="Expiration Date" p:required="true" >
+								p:propertyName="orgPersonRelation.expirationDate" p:label="Expiration Date" p:required="true" >
 								<property name="control">
             						<bean parent="Uif-DateControl"/>
           						</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrgPersonRelation.id" p:label="Identifier" p:readOnly="true" />
+								p:propertyName="orgPersonRelation.id" p:label="Identifier" p:readOnly="true" />
 						</list>
 					</property>
 				</bean>				

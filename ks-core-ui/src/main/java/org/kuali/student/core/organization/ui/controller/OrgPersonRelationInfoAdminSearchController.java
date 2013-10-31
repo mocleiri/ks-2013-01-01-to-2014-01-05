@@ -25,6 +25,11 @@ import org.kuali.student.common.util.ContextBuilder;
 import org.kuali.student.core.organization.ui.form.OrgPersonRelationInfoAdminSearchForm;
 import org.kuali.student.core.organization.ui.form.model.OrgPersonRelationUIModel;
 import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.common.exceptions.InvalidParameterException;
+import org.kuali.student.r2.common.exceptions.MissingParameterException;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
+import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.core.class1.state.dto.StateInfo;
 import org.kuali.student.r2.core.class1.state.service.StateService;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
@@ -51,7 +56,7 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
 	private transient TypeService typeService;
 	private transient StateService stateService;
 	
-	{
+	{   
 		// Beanutils config
 		java.util.Date defaultValue = null;        
 		DateConverter converter = new DateConverter(defaultValue);        
@@ -95,7 +100,18 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
         }
         
         try {
+        	
+        	if(!searchForm.getResultSize().equalsIgnoreCase("All") && searchForm.isRenderSizeDrop()){
+        		qBuilder.setMaxResults (Integer.parseInt(searchForm.getResultSize()));
+        	} 
+        	
             List<OrgPersonRelationInfo> relations = this.getOrganizationService().searchForOrgPersonRelations(qBuilder.build(), getContextInfo());
+            
+            if(relations.size() > 100 && !searchForm.isRenderSizeDrop()){
+            	GlobalVariables.getMessageMap().putWarning("KS-OrgPersonRelationSearch-CriteriaSection","tooManyResult");
+            	searchForm.setRenderSizeDrop(true);
+            	return getUIFModelAndView(searchForm);
+            }
             
             results.clear();
             
@@ -104,30 +120,8 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
             	OrgPersonRelationUIModel orgPersonUIModel = new OrgPersonRelationUIModel();
             	
             	BeanUtils.copyProperties(orgPersonUIModel, orgPersonRelationInfo);
-            	
-            	EntityNamePrincipalName principalName = null;
                 
-            	if (orgPersonRelationInfo.getPersonId() != null) {
-                    principalName = KimApiServiceLocator.getIdentityService().getDefaultNamesForPrincipalId(orgPersonRelationInfo.getPersonId());
-                }
-                
-            	String personName = (principalName != null  && principalName.getDefaultName() != null) ? principalName.getDefaultName().getCompositeName() : StringUtils.EMPTY;
-            	
-            	orgPersonUIModel.setPersonName(personName);
-            	
-            	OrgInfo orgInfo = this.getOrganizationService().getOrg(orgPersonRelationInfo.getOrgId(), getContextInfo());
-            	
-            	orgPersonUIModel.setOrgInfo(orgInfo);
-            	
-            	TypeInfo typeInfo = this.getTypeService().getType(orgPersonRelationInfo.getTypeKey(), getContextInfo());
-            	
-            	orgPersonUIModel.setTypeInfo(typeInfo);
-            	
-            	StateInfo stateInfo = new StateInfo();
-            	
-            	stateInfo = this.getStateService().getState(orgPersonRelationInfo.getStateKey(), getContextInfo());
-            	
-            	orgPersonUIModel.setStateInfo(stateInfo);
+            	this.setOtherInfo(orgPersonUIModel);
             	
             	results.add(orgPersonUIModel);
 			}
@@ -143,7 +137,7 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
 	}
 	@RequestMapping(params = "methodToCall=view")
 	public ModelAndView view(@ModelAttribute("KualiForm") OrgPersonRelationInfoAdminSearchForm viewForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String orgPersonRelationId = viewForm.getActionParamaterValue("selectedOrgPersonRelationId");
+		String orgPersonRelationId = viewForm.getActionParamaterValue("orgPersonRelationId");
 		
 		LOG.info("orgPersonRelationId " + orgPersonRelationId);
 		
@@ -151,7 +145,7 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
 		for(OrgPersonRelationUIModel relation : results){			
 			if(orgPersonRelationId.equals(relation.getId())){
 				LOG.info("match found");
-				viewForm.setSelectedOrgPersonRelation(relation);
+				viewForm.setOrgPersonRelation(relation);
 				break;
 			}
 		}
@@ -165,75 +159,143 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
 		return getUIFModelAndView(viewForm, returnViewName);
 	}
 	
+	@RequestMapping(params = "methodToCall=create")
+	public ModelAndView create(@ModelAttribute("KualiForm") OrgPersonRelationInfoAdminSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
+		form.setOrgPersonRelation(new OrgPersonRelationUIModel());
+		return getUIFModelAndView(form,"KS-OrgPersonRelationInfoCreate-View");
+	}
+	
 	private void resetForm(OrgPersonRelationInfoAdminSearchForm searchForm) {
 		searchForm.setOrgPersonRelationUIModel(new ArrayList<OrgPersonRelationUIModel>());
 	}
 	
 	@RequestMapping(params = "methodToCall=save")
-	public ModelAndView save(@ModelAttribute("KualiForm") OrgPersonRelationInfoAdminSearchForm createForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		KRADServiceLocatorWeb.getViewValidationService().validateView(createForm);
+	public ModelAndView save(@ModelAttribute("KualiForm") OrgPersonRelationInfoAdminSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
-		String selectedOrgPersonRelationId = createForm.getActionParamaterValue("selectedOrgPersonRelationId");
+		KRADServiceLocatorWeb.getViewValidationService().validateView(form);
+		
+		String selectedOrgPersonRelationId = form.getActionParamaterValue("orgPersonRelationId");
 		
 		QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
 		
 		if(!GlobalVariables.getMessageMap().hasErrors()){
 			
-			OrgPersonRelationUIModel orgPersonRelationUi = createForm.getNewOrgPersonRelation();
-			OrgPersonRelationInfo orgPersonRelationInfo = new OrgPersonRelationInfo();
+			OrgPersonRelationUIModel orgPersonRelationUi = form.getOrgPersonRelation();
 			
 			try{
-				qBuilder.setPredicates(PredicateFactory.equal("longName",orgPersonRelationUi.getOrgId()));
+				qBuilder.setPredicates(PredicateFactory.equal("longName",orgPersonRelationUi.getOrgInfo().getLongName()));
 	        	List<OrgInfo> orgInfos = this.getOrganizationService().searchForOrgs(qBuilder.build(), getContextInfo());
 	        	orgPersonRelationUi.setOrgId(orgInfos.get(0).getId());
+	        	orgPersonRelationUi.setOrgInfo(orgInfos.get(0));
+			}catch (Exception e){
+				GlobalVariables.getMessageMap().putError("KS-OrgPersonRelationInfoCreate-Section","unknownError",e.getMessage());
+				return getUIFModelAndView(form);
+			}
+					
+			try{
+				OrgPersonRelationInfo orgPersonRelation = getOrganizationService().createOrgPersonRelation(
+									orgPersonRelationUi.getOrgId(), orgPersonRelationUi.getPersonId(), 
+									orgPersonRelationUi.getTypeKey(), orgPersonRelationUi, getContextInfo());
+				
+				resetForm(form);
+				
+				BeanUtils.copyProperties(orgPersonRelationUi, orgPersonRelation);
+				this.setOtherInfo(orgPersonRelationUi);
+				form.setOrgPersonRelation(orgPersonRelationUi);
+				
+				GlobalVariables.getMessageMap().putInfo("KS-OrgPersonRelationInfoDetail-Section","databaseChnageSuccess");
+				
+				return getUIFModelAndView(form, "KS-OrgPersonRelationInfoDetail-View");
 			}catch (Exception e){
 				e.printStackTrace();
-			}			
-			
-			BeanUtils.copyProperties(orgPersonRelationInfo, orgPersonRelationUi);
-			
-			if(orgPersonRelationInfo.getId() == null){
-				OrgPersonRelationInfo orgPersonRelation = getOrganizationService().createOrgPersonRelation(orgPersonRelationInfo.getOrgId(), 
-						orgPersonRelationInfo.getPersonId(), orgPersonRelationInfo.getTypeKey(), orgPersonRelationInfo, getContextInfo());
-				
-				OrgPersonRelationUIModel orgPersonUiModel = new OrgPersonRelationUIModel();
-				BeanUtils.copyProperties(orgPersonUiModel, orgPersonRelation);
-				createForm.setSelectedOrgPersonRelation(orgPersonUiModel);
-				createForm.setNewOrgPersonRelation(null);
-			} else {
-				getOrganizationService().updateOrgPersonRelation(orgPersonRelationInfo.getId(), orgPersonRelationInfo, getContextInfo());
-			}
-		} else {
-			return getUIFModelAndView(createForm);
-		}
+				GlobalVariables.getMessageMap().putError("KS-OrgPersonRelationInfoCreate-Section","unknownError",e.getMessage());
+				return getUIFModelAndView(form);
+			}	
+		} 
 		
-		return getUIFModelAndView(createForm, "KS-OrgPersonRelationInfoDetail-View");
+		return getUIFModelAndView(form);		
+	}
+	
+	@RequestMapping(params = "methodToCall=update")
+	public ModelAndView update(@ModelAttribute("KualiForm") OrgPersonRelationInfoAdminSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		KRADServiceLocatorWeb.getViewValidationService().validateView(form);
+		
+		String selectedOrgPersonRelationId = form.getActionParamaterValue("orgPersonRelationId");
+		
+		QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
+		
+		if(!GlobalVariables.getMessageMap().hasErrors()){
+			
+			OrgPersonRelationUIModel orgPersonRelationUi = form.getOrgPersonRelation();
+			
+			try {
+				
+				OrgPersonRelationInfo orgPersonRelation = getOrganizationService().updateOrgPersonRelation(orgPersonRelationUi.getId(), orgPersonRelationUi, getContextInfo());
+				
+				resetForm(form);
+				
+				BeanUtils.copyProperties(orgPersonRelationUi, orgPersonRelation);
+				this.setOtherInfo(orgPersonRelationUi);
+				LOG.info("After update relation is : " + orgPersonRelationUi.getOrgInfo().getLongName());
+				form.setOrgPersonRelation(orgPersonRelationUi);
+				
+				GlobalVariables.getMessageMap().putInfo("KS-OrgPersonRelationInfoDetail-Section","databaseChnageSuccess");
+				
+				return getUIFModelAndView(form, "KS-OrgPersonRelationInfoDetail-View");
+				
+			} catch(Exception e){
+				e.printStackTrace();
+				GlobalVariables.getMessageMap().putError("KS-OrgPersonRelationInfoEdit-Section","unknownError",e.getMessage());
+				return getUIFModelAndView(form);
+			} 
+		} 
+		
+		return getUIFModelAndView(form);
 	}
 	
 	@RequestMapping(params = "methodToCall=delete")
 	public ModelAndView delete(@ModelAttribute("KualiForm") OrgPersonRelationInfoAdminSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String selectedOrgPersonRelationId = form.getActionParamaterValue("selectedOrgPersonRelationId");
+		String selectedOrgPersonRelationId = form.getActionParamaterValue("orgPersonRelationId");
 		
-		this.getOrganizationService().deleteOrgPersonRelation(selectedOrgPersonRelationId, getContextInfo());
-		
-		return getUIFModelAndView(form, "KS-OrgPersonRelationInfoSearch-View");
+		try {
+			this.getOrganizationService().deleteOrgPersonRelation(selectedOrgPersonRelationId, getContextInfo());
+			
+			resetForm(form);
+			
+			GlobalVariables.getMessageMap().putInfo("KS-OrgPersonRelationSearch-CriteriaSection","databaseChnageSuccess");
+			
+			return getUIFModelAndView(form, "KS-OrgPersonRelationInfoSearch-View");
+		} catch(Exception e){
+			GlobalVariables.getMessageMap().putError("KS-OrgPersonRelationInfoDetail-Section","unknownError",e.getMessage());				
+		}
+		return getUIFModelAndView(form);		
 	}
 	
 	@RequestMapping(params = "methodToCall=copy")
 	public ModelAndView copy(@ModelAttribute("KualiForm") OrgPersonRelationInfoAdminSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String selectedOrgPersonRelationId = form.getActionParamaterValue("selectedOrgPersonRelationId");
+		String selectedOrgPersonRelationId = form.getActionParamaterValue("orgPersonRelationId");
 		
-		OrgPersonRelationUIModel orgPersonRelationUi = form.getSelectedOrgPersonRelation();
-		OrgPersonRelationUIModel newOrgPersonRelationUi = new OrgPersonRelationUIModel();
+		OrgPersonRelationUIModel orgPersonRelationUi = form.getOrgPersonRelation();
 		
-		BeanUtils.copyProperties(newOrgPersonRelationUi, orgPersonRelationUi);
-		
-		newOrgPersonRelationUi.setId(null);
-		newOrgPersonRelationUi.setOrgId(orgPersonRelationUi.getOrgInfo().getLongName());
-		
-		form.setNewOrgPersonRelation(newOrgPersonRelationUi);
+		orgPersonRelationUi.setId(null);
 		
 		return getUIFModelAndView(form, "KS-OrgPersonRelationInfoCreate-View");
+	}
+	
+	private void setOtherInfo(OrgPersonRelationUIModel orgPersonRelation) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+		
+		EntityNamePrincipalName principalName = KimApiServiceLocator.getIdentityService().getDefaultNamesForPrincipalId(orgPersonRelation.getPersonId());
+		String personName = (principalName != null  && principalName.getDefaultName() != null) ? principalName.getDefaultName().getCompositeName() : StringUtils.EMPTY;
+		orgPersonRelation.setPersonName(personName);
+    	
+    	OrgInfo orgInfo = this.getOrganizationService().getOrg(orgPersonRelation.getOrgId(), getContextInfo());
+    	orgPersonRelation.setOrgInfo(orgInfo);
+    	
+    	TypeInfo typeInfo = this.getTypeService().getType(orgPersonRelation.getTypeKey(), getContextInfo());
+    	orgPersonRelation.setTypeInfo(typeInfo);
+    	
+    	StateInfo stateInfo = this.getStateService().getState(orgPersonRelation.getStateKey(), getContextInfo());
+    	orgPersonRelation.setStateInfo(stateInfo);
 	}
 	
 	private ContextInfo getContextInfo() {

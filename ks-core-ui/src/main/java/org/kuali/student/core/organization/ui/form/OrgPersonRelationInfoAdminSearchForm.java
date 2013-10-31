@@ -13,9 +13,10 @@ public class OrgPersonRelationInfoAdminSearchForm extends UifFormBase{
 	private static final long serialVersionUID = 4703388779356717776L;
 	
 	private String keywordSearch;
+	private String resultSize;
+	private boolean renderSizeDrop;
 	private String selectedOrgPersonRelationId;
-	private OrgPersonRelationUIModel newOrgPersonRelation;
-	private OrgPersonRelationUIModel selectedOrgPersonRelation;
+	private OrgPersonRelationUIModel orgPersonRelation;
 	private ArrayList<OrgPersonRelationUIModel> orgPersonRelationUIModel;
 
 	public ArrayList<OrgPersonRelationUIModel> getOrgPersonRelationUIModel() {
@@ -43,21 +44,28 @@ public class OrgPersonRelationInfoAdminSearchForm extends UifFormBase{
 		this.selectedOrgPersonRelationId = selectedOrgPersonRelationId;
 	}
 
-	public OrgPersonRelationUIModel getSelectedOrgPersonRelation() {
-		return selectedOrgPersonRelation;
+	public OrgPersonRelationUIModel getOrgPersonRelation() {
+		return orgPersonRelation;
 	}
 
-	public void setSelectedOrgPersonRelation(
-			OrgPersonRelationUIModel selectedOrgPersonRelation) {
-		this.selectedOrgPersonRelation = selectedOrgPersonRelation;
+	public void setOrgPersonRelation(OrgPersonRelationUIModel orgPersonRelation) {
+		this.orgPersonRelation = orgPersonRelation;
 	}
 
-	public OrgPersonRelationUIModel getNewOrgPersonRelation() {
-		return newOrgPersonRelation;
+	public String getResultSize() {
+		return resultSize;
 	}
 
-	public void setNewOrgPersonRelation(OrgPersonRelationUIModel newOrgPersonRelation) {
-		this.newOrgPersonRelation = newOrgPersonRelation;
+	public void setResultSize(String resultSize) {
+		this.resultSize = resultSize;
+	}
+
+	public boolean isRenderSizeDrop() {
+		return renderSizeDrop;
+	}
+
+	public void setRenderSizeDrop(boolean renderSizeDrop) {
+		this.renderSizeDrop = renderSizeDrop;
 	}
 	
 }
