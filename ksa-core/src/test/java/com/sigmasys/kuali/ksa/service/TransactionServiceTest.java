@@ -8,10 +8,14 @@ import java.util.*;
 
 import com.sigmasys.kuali.ksa.exception.GlTransactionFailedException;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.service.hold.HoldService;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kuali.student.r2.core.constants.HoldServiceConstants;
+import org.kuali.student.r2.core.hold.dto.AppliedHoldInfo;
+import org.kuali.student.r2.core.hold.dto.HoldIssueInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -36,7 +40,13 @@ public class TransactionServiceTest extends AbstractServiceTest {
     private GeneralLedgerService glService;
 
     @Autowired
+    private InformationService informationService;
+
+    @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private HoldService holdService;
 
     private Transaction transaction1;
     private Transaction transaction2;
@@ -580,7 +590,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void bouncePayment() throws Exception {
+    public void bouncePayment1() throws Exception {
 
         String id = "cash";
 
@@ -650,6 +660,133 @@ public class TransactionServiceTest extends AbstractServiceTest {
         }
 
         isTrue(bouncingTransactionExists);
+    }
+
+    @Test
+    public void bouncePayment2() throws Exception {
+
+        String id = "finaid";
+
+        Transaction transaction = transactionService.createPayment(id, TEST_USER_ID, new Date(), new BigDecimal(2500.00));
+
+        notNull(transaction);
+        isTrue(transaction instanceof Payment);
+        isTrue(transaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getTransactionType().getId());
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        holdService.createAppliedHold(TEST_USER_ID, "kuali.hold.issue.type.library",
+                "Unpaid Library Fine", "Hold_1 Name", "Hold_1 Description", new Date(), null);
+
+        transaction = transactionService.bouncePayment(transaction.getId(), "Memo text");
+
+        notNull(transaction);
+        isTrue(transaction instanceof Payment);
+        isTrue(transaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT);
+        notNull(transaction.getId());
+        notNull(transaction.getTransactionType());
+        notNull(transaction.getAccount());
+        notNull(transaction.getAccountId());
+        notNull(transaction.getCurrency());
+        notNull(transaction.getAmount());
+
+        isTrue(transaction.isOffset());
+        isTrue(transaction.getStatus() == TransactionStatus.ACTIVE);
+
+        List<Allocation> allocations = transactionService.getAllocations(transaction.getId());
+
+        notNull(allocations);
+        notEmpty(allocations);
+
+        List<Flag> flags = informationService.getFlags(TEST_USER_ID);
+
+        notNull(flags);
+        notEmpty(flags);
+
+        boolean overLimitFlagExists = false;
+
+        for (Flag flag : flags) {
+
+            notNull(flag);
+            notNull(flag.getType());
+            notNull(flag.getType().getCode());
+
+            if (flag.getType().getCode().equals("OverLimit") && new Integer(10).equals(flag.getSeverity())) {
+                overLimitFlagExists = true;
+            }
+        }
+
+        isTrue(overLimitFlagExists);
+
+        List<Alert> alerts = informationService.getAlerts(TEST_USER_ID);
+
+        notNull(alerts);
+        notEmpty(alerts);
+
+        boolean alertExists = false;
+
+        for (Alert alert : alerts) {
+
+            notNull(alert);
+            notNull(alert.getText());
+
+            if (alert.getText().equals("Library Fine Alert")) {
+                alertExists = true;
+            }
+        }
+
+        isTrue(alertExists);
+
+        List<AppliedHoldInfo> holds = holdService.getAppliedHoldsByPerson(TEST_USER_ID, holdService.getHoldContextInfo());
+
+        notNull(holds);
+        notEmpty(holds);
+
+        boolean holdExists = false;
+
+        for (AppliedHoldInfo hold : holds) {
+
+            notNull(hold);
+            notNull(hold.getName());
+
+            if (hold.getName().equals("Library Fine")) {
+                holdExists = true;
+            }
+        }
+
+        isTrue(holdExists);
+
+        List<Charge> charges = transactionService.getCharges(TEST_USER_ID, new Date(), new Date());
+
+        notNull(charges);
+        notEmpty(charges);
+
+        boolean chargeExists = false;
+
+        for (Charge charge : charges) {
+
+            notNull(charge);
+
+            TransactionType transactionType = charge.getTransactionType();
+
+            notNull(transactionType);
+
+            String transactionTypeId = transactionType.getId().getId();
+
+            notNull(transactionTypeId);
+
+            if (transactionTypeId.equals("1020") && new BigDecimal(850.45).compareTo(charge.getAmount()) == 0) {
+                chargeExists = true;
+            }
+        }
+
+        isTrue(chargeExists);
+
     }
 
     @Test
