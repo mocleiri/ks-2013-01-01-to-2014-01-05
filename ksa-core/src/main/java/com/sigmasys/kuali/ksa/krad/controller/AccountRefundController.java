@@ -20,10 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * The Controller for the Account Refund page.
@@ -41,9 +38,6 @@ public class AccountRefundController extends DownloadController {
 
     @Autowired
     private RefundService refundService;
-
-    @Autowired
-    private InformationService informationService;
 
     @Autowired
     private PaymentService paymentService;
@@ -120,8 +114,7 @@ public class AccountRefundController extends DownloadController {
     /**
      * This method is called when the "Request Refund" button on the "Potential Refunds" tab is pressed.
      *
-     *
-     * @param form The form object associated with the Account Refund page.
+     * @param form   The form object associated with the Account Refund page.
      * @param userId Current Account ID.
      * @return ModelAndView.
      * @throws Exception If an error occurs.
@@ -297,9 +290,11 @@ public class AccountRefundController extends DownloadController {
         List<PotentialRefundModel> notEligibleForRefund = new ArrayList<PotentialRefundModel>();
 
         for (PotentialRefundModel potentialRefund : selectedPotentialRefunds) {
+
             Long paymentId = potentialRefund.getId();
 
             try {
+
                 // Generate a Refund:
                 Refund refund = refundService.checkForRefund(paymentId, potentialRefund.getRefundAmount());
 
@@ -314,7 +309,7 @@ public class AccountRefundController extends DownloadController {
                 }
             } catch (Exception e) {
                 // Log an error and add to ineligible:
-                logger.error(String.format("Error generating refund for Payment ID %d", paymentId), e);
+                logger.error(String.format("Error generating refund for Payment ID %d: " + e.getMessage(), paymentId), e);
                 notEligibleForRefund.add(potentialRefund);
             }
         }
@@ -331,13 +326,14 @@ public class AccountRefundController extends DownloadController {
 
     /**
      * Returns only the selected potential refund list.
+     *
      * @param form The form
      * @return Only the selected Potential Refunds.
      */
     List<PotentialRefundModel> getSelectedPotentialRefunds(AccountRefundForm form) {
 
         List<PotentialRefundModel> allPotentialRefunds = form.getPotentialRefunds();
-        List<PotentialRefundModel> selectedRefunds = new ArrayList<PotentialRefundModel>();
+        List<PotentialRefundModel> selectedRefunds = new LinkedList<PotentialRefundModel>();
 
         if (allPotentialRefunds != null) {
             for (PotentialRefundModel refund : allPotentialRefunds) {
@@ -358,14 +354,14 @@ public class AccountRefundController extends DownloadController {
     private void calculateRefundRequestSummaryTotals(RequestPotentialRefundSummaryModel summary) {
 
         // All totals:
-        BigDecimal totalEligiblePayment = new BigDecimal(0);
-        BigDecimal totalEligibleAllocated = new BigDecimal(0);
-        BigDecimal totalEligibleUnallocated = new BigDecimal(0);
-        BigDecimal totalEligibleRefundAmount = new BigDecimal(0);
-        BigDecimal totalNotEligiblePayment = new BigDecimal(0);
-        BigDecimal totalNotEligibleAllocated = new BigDecimal(0);
-        BigDecimal totalNotEligibleUnallocated = new BigDecimal(0);
-        BigDecimal totalNotEligibleRefundAmount = new BigDecimal(0);
+        BigDecimal totalEligiblePayment = BigDecimal.ZERO;
+        BigDecimal totalEligibleAllocated = BigDecimal.ZERO;
+        BigDecimal totalEligibleUnallocated = BigDecimal.ZERO;
+        BigDecimal totalEligibleRefundAmount = BigDecimal.ZERO;
+        BigDecimal totalNotEligiblePayment = BigDecimal.ZERO;
+        BigDecimal totalNotEligibleAllocated = BigDecimal.ZERO;
+        BigDecimal totalNotEligibleUnallocated = BigDecimal.ZERO;
+        BigDecimal totalNotEligibleRefundAmount = BigDecimal.ZERO;
 
         // Go through the list of Eligible Refunds:
         for (PotentialRefundModel refund : summary.getEligiblePotentialRefunds()) {

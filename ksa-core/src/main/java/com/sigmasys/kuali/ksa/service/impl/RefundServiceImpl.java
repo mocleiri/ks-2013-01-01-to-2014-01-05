@@ -219,15 +219,6 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             throw new IllegalStateException(errMsg);
         }
 
-        // KSA-380: Allowing no Refund Rule, which will mean "Process As Cash"
-/*
-        if (payment.getRefundRule() == null) {
-            String errMsg = "Refund rule (Payment ID = " + payment.getId() + ") is required";
-            logger.error(errMsg);
-            throw new IllegalStateException(errMsg);
-        }
-*/
-
         if (payment.getStatus() != TransactionStatus.ACTIVE) {
             String errMsg = "Payment '" + payment.getId() + "' must be ACTIVE";
             logger.error(errMsg);
@@ -340,6 +331,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         refund.setStatus(RefundStatus.VERIFIED);
         refund.setAuthorizedBy(currentUserAccount);
+
         persistEntity(refund);
 
         return refund;
@@ -382,6 +374,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         // Validate the refund rule:
         if (!isRefundRuleValid(refundRule)) {
+
             // Check if the refund rule is invalid because of a non-existing Account:
             String[] refundRuleParams = StringUtils.substringsBetween(refundRule, "(", ")");
 
