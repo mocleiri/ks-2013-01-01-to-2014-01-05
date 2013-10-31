@@ -500,11 +500,13 @@
                 <bean parent="Uif-VerticalBoxSection">
                     <property name="items">
                         <list>
+                            <!--
                             <bean parent="Uif-InputField" p:propertyName="cancellationRule" p:label="Cancellation Rule" p:progressiveRender="@{#dp.type eq 'D'}">
                                 <property name="control">
                                     <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
                                 </property>
                             </bean>
+                            -->
                             <bean parent="Uif-InputField" p:propertyName="clearPeriod" p:label="Default Clearing Period" p:progressiveRender="@{#dp.type eq 'C'}">
                                 <property name="control">
                                     <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
