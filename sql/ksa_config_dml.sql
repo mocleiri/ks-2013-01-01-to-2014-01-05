@@ -195,8 +195,15 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.default.type', 'PERSONAL
 
 -- Refund constants
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.ach.bank.type', 'ACH');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.source.type', 'cash');
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.method', 'RefundMethod1');
+
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.method', 'cash');  -- This is the default refund method unles the student has a refund type associated with their account.
+
+
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.account.type', 'account'); -- Default type for account refunds.
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.account.system.name', 'Automated KSA-to-KSA Refund System'); -- Default name of system for account refunds.
+
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.source.type', 'source');  -- Default type for source refunds.
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.source.system.name', 'KSA Source Refund');  -- Name of source refund system
 
 -- Charge constants
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.charge.cancellation.rule', 'DAYS(10)PERCENTAGE(50)');
