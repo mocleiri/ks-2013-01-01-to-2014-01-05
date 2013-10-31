@@ -194,19 +194,19 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.us.ssn.tax.type', 'SSN')
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.8300.default.type', 'PERSONAL_SERVICE');
 
 -- Refund constants
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.ach.bank.type', 'ACH');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.ach.bank.type', 'ACH');   -- This doesn't currently point anywhere. Will need to be done in the next revision.
 
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.method', 'cash');  -- This is the default refund method unles the student has a refund type associated with their account.
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.cash', 'cash');  -- This is the default refund method unles the student has a refund type associated with their account.
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.cash.system.name', 'Is there really a name for this...');  -- This is the default refund method system name unless the student has a refund type associated with their account.
 
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.account', 'account'); -- Default type for account refunds.
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.account.system.name', 'Automated KSA-to-KSA Refund System'); -- Default name of system for account refunds.
 
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.account.type', 'account'); -- Default type for account refunds.
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.account.system.name', 'Automated KSA-to-KSA Refund System'); -- Default name of system for account refunds.
-
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.source.type', 'source');  -- Default type for source refunds.
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.source.system.name', 'KSA Source Refund');  -- Name of source refund system
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.source', 'source');  -- Default type for source refunds.
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.source.system.name', 'KSA Source Refund');  -- Name of source refund system
 
 -- Charge constants
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.charge.cancellation.rule', 'DAYS(10)PERCENTAGE(50)');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.charge.cancellation.rule', '');
 
 -- BRM (Drools) rule types
 insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (1, 'DSL', 'Drools DSL');
