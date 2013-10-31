@@ -1,5 +1,7 @@
 class StatePropagationTest < BasePage
 
+  page_url "#{$test_site}/kr-krad/testStatePropagation?viewId=testStatePropagationView&pageId=testStatePropagationPageId&methodToCall=start"
+
   expected_element :perform_test_button
 
   wrapper_elements
@@ -54,9 +56,5 @@ class StatePropagationTest < BasePage
   RG_INVALID_TABLE_EXPECTED_COLUMN = 2
   RG_INVALID_TABLE_ACTUAL_COLUMN = 3
   RG_INVALID_TABLE_STATUS_COLUMN = 4
-
-  def frm
-    self.frame(id: /easyXDM_default.*_provider/).frame(id: "iframeportlet")
-  end
 
 end

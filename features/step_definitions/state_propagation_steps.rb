@@ -1,9 +1,6 @@
 When /^I run the State Propagation test$/ do
-  go_to_state_propagation
   @state_propagation = make StatePropagation
-  on StatePropagation do |page|
-    page.perform_propagation_test
-  end
+  @state_propagation.perform_propagation_test
 end
 
 Then /^all State Propagation test rows should have status pass$/ do

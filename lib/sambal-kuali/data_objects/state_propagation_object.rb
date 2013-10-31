@@ -11,7 +11,7 @@ class StatePropagation
   end
 
   def perform_propagation_test
-    on StatePropagationTest do |page|
+    visit StatePropagationTest do |page|
       st_time = Time.new
       page.perform_test
       end_time = Time.new

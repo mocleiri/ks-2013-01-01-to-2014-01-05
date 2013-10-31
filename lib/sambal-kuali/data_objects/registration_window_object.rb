@@ -72,9 +72,7 @@ class RegistrationWindow
 
   #navigate to registration windows page and display reg windows for a specific term/period
   def show_windows_for_period
-    #TODO need conditional logic here if already on the right page
-    go_to_manage_reg_windows
-    on RegistrationWindowsTermLookup do |page1|
+    visit RegistrationWindowsTermLookup do |page1|
       page1.search_by_term_and_year @year, @term_type
     end
     on RegistrationWindowsPeriodLookup do |page2|

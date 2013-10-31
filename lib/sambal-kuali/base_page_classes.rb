@@ -227,8 +227,8 @@ class RegistrationWindowsBase < BasePage
 
   wrapper_elements
   validation_elements
-  #frame_element
-  element(:frm) { |b| b.frame(id: /easyXDM/).frame(id: "iframeportlet") }
+  frame_element
+  #element(:frm) { |b| b.frame(id: /easyXDM/).frame(id: "iframeportlet") }
   #element(:child_populations_table) { |b| b.frm.div(id: "populations_table").table() }
 
   class << self

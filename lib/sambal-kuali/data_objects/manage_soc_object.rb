@@ -195,8 +195,8 @@ class ManageSoc
         soc_state = ManageSoc::OPEN_STATE_KEY
     end
 
-    go_to_manual_soc_change
-    on ManualSocStateChangePage do |page|
+    #go_to_manual_soc_change
+    visit ManualSocStateChangePage do |page|
       page.change_soc_state_termCode.value = @term_code
       page.change_soc_state_newSocState.value = soc_state
       page.change_soc_state
@@ -205,8 +205,8 @@ class ManageSoc
 
   #can't do this for a subterm
   def set_up_soc
-    go_to_create_soc
-    on CreateSocForTerm do |page|
+    #go_to_create_soc
+    visit CreateSocForTerm do |page|
       page.term_code.set @term_code
       page.submit
     end

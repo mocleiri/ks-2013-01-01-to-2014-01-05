@@ -3,12 +3,6 @@
 module Workflows
 
   # Site Navigation helpers...
-  def go_to_create_soc
-    visit KSMaintenancePortal do |page|
-      page.create_soc_for_term
-    end
-  end
-
   def go_to_rollover_details
     visit Enrollment do |page|
       page.view_rollover_details
@@ -36,11 +30,6 @@ module Workflows
     end
   end
 
-  def go_to_manage_reg_windows
-    visit KSMaintenancePortal
-    on(KSMaintenancePortal).manage_reg_windows
-  end
-
   def go_to_manage_course_offerings
     visit Enrollment do |page|
       page.manage_course_offerings
@@ -58,7 +47,6 @@ module Workflows
       page.create_holiday_calendar
     end
   end
-
 
   def go_to_academic_calendar
     visit Enrollment do |page|
@@ -90,34 +78,27 @@ module Workflows
     end
   end
 
-  def go_to_manual_soc_change
-    visit KSMaintenancePortal
-    on(KSMaintenancePortal).test_soc_state_change
-  end
+  #def go_to_manual_soc_change
+  #  visit KSMaintenancePortal
+  #  on(KSMaintenancePortal).test_soc_state_change
+  #end
+  #def go_to_krms_components
+  #  visit KSMaintenancePortal do |page|
+  #    page.krms_components
+  #  end
+  #end
 
-  def go_to_krms_components
-    visit KSMaintenancePortal do |page|
-      page.krms_components
-    end
-  end
+  #def go_to_manage_co_agendas
+  #  visit KSMaintenancePortal do |page|
+  #    page.krms_manage_co_agendas
+  #  end
+  #end
 
-  def go_to_manage_co_agendas
-    visit KSMaintenancePortal do |page|
-      page.krms_manage_co_agendas
-    end
-  end
-
-  def go_to_krms_manage_course_offerings
-    visit KSMaintenancePortal do |page|
-      page.manage_course_offerings
-    end
-  end
-
-  def go_to_state_propagation
-    visit KSMaintenancePortal do |page|
-      page.test_state_propagation
-    end
-  end
+  #def go_to_krms_manage_course_offerings
+  #  visit KSMaintenancePortal do |page|
+  #    page.manage_course_offerings
+  #  end
+  #end
 
   def go_to_manage_final_exam_matrix
     visit Enrollment do |page|
