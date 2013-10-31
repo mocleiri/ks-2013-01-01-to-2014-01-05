@@ -12,12 +12,10 @@ Feature: WC.Edit AO delivery logistics
     When I revise an AO's requested delivery logistics
     Then the AO's delivery logistics shows the new schedule
 
-  #KSENROLL-10132
   Scenario: Add standard RDLs for an AO
     When I add standard RDLs for an AO
     Then the AO's delivery logistics shows the new schedule
 
-  #KSENROLL-10132
   Scenario: Add ad hoc RDLs for an AO
     When I add ad hoc RDLs for an AO
     Then the AO's delivery logistics shows the new schedule
