@@ -108,6 +108,13 @@ public class MemoForm extends AbstractViewModel {
 
         }
 
+
+        Collections.sort(memoModels, new Comparator<MemoModel>(){
+            public int compare(MemoModel m1, MemoModel m2) {
+                return m2.getEffectiveDate().compareTo(m1.getEffectiveDate());
+            }
+        });
+
         /*
         for(Memo child : childMemos) {
             Long previousId = child.getPreviousMemo().getId();
