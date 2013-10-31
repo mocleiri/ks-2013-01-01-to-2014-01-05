@@ -413,7 +413,7 @@ public class PlanController extends UifControllerBase {
         /**
          * populating the Plan related Information
          */
-        planForm.setPlannedCourseSummary(getCourseDetailsInquiryService().getPlannedCourseSummaryById(planForm.getCourseId(), getUserSessionHelper().getStudentId()));
+        planForm.setPlannedCourseSummary(getCourseDetailsInquiryService().getPlannedCourseSummaryByIdAndCd(planForm.getCourseId(), planForm.getCode(), getUserSessionHelper().getStudentId()));
 
 
         /*Setting the atpId to the first recommended unplanned term */

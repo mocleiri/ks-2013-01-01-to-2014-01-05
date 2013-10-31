@@ -381,16 +381,17 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      * multiple terms for the provided course Id and Student Id
      *
      * @param courseId
+     * @param courseCd
      * @param studentId
      * @return
      */
-    public PlannedCourseSummary getPlannedCourseSummaryById(String courseId, String studentId) {
+    public PlannedCourseSummary getPlannedCourseSummaryByIdAndCd(String courseId, String courseCd, String studentId) {
 
         /**
          * If version independent Id provided, retrieve the right course version Id based on current term/date
          * else get the same id as the provided course version specific Id
          */
-        CourseInfo course = getCourseHelper().getCourseInfoByIdAndCd(courseId, null);
+        CourseInfo course = getCourseHelper().getCourseInfoByIdAndCd(courseId, courseCd);
         return getPlannedCourseSummary(course, studentId);
     }
 
