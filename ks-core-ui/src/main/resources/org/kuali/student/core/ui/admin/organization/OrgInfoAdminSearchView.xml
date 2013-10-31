@@ -65,8 +65,8 @@
 								            <bean parent="Uif-DropdownControl" p:options-ref="result-size-options"/>
 								          </property>								          
 								        </bean>
-										<bean parent="Uif-SecondaryActionButton" p:actionLabel="Search" p:methodToCall="search"/> 
-										<bean parent="Uif-NavigationActionButton" p:actionLabel="Create New" p:navigateToPageId="KS-OrgInfoCreate-View" />
+										<bean parent="Uif-SecondaryActionButton" p:actionLabel="Search" p:methodToCall="search"/>
+										<bean parent="Uif-SecondaryActionButton" p:actionLabel="Create New" p:methodToCall="create"/> 
                                     </list>
                                 </property>
                             </bean>
@@ -99,13 +99,7 @@
         <property name="collectionLookup.quickfinderAction.render" value="false" />
         <property name="layoutManager.renderSequenceField" value="false" />
         <property name="layoutManager.applyDefaultCellWidths" value="false" />
-        <property name="layoutManager.applyAlternatingRowStyles" value="false" />
-        <property name="layoutManager.richTable.templateOptions">
-            <map merge="true">
-                <entry key="sDom" value="rtip"/>
-                <entry key="aaSorting" value="[[ 1, 'desc' ]]"/>
-            </map>
-        </property>
+        <property name="layoutManager.applyAlternatingRowStyles" value="false" />        
         <property name="items">
             <list>               
                 <bean parent="Uif-DataField" p:propertyName="longName"  p:label="Name"/>		       	   

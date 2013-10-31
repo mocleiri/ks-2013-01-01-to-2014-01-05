@@ -26,6 +26,5 @@ public class OrgUIModel extends OrgInfo{
 	}
 	public void setStateInfo(StateInfo stateInfo) {
 		this.stateInfo = stateInfo;
-	}
-	
+	}	
 }

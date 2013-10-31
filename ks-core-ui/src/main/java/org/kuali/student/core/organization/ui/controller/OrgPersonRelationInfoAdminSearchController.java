@@ -12,10 +12,12 @@ import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.kim.api.identity.principal.EntityNamePrincipalName;
+import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.util.GlobalVariables;
@@ -81,23 +83,35 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
 	public ModelAndView search(@ModelAttribute("KualiForm") OrgPersonRelationInfoAdminSearchForm searchForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
         String organizationName = searchForm.getKeywordSearch();
+        String personId = searchForm.getPersonId();
  
         resetForm(searchForm);
+        
+        ArrayList<Predicate> predicates = new ArrayList<Predicate>();
  
         QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
+        
+        if (StringUtils.isNotBlank(personId) && !personId.isEmpty()) {
+        	predicates.add(PredicateFactory.equal("personId",personId));
+        }
         
         if (StringUtils.isNotBlank(organizationName) && !organizationName.isEmpty()) {
         	qBuilder.setPredicates(PredicateFactory.equal("longName",organizationName));
         	List<OrgInfo> orgInfos = this.getOrganizationService().searchForOrgs(qBuilder.build(), getContextInfo());
         	
         	if(orgInfos.size() != 0){
-        		qBuilder.setPredicates(PredicateFactory.equal("orgId",orgInfos.get(0).getId()));
+        		predicates.add(PredicateFactory.equal("orgId",orgInfos.get(0).getId()));
         	} else {
         		return getUIFModelAndView(searchForm, null);
         	}
         } else {
-            qBuilder.setPredicates(PredicateFactory.like("orgId","*"));
+        	predicates.add(PredicateFactory.like("orgId","*"));
         }
+        
+        if (!predicates.isEmpty())
+		{
+			qBuilder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[predicates.size()])));
+		}
         
         try {
         	

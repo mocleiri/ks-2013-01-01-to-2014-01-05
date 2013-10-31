@@ -21,29 +21,29 @@
 	                <property name="items">
                         <list>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.shortName" p:label="Abbreviation" p:readOnly="true" />
+								p:propertyName="orgInfo.shortName" p:label="Abbreviation" p:readOnly="true" />
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.longName" p:label="Department" p:readOnly="true"/>
+								p:propertyName="orgInfo.longName" p:label="Department" p:readOnly="true"/>
 					        <bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
-								p:propertyName="selectedOrg.typeInfo.name" p:label="Type" />
+								p:propertyName="orgInfo.typeInfo.name" p:label="Type" />
 							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
-								p:propertyName="selectedOrg.stateInfo.name" p:label="State" />							
+								p:propertyName="orgInfo.stateInfo.name" p:label="State" />							
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.effectiveDate" p:label="Effective Date" p:readOnly="true"/>
+								p:propertyName="orgInfo.effectiveDate" p:label="Effective Date" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.expirationDate" p:label="Expiration Date" p:readOnly="true"/>
+								p:propertyName="orgInfo.expirationDate" p:label="Expiration Date" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.longDescr.plain" p:label="Description" p:readOnly="true"/>
+								p:propertyName="orgInfo.longDescr.plain" p:label="Description" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.meta.createId" p:label="Created By" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.createId" p:label="Created By" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.meta.createTime" p:label="Date Created" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.createTime" p:label="Date Created" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.meta.updateId" p:label="Last Updated By" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.updateId" p:label="Last Updated By" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.meta.updateTime" p:label="Last Update" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.updateTime" p:label="Last Update" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.id" p:label="Identifier" p:readOnly="true"/>
+								p:propertyName="orgInfo.id" p:label="Identifier" p:readOnly="true"/>
 						</list>
 					</property>
 				</bean>				
@@ -52,9 +52,9 @@
 						<list>
 							<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Edit" p:navigateToPageId="KS-OrgInfoEdit-View" />
 							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="copy" p:actionLabel="Copy" 
-							p:actionParameters="selectedOrgId:@{selectedOrg.id}" p:ajaxSubmit="false" />
+							p:actionParameters="selectedOrgId:@{orgInfo.id}" p:ajaxSubmit="false" />
 							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="delete" p:actionLabel="Delete" 
-							p:actionParameters="selectedOrgId:@{selectedOrg.id}" p:ajaxSubmit="false" /> 
+							p:actionParameters="selectedOrgId:@{orgInfo.id}" p:ajaxSubmit="false" /> 
 							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="cancel" p:actionLabel="Cancel" 
 							p:actionParameters="returnViewName:KS-OrgInfoSearch-View"/>
 						</list>

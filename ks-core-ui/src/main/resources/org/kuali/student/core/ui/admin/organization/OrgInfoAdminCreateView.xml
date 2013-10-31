@@ -21,12 +21,12 @@
 	                <property name="items">
 						<list>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" 
-								p:propertyName="newOrg.shortName" p:label="Abbreviation" />
+								p:propertyName="orgInfo.shortName" p:label="Abbreviation" />
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.longName" p:label="Department">								
+								p:propertyName="orgInfo.longName" p:label="Department" p:required="true">								
 							</bean>							
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.typeKey" p:label="Type">
+								p:propertyName="orgInfo.typeKey" p:label="Type" p:required="true">
 								<property name="control">
             						<bean parent="Uif-DropdownControl"/>
           						</property>
@@ -35,7 +35,7 @@
 					          	</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.stateKey" p:label="State" >
+								p:propertyName="orgInfo.stateKey" p:label="State" p:required="true">
 								<property name="control">
             						<bean parent="Uif-DropdownControl"/>
           						</property>
@@ -44,40 +44,40 @@
 					          	</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.effectiveDate" p:label="Effective Date" >
+								p:propertyName="orgInfo.effectiveDate" p:label="Effective Date" p:required="true">
 								<property name="control">
             						<bean parent="Uif-DateControl"/>
           						</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.expirationDate" p:label="Expiration Date" >
+								p:propertyName="orgInfo.expirationDate" p:label="Expiration Date" p:required="true">
 								<property name="control">
             						<bean parent="Uif-DateControl"/>
           						</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.longDescr.plain" p:label="Description" >		
+								p:propertyName="orgInfo.longDescr.plain" p:label="Description" p:required="true">		
 								<property name="control">
             						<bean parent="Uif-LargeTextAreaControl" p:watermarkText="Organization Description"/>
           						</property>					
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.meta.createId" p:label="Created By" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.createId" p:label="Created By" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.meta.createTime" p:label="Date Created" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.createTime" p:label="Date Created" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.meta.updateId" p:label="Last Updated By" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.updateId" p:label="Last Updated By" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.meta.updateTime" p:label="Last Update" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.updateTime" p:label="Last Update" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="newOrg.id" p:label="Identifier" p:readOnly="true"/>
+								p:propertyName="orgInfo.id" p:label="Identifier" p:readOnly="true"/>
 						</list>
 					</property>
 				</bean>				
 				<bean parent="Uif-HorizontalFieldGroup">
 					<property name="items">
 						<list>
-							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="create" p:actionLabel="Save" />
+							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="save" p:actionLabel="Save" />
 							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="cancel" p:actionLabel="Cancel" 
 									p:actionParameters="returnViewName:KS-OrgInfoSearch-View" />
 						</list>

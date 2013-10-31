@@ -56,6 +56,14 @@ public class OrgInfoAdminSearchController extends UifControllerBase {
 	List<OrgUIModel> results = new ArrayList<OrgUIModel>();
 	OrgInfo orgInfo = new OrgInfo();
 	
+	{   
+		// Beanutils config
+		java.util.Date defaultValue = null;        
+		DateConverter converter = new DateConverter(defaultValue);        
+		ConvertUtils.register(converter, java.util.Date.class);
+        // config ends
+	}
+	
 	protected UifFormBase createInitialForm(HttpServletRequest request) {
 		return new OrgInfoAdminSearchForm();
 	}
@@ -69,18 +77,10 @@ public class OrgInfoAdminSearchController extends UifControllerBase {
 	
 	@RequestMapping(params = "methodToCall=search")
 	public ModelAndView search(@ModelAttribute("KualiForm") OrgInfoAdminSearchForm searchForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {	   
-	    
-		// Beanutils config
-		java.util.Date defaultValue = null;
-        
-        DateConverter converter = new DateConverter(defaultValue);
-        
-        ConvertUtils.register(converter, java.util.Date.class);
-        // config ends
-		
-        String organizationName = StringUtils.hasText(searchForm.getKeywordSearch())?searchForm.getKeywordSearch():"%";
-        String typeKey = StringUtils.hasText(searchForm.getTypeInfoKey())?searchForm.getTypeInfoKey():"%";
-        String stateKey = StringUtils.hasText(searchForm.getStateInfoKey())?searchForm.getStateInfoKey():"%";
+	    		
+        String organizationName = StringUtils.hasText(searchForm.getKeywordSearch())?searchForm.getKeywordSearch():"*";
+        String typeKey = StringUtils.hasText(searchForm.getTypeInfoKey())?searchForm.getTypeInfoKey():"*";
+        String stateKey = StringUtils.hasText(searchForm.getStateInfoKey())?searchForm.getStateInfoKey():"*";
  
         resetForm(searchForm);
  
@@ -123,46 +123,52 @@ public class OrgInfoAdminSearchController extends UifControllerBase {
                 results.add(orgUIModel);
             }
         }
-            
-       searchForm.setOrgInfo(orgInfo);
+       
        searchForm.setOrgUIModel((ArrayList<OrgUIModel>) results);
  
        return getUIFModelAndView(searchForm, null);
 	}
 	
-	@RequestMapping(params = "methodToCall=create")
-    public ModelAndView create(@ModelAttribute("KualiForm") OrgInfoAdminSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@RequestMapping(params = "methodToCall=save")
+    public ModelAndView save(@ModelAttribute("KualiForm") OrgInfoAdminSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
        
 	    KRADServiceLocatorWeb.getViewValidationService().validateView(form);       
         
         if(!GlobalVariables.getMessageMap().hasErrors()){
             
-            OrgUIModel orgUi = form.getNewOrg();   
-            OrgInfo org = null;
+            OrgUIModel orgUi = form.getOrgInfo();   
             if(orgUi != null) {
-                org = getOrganizationService().createOrg(orgUi.getTypeKey(), orgUi, getContextInfo());
-               
-                OrgUIModel orgUiModel = new OrgUIModel();
-                BeanUtils.copyProperties(orgUiModel, org);
-                
-                TypeInfo typeInfo = this.getTypeService().getType(orgUiModel.getTypeKey(), getContextInfo());
-
-                orgUiModel.setTypeInfo(typeInfo);
-
-                StateInfo stateInfo = new StateInfo();
-
-                stateInfo = this.getStateService().getState(orgUiModel.getStateKey(), getContextInfo());
-
-                orgUiModel.setStateInfo(stateInfo);
-                
-                form.setSelectedOrg(orgUiModel);
-                form.setNewOrg(null);
+            	try{
+	                OrgInfo org = getOrganizationService().createOrg(orgUi.getTypeKey(), orgUi, getContextInfo());
+	                
+	                BeanUtils.copyProperties(orgUi, org);
+	                
+	                TypeInfo typeInfo = this.getTypeService().getType(orgUi.getTypeKey(), getContextInfo());
+	
+	                orgUi.setTypeInfo(typeInfo);
+	
+	                StateInfo stateInfo = new StateInfo();
+	
+	                stateInfo = this.getStateService().getState(orgUi.getStateKey(), getContextInfo());
+	
+	                orgUi.setStateInfo(stateInfo);
+	                
+	                form.setOrgInfo(orgUi);
+	                
+	                GlobalVariables.getMessageMap().putInfo("KS-OrgInfoDetail-Section","databaseChnageSuccess");
+					
+					return getUIFModelAndView(form, "KS-OrgInfoDetail-View");
+            	}catch (Exception e){
+    				e.printStackTrace();
+    				GlobalVariables.getMessageMap().putError("KS-OrgInfoCreate-Section","unknownError",e.getMessage());
+    				return getUIFModelAndView(form);
+    			}	
             }
         } else {
             return getUIFModelAndView(form);
         }
         
-        return getUIFModelAndView(form, "KS-OrgInfoDetail-View");
+        return getUIFModelAndView(form);
     }
 	
 	@RequestMapping(params = "methodToCall=update")
@@ -172,56 +178,68 @@ public class OrgInfoAdminSearchController extends UifControllerBase {
         
         if(!GlobalVariables.getMessageMap().hasErrors()){
             
-            OrgUIModel orgUi = form.getSelectedOrg();   
-            OrgInfo org = null;
+            OrgUIModel orgUi = form.getOrgInfo();   
             if(orgUi != null) {
-                org = getOrganizationService().updateOrg(orgUi.getId(), orgUi, getContextInfo());
-                
-                OrgUIModel orgUiModel = new OrgUIModel();
-                BeanUtils.copyProperties(orgUiModel, org);
-                
-                TypeInfo typeInfo = this.getTypeService().getType(orgUiModel.getTypeKey(), getContextInfo());
-
-                orgUiModel.setTypeInfo(typeInfo);
-
-                StateInfo stateInfo = new StateInfo();
-
-                stateInfo = this.getStateService().getState(orgUiModel.getStateKey(), getContextInfo());
-
-                orgUiModel.setStateInfo(stateInfo);
-                
-                form.setSelectedOrg(orgUiModel);
-                form.setNewOrg(null);
+            	try{
+	            	OrgInfo org = getOrganizationService().updateOrg(orgUi.getId(), orgUi, getContextInfo());
+	                
+	                BeanUtils.copyProperties(orgUi, org);
+	                
+	                TypeInfo typeInfo = this.getTypeService().getType(orgUi.getTypeKey(), getContextInfo());
+	
+	                orgUi.setTypeInfo(typeInfo);
+	
+	                StateInfo stateInfo = new StateInfo();
+	
+	                stateInfo = this.getStateService().getState(orgUi.getStateKey(), getContextInfo());
+	
+	                orgUi.setStateInfo(stateInfo);
+	                
+	                form.setOrgInfo(orgUi);
+	                GlobalVariables.getMessageMap().putInfo("KS-OrgInfoDetail-Section","databaseChnageSuccess");
+					
+					return getUIFModelAndView(form, "KS-OrgInfoDetail-View");
+	        	}catch (Exception e){
+					e.printStackTrace();
+					GlobalVariables.getMessageMap().putError("KS-OrgInfoEdit-Section","unknownError",e.getMessage());
+					return getUIFModelAndView(form);
+				}	
             }
         } else {
             return getUIFModelAndView(form);
         }
-        
-        return getUIFModelAndView(form, "KS-OrgInfoDetail-View");
+        return getUIFModelAndView(form);
     }
 	
 	@RequestMapping(params = "methodToCall=delete")
     public ModelAndView delete(@ModelAttribute("KualiForm") OrgInfoAdminSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String selectedOrgId = form.getActionParamaterValue("selectedOrgId");
-        
-        this.getOrganizationService().deleteOrg(selectedOrgId, getContextInfo());
-      
-        resetForm(form);
-        
+        try{
+	        this.getOrganizationService().deleteOrg(selectedOrgId, getContextInfo());
+	      
+	        resetForm(form);
+	        
+	        GlobalVariables.getMessageMap().putInfo("KS-OrgInfoSearch-CriteriaSection","databaseChnageSuccess");
+			
+			return getUIFModelAndView(form, "KS-OrgInfoSearch-View");
+		} catch(Exception e){
+			GlobalVariables.getMessageMap().putError("KS-OrgInfoDetail-Section","unknownError",e.getMessage());				
+		}
         return getUIFModelAndView(form, "KS-OrgInfoSearch-View");
+    }
+	
+	@RequestMapping(params = "methodToCall=create")
+    public ModelAndView create(@ModelAttribute("KualiForm") OrgInfoAdminSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		form.setOrgInfo(new OrgUIModel());
+        return getUIFModelAndView(form, "KS-OrgInfoCreate-View");
     }
     
     @RequestMapping(params = "methodToCall=copy")
     public ModelAndView copy(@ModelAttribute("KualiForm") OrgInfoAdminSearchForm form, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
-              
-        OrgUIModel orgUi = form.getSelectedOrg();
-        OrgUIModel newOrgUi = new OrgUIModel();
-        
-        BeanUtils.copyProperties(newOrgUi, orgUi);
-        
-        newOrgUi.setId(null);        
-        
-        form.setNewOrg(newOrgUi);
+    	
+    	OrgUIModel orgInfo = form.getOrgInfo();
+    	
+    	orgInfo.setId(null);        
         
         return getUIFModelAndView(form, "KS-OrgInfoCreate-View");
     }
@@ -232,8 +250,9 @@ public class OrgInfoAdminSearchController extends UifControllerBase {
 
 		for(OrgUIModel relation : results){			
 			if(orgId.equals(relation.getId())){
-				viewForm.setOrgInfo(orgInfo);
-				viewForm.setSelectedOrg(relation);
+				OrgUIModel copy = new OrgUIModel();
+				BeanUtils.copyProperties(copy, relation);
+				viewForm.setOrgInfo(copy);
 				break;
 			}
 		}

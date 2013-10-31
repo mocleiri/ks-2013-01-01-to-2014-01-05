@@ -20,27 +20,19 @@ public class OrgInfoAdminSearchForm extends UifFormBase{
 	private String selectedOrgId;
 	private String typeInfoKey;
 	private String stateInfoKey;
-	private OrgUIModel selectedOrg;
-	private OrgInfo orgInfo;
-	private OrgUIModel newOrg;
+	private OrgUIModel orgInfo;
 	private ArrayList<OrgUIModel> OrgUIModel;
 				
+	
+    public OrgUIModel getOrgInfo() {
+		return orgInfo;
+	}
+
+	public void setOrgInfo(OrgUIModel orgInfo) {
+		this.orgInfo = orgInfo;
+	}
 
 	/**
-     * @return the newOrg
-     */
-    public OrgUIModel getNewOrg() {
-        return newOrg;
-    }
-
-    /**
-     * @param newOrg the newOrg to set
-     */
-    public void setNewOrg(OrgUIModel newOrg) {
-        this.newOrg = newOrg;
-    }
-
-    /**
      * @return the typeInfoKey
      */
     public String getTypeInfoKey() {
@@ -99,24 +91,7 @@ public class OrgInfoAdminSearchForm extends UifFormBase{
 
 	public void setSelectedOrgId(String selectedOrgId) {
 		this.selectedOrgId = selectedOrgId;
-	}
-
-	public OrgUIModel getSelectedOrg() {
-		return selectedOrg;
-	}
-
-	public void setSelectedOrg(
-			OrgUIModel selectedOrg) {
-		this.selectedOrg = selectedOrg;
-	}
-
-	public OrgInfo getOrgInfo() {
-		return orgInfo;
-	}
-
-	public void setOrgInfo(OrgInfo orgInfo) {
-		this.orgInfo = orgInfo;
-	}
+	}	
 
 	public String getResultSize() {
 		return resultSize;

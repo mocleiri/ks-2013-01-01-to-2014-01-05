@@ -21,15 +21,15 @@
 	                <property name="items">
 						<list>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.shortName" p:label="Abbreviation" />
+								p:propertyName="orgInfo.shortName" p:label="Abbreviation" p:required="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.longName" p:label="Department">								
+								p:propertyName="orgInfo.longName" p:label="Department">								
 							</bean>							
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;" p:readOnly="true"
-								p:propertyName="selectedOrg.typeInfo.name" p:label="Type">								
+								p:propertyName="orgInfo.typeInfo.name" p:label="Type" p:required="true">								
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.stateInfo.key" p:label="State" >
+								p:propertyName="orgInfo.stateInfo.key" p:label="State" p:required="true">
 								<property name="control">
             						<bean parent="Uif-DropdownControl"/>
           						</property>
@@ -38,33 +38,33 @@
 					          	</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.effectiveDate" p:label="Effective Date" >
+								p:propertyName="orgInfo.effectiveDate" p:label="Effective Date" p:required="true" >
 								<property name="control">
             						<bean parent="Uif-DateControl"/>
           						</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.expirationDate" p:label="Expiration Date" >
+								p:propertyName="orgInfo.expirationDate" p:label="Expiration Date" p:required="true" >
 								<property name="control">
             						<bean parent="Uif-DateControl"/>
           						</property>
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="selectedOrg.longDescr.plain" p:label="Description" >		
+								p:propertyName="orgInfo.longDescr.plain" p:label="Description" p:required="true">		
 								<property name="control">
             						<bean parent="Uif-LargeTextAreaControl" p:watermarkText="Organization Description"/>
           						</property>					
 							</bean>
 							<bean parent="Uif-InputField"  p:style="align: right;"
-								p:propertyName="selectedOrg.meta.createId" p:label="Created By" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.createId" p:label="Created By" p:readOnly="true"/>
 							<bean parent="Uif-InputField"  p:style="align: right;"
-								p:propertyName="selectedOrg.meta.createTime" p:label="Date Created" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.createTime" p:label="Date Created" p:readOnly="true"/>
 							<bean parent="Uif-InputField"  p:style="align: right;"
-								p:propertyName="selectedOrg.meta.updateId" p:label="Last Updated By" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.updateId" p:label="Last Updated By" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT"  
-								p:propertyName="selectedOrg.meta.updateTime" p:label="Last Update" p:readOnly="true"/>
+								p:propertyName="orgInfo.meta.updateTime" p:label="Last Update" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT"  
-								p:propertyName="selectedOrg.id" p:label="Identifier" p:readOnly="true"/>
+								p:propertyName="orgInfo.id" p:label="Identifier" p:readOnly="true"/>
 						</list>
 					</property>
 				</bean>				

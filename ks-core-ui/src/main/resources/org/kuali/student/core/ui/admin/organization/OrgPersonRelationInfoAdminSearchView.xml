@@ -22,7 +22,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-GridSubSection">
-                <property name="layoutManager.numberOfColumns" value="2"/>
+                <property name="layoutManager.numberOfColumns" value="3"/>
                 <property name="layoutManager.applyDefaultCellWidths" value="false" />
                 <property name="style" value="margin-bottom:0;"/>
                 <property name="items">
@@ -30,8 +30,7 @@
                             <bean parent="Uif-HorizontalFieldGroup">
                                 <property name="items">
                                     <list> 
-                                        <bean parent="Uif-InputField" p:propertyName="keywordSearch"
-										      p:label="Keyword(s)" p:required="true"
+                                        <bean parent="Uif-InputField" p:propertyName="keywordSearch" p:label="Organization" p:required="true"
 										      p:helpSummary="Please enter Organization name." >
 										      <property name="suggest">
 										          <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="longName">
@@ -43,6 +42,13 @@
 										          </bean>
 									          </property>									          
 										</bean>
+										<bean parent="Uif-InputField" p:propertyName="personName" p:additionalHiddenPropertyNames="personId"
+											 p:label="Person" p:helpSummary="Please enter person name." >
+								        	<property name="quickfinder">
+												<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.rice.kim.api.identity.Person"
+												p:fieldConversions="principalId:personId,name:personName" />
+											</property>  
+								        </bean>
 										<bean parent="Uif-InputField" p:propertyName="resultSize" p:render="@{renderSizeDrop}" p:width="auto" p:defaultValue="25">
 								          <property name="control">
 								            <bean parent="Uif-DropdownControl" p:options-ref="result-size-options"/>
@@ -84,13 +90,7 @@
         <property name="collectionLookup.quickfinderAction.render" value="false" />
         <property name="layoutManager.renderSequenceField" value="false" />
         <property name="layoutManager.applyDefaultCellWidths" value="true" />
-        <property name="layoutManager.applyAlternatingRowStyles" value="false" />
-        <property name="layoutManager.richTable.templateOptions">
-            <map merge="true">
-                <entry key="sDom" value="rtip"/>
-                <entry key="aaSorting" value="[[ 1, 'desc' ]]"/>
-            </map>
-        </property>
+        <property name="layoutManager.applyAlternatingRowStyles" value="false" />        
         <property name="items">
             <list>               
                 <bean parent="Uif-DataField" p:propertyName="personId" p:readOnlyDisplayReplacementPropertyName="personName" p:label="Person"/>		       	   
