@@ -525,7 +525,7 @@
                                     <bean parent="Uif-TextControl" p:size="40" p:maxLength="100"/>
                                 </property>
                             </bean>
-                            <bean parent="Uif-InputField" p:label="Unallocated GL Operation" p:propertyName="unallocatedGLOperation" p:progressiveRender="@{#dp.type eq 'C'}">
+                            <bean parent="Uif-InputField" p:label="Unallocated GL Operation (default credit)" p:propertyName="unallocatedGLOperation" p:progressiveRender="@{#dp.type eq 'C'}">
                                 <property name="control">
                                     <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeListShort"/>
                                 </property>
@@ -553,7 +553,6 @@
         <bean parent="Uif-KeyLabelPair" p:key="C" p:value="Credit"/>
         <bean parent="Uif-KeyLabelPair" p:key="D" p:value="Debit"/>
     </util:list>
-
 
     <bean id="glBreakdownList" parent="Uif-Disclosure-VerticalBoxSection" p:style="text-decoration:underline"> <!-- p:progressiveRender="@{#dp.type eq 'D'}"> -->
         <property name="headerText" value="Default General Ledger Breakdown"/>

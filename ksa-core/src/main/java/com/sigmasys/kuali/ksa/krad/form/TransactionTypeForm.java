@@ -48,7 +48,7 @@ public class TransactionTypeForm extends AbstractViewModel {
     private String refundRule;
     private String authorizationText;
     private String unallocatedGLAccount;
-    private String unallocatedGLOperation;
+    private String unallocatedGLOperation = GlOperationType.CREDIT_CODE;
     private List<GlBreakdownModel> glBreakdowns;
     private List<Tag> tags;
     private List<CreditPermission> creditPermissions;
