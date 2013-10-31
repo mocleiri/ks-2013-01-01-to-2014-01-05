@@ -366,23 +366,6 @@
         </search:searchCriteriaTypeInfo>
     </search:searchType>
 
-
-    <search:searchType id="myplan.course.ident.type">
-        <search:searchResultTypeInfo>
-            <search:name/>
-            <search:desc/>
-            <search:resultColumns>
-                <search:resultColumn id="course.ident.type">
-                    <search:dataType>string</search:dataType>
-                </search:resultColumn>
-            </search:resultColumns>
-        </search:searchResultTypeInfo>
-        <search:searchCriteriaTypeInfo>
-            <search:queryParams>
-            </search:queryParams>
-        </search:searchCriteriaTypeInfo>
-    </search:searchType>
-
     <bean id="queryMap" parent="queryMap-parent">
         <property name="sourceMap">
             <map merge="true">
@@ -466,9 +449,9 @@
 
                 <entry key="myplan.lu.search.divisionAndCode">
                     <value>NATIVE:
-                        SELECT DISTINCT clu.ID, ident.TYPE FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
+                        SELECT DISTINCT clu.ID, ident.TYPE FROM KSLU_CLU_IDENT ident, KSLU_CLU_ATTR attr, KSLU_CLU clu  left outer join KSLU_CLU_JN_CLU_IDENT jni on jni.CLU_ID = clu.ID
                         WHERE attr.OWNER = clu.ID
-                        AND (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
+                        AND (ident.ID = clu.OFFIC_CLU_ID OR ident.ID = jni.ALT_CLU_ID)
                         AND ident.DIVISION = :division
                         AND ident.SUFX_CD = :code
                         AND attr.ATTR_NAME = 'course.campus'
@@ -487,9 +470,9 @@
 
                 <entry key="myplan.lu.search.divisionAndLevel">
                     <value>NATIVE:
-                        SELECT DISTINCT clu.ID, ident.SUFX_CD FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
+                        SELECT DISTINCT clu.ID, ident.SUFX_CD FROM KSLU_CLU_IDENT ident, KSLU_CLU_ATTR attr, KSLU_CLU clu  left outer join KSLU_CLU_JN_CLU_IDENT jni on jni.CLU_ID = clu.ID
                         WHERE attr.OWNER = clu.ID
-                        AND (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
+                        AND (ident.ID = clu.OFFIC_CLU_ID OR ident.ID = jni.ALT_CLU_ID)
                         AND ident.DIVISION = :division
                         AND (ident.LVL = :level OR (ident.LVL IS NULL AND ident.SUFX_CD LIKE :levelStart||'%'))
                         AND attr.ATTR_NAME = 'course.campus'
@@ -508,9 +491,9 @@
                 </entry>
                 <entry key="myplan.lu.search.additionalDivision">
                     <value>NATIVE:
-                        SELECT DISTINCT clu.ID, ident.SUFX_CD FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
+                        SELECT DISTINCT clu.ID, ident.SUFX_CD FROM KSLU_CLU_IDENT ident, KSLU_CLU_ATTR attr, KSLU_CLU clu  left outer join KSLU_CLU_JN_CLU_IDENT jni on jni.CLU_ID = clu.ID
                         WHERE attr.OWNER = clu.ID
-                        AND (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
+                        AND (ident.ID = clu.OFFIC_CLU_ID OR ident.ID = jni.ALT_CLU_ID)
                         AND ident.DIVISION IN (:divisions)
                         AND attr.ATTR_NAME = 'course.campus'
                         AND attr.ATTR_VALUE IN ( :campus1, :campus2, :campus3 )
@@ -528,9 +511,9 @@
                 </entry>
                 <entry key="myplan.lu.search.division">
                     <value>NATIVE:
-                        SELECT DISTINCT clu.ID, ident.SUFX_CD FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
+                        SELECT DISTINCT clu.ID, ident.SUFX_CD FROM KSLU_CLU_IDENT ident, KSLU_CLU_ATTR attr, KSLU_CLU clu  left outer join KSLU_CLU_JN_CLU_IDENT jni on jni.CLU_ID = clu.ID
                         WHERE attr.OWNER = clu.ID
-                        AND (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
+                        AND (ident.ID = clu.OFFIC_CLU_ID OR ident.ID = jni.ALT_CLU_ID)
                         AND ident.DIVISION = :division
                         AND attr.ATTR_NAME = 'course.campus'
                         AND attr.ATTR_VALUE IN ( :campus1, :campus2, :campus3 )
@@ -557,15 +540,14 @@
                         ident.cd,
                         clu.VER_IND_ID
                         FROM
-                        KSLU_CLU clu,
                         KSLU_CLU_IDENT ident,
                         KSLU_CLU_IDENT ident2,
                         KSLU_CLU_RSLT res,
                         KSLU_CLURES_JN_RESOPT jn,
-                        KSLU_CLU_JN_CLU_IDENT jni,
-                        KSLU_RSLT_OPT opt
+                        KSLU_RSLT_OPT opt,
+                        KSLU_CLU clu  left outer join KSLU_CLU_JN_CLU_IDENT jni on jni.CLU_ID = clu.ID
                         WHERE
-                        (clu.offic_clu_id = ident.id or (jni.ALT_CLU_ID = ident.ID and jni.CLU_ID = clu.ID))
+                        (clu.offic_clu_id = ident.id OR jni.ALT_CLU_ID = ident.ID)
                         and
                         clu.id = res.clu_id
                         AND
@@ -679,12 +661,11 @@
                         SELECT DISTINCT
                         clu.id, ident2.LNG_NAME
                         FROM
-                        KSLU_CLU clu,
                         KSLU_CLU_IDENT ident,
                         KSLU_CLU_IDENT ident2,
-                        KSLU_CLU_JN_CLU_IDENT jni
+                        KSLU_CLU clu  left outer join KSLU_CLU_JN_CLU_IDENT jni on jni.CLU_ID = clu.ID
                         WHERE
-                        (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
+                        (ident.ID = clu.OFFIC_CLU_ID OR ident.ID = jni.ALT_CLU_ID)
                         AND
                         trim( ident.SUFX_CD ) = :number
                         AND
@@ -692,24 +673,6 @@
                         AND
                         ident2.id = (select c.OFFIC_CLU_ID from kslu_clu c join kslu_clu_ident ide on ide.ID = c.OFFIC_CLU_ID where c.ID = clu.ID)
                         AND clu.EXP_FIRST_ATP = (select min(c.EXP_FIRST_ATP) FROM KSLU_CLU c where c.ver_ind_id = clu.ver_ind_id and c.LAST_ATP >= :lastScheduledTerm group by c.ver_ind_id )
-                    </value>
-                </entry>
-
-                <entry key="myplan.course.ident.type">
-                    <value>NATIVE:
-                        SELECT DISTINCT ident.TYPE FROM KSLU_CLU clu, KSLU_CLU_IDENT ident, KSLU_CLU_JN_CLU_IDENT jni, KSLU_CLU_ATTR attr
-                        WHERE (ident.ID = clu.OFFIC_CLU_ID OR (ident.ID = jni.ALT_CLU_ID AND jni.CLU_ID = clu.ID))
-                        AND Trim(ident.DIVISION) = :division
-                        AND Trim(ident.SUFX_CD) = :number
-                        AND clu.ID NOT IN (SELECT att.OWNER
-                        FROM   KSLU_CLU_ATTR att
-                        WHERE  att.ATTR_NAME = 'course.catalogOmit_ind'
-                        AND att.ATTR_VALUE = 'true')
-                        AND clu.EXP_FIRST_ATP = (SELECT Min(c.EXP_FIRST_ATP)
-                        FROM   kslu_clu c
-                        WHERE  c.VER_IND_ID = clu.VER_IND_ID
-                        AND c.LAST_ATP >= :lastScheduledTerm
-                        GROUP  BY c.VER_IND_ID)
                     </value>
                 </entry>
 
