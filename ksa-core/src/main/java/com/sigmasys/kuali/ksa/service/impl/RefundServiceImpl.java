@@ -57,13 +57,13 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     /**
      * The main join to select refunds.
      */
-    private static final String GET_REFUNDS_JOIN =
+    private static final String GET_REFUNDS_SELECT =
             "select r from Refund r " +
                     " left outer join fetch r.transaction t " +
                     " left outer join fetch r.refundType rtp " +
                     " left outer join fetch r.requestedBy rb " +
                     " left outer join fetch r.authorizedBy ab " +
-                    " left outer join r.refundTransaction rt " +
+                    " left outer join fetch r.refundTransaction rt " +
                     " left outer join fetch r.refundManifest rf ";
 
     /**
@@ -343,8 +343,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * Performs refund validation. Alters the refund amount.
      * Sets the refundStatus to {@link RefundStatus#VERIFIED} and the authorizedBy to the current user.
      *
-     * @param refundId  Refund ID
-     * @param amount    Amount to set on the Refund object.
+     * @param refundId Refund ID
+     * @param amount   Amount to set on the Refund object.
      * @return Refund instance
      */
     @Override
@@ -883,7 +883,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     /**
      * Returns all Refunds belonging to the same group with the specified Group ID (UUID).
      *
-     * @param groupId  Refund Group id.
+     * @param groupId Refund Group id.
      * @return A List of <code>Refund</code>s belonging to the Group with the given ID.
      */
     @Override
@@ -891,8 +891,9 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     public List<Refund> getRefundGroup(String groupId) {
 
         // Create a run a query to get all refunds in the same Group as the given one
-        Query query = em.createQuery(GET_REFUNDS_JOIN + " where r.refundGroup = :refundGroup")
-                .setParameter("refundGroup", groupId);
+        Query query = em.createQuery(GET_REFUNDS_SELECT + " where r.refundGroup = :refundGroup");
+
+        query.setParameter("refundGroup", groupId);
 
         return query.getResultList();
     }
@@ -900,7 +901,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     /**
      * Returns a List of Refunds for the given Account ID.
      *
-     * @param userId    ID of an Account for which to get its Refunds.
+     * @param userId ID of an Account for which to get its Refunds.
      * @return A List of all Refund objects linked to the given Account ID.
      */
     @Override
@@ -908,8 +909,9 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     public List<Refund> getAccountRefunds(String userId) {
 
         // Create a run a query to get all refunds with matching Account IDs
-        Query query = em.createQuery(GET_REFUNDS_JOIN + " where t.account.id = :accountId ")
-                .setParameter("accountId", userId);
+        Query query = em.createQuery(GET_REFUNDS_SELECT + " where t.account.id = :accountId ");
+
+        query.setParameter("accountId", userId);
 
         return query.getResultList();
     }
@@ -917,21 +919,22 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     /**
      * Returns all Refunds linked to the Account with the given ID and which fall in the specified date range.
      *
-     * @param userId    Account which Refunds to find.
-     * @param dateFrom  Start of the date range.
-     * @param dateTo    End of the date range.
-     * @return  List of Refunds in the date range for the given Account.
+     * @param userId   Account which Refunds to find.
+     * @param dateFrom Start of the date range.
+     * @param dateTo   End of the date range.
+     * @return List of Refunds in the date range for the given Account.
      */
     @Override
     @Transactional(readOnly = true)
     public List<Refund> getAccountRefunds(String userId, Date dateFrom, Date dateTo) {
 
         // Create a run a query to get all refunds with matching Account IDs
-        Query query = em.createQuery(GET_REFUNDS_JOIN +
-                " where t.account.id = :accountId and to_date(t.effectiveDate) between :dateFrom and :dateTo ")
-                .setParameter("accountId", userId)
-                .setParameter("dateFrom", dateFrom)
-                .setParameter("dateTo", dateTo);
+        Query query = em.createQuery(GET_REFUNDS_SELECT +
+                " where t.account.id = :accountId and t.effectiveDate between :dateFrom and :dateTo ");
+
+        query.setParameter("accountId", userId);
+        query.setParameter("dateFrom", CalendarUtils.removeTime(dateFrom), TemporalType.DATE);
+        query.setParameter("dateTo", CalendarUtils.removeTime(dateTo), TemporalType.DATE);
 
         return query.getResultList();
     }
