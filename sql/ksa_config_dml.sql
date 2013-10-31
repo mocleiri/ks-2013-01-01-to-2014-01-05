@@ -206,7 +206,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.source', 'source'
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.source.system.name', 'KSA Source Refund');  -- Name of source refund system
 
 -- Charge constants
-insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.charge.cancellation.rule', '');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.charge.cancellation.rule', 'DAYS(10)PERCENTAGE(50)');
 
 -- BRM (Drools) rule types
 insert into KSSA_RULE_TYPE (ID, NAME, DESCRIPTION) values (1, 'DSL', 'Drools DSL');
