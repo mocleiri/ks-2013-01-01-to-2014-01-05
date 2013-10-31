@@ -123,13 +123,13 @@ public class AccountRefundController extends DownloadController {
     public ModelAndView requestRefund(@ModelAttribute("KualiForm") AccountRefundForm form,
                                       @RequestParam("userId") String userId) throws Exception {
 
-        // Process Refund request for all selected Potential Refunds:
-        processRequestPotentialRefund(form);
-
-        // Run Payment Application, if selected:
-        if (form.isRunPaymentApplication() && form.isRunPaymentApplicationEnabled()) {
+        // Run the Payment Application, if selected:
+        if (form.isRunPaymentApplication()) {
             paymentService.paymentApplication(userId);
         }
+
+        // Process Refund request for all selected Potential Refunds:
+        processRequestPotentialRefund(form);
 
         return getUIFModelAndView(form);
     }
@@ -169,7 +169,17 @@ public class AccountRefundController extends DownloadController {
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=verifySelectedRefunds")
     public ModelAndView verifySelectedRefunds(@ModelAttribute("KualiForm") AccountRefundForm form) throws Exception {
 
-        // TODO: Implement the logic of Refund verification:
+        // Get the selected Refunds:
+        List<RefundModel> selectedRefunds = getSelectedRefunds(form);
+
+        for (RefundModel refundModel : selectedRefunds) {
+            // Verify each refund:
+            try {
+                refundService.validateRefund(refundModel.getRefund().getId());
+            } catch (Exception e) {
+                logger.error("Error validating a Refund with ID " + refundModel.getRefund().getId(), e);
+            }
+        }
 
         return getUIFModelAndView(form);
     }
@@ -184,7 +194,17 @@ public class AccountRefundController extends DownloadController {
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=cancelSelectedRefunds")
     public ModelAndView cancelSelectedRefunds(@ModelAttribute("KualiForm") AccountRefundForm form) throws Exception {
 
-        // TODO: Implement the logic of Refund cancellation:
+        // Get the selected Refunds:
+        List<RefundModel> selectedRefunds = getSelectedRefunds(form);
+
+        for (RefundModel refundModel : selectedRefunds) {
+            // Cancel each refund:
+            try {
+                refundService.cancelRefund(refundModel.getRefund().getId(), "User cancellation");
+            } catch (Exception e) {
+                logger.error("Error canceling a Refund with ID " + refundModel.getRefund().getId(), e);
+            }
+        }
 
         return getUIFModelAndView(form);
     }
@@ -235,7 +255,7 @@ public class AccountRefundController extends DownloadController {
     private List<RefundModel> createRefundModelList(String userId, Date dateFrom, Date dateTo) {
 
         // Get all Refunds for the current Account:
-        List<Refund> refunds = refundService.checkForRefund(userId, dateFrom, dateTo);
+        List<Refund> refunds = refundService.getAccountRefunds(userId, dateFrom, dateTo);
 
         // Create a list of RefundModel objects:
         List<RefundModel> refundModels = new ArrayList<RefundModel>();
@@ -243,15 +263,79 @@ public class AccountRefundController extends DownloadController {
         if (refunds != null) {
             for (Refund refund : refunds) {
                 // Create a new RefundModel object:
-                RefundModel refundModel = new RefundModel();
+                RefundModel refundModel = createRefundModel(refund);
 
-                refundModel.setRefund(refund);
-                refundModel.setRefundStatusDisplay(refund.getStatus().toString());
                 refundModels.add(refundModel);
             }
         }
 
         return refundModels;
+    }
+
+    /**
+     * Creates a RefundModel from a Refund object.
+     *
+     * @param refund A Refund to create a RefundModel out of.
+     * @return RefundModel that uses the given Refund.
+     */
+    private RefundModel createRefundModel(Refund refund) {
+        // Create a new RefundModel object:
+        RefundModel refundModel = new RefundModel(refund.getTransaction());
+        RefundManifest manifest = refund.getRefundManifest();
+
+        refundModel.setRefund(refund);
+        refundModel.setRefundStatusDisplay(refund.getStatus().toString());
+
+        // Set requesting and authorizing person names:
+        if (refund.getAuthorizedBy() != null) {
+            refundModel.setAuthorizedByName(refund.getAuthorizedBy().getDefaultPersonName().getDisplayValue());
+        }
+
+        if (refund.getRequestedBy() != null) {
+            refundModel.setRequestedByName(refund.getRequestedBy().getDefaultPersonName().getDisplayValue());
+        }
+
+        // Set the Refund Manifest to a new empty object if one does not exist:
+        refundModel.setRefundManifest((manifest != null) ? manifest : new RefundManifest());
+
+        // Add Refund Group:
+        List<RefundModel> refundGroup = createRefundGroupModelList(refund);
+
+        refundModel.setRefundGroup(refundGroup);
+
+        return refundModel;
+    }
+
+    /**
+     * Creates a list of related Refunds in the same group as the given one.
+     * The resulting list is of RefundModel to be able to display on screen.
+     *
+     * @param refund A refund to find other refunds in the same group.
+     * @return A list of RefundModel objects in the same group.
+     */
+    private List<RefundModel> createRefundGroupModelList(Refund refund) {
+
+        List<RefundModel> groupRefundModels = new ArrayList<RefundModel>();
+
+        // Check if the given Refund has a Group ID:
+        if (StringUtils.isNotBlank(refund.getRefundGroup())) {
+
+            // Get Refunds in the same group:
+            List<Refund> refundGroup = refundService.getRefundGroup(refund.getRefundGroup());
+            Long argRefundId = refund.getId();
+
+            // Create RefundModels. Exclude the argument Refund:
+            for (Refund groupRefund : refundGroup) {
+                if (groupRefund.getId().compareTo(argRefundId) != 0) {
+                    // Create a new RefundModel object:
+                    RefundModel groupRefundModel = createRefundModel(groupRefund);
+
+                    groupRefundModels.add(groupRefundModel);
+                }
+            }
+        }
+
+        return groupRefundModels;
     }
 
     /**
@@ -337,6 +421,28 @@ public class AccountRefundController extends DownloadController {
 
         if (allPotentialRefunds != null) {
             for (PotentialRefundModel refund : allPotentialRefunds) {
+                if (refund.isSelected()) {
+                    selectedRefunds.add(refund);
+                }
+            }
+        }
+
+        return selectedRefunds;
+    }
+
+    /**
+     * Returns only the selected refunds from the "Refund Status" tab.
+     *
+     * @param form The form object.
+     * @return Only the selected Refunds.
+     */
+    List<RefundModel> getSelectedRefunds(AccountRefundForm form) {
+
+        List<RefundModel> allRefunds = form.getAllRefunds();
+        List<RefundModel> selectedRefunds = new ArrayList<RefundModel>();
+
+        if (allRefunds != null) {
+            for (RefundModel refund : allRefunds) {
                 if (refund.isSelected()) {
                     selectedRefunds.add(refund);
                 }

@@ -15,7 +15,7 @@ public class PotentialRefundModel extends TransactionModel {
 
     private String      overrideDescription;
     private BigDecimal  refundAmount;
-    private boolean     selected;
+    private boolean     selected = true;
 
     public PotentialRefundModel(){
     }

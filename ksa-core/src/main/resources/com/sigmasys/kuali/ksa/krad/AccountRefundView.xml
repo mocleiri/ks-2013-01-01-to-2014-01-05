@@ -182,7 +182,7 @@
 				<!-- The Run Payment Application checkbox -->
 				<bean parent="Uif-InputField" p:propertyName="runPaymentApplication" p:readOnly="false">
 					<property name="control">
-						<bean parent="Uif-CheckboxControl"  p:checkboxLabel="Run Payment Application" p:disabled="@{!runPaymentApplicationEnabled}"/>
+						<bean parent="Uif-CheckboxControl"  p:checkboxLabel="Run Payment Application" p:componentSecurity.viewAuthz="true"/>
 					</property>
 				</bean>
 				
@@ -319,11 +319,6 @@
 	<bean id="accountRefundStatusSection" parent="Uif-VerticalBoxSection" p:headerText="Refund Status">
 		<property name="items">
 			<list>
-				<!-- TEST - REMOVE WHEN DEMO DATA ADDED -->
-				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Create Test Refunds" p:ajaxSubmit="true" 
-						p:methodToCall="createTestRefunds" p:onClickScript="writeHiddenToForm('userId', '@{account.id}');"
-						p:successCallback="alert('Test refunds were created successfully.');"
-						p:errorCallback="alert('There were errors creating test refunds. See log for details.');"/>
 			
 				<!-- No Refunds message -->
 				<bean parent="Uif-MessageField" p:messageText="No Refunds found with supplied filter criteria" p:render="@{allRefunds.size() == 0}"/>
@@ -343,22 +338,29 @@
                     <property name="layoutManager.richTable.disableTableSort" value="true"/>
 					<property name="items">
 						<list>
-							<bean parent="Uif-InputField" p:label="Select" p:propertyName="selected" p:readOnly="false" p:hidden="@{refund.status.id != 'U'}">
+							<bean parent="Uif-InputField" p:label="Select" p:propertyName="selected" p:readOnly="false" p:hidden="@{#line.refund.status.id != 'U'}">
 								<property name="control">
 									<bean parent="Uif-CheckboxControl"/>
 								</property>
 							</bean>
 							<bean parent="Uif-DataField" p:label="Refund Status" p:propertyName="refundStatusDisplay"/>
 							<bean parent="Uif-DataField" p:label="Request Date" p:propertyName="refund.requestDate"/>
-							<bean parent="Uif-DataField" p:label="Request" p:propertyName="refund.requestedBy"/>
-							<bean parent="Uif-DataField" p:label="Authorization" p:propertyName="refund.authorizedBy"/>
+							<bean parent="Uif-DataField" p:label="Request" p:propertyName="requestedByName"/>
+							<bean parent="Uif-DataField" p:label="Authorization" p:propertyName="authorizedByName"/>
 							<bean parent="Uif-DataField" p:label="Refund Date" p:propertyName="refund.refundDate"/>
-							<bean parent="Uif-DataField" p:label="Transaction to Refund" p:propertyName="refund.refundTransaction.statementText"/>
-							<bean parent="Uif-DataField" p:label="Original Amount" p:propertyName="refund.refundTransaction.amount"/>
+							<bean parent="Uif-DataField" p:label="Transaction to Refund" p:propertyName="statementText"/>
+							<bean parent="Uif-DataField" p:label="Original Amount" p:propertyName="refund.transaction.amount"/>
 							<bean parent="Uif-DataField" p:label="Refund" p:propertyName="refund.amount"/>
 							<bean parent="Uif-DataField" p:label="Refund Type" p:propertyName="refund.refundType.name"/>
-							<bean parent="Uif-LinkField" p:linkText="Details" p:target="_self"
-									p:onClickScript="alert('Display Refund Details');"/>
+							<bean parent="Uif-HorizontalFieldGroup" p:label="Actions">
+								<property name="items">
+									<list>
+										<bean parent="Uif-LinkField" p:linkText="Details" p:target="_self" p:style="width: 100%;"
+												p:onClickScript="showLightboxComponent('refundDetailsLightbox@{#lineSuffix}');"/>
+										<ref bean="refundDetailsLightbox"/>
+									</list>
+								</property>
+							</bean>
 						</list>
 					</property>
 				</bean>
@@ -377,7 +379,135 @@
 			</list>
 		</property>
 	</bean>
+
+
 	
+	<!--
 	
+	******************************* Refund Details lightbox *********************************
+	
+	-->
+	<bean id="refundDetailsLightbox" parent="Uif-VerticalBoxSection" p:headerText="Refund Details" p:hidden="true">
+		<property name="items">
+			<list>
+				<!-- Refund Details section -->
+				<bean parent="Uif-HorizontalBoxSection" p:readOnly="true">
+					<property name="items">
+						<list>
+							<!-- Refund Details vertical subsection 1 -->
+							<bean parent="Uif-VerticalBoxSection">
+								<property name="items">
+									<list>
+										<bean parent="Uif-InputField" p:label="Refund ID" p:propertyName="refund.id"/>
+										<bean parent="Uif-InputField" p:label="Request Date" p:propertyName="refund.requestDate"/>
+										<bean parent="Uif-InputField" p:label="Refund Date" p:propertyName="refund.refundDate"/>
+										<bean parent="Uif-InputField" p:label="Transaction Description" p:propertyName="refund.transaction.statementText"/>
+										<bean parent="Uif-InputField" p:label="Description Override" p:propertyName="refund.statement"/>
+									</list>
+								</property>
+							</bean>
+							
+							<!-- Refund Details vertical subsection 2 -->
+							<bean parent="Uif-VerticalBoxSection">
+								<property name="items">
+									<list>
+										<bean parent="Uif-InputField" p:label="Amount to Refund" p:propertyName="refund.amount"/>
+										<bean parent="Uif-InputField" p:label="Refund Attributes" p:propertyName="refund.attribute"/>
+										<bean parent="Uif-InputField" p:label="Refund Status" p:propertyName="refundStatusDisplay"/>
+										<bean parent="Uif-InputField" p:label="Refund System" p:propertyName="refund.system"/>
+										<bean parent="Uif-InputField" p:label="Refund Batch ID" p:propertyName="refund.batchId"/>
+										<bean parent="Uif-InputField" p:label="Requested By" p:propertyName="requestedByName"/>
+										<bean parent="Uif-InputField" p:label="Authorized By" p:propertyName="authorizedByName"/>
+									</list>
+								</property>
+							</bean>
+							
+						</list>
+					</property>
+				</bean>
+				
+				<!-- View Generated Refund Transaction button -->
+				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="View Generated Refund Transaction"
+						p:onClickScript="alert('Refund Transaction Details');"/>
+						
+						<!-- p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{refund.getTransaction().getId()}');" -->
+						
+				<ref bean="transactionDetailLightboxRunningTotal"/>
+						
+				<!-- View Refund Manifest Information section -->
+				<bean parent="Uif-Disclosure-HorizontalBoxSection" p:readOnly="true" p:headerText="View Refund Manifest Information" p:style="width: 100%;">
+					<property name="items">
+						<list>
+							<!-- Refund Manifest Details vertical subsection 1 -->
+							<bean parent="Uif-VerticalBoxSection">
+								<property name="items">
+									<list>
+										<bean parent="Uif-InputField" p:label="Check ID" p:propertyName="refundManifest.checkIdentifier"/>
+										<bean parent="Uif-InputField" p:label="KSA Account ID" p:propertyName="refundManifest.refundAccount.id"/>
+										<bean parent="Uif-InputField" p:label="KSA Transaction ID" p:propertyName="refundManifest.refundTransaction.id"/>
+									</list>
+								</property>
+							</bean>
+							
+							<!-- Refund Manifest Details vertical subsection 2 -->
+							<bean parent="Uif-VerticalBoxSection">
+								<property name="items">
+									<list>
+										<bean parent="Uif-InputField" p:label="Bank Transfer ID" p:propertyName="refundManifest.bankTransferIdentifier"/>
+										<bean parent="Uif-InputField" p:label="Credit Card ID" p:propertyName="refundManifest.creditCardIdentifier"/>
+										<bean parent="Uif-InputField" p:label="Other ID" p:propertyName="refundManifest.otherIdentifier"/>
+									</list>
+								</property>
+							</bean>
+							
+						</list>
+					</property>
+				</bean>
+				
+				<!-- View Refund Group enclosure collection -->
+				<bean parent="Uif-Disclosure-VerticalBoxSection" p:readOnly="true" p:headerText="View Refund Group" p:style="width: 100%;">
+					<property name="items">
+						<list>
+							<!-- The table of Refunds in the same Group -->
+							<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="8" p:displayCollectionSize="10">
+								<property name="title" value="View Refund Group"/>
+								<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.RefundModel"/>
+								<property name="propertyName" value="refundGroup"/>
+								<property name="layoutManager.generateAutoSequence" value="false" />
+								<property name="layoutManager.richTable.render" value="true"/>
+								<property name="layoutManager.renderSequenceField" value="false"/>
+								<property name="renderAddBlankLineButton" value="false"/>
+								<property name="renderAddLine" value="false"/>
+								<property name="renderLineActions" value="false"/>
+								<property name="layoutManager.applyDefaultCellWidths" value="false"/>
+								<property name="layoutManager.richTable.disableTableSort" value="true"/>
+								<property name="items">
+									<list>
+										<bean parent="Uif-DataField" p:label="Request Date" p:propertyName="refund.requestDate"/>
+										<bean parent="Uif-DataField" p:label="Refund Date" p:propertyName="refund.refundDate"/>
+										<bean parent="Uif-DataField" p:label="Request" p:propertyName="refund.requestedBy"/>
+										<bean parent="Uif-DataField" p:label="Authorization" p:propertyName="refund.authorizedBy"/>
+										<bean parent="Uif-HorizontalFieldGroup" p:label="Transaction to Refund" p:style="width: 50%;">
+											<property name="items">
+												<list>
+													<bean parent="Uif-LinkField" p:href="javascript:void(0)" p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{#lineSuffix}');" 
+															p:linkText="@{#line.statementText}" p:style="width: 100%;"/>
+													<ref bean="transactionDetailLightboxRunningTotal"/>
+												</list>
+											</property>
+										</bean>
+										<bean parent="Uif-DataField" p:label="Amount" p:propertyName="refund.amount"/>
+										<bean parent="Uif-DataField" p:label="Refund Type" p:propertyName="refund.refundType.name"/>
+										<bean parent="Uif-LinkField" p:linkText="Details" p:target="_self"
+												p:onClickScript="alert('Refund Details sublightbox is not implemented yet');"/>
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
 	
 </beans>

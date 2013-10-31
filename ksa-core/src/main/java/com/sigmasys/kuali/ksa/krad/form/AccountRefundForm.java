@@ -51,11 +51,6 @@ public class AccountRefundForm extends TransactionForm {
     private boolean runPaymentApplication;
 
     /**
-     * Whether the "Run Payment Application" checkbox is enabled.
-     */
-    private boolean runPaymentApplicationEnabled;
-
-    /**
      * Type of the Date range to find transactions.
      * @see com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder
      */
@@ -119,14 +114,6 @@ public class AccountRefundForm extends TransactionForm {
 
     public void setRunPaymentApplication(boolean runPaymentApplication) {
         this.runPaymentApplication = runPaymentApplication;
-    }
-
-    public boolean isRunPaymentApplicationEnabled() {
-        return runPaymentApplicationEnabled;
-    }
-
-    public void setRunPaymentApplicationEnabled(boolean runPaymentApplicationEnabled) {
-        this.runPaymentApplicationEnabled = runPaymentApplicationEnabled;
     }
 
     public Date getFilterDateFrom() {
