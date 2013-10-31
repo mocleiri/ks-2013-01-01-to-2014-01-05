@@ -49,7 +49,7 @@ public abstract class AbstractViewModel extends UifFormBase {
     private List<InformationModel> alerts;
     private List<InformationModel> flags;
     private List<InformationModel> holds;
-    private List<Memo> memos;
+    //private List<Memo> memos;
     private List<ThirdPartyPlan> thirdPartyPlans;
 
 
@@ -270,6 +270,7 @@ public abstract class AbstractViewModel extends UifFormBase {
         this.flags = flags;
     }
 
+    /*
     public List<Memo> getMemos() {
         if (memos == null) {
             memos = new ArrayList<Memo>();
@@ -284,7 +285,7 @@ public abstract class AbstractViewModel extends UifFormBase {
     public void setMemos(List<Memo> memos) {
         this.memos = memos;
     }
-
+    */
     public List<InformationModel> getHolds() {
         if (holds == null) {
             holds = new ArrayList<InformationModel>();

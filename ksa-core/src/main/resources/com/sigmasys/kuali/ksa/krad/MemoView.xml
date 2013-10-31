@@ -185,7 +185,7 @@
         <property name="layoutManager.expandDetailsActionPrototype">
             <bean parent="Uif-ExpandDetailsImageAction" p:render="@{#line.memoModels.size() > 0}"/>
         </property>
-        <property name="layoutManager.ajaxDetailsRetrieval" value="true"/>
+        <!--<property name="layoutManager.ajaxDetailsRetrieval" value="true"/>-->
         <property name="layoutManager.rowDetailsGroup">
             <ref bean="memoTableDetailSection"/>
         </property>
@@ -195,8 +195,9 @@
     <bean id="memoTableDetailSection" parent="Uif-Disclosure-TableCollectionSection"
           p:layoutManager.numberOfColumns="5"
           p:disclosure.render="false"
-          p:progressiveRenderViaAJAX="true"
           p:width="85%">
+        <!--p:progressiveRenderViaAJAX="true"-->
+
         <property name="readOnly" value="true"/>
         <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.MemoModel"/>
         <property name="propertyName" value="memoModels"/>

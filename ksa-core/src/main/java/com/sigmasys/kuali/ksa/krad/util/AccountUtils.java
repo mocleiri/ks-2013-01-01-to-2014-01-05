@@ -47,7 +47,7 @@ public class AccountUtils {
 
         form.setAlertObjects(informationService.getAlerts(userId));
         form.setFlagObjects(informationService.getFlags(userId));
-        form.setMemos(informationService.getMemos(userId));
+        //form.setMemos(informationService.getMemos(userId));
         form.setHolds(AccountUtils.getHolds(userId));
 
         form.setThirdPartyPlansForTooltip(thirdPartyTransferService.getThirdPartyPlansByMember(userId));

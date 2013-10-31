@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
+import com.sigmasys.kuali.ksa.model.Information;
 import com.sigmasys.kuali.ksa.model.Memo;
 
 import java.util.ArrayList;
@@ -38,7 +39,10 @@ public class MemoModel extends InformationModel {
         if(followupMemoModel == null) {
             followupMemoModel = new MemoModel();
             Memo memo = new Memo();
-            memo.setEffectiveDate(this.getParentEntity().getEffectiveDate());
+            Information parent = this.getParentEntity();
+            if(parent != null) {
+                memo.setEffectiveDate(parent.getEffectiveDate());
+            }
             followupMemoModel.setParentEntity(memo);
         }
         return followupMemoModel;

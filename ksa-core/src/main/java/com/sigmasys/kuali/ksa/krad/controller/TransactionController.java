@@ -118,7 +118,7 @@ public class TransactionController extends GenericSearchController {
         } else if ("ViewFlags".equals(pageId)) {
             form.setFlagObjects(informationService.getFlags(userId));
         } else if ("ViewMemos".equals(pageId)) {
-            form.setMemos(informationService.getMemos(userId));
+            //form.setMemos(informationService.getMemos(userId));
         } else if ("ViewHolds".equals(pageId)) {
             form.setHolds(AccountUtils.getHolds(userId));
         }

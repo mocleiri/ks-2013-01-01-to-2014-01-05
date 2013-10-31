@@ -184,7 +184,6 @@ public class MemoController extends GenericSearchController {
         // do insert stuff...
 
         String viewId = request.getParameter("viewId");
-        String userId = request.getParameter("userId");
 
         String parentMemoId = request.getParameter("actionParameters[parentMemoID]");
         Memo parentMemo = null;
@@ -199,8 +198,14 @@ public class MemoController extends GenericSearchController {
             }
             parentMemo = informationService.getMemo(parentId);
         }
+        String accountId = form.getAccount().getId();
 
-        logger.info("View: " + viewId + " User: " + userId);
+        if(accountId == null) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Error determining userid for memo");
+            return getUIFModelAndView(form);
+        }
+
+        logger.info("View: " + viewId + " User: " + accountId);
         MemoModel memoModel = null;
         if(parentMemo == null) {
             memoModel = form.getNewMemoModel();
@@ -220,7 +225,6 @@ public class MemoController extends GenericSearchController {
             return getUIFModelAndView(form);
         }
 
-        String accountId = form.getAccount().getId();
         String memoText = memoModel.getText();
 
         String accessLevelCode = "DEF_MEMO_LEVEL_CD";
@@ -238,7 +242,7 @@ public class MemoController extends GenericSearchController {
                 String statusMsg = "Memo saved";
                 GlobalVariables.getMessageMap().putInfo("MemoView", RiceKeyConstants.ERROR_CUSTOM, statusMsg);
 
-                List<Memo> memos = informationService.getMemos(userId);
+                List<Memo> memos = informationService.getMemos(accountId);
 
                 form.setMemos(memos);
 

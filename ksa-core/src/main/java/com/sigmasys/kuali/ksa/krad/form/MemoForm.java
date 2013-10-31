@@ -56,6 +56,30 @@ public class MemoForm extends AbstractViewModel {
         this.memoModels = new ArrayList<MemoModel>();
         Map<Long, MemoModel> idList = new HashMap<Long, MemoModel>();
 
+        for(Memo m : memos) {
+            logger.error("Memo: " + m.getId() + " Previous: " + (m.getPreviousMemo() == null ? "null" : m.getPreviousMemo().getId()));
+        }
+        // Sort the memos by previous memo's ID where null will be sorted first.
+        // This gets all of the parent memos that have no other parent memos first
+
+        Collections.sort(memos, new Comparator<Memo>(){
+            public int compare(Memo m1, Memo m2) {
+                if(m1.getPreviousMemo() == null && m2.getPreviousMemo() == null) {
+                    return m1.getId().compareTo(m2.getId());
+                } else if(m1.getPreviousMemo() == null && m2.getPreviousMemo() != null) {
+                    return -1;
+                } else if(m1.getPreviousMemo() != null && m2.getPreviousMemo() == null) {
+                    return 1;
+                } else {
+                    return m1.getPreviousMemo().getId().compareTo(m2.getPreviousMemo().getId());
+                }
+            }
+        });
+
+        for(Memo m : memos) {
+            logger.error("Memo: " + m.getId() + " Previous: " + (m.getPreviousMemo() == null ? "null" : m.getPreviousMemo().getId()));
+        }
+
         // List for holding the child memos that came in before the parent
         List<Memo> childMemos = new ArrayList<Memo>();
 
@@ -84,14 +108,17 @@ public class MemoForm extends AbstractViewModel {
 
         }
 
+        /*
         for(Memo child : childMemos) {
-            MemoModel parent = idList.get(child.getPreviousMemo().getId());
+            Long previousId = child.getPreviousMemo().getId();
+            MemoModel parent = idList.get(previousId);
             if(parent != null) {
                 List<MemoModel> parentModels = parent.getMemoModels();
                 MemoModel model = new MemoModel(child);
                 parentModels.add(model);
             }
         }
+        */
     }
 
     public List<MemoModel> getMemoModels() {
