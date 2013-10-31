@@ -2,15 +2,10 @@ package com.sigmasys.kuali.ksa.krad.form;
 
 //import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
 
-import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
-import com.sigmasys.kuali.ksa.krad.model.PaymentBillingPlanModel;
-import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
-import com.sigmasys.kuali.ksa.krad.model.TransactionTransferModel;
+import com.sigmasys.kuali.ksa.krad.model.*;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
-import com.sigmasys.kuali.ksa.model.pb.PaymentBillingAllowableCharge;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 
@@ -27,8 +22,8 @@ public class PaymentPlanForm extends AbstractViewModel {
 
     private Account account;
 
-    private List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges;
-    private List<PaymentBillingAllowableCharge> paymentBillingAllowableCharges;
+    private List<ThirdPartyAllowableChargeModel> thirdPartyAllowableCharges;
+    private List<PaymentBillingAllowableChargeModel> paymentBillingAllowableCharges;
 
     private String filterPlanName;
     private List<ThirdPartyPlan> filterThirdPartyPlans;
@@ -136,14 +131,14 @@ public class PaymentPlanForm extends AbstractViewModel {
         this.newThirdPartyPlan = newThirdPartyPlan;
     }
 
-    public List<ThirdPartyAllowableCharge> getThirdPartyAllowableCharges() {
+    public List<ThirdPartyAllowableChargeModel> getThirdPartyAllowableCharges() {
         if(thirdPartyAllowableCharges == null){
-            thirdPartyAllowableCharges = new ArrayList<ThirdPartyAllowableCharge>();
+            thirdPartyAllowableCharges = new ArrayList<ThirdPartyAllowableChargeModel>();
         }
         return thirdPartyAllowableCharges;
     }
 
-    public void setThirdPartyAllowableCharges(List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges) {
+    public void setThirdPartyAllowableCharges(List<ThirdPartyAllowableChargeModel> thirdPartyAllowableCharges) {
         this.thirdPartyAllowableCharges = thirdPartyAllowableCharges;
     }
 
@@ -311,14 +306,14 @@ public class PaymentPlanForm extends AbstractViewModel {
         this.thirdPartyPlan = thirdPartyPlan;
     }
 
-    public List<PaymentBillingAllowableCharge> getPaymentBillingAllowableCharges() {
+    public List<PaymentBillingAllowableChargeModel> getPaymentBillingAllowableCharges() {
         if(paymentBillingAllowableCharges == null) {
-            paymentBillingAllowableCharges = new ArrayList<PaymentBillingAllowableCharge>();
+            paymentBillingAllowableCharges = new ArrayList<PaymentBillingAllowableChargeModel>();
         }
         return paymentBillingAllowableCharges;
     }
 
-    public void setPaymentBillingAllowableCharges(List<PaymentBillingAllowableCharge> paymentBillingAllowableCharges) {
+    public void setPaymentBillingAllowableCharges(List<PaymentBillingAllowableChargeModel> paymentBillingAllowableCharges) {
         this.paymentBillingAllowableCharges = paymentBillingAllowableCharges;
     }
 

@@ -292,13 +292,13 @@
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
-                    <bean parent="Uif-InputField" p:propertyName="openPeriodStartDate" p:labelPlacement="TOP" p:label="Start"
+                    <bean parent="Uif-InputField" p:propertyName="openPeriodStartDate" p:labelPlacement="TOP" p:label="Start"  p:required="true"
                           p:constraintText="Format: mm/dd/yyyy">
                         <property name="control">
                             <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
                         </property>
                     </bean>
-                    <bean parent="Uif-InputField" p:propertyName="openPeriodEndDate" p:labelPlacement="TOP" p:label="End"
+                    <bean parent="Uif-InputField" p:propertyName="openPeriodEndDate" p:labelPlacement="TOP" p:label="End" p:required="true"
                           p:constraintText="Format: mm/dd/yyyy">
                         <property name="control">
                             <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
@@ -315,13 +315,13 @@
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
-                    <bean parent="Uif-InputField" p:propertyName="chargePeriodStartDate" p:labelPlacement="TOP" p:label="Start"
+                    <bean parent="Uif-InputField" p:propertyName="chargePeriodStartDate" p:labelPlacement="TOP" p:label="Start" p:required="true"
                           p:constraintText="Format: mm/dd/yyyy">
                         <property name="control">
                             <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
                         </property>
                     </bean>
-                    <bean parent="Uif-InputField" p:propertyName="chargePeriodEndDate" p:labelPlacement="TOP" p:label="End"
+                    <bean parent="Uif-InputField" p:propertyName="chargePeriodEndDate" p:labelPlacement="TOP" p:label="End" p:required="true"
                           p:constraintText="Format: mm/dd/yyyy">
                         <property name="control">
                             <bean parent="Uif-DateControl" p:size="11" p:maxLength="20"/>
@@ -342,7 +342,7 @@
                 <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="6" p:width="85%">
                     <property name="headerText" value="Allowable Charges"/>
                     <property name="readOnly" value="false"/>
-                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.ThirdPartyAllowableChargeModel"/>
                     <property name="propertyName" value="thirdPartyAllowableCharges"/>
                     <property name="layoutManager.sequencePropertyName" value="name"/>
                     <property name="layoutManager.richTable.render" value="true"/>
@@ -362,7 +362,7 @@
                         <list>
                             <bean parent="Uif-InputField" p:label="Transaction Type Mask" p:propertyName="transactionTypeMask"/>
                             <bean parent="Uif-InputField" p:label="Priority" p:propertyName="priority"/>
-                            <bean parent="Uif-InputField" p:label="Percentage Allowed" p:propertyName="maxPercentage"/>
+                            <bean parent="Uif-InputField" p:label="Percentage Allowed" p:propertyName="maxPercentageString"/>
                             <bean parent="Uif-InputField" p:label="Maximum Amount" p:propertyName="maxAmount"/>
                             <bean parent="Uif-InputField" p:label="Charge Distribution Plan" p:propertyName="distributionPlanCode">
                                 <property name="control">
@@ -411,7 +411,7 @@
                 <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="6" p:width="85%">
                     <property name="headerText" value="Allowable Charges"/>
                     <property name="readOnly" value="false"/>
-                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.pb.PaymentBillingAllowableCharge"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PaymentBillingAllowableChargeModel"/>
                     <property name="propertyName" value="paymentBillingAllowableCharges"/>
                     <property name="layoutManager.sequencePropertyName" value="name"/>
                     <property name="layoutManager.richTable.render" value="true"/>
@@ -431,7 +431,7 @@
                         <list>
                             <bean parent="Uif-InputField" p:label="Transaction Type Mask" p:propertyName="transactionTypeMask"/>
                             <bean parent="Uif-InputField" p:label="Priority" p:propertyName="priority"/>
-                            <bean parent="Uif-InputField" p:label="Percentage Allowed" p:propertyName="maxPercentage"/>
+                            <bean parent="Uif-InputField" p:label="Percentage Allowed" p:propertyName="maxPercentageString"/>
                             <bean parent="Uif-InputField" p:label="Maximum Amount" p:propertyName="maxAmount"/>
                         </list>
                     </property>
@@ -1156,8 +1156,8 @@
         <property name="readOnly" value="false"/>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="flatFeeAmount" p:label="Amount" p:labelPlacement="TOP"/>
-                <bean parent="Uif-InputField" p:propertyName="flatFeeTransactionType" p:label="Transaction Type" p:labelPlacement="TOP">
+                <bean parent="Uif-InputField" p:propertyName="flatFeeAmount" p:label="Amount" p:labelPlacement="TOP" p:required="true"/>
+                <bean parent="Uif-InputField" p:propertyName="flatFeeTransactionType" p:label="Transaction Type" p:labelPlacement="TOP" p:required="true">
                     <property name="suggest">
                         <bean parent="Uif-Suggest">
                             <property name="valuePropertyName" value="id.id"/>

@@ -1,10 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.PaymentPlanForm;
-import com.sigmasys.kuali.ksa.krad.model.PaymentBillingDateModel;
-import com.sigmasys.kuali.ksa.krad.model.PaymentBillingPlanModel;
-import com.sigmasys.kuali.ksa.krad.model.ThirdPartyPlanModel;
-import com.sigmasys.kuali.ksa.krad.model.TransactionTransferModel;
+import com.sigmasys.kuali.ksa.krad.model.*;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.pb.*;
@@ -31,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Controller
@@ -701,9 +699,9 @@ public class PaymentPlanController extends GenericSearchController {
         plan.setId(planId);
 
 
-        List<PaymentBillingAllowableCharge> allowableCharges = form.getPaymentBillingAllowableCharges();
+        List<PaymentBillingAllowableChargeModel> allowableCharges = form.getPaymentBillingAllowableCharges();
         for(PaymentBillingAllowableCharge charge : allowableCharges) {
-            PaymentBillingAllowableCharge newCharge = paymentBillingService.createPaymentBillingAllowableCharge(planId, charge.getTransactionTypeMask(), charge.getMaxAmount(), charge.getMaxPercentage(), charge.getPriority());
+            PaymentBillingAllowableCharge newCharge = paymentBillingService.createPaymentBillingAllowableCharge(planId, charge.getTransactionTypeMask(), charge.getMaxAmount(), charge.getMaxPercentage().multiply(new BigDecimal(100)), charge.getPriority());
         }
 
 
@@ -809,7 +807,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         for (ThirdPartyAllowableCharge charge : form.getThirdPartyAllowableCharges()) {
             thirdPartyTransferService.createThirdPartyAllowableCharge(plan.getId(), charge.getTransactionTypeMask(),
-                    charge.getMaxAmount(), charge.getMaxPercentage(), charge.getPriority(),
+                    charge.getMaxAmount(), charge.getMaxPercentage().multiply(new BigDecimal(100)), charge.getPriority(),
                     charge.getDistributionPlan());
         }
 
