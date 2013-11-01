@@ -38,8 +38,7 @@ Feature: WC.Schedule of Classes
     Then a list of course offerings with that keyword is displayed
     And the course offering details for a particular offering can be shown
 
-#KSENROLL-9414
-  @pending
+  #KSENROLL-9414
   Scenario: Confirm requisites' natural language for a particular course is displayed correctly
     When I search for course offerings by course to view the course offering requisites
     And I select a course that has existing course offering requisites

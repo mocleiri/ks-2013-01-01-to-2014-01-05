@@ -143,7 +143,7 @@ Then /^the course offering requisites should be displayed alongside the course d
 end
 
 When /^I search for course offerings by course$/ do
-  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "PHYS272", :exp_course_list => ["PHYS272","PHYS272H"],
+  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "PHYS272", :exp_course_list => [@course_offering.course],
                               :term => "Fall 2012"
 end
 
@@ -152,16 +152,7 @@ When /^I select a course that has existing (?:course offering|activity offering 
   @schedule_of_classes.expand_course_details
 end
 
-When /^I search for course offerings by course in the CHEM subject group to view the course offering requisites$/ do
-  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "CHEM272", :exp_course_list => ["CHEM272"],
-                              :term => "Fall 2012"
-  @schedule_of_classes.display
-  @schedule_of_classes.expand_course_details
-end
-
-When /^I search for course offerings by course in the CHEM subject group to view the registration group$/ do
-  @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "CHEM272", :exp_course_list => ["CHEM272"],
-                              :term => "Fall 2012"
+When /^I select a course that has existing (?:course offering|activity offering level) requisites in the registration group$/ do
   @schedule_of_classes.display
   @schedule_of_classes.choose_rendering DisplayScheduleOfClasses::REG_GROUP_RENDERING
   @schedule_of_classes.expand_course_details
@@ -185,9 +176,16 @@ Then /^the added course offering requisite should be displayed with the course d
   end
 end
 
+Then /^the added course offering requisite should not be displayed on Reg Group level$/ do
+  on DisplayScheduleOfClasses do |page|
+    page.details_table.rows[1].text.should_not match /Antirequisite.*Added Antirequisite on CO level/m
+    page.details_table.rows[2].text.should_not match /Antirequisite.*Added Antirequisite on CO level/m
+  end
+end
+
 Then /^any un-suppressed course offering requisites should be visible with the course data$/ do
   on DisplayScheduleOfClasses do |page|
-    puts page.get_requisites_message_text #.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+    page.get_requisites_message_text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
   end
 end
 
@@ -198,9 +196,34 @@ Then /^the suppressed requisite should not be visible for the changed activity$/
   end
 end
 
-Then /^the course offering requisites should be displayed not stating "([^"]+)"$/ do |exp_msg|
+Then /^the suppressed rule should not be visible with the course data$/ do
   on DisplayScheduleOfClasses do |page|
-    page.get_requisites_message_text.should_not match /#{exp_msg}/m
+    page.get_requisites_message_text.should_not match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+  end
+end
+
+Then /^the suppressed rule should not be visible for the changed activity$/ do
+  on DisplayScheduleOfClasses do |page|
+    page.details_table.rows[4].text.should_not match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+  end
+end
+
+Then /^the suppressed rule should be visible for any unchanged activity$/ do
+  on DisplayScheduleOfClasses do |page|
+    page.details_table.rows[2].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+  end
+end
+
+Then /^the suppressed rule should be visible for any unchanged activity that shares a Reg Group with the changed activity$/ do
+  on DisplayScheduleOfClasses do |page|
+    page.details_table.rows[2].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+    page.details_table.rows[3].text.should_not match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+  end
+end
+
+Then /^any un-suppressed course offering rules should be visible with the course data$/ do
+  on DisplayScheduleOfClasses do |page|
+    page.get_requisites_message_text.should match /Corequisite: ENGL101 and HIST106/m
   end
 end
 
@@ -235,72 +258,53 @@ Then /^the unedited course offering requisite should be displayed with any un-af
   end
 end
 
-Then /^the Activity A of the Course Offering has Activity Offering Requisites displayed not stating "([^"]+)"$/ do |exp_msg|
-  on DisplayScheduleOfClasses do |page|
-    if !page.details_table.exists?
-      raise "activities table not found"
-    else
-      page.details_table.rows[2].text.should_not match /#{exp_msg}/m
-    end
-  end
-end
-
 Then /^the suppressed requisite should be visible for any unchanged activity$/ do
   on DisplayScheduleOfClasses do |page|
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      page.details_table.rows[4].text.should match /Corequisite: ENGL101 and HIST106/m
+      page.details_table.rows[3].text.should match /Corequisite: ENGL101 and HIST106/m
     end
   end
 end
 
-Then /^the Activity L of the Course Offering has Activity Offering Requisites displayed stating "([^"]+)"$/ do |exp_msg|
+Then /^the edited course offering rule should be displayed with the affected activity offering$/ do
   on DisplayScheduleOfClasses do |page|
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      page.details_table.rows[4].text.should match /#{exp_msg}/m
+      page.details_table.rows[4].text.should match /Changed the Corequisite on AO B only/m
     end
   end
 end
 
-Then /^the Activity C of the Course Offering has Activity Offering Requisites displayed stating "([^"]+)"$/ do |exp_msg|
+Then /^the unedited course offering rule should be displayed with any un-affected activity offerings$/ do
   on DisplayScheduleOfClasses do |page|
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      page.details_table.rows[10].text.should match /#{exp_msg}/m
+      page.details_table.rows[2].text.should match /Corequisite: ENGL101 and HIST106/m
+      page.details_table.rows[2].text.should_not match /Changed the Corequisite on AO B only/m
     end
   end
 end
 
-Then /^Activity J in the Registration Group has Activity Offering Requisites displayed stating "([^"]+)"$/ do |exp_msg|
+Then /^the edited course offering rule should be displayed at the activity level on Reg Groups that contain the affected activity$/ do
   on DisplayScheduleOfClasses do |page|
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      page.details_table.rows[4].text.should match /#{exp_msg}/m
+      page.details_table.rows[4].text.should match /Changed the Corequisite on AO B only/m
     end
   end
 end
 
-Then /^Activity J in the Registration Group has Activity Offering Requisites displayed not stating "([^"]+)"$/ do |exp_msg|
+Then /^the unedited course offering rule should be displayed at the Reg Group level on Reg Groups that do not contain the affected activity$/ do
   on DisplayScheduleOfClasses do |page|
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      page.details_table.rows[4].text.should_not match /#{exp_msg}/m
-    end
-  end
-end
-
-Then /^Activity C in the Registration Group has Activity Offering Requisites displayed stating "([^"]+)"$/ do |exp_msg|
-  on DisplayScheduleOfClasses do |page|
-    if !page.details_table.exists?
-      raise "activities table not found"
-    else
-      page.details_table.rows[12].text.should match /#{exp_msg}/m
+      page.details_table.rows[2].text.should_not match /Changed the Corequisite on AO B only/m
     end
   end
 end
