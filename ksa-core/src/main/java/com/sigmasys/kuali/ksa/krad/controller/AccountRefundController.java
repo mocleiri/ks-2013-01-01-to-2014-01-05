@@ -8,6 +8,7 @@ import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
+import com.sigmasys.kuali.ksa.util.EnumUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -209,6 +210,27 @@ public class AccountRefundController extends DownloadController {
         return getUIFModelAndView(form);
     }
 
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=verifySingleRefund")
+    public ModelAndView verifySingleRefund(@ModelAttribute("KualiForm") AccountRefundForm form,
+                                           @RequestParam("verificationRefundId") Long refundId) throws Exception {
+
+
+        // Go through all Refunds and find one with ID refundId:
+        List<RefundModel> allRefunds = form.getAllRefunds();
+
+        for (RefundModel refund : allRefunds) {
+
+            if(refund.getId().compareTo(refundId) == 0) {
+
+                // Validate the refund and adjust the status:
+                adjustRefundStatus(refund);
+            }
+        }
+
+
+        return getUIFModelAndView(form);
+    }
+
 
     /* ********************************************************************
    *
@@ -285,6 +307,12 @@ public class AccountRefundController extends DownloadController {
 
         refundModel.setRefund(refund);
         refundModel.setRefundStatusDisplay(refund.getStatus().toString());
+
+        // Set Refund Verification object:
+        RefundModel.RefundVerification refundVerification = new RefundModel.RefundVerification();
+
+        refundVerification.setAmount(refund.getAmount());
+        refundModel.setRefundVerification(refundVerification);
 
         // Set requesting and authorizing person names:
         if (refund.getAuthorizedBy() != null) {
@@ -512,5 +540,50 @@ public class AccountRefundController extends DownloadController {
             bd1 = bd1.add(bd2);
         }
         return bd1;
+    }
+
+    /**
+     * Adjusts refund's status based on the RefundVerification stored in the RefundModel object.
+     *
+     * @param refundModel A model object.
+     */
+    private void adjustRefundStatus(RefundModel refundModel) {
+
+        // Make sure the Refund Verification object exists:
+        RefundModel.RefundVerification refundVerification = refundModel.getRefundVerification();
+
+        if (refundVerification == null) {
+            String error = "Refund cannot be verified. No associated Refund Verification object found.";
+
+            logger.error(error);
+            throw new IllegalArgumentException(error);
+        }
+
+        // If Refund is for Verification, validate the Amount first:
+        if (RefundStatus.VERIFIED_CODE.equals(refundVerification.getStatusCode())) {
+            // Check that the requested refund amount doesn't exceed the original refund amount:
+            BigDecimal requestedAmount = refundVerification.getAmount();
+
+            if (requestedAmount == null) {
+                String error = "Refund amount must be indicated.";
+
+                logger.error("Refund amount must be indicated.");
+                throw new IllegalStateException(error);
+            } else if (requestedAmount.compareTo(refundModel.getRefund().getAmount()) > 0) {
+                String error = String.format("Refund amount specified exceed the allowed maximum of %d",
+                        refundModel.getRefund().getAmount().doubleValue());
+
+                logger.error(error);
+                throw new IllegalStateException(error);
+            }
+
+            // Verify the refund:
+            refundService.validateRefund(refundModel.getRefund().getId());
+        } else if (RefundStatus.CANCELED_CODE.equals(refundVerification.getStatusCode())) {
+
+            // Simply cancel the refund. Ignore the amount:
+            refundService.cancelRefund(refundModel.getRefund().getId(), refundVerification.getOverrideDescription());
+        }
+
     }
 }

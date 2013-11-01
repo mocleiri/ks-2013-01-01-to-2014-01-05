@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.model.Refund;
 import com.sigmasys.kuali.ksa.model.RefundManifest;
 import com.sigmasys.kuali.ksa.model.Transaction;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -45,6 +46,13 @@ public class RefundModel extends TransactionModel {
      * Whether this Refund is selected for Verification or Cancellation.
      */
     private boolean selected;
+
+    /**
+     * Refund Verification object.
+     */
+    private RefundVerification refundVerification;
+
+
 
     public RefundModel() {}
 
@@ -113,4 +121,43 @@ public class RefundModel extends TransactionModel {
     public void setRequestedByName(String requestedByName) {
         this.requestedByName = requestedByName;
     }
+
+    public RefundVerification getRefundVerification() {
+        return refundVerification;
+    }
+
+    public void setRefundVerification(RefundVerification refundVerification) {
+        this.refundVerification = refundVerification;
+    }
+
+    public static class RefundVerification {
+        String statusCode;
+        BigDecimal amount;
+        String overrideDescription;
+
+        public String getStatusCode() {
+            return statusCode;
+        }
+
+        public void setStatusCode(String statusCode) {
+            this.statusCode = statusCode;
+        }
+
+        public BigDecimal getAmount() {
+            return amount;
+        }
+
+        public void setAmount(BigDecimal amount) {
+            this.amount = amount;
+        }
+
+        public String getOverrideDescription() {
+            return overrideDescription;
+        }
+
+        public void setOverrideDescription(String overrideDescription) {
+            this.overrideDescription = overrideDescription;
+        }
+    }
+
 }

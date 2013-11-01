@@ -779,6 +779,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             case VERIFIED:
             case UNVERIFIED:
                 refund.setStatus(RefundStatus.CANCELLED);
+                persistEntity(refund);
                 break;
             case ACTIVE:
 
@@ -828,13 +829,15 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     public RefundType getRefundType(String refundTypeCode) {
 
-        Query query = em.createQuery(GET_REFUNDS_SELECT + " where r.code = :refundTypeCode");
+        return auditableEntityService.getAuditableEntity(refundTypeCode, RefundType.class);
 
-        query.setParameter("refundTypeCode", refundTypeCode);
-
-        List<RefundType> refundTypes = query.getResultList();
-
-        return CollectionUtils.isNotEmpty(refundTypes) ? refundTypes.get(0) : null;
+//        Query query = em.createQuery(GET_REFUNDS_SELECT + " where rtp.code = :refundTypeCode");
+//
+//        query.setParameter("refundTypeCode", refundTypeCode);
+//
+//        List<RefundType> refundTypes = query.getResultList();
+//
+//        return CollectionUtils.isNotEmpty(refundTypes) ? refundTypes.get(0) : null;
     }
 
 
