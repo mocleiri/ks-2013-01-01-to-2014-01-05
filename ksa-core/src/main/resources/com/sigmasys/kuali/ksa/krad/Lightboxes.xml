@@ -291,7 +291,7 @@
 
         <property name="items">
             <list>
-                <bean parent="Uif-ImageField" p:source="../images/memo.png" p:altText="Flags" p:title="" />
+                <bean parent="Uif-ImageField" p:source="../images/memo.png" p:altText="Flags" p:title="" p:width="10%"/>
                 <bean parent="Uif-InputField" p:label="Effective Date"
                       p:propertyName="effectiveDate"
                       p:width="10%">
@@ -302,7 +302,7 @@
                 </bean>
                 <bean parent="Uif-InputField" p:label="Memo Text"
                       p:propertyName="text"
-                      p:width="15%">
+                      p:width="80%">
                     <property name="control">
                         <bean parent="Uif-TextControl"
                               p:size="20" p:maxLength="100"/>
