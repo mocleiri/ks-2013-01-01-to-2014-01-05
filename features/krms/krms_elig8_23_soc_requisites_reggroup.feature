@@ -6,29 +6,32 @@ Feature: SA.ELIG8-23 Ensure that changes made to AO or CO Requisites displays di
   Background:
     Given I am logged in as admin
 
-  #ELIG8.22.EB1 (KSENROLL-10123)
+#ELIG8.23.EB1 (KSENROLL-10128)
   @pending
-  Scenario: Test that suppressing the Corequisite rule for AO A only displays on the Schedule of Classes for the AO
-    Given I suppress the rule in the Student Eligibilty & Prerequisite section
+  Scenario: Verify that suppressing the Course Offering rule for an Activity displays correctly on the Schedule of Classes for the Reg Group
+    Given I suppress a course offering rule for an activity in a course
     And I am using the schedule of classes page
-    When I search for course offerings by course in the CHEM subject group to view the registration group
-    Then the course offering requisites should be displayed not stating "Prerequisite.*CHEM241 and CHEM242.*CHEM247.*A grade of C- or better"
-    And Activity J in the Registration Group has Activity Offering Requisites displayed stating "Prerequisite.*CHEM241 and CHEM242.*CHEM247.*A grade of C- or better"
+    When I search for course offerings by course
+    And I select a course that has existing course offering requisites in the registration group
+    Then the suppressed rule should be visible for any unchanged activity that shares a Reg Group with the changed activity
+    And any un-suppressed course offering rules should be visible with the course data
 
-  #ELIG8.22.EB2 (KSENROLL-10123)
-  @pending
-  Scenario: Test that editing the Corequisite rule is displayed on the Schedule of Classes
-    Given I edit the Corequisite section by adding a new text statement
+#ELIG8.23.EB2 (KSENROLL-10128)
+  @bug @KSENROLL-10510
+  Scenario: Verify that a CO level rule edited at the AO level displays correctly on the Schedule of Classes for the Reg Group
+    Given I edit a course offering rule at the AO level by adding a new text statement
     And I am using the schedule of classes page
-    When I search for course offerings by course in the CHEM subject group to view the registration group
-    Then the course offering requisites should be displayed not stating "Corequisite.*CHEM271.*Changed the Corequisite on AO V only"
-    And Activity C in the Registration Group has Activity Offering Requisites displayed stating "Corequisite.*CHEM271.*Changed the Corequisite on AO V only"
+    When I search for course offerings by course
+    And I select a course that has existing course offering requisites in the registration group
+    Then the edited course offering rule should be displayed at the activity level on Reg Groups that contain the affected activity
+    But the unedited course offering rule should be displayed at the Reg Group level on Reg Groups that do not contain the affected activity
 
-  #ELIG8.22.EB3 (KSENROLL-10123)
+  #ELIG8.23.EB3 (KSENROLL-10128)
   @pending
-  Scenario: Test that adding CO Requisites is displayed on the Schedule of Classes
-    Given I add a new text statement to the Antirequisite section
+  Scenario: Verify that adding an AO Rule is displayed on the Schedule of Classes for the Reg Group
+    Given I add a new course offering rule to a course
     And I am using the schedule of classes page
-    When I search for course offerings by course in the CHEM subject group to view the registration group
+    When I search for course offerings by course
+    And I select a course that has existing course offering requisites in the registration group
     Then the added course offering requisite should be displayed with the course data
-    And Activity J in the Registration Group has Activity Offering Requisites displayed not stating "Antirequisite.*Added Antirequisite on CO level"
+    But the added course offering requisite should not be displayed on Reg Group level
