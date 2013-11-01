@@ -12,6 +12,7 @@ import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
@@ -595,7 +596,17 @@ public class PaymentPlanController extends GenericSearchController {
                 account.getCompositeDefaultPersonName();
             }
 
-            model.setThirdPartyAllowableCharges(thirdPartyTransferService.getThirdPartyAllowableCharges(plan.getId()));
+            List<ThirdPartyAllowableCharge> allowableCharges = thirdPartyTransferService.getThirdPartyAllowableCharges(plan.getId());
+            List<ThirdPartyAllowableChargeModel> allowableChargeModels = model.getThirdPartyAllowableCharges();
+            for(ThirdPartyAllowableCharge charge : allowableCharges) {
+                ThirdPartyAllowableChargeModel thirdPartyAllowableChargeModel = new ThirdPartyAllowableChargeModel();
+                try{
+                    BeanUtils.copyProperties(thirdPartyAllowableChargeModel, charge);
+                }catch (Throwable t) {
+                    throw new RuntimeException(t);
+                }
+
+            }
 
             List<ThirdPartyTransferDetail> transferDetails = thirdPartyTransferService.getThirdPartyTransfersByPlanId(plan.getId());
 

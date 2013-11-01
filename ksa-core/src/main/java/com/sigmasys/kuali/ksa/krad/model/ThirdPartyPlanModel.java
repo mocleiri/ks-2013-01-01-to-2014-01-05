@@ -1,7 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
 import com.sigmasys.kuali.ksa.model.ThirdPartyAccount;
-import com.sigmasys.kuali.ksa.model.tp.ThirdPartyAllowableCharge;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
@@ -19,7 +18,7 @@ public class ThirdPartyPlanModel {
 
     private ThirdPartyPlan parent;
 
-    private List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges;
+    private List<ThirdPartyAllowableChargeModel> thirdPartyAllowableCharges;
 
     private List<ThirdPartyTransferDetail> planMembers;
     private List<ThirdPartyPlanMember> queuedMembers;
@@ -132,14 +131,14 @@ public class ThirdPartyPlanModel {
         getParent().getTransferType().setId(Long.parseLong(type));
     }
 
-    public List<ThirdPartyAllowableCharge> getThirdPartyAllowableCharges() {
+    public List<ThirdPartyAllowableChargeModel> getThirdPartyAllowableCharges() {
         if (thirdPartyAllowableCharges == null) {
-            thirdPartyAllowableCharges = new ArrayList<ThirdPartyAllowableCharge>();
+            thirdPartyAllowableCharges = new ArrayList<ThirdPartyAllowableChargeModel>();
         }
         return thirdPartyAllowableCharges;
     }
 
-    public void setThirdPartyAllowableCharges(List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges) {
+    public void setThirdPartyAllowableCharges(List<ThirdPartyAllowableChargeModel> thirdPartyAllowableCharges) {
         this.thirdPartyAllowableCharges = thirdPartyAllowableCharges;
     }
 

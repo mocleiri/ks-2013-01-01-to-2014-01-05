@@ -171,10 +171,10 @@
         <property name="items">
             <list>
                 <bean parent="Uif-HorizontalBoxSection"><property name="items"><list>
-                    <bean parent="Uif-InputField" p:propertyName="newPaymentBillingPlan.code" p:label="Code"/>
-                    <bean parent="Uif-InputField" p:propertyName="newPaymentBillingPlan.name" p:label="Name"/>
+                    <bean parent="Uif-InputField" p:propertyName="newPaymentBillingPlan.code" p:label="Code" p:required="true"/>
+                    <bean parent="Uif-InputField" p:propertyName="newPaymentBillingPlan.name" p:label="Name" p:required="true"/>
                 </list></property></bean>
-                <bean parent="Uif-InputField" p:propertyName="newPaymentBillingPlan.description" p:label="Description" p:labelPlacement="TOP">
+                <bean parent="Uif-InputField" p:propertyName="newPaymentBillingPlan.description" p:label="Description" p:labelPlacement="TOP" p:required="true">
                     <property name="control">
                         <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
                     </property>
@@ -1233,7 +1233,7 @@
                         <bean parent="Uif-DropdownControl" p:options-ref="PostToGeneralLedgerList"/>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:propertyName="lateMembership" p:label="Late Membership" p:labelPlacement="TOP">
+                <bean parent="Uif-InputField" p:propertyName="lateMembership" p:label="Late Membership" p:labelPlacement="TOP" p:required="true">
                     <property name="control">
                         <bean parent="Uif-VerticalRadioControl" p:options-ref="LateMembershipList"/>
                     </property>
