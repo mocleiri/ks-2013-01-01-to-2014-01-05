@@ -13,7 +13,6 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -828,16 +827,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     public RefundType getRefundType(String refundTypeCode) {
-
         return auditableEntityService.getAuditableEntity(refundTypeCode, RefundType.class);
-
-//        Query query = em.createQuery(GET_REFUNDS_SELECT + " where rtp.code = :refundTypeCode");
-//
-//        query.setParameter("refundTypeCode", refundTypeCode);
-//
-//        List<RefundType> refundTypes = query.getResultList();
-//
-//        return CollectionUtils.isNotEmpty(refundTypes) ? refundTypes.get(0) : null;
     }
 
 
