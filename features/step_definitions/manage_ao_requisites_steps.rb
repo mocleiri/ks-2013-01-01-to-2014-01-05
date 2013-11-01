@@ -17,47 +17,10 @@ When /^I copy and edit the Course Offering rule to the Student Eligibility & Pre
   @prereq.sepr_copy_edit_co_rule
 end
 
-When /^I copy the Course Offering rule to the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule
-  @prereq.sepr_copy_co_rule
-end
-
-When /^I commit after copying and editing the Course Offering rule in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "E"
-  @prereq = make AOPreparationPrerequisiteRule, :activity => "E"
-  @prereq.sepr_copy_edit_co_rule
-  @prereq.commit_changes
-end
-
 When /^I suppress the copied and edited Course Offering rule that was committed in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "E"
   @prereq = make AOPreparationPrerequisiteRule, :activity => "E"
   @prereq.sepr_suppress_committed_copied_edited_co_rule
-end
-
-When /^I revert the copied rule in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule
-  @prereq.sepr_revert_copy_co_rule
-end
-
-When /^I revert the copied and edited rule in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule
-  @prereq.sepr_revert_copy_edit_co_rule
-end
-
-When /^I revert the added rule in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule
-  @prereq.sepr_revert_add_ao_rule
-end
-
-When /^I revert the previously added rule in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule
-  @prereq.sepr_revert_add_ao_rule
 end
 
 When /^I revert the rule that replaced the CO rule in the Student Eligibility & Prerequisite section$/ do
@@ -104,34 +67,16 @@ When /^I commit the rule that replaced the CO rule in the Student Eligibility & 
   @prereq.commit_changes
 end
 
-When /^I suppress a newly added rule in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201301", :course => "ENGL313"
-  @prereq.sepr_suppress_added_ao_rule
-end
-
 When /^I suppress the copied rule in the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_suppress_copied_co_rule
 end
 
-When /^I suppress the copied and edited rule in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule
-  @prereq.sepr_suppress_copied_edited_ao_rule
-end
-
 When /^I view the catalog and course offering rule for the Student Eligibility & Prerequisite section$/ do
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
   @prereq = make AOPreparationPrerequisiteRule
   @prereq.sepr_view_catalog_co_rule
-end
-
-When /^I compare the rules in the Student Eligibility & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule
-  @prereq.sepr_compare_catalog_co_ao_rule
 end
 
 When /^I compare the replaced rule with the CO and CLU rules in the Student Eligibility & Prerequisite section$/ do
@@ -147,8 +92,15 @@ When /^I compare the added rule with the CO and CLU rules in the Student Eligibi
 end
 
 When /^I edit a course offering requisite at the AO level by adding a new text statement$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "PHYS272")
+  on ManageCourseOfferings do |page|
+    page.codes_list.each do |code|
+      aos = make ActivityOffering, :code => code, :parent_course_offering => @course_offering
+      aos.edit :send_to_scheduler => true, :defer_save => false
+    end
+  end
   @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "B"
-  @prereq = make AOPreparationPrerequisiteRule, :activity => "B", :term => "201208", :course => "PHYS272"
+  @prereq = make AOPreparationPrerequisiteRule, :activity => "B", :term => @course_offering.term, :course => @course_offering.course
   @prereq.navigate_to_ao_requisites
   on ActivityOfferingRequisites do |page|
     if page.prereq_copy_edit_link.exists?
@@ -160,18 +112,19 @@ When /^I edit a course offering requisite at the AO level by adding a new text s
   end
 end
 
-When /^I suppress the rule in the Student Eligibilty & Prerequisite section$/ do
-  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite"
-  @prereq = make AOPreparationPrerequisiteRule, :term => "201208", :course => "CHEM272"
+When /^I suppress a course offering rule for an activity in a course$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "PHYS272")
+  on ManageCourseOfferings do |page|
+    page.codes_list.each do |code|
+      aos = make ActivityOffering, :code => code, :parent_course_offering => @course_offering
+      aos.edit :send_to_scheduler => true, :defer_save => false
+    end
+  end
+  @activityOR = make AORequisitesData, :section => "Student Eligibility & Prerequisite", :activity => "B"
+  @prereq = make AOPreparationPrerequisiteRule, :activity => "B", :term => @course_offering.term,
+                 :course => @course_offering.course
   @prereq.sepr_suppress_co_rule
   @prereq.commit_changes
-end
-
-Then /^I should be able to compare the CO Rule to the AO in the Student Eligibility & Prerequisite section$/ do
-  on ActivityOfferingRequisites do |page|
-    page.loading.wait_while_present
-    page.eligibility_prereq_edit_links.a(:text => /Compare/).exists?.should be_true
-  end
 end
 
 Then /^there should be no rule in the Student Eligibility & Prerequisite section$/ do
@@ -191,15 +144,6 @@ Then /^the created rule should be shown in the Student Eligibility & Prerequisit
   end
 end
 
-Then /^the created rule should not exist in the Student Eligibility & Prerequisite section$/ do
-  @prereq.open_agenda_section
-  on ActivityOfferingRequisites do |page|
-    page.loading.wait_while_present
-    @prereq.show_all_courses( "agenda")
-    page.agenda_management_section.text.should_not match @prereq.test_text("agenda", "ENGL101,ENGL478,HIST416,BSCI202,BSCI361,HIST110,Text to copy,free form text input value")
-  end
-end
-
 Then /^the edited rule should be shown in the Student Eligibility & Prerequisite section$/ do
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
@@ -209,49 +153,11 @@ Then /^the edited rule should be shown in the Student Eligibility & Prerequisite
   end
 end
 
-Then /^the edited rule should exist in the Student Eligibility & Prerequisite section$/ do
-  @prereq.open_agenda_section
-  on ActivityOfferingRequisites do |page|
-    page.loading.wait_while_present
-    @prereq.show_all_courses( "agenda")
-    page.agenda_management_section.text.should match @prereq.test_text("agenda", "lower-level English,ENGL478,HIST416,Text to copy,ARHU-English,ENGL101,BSCI202,BSCI361,HIST110,free form text input value")
-  end
-end
-
-Then /^the edited rule should not exist in the Student Eligibility & Prerequisite section$/ do
-  @prereq.open_agenda_section
-  on ActivityOfferingRequisites do |page|
-    page.loading.wait_while_present
-    @prereq.show_all_courses( "agenda")
-    page.agenda_management_section.text.should_not match @prereq.test_text("agenda", "lower-level English,ENGL478,HIST416,Text to copy,ARHU-English,ENGL101,BSCI202,BSCI361,HIST110,free form text input value")
-  end
-end
-
 Then /^both rules for the Student Eligibility & Prerequisite section should be the same$/ do
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
     page.view_tree.text.should match @prereq.test_compare_text("at least one in literature,ARHU-English required")
-  end
-end
-
-Then /^both rules for the Student Eligibility & Prerequisite section should not be the same$/ do
-  @prereq.open_agenda_section
-  on ActivityOfferingRequisites do |page|
-    page.loading.wait_while_present
-    page.view_tree.text.should_not match @prereq.test_compare_text("at least one in literature,ARHU-English required")
-  end
-end
-
-Then /^the AO, CO and CLU rules for the Student Eligibility & Prerequisite section should be the same$/ do
-  @prereq.open_agenda_section
-  on ActivityOfferingRequisites do |page|
-    if !page.compare_section.present?
-      page.loading.wait_while_present
-      page.prereq_compare
-    end
-    page.loading.wait_while_present
-    page.compare_tree.text.should match @prereq.test_ao_compare_text("at least one in literature,ARHU-English required")
   end
 end
 
@@ -294,8 +200,15 @@ end
 
 #Antirequisite
 When /^I add a text rule to the Antirequisite section$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "PHYS272")
+  on ManageCourseOfferings do |page|
+    page.codes_list.each do |code|
+      aos = make ActivityOffering, :code => code, :parent_course_offering => @course_offering
+      aos.edit :send_to_scheduler => true, :defer_save => false
+    end
+  end
   @activityOR = make AORequisitesData, :section => "Antirequisite"
-  @antireq = make AOAntirequisiteRule, :term => "201208", :course => "PHYS272"
+  @antireq = make AOAntirequisiteRule, :term => @course_offering.term, :course => @course_offering.course
   @antireq.navigate_to_ao_requisites
   on ActivityOfferingRequisites do |page|
     if page.antireq_add_link.exists?
@@ -309,28 +222,39 @@ end
 
 #Corequisite
 When /^I suppress a course offering rule for a specific activity in a course$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "PHYS272")
+  on ManageCourseOfferings do |page|
+    page.codes_list.each do |code|
+      aos = make ActivityOffering, :code => code, :parent_course_offering => @course_offering
+      aos.edit :send_to_scheduler => true, :defer_save => false
+    end
+  end
   @activityOR = make AORequisitesData, :section => "Corequisite"
-  @coreq = make AOCorequisiteRule, :term => "201208", :course => "PHYS272"
+  @coreq = make AOCorequisiteRule, :term => @course_offering.term, :course => @course_offering.course
   @coreq.cr_suppress_co_rule
   @coreq.commit_changes
 end
 
-When /^I edit the Corequisite section by adding a new text statement$/ do
-  @activityOR = make AORequisitesData, :section => "Corequisite", :activity => "C"
-  @coreq = make AOCorequisiteRule, :activity => "C", :term => "201208", :course => "CHEM272"
+When /^I edit a course offering rule at the AO level by adding a new text statement$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "PHYS272")
+  on ManageCourseOfferings do |page|
+    page.codes_list.each do |code|
+      aos = make ActivityOffering, :code => code, :parent_course_offering => @course_offering
+      aos.edit :send_to_scheduler => true, :defer_save => false
+    end
+  end
+  @activityOR = make AORequisitesData, :section => "Corequisite", :activity => "B"
+  @coreq = make AOCorequisiteRule, :activity => "B", :term => @course_offering.term, :course => @course_offering.course
   @coreq.navigate_to_ao_requisites
   on ActivityOfferingRequisites do |page|
     if page.coreq_copy_edit_link.exists?
       page.loading.wait_while_present
       page.coreq_copy_edit
-      @coreq.cr_text_rule( "add", "", "Changed the Corequisite on AO V only")
+      @coreq.cr_text_rule( "add", "", "Changed the Corequisite on AO B only")
       @coreq.commit_changes
     end
   end
 end
-
-
-
 
 ###General steps###
 Given /^I have made changes to multiple AO Requisites for the same course offering$/ do
@@ -341,16 +265,6 @@ end
 
 When /^I copy a course offering from an existing offering that had changes made to its activity offerings$/ do
   @copyCO = create CourseOffering, :term => "201301", :course => "CHEM277", :create_from_existing => @course_offering
-end
-
-When /^I update the manage activity offering agendas page$/ do
-  on ManageAORequisites do |page|
-    page.update_rule_btn
-  end
-end
-
-When /^I commit the changes made to the Activity Offering$/ do
-  @activityOR.commit_changes
 end
 
 Then /^the copied course offering should have the same AO Requisites as the original$/ do
@@ -382,12 +296,6 @@ Then /^both Activity Offerings should have the AR icon present$/ do
     page.loading.wait_while_present
     page.has_ar_icon("A")
     page.has_ar_icon("D")
-  end
-end
-
-Then /^there should be a new single course statement on the edit tab$/ do
-  on ManageAORequisites do |page|
-    page.edit_tree_section.text.should match /ENGL101/
   end
 end
 

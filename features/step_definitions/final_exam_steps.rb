@@ -301,23 +301,6 @@ When /^I view the Exam Offerings for a CO with a standard final exam driven by C
   end
 end
 
-When /^I view the Exam Offerings for a CO with a standard final exam driven by Activity Offering$/ do
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
-                                 :final_exam_driver => "Final Exam Per Activity Offering",
-                                 :final_exam_activity => "Lecture"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
-
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
-end
-
 When /^I view the Exam Offerings for an open CO with a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201301", :course => "ENGL304")
   on ManageCourseOfferings do |page|
@@ -472,23 +455,6 @@ When /^I view the Exam Offerings for a CO created from catalog with a standard f
   end
 end
 
-When /^I view the Exam Offerings for a CO created from catalog with a standard final exam driven by Activity Offering$/ do
-  @course_offering = create CourseOffering, :term => "201208", :course => "ENGL304"
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
-                                 :final_exam_driver => "Final Exam Per Activity Offering",
-                                 :final_exam_activity => "Lecture"
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
-
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
-end
-
 When /^I add an Exam Period to the term$/ do
   @term.edit :exam_period => true
 end
@@ -558,6 +524,7 @@ end
 When /^I cancel all Activity Offerings for a CO with a standard final exam driven by Course Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
   on ManageCourseOfferings do |page|
+    page.loading.wait_while_present
     page.edit_course_offering
   end
   @course_offering.edit_offering :final_exam_type => "Standard final Exam",
@@ -633,10 +600,6 @@ Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |
   end
 end
 
-Then /^no warning in the Final Exam section is displayed$/ do
-  on(EditAcademicTerms).exam_warning_message( @term.term_type).present?.should be_false
-end
-
 Then /^an error in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_error_message( @term.term_type).should match /#{exp_msg}/
@@ -659,13 +622,6 @@ Then /^the final exam for the Fall Term is listed when I view the Academic Calen
     page.open_term_section(@term.term_type)
     page.get_exam_start_date( @term.term_type).should match /#{@term.start_date}/
     page.get_exam_end_date( @term.term_type).should match /#{@term.end_date}/
-  end
-end
-
-Then /^the exam start and end dates should be blank$/ do
-  on EditAcademicTerms do |page|
-    page.get_exam_start_date( @term.term_type).should == ""
-    page.get_exam_end_date( @term.term_type).should == ""
   end
 end
 
@@ -837,52 +793,6 @@ Then /^all the Exam Offering's state and table by Exam Driver should be retained
   end
 end
 
-Then /^every CO's Exam Offerings should be copied to the new term by the rollover process$/ do
-  @test_co_list = []
-  @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[0].course)
-  @test_co_list[0].manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
-    page.final_exam_driver_value_0.should == "No final exam for this offering"
-  end
-  @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[1].course)
-  @test_co_list[1].manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
-    page.final_exam_driver_value_0.should == "Alternate exam for this offering"
-  end
-  @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[2].course)
-  @test_co_list[2].manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.final_exam_driver_value_0.should == "Activity Offering"
-  end
-  @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[3].course)
-  @test_co_list[3].manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.final_exam_driver_value_0.should == "Course Offering"
-    #TODO: add assertion to check if use final exam matrix is checked or not
-  end
-end
-
-#Then /^there should be a Course Offering table that is in the ([^"]*) state$/ do |exp_state|
-#  on ViewExamOfferings do |page|
-#    page.co_table_header_text.should match /for Course Offering/
-#    page.eo_by_co_status.should match /#{exp_state}/
-#  end
-#end
-
 Then /^the Exam Offerings for Course Offering should be in a ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
     page.co_table_header_text.should match /for Course Offering/
@@ -893,16 +803,6 @@ Then /^the Exam Offerings for Course Offering should be in a ([^"]*) state$/ do 
     page.eo_by_co_bldg.should == ""
     page.eo_by_co_room.should == ""
     page.count_no_of_eos_by_co.should == "1"
-  end
-end
-
-Then /^the Exam Offerings for Activity Offering should be in a ([^"]*) state$/ do |exp_state|
-  on ViewExamOfferings do |page|
-    page.ao_table_header_text.should match /for Activity Offering/
-    page.eo_by_ao_status("A").should match /#{exp_state}/
-    page.eo_by_ao_status("C").should match /#{exp_state}/
-    page.eo_by_ao_status("F").should match /#{exp_state}/
-    page.eo_by_ao_status("J").should match /#{exp_state}/
   end
 end
 
@@ -966,26 +866,10 @@ Then /^the Exam Offering for Activity Offering should be in a ([^"]*) state$/ do
   end
 end
 
-Then /^there should be an Activity Offering table where all Exam Offerings is in the ([^"]*) state$/ do |exp_state|
-  on ViewExamOfferings do |page|
-    page.ao_table_header_text.should match /for Activity Offering/
-    page.return_array_of_ao_codes.each do |code|
-      page.eo_by_ao_status(code).should match /#{exp_state}/
-    end
-  end
-end
-
 Then /^there should be ([^"]*) Exam Offerings? by Activity Offering for the course$/ do |no_of_aos|
   on ViewExamOfferings do |page|
     array = page.return_array_of_ao_codes
     array.length.should == no_of_aos.to_i
-  end
-end
-
-Then /^there should be 1 Exam Offering by Course Offering for the course$/ do
-  on ViewExamOfferings do |page|
-    array = page.return_array_of_ao_codes
-    array.length.should == 1
   end
 end
 
@@ -1024,21 +908,6 @@ end
 Then /^the Exam Offering table should be in a ([^"]*) state$/ do |exp_msg|
   on ViewExamOfferings do |page|
     page.canceled_eo_table.rows[1].cells[0].text.should == exp_msg
-  end
-end
-
-Then /^the Exam Offering table for all Activity Offerings should be in a ([^"]*) state$/ do |exp_msg|
-  on ViewExamOfferings do |page|
-    array = page.return_array_of_ao_codes
-    array.each do |code|
-      page.canceled_eo_table.row(text: /#{Regexp.escape(code)}/).cells[0].text.should == exp_msg
-    end
-  end
-end
-
-Then /^there should be an Course Offering table header explaining that the Exam Offerings have been canceled$/ do
-  on ViewExamOfferings do |page|
-    page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Course Offerings/
   end
 end
 

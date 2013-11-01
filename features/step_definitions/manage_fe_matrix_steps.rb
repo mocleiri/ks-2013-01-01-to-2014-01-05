@@ -3,17 +3,6 @@ When /^I edit a Standard Final Exam rule on the matrix$/ do
   @matrix.edit :defer_save => true
 end
 
-When /^I add a new statement to the TH at 04:30 AM Standard Final Exam rule on the matrix$/ do
-  @matrix = make FinalExamMatrix, :rule_requirements => "TH at 04:30 AM"
-  @matrix.edit :add_statement => true
-end
-
-When /^I edit an existing TH at 04:30 AM Standard Final Exam rule on the matrix$/ do
-  @matrix = make FinalExamMatrix, :rule_requirements => "TH at 04:30 AM"
-  @matrix.edit :edit_statement => true, :rule => "Free Form Text", :free_text => "This is a test"
-  sleep 10
-end
-
 When /^I open the Final Exam Matrix for ([^"]*)$/ do |term|
   @matrix = make FinalExamMatrix, :term_type => term
   @matrix.manage
@@ -35,8 +24,8 @@ end
 
 When /^I submit and return to see my changes$/ do
   on FEMatrixView do |page|
-    page.loading.wait_while_present
     page.submit
+    page.loading.wait_while_present
   end
   @matrix.manage
 end
@@ -315,13 +304,6 @@ end
 Then /^there is a message indicating that the final exam matrix for the initial term is not used$/ do
   on FEMatrixView do |page|
     page.term_type_select.option(selected: "selected").text.should_not == "Fall Term"
-  end
-end
-
-Then /^no Standard Final Exam or Common Final Exam rules are listed$/ do
-  on FEMatrixView do |page|
-    page.standard_final_exam_section.visible?.should == false
-    page.common_final_exam_section.visible?.should == false
   end
 end
 
