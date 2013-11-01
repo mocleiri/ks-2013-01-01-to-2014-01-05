@@ -4,7 +4,7 @@ When /^I create a Course Offering with "([^"]*)" delivery Formats$/ do |format_t
     delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture")
   else
     delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture")
-    delivery_format_list << (make DeliveryFormat, :format => "Lecture/Discussion", :grade_format => "Course Offering", :final_exam_activity => "Lecture")
+    delivery_format_list << (make DeliveryFormat, :format => "Discussion/Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture")
   end
   @course_offering = create CourseOffering, :term=> Rollover::OPEN_SOC_TERM, :course => "ENGL222", :delivery_format_list => delivery_format_list
 end
