@@ -811,7 +811,7 @@ public class PaymentPlanController extends GenericSearchController {
                     charge.getDistributionPlan());
         }
 
-        String message = "Third Pary Payment Plan saved";
+        String message = "Third Party Payment Plan saved";
         GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, message);
 
 
