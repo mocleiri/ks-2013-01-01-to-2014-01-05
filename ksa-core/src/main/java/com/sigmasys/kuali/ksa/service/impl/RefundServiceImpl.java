@@ -13,6 +13,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import com.sigmasys.kuali.ksa.jaxb.Ach;
 import com.sigmasys.kuali.ksa.jaxb.BatchAch;
@@ -54,9 +54,9 @@ import com.sigmasys.kuali.ksa.util.RequestUtils;
 @SuppressWarnings("unchecked")
 public class RefundServiceImpl extends GenericPersistenceService implements RefundService {
 
-    /**
-     * The main join to select refunds.
-     */
+    private static final Log logger = LogFactory.getLog(RefundServiceImpl.class);
+
+
     private static final String GET_REFUNDS_SELECT =
             "select r from Refund r " +
                     " left outer join fetch r.transaction t " +
@@ -66,10 +66,6 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
                     " left outer join fetch r.refundTransaction rt " +
                     " left outer join fetch r.refundManifest rf ";
 
-    /**
-     * The logger.
-     */
-    private static final Log logger = LogFactory.getLog(RefundServiceImpl.class);
 
     @Autowired
     private AccountService accountService;
@@ -445,9 +441,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         persistEntity(paymentTransaction);
 
         // Set the Refund system:
-        String systemName = configService.getParameter(Constants.REFUND_ACCOUNT_SYSTEM_NAME);
 
-        refund.setSystem(systemName);
+        refund.setSystem(configService.getParameter(Constants.REFUND_ACCOUNT_SYSTEM_NAME));
 
         // Add Refund Manifest:
         addAccountRefundManifest(refund, accountId, paymentTransaction);
@@ -465,9 +460,18 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = false)
     public List<Refund> doAccountRefunds(String batch) {
-        // Find all Refund object with the given value of "batch":
-        String sql = "select r from Refund r where r.batchId = :batchId and r.status = :status and r.refundType.debitTypeId = :refundTypeId";
+
         String refundTypeId = configService.getParameter(Constants.REFUND_TYPE_ACCOUNT);
+        if (StringUtils.isBlank(refundTypeId)) {
+            String errMsg = "Configuration parameter '" + Constants.REFUND_TYPE_ACCOUNT + " is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+
+        // Find all Refund object with the given value of "batch":
+        String sql = "select r from Refund r where r.batchId = :batchId and r.status = :status and " +
+                " r.refundType.debitTypeId = :refundTypeId";
+
         Query query = em.createQuery(sql)
                 .setParameter("batchId", batch)
                 .setParameter("status", RefundStatus.VERIFIED)
@@ -528,9 +532,18 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = false)
     public String doCheckRefunds(String batch, Date checkDate, String checkMemo) {
+
+        String refundTypeId = configService.getParameter(Constants.REFUND_TYPE_CHECK);
+        if (StringUtils.isBlank(refundTypeId)) {
+            String errMsg = "Configuration parameter '" + Constants.REFUND_TYPE_CHECK + " is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+
         // Find all VERIFIED Check Refunds in the batch:
-        String sql = "select r from Refund r where r.batchId = :batchId and r.status = :status and r.refundType.debitTypeId = :refundTypeId";
-        String refundTypeId = configService.getParameter(Constants.REFUND_CHECK_TYPE);
+        String sql = "select r from Refund r where r.batchId = :batchId and r.status = :status and " +
+                " r.refundType.debitTypeId = :refundTypeId";
+
         Query query = em.createQuery(sql)
                 .setParameter("batchId", batch)
                 .setParameter("status", RefundStatus.VERIFIED)
@@ -626,9 +639,18 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = false)
     public String doAchRefunds(String batch) {
+
+        String refundTypeId = configService.getParameter(Constants.REFUND_TYPE_ACH);
+        if (StringUtils.isBlank(refundTypeId)) {
+            String errMsg = "Configuration parameter '" + Constants.REFUND_TYPE_ACH + " is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+
         // Find all VERIFIED Ach Refunds in the batch:
-        String sql = "select r from Refund r where r.batchId = :batchId and r.status = :status and r.refundType.debitTypeId = :refundTypeId";
-        String refundTypeId = configService.getParameter(Constants.REFUND_ACH_TYPE);
+        String sql = "select r from Refund r where r.batchId = :batchId and r.status = :status and " +
+                " r.refundType.debitTypeId = :refundTypeId";
+
         Query query = em.createQuery(sql)
                 .setParameter("batchId", batch)
                 .setParameter("status", RefundStatus.VERIFIED)
@@ -798,48 +820,23 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     }
 
     /**
-     * Either retrieves an existing <code>RefundType</code> with the matching values of
-     * the debit and credit payment types, or creates and persists a new one.
+     * Retrieves the refund type by code.
      *
-     * @param debitTypeId  Debit type ID.
-     * @param creditTypeId Credit type ID.
-     * @return An existing <code>RefundType</code> or a newly created one if there is no existing one.
+     * @param refundTypeCode Credit type ID.
+     * @return RefundType instance
      */
     @Override
-    @Transactional(readOnly = false)
-    public RefundType getOrCreateRefundType(String debitTypeId, String creditTypeId) {
+    public RefundType getRefundType(String refundTypeCode) {
 
-        // Validate the parameters:
-        if (StringUtils.isBlank(debitTypeId) || StringUtils.isBlank(creditTypeId)) {
-            String errMsg = "Debit and Credit types are required when requesting refund types";
-            logger.error(errMsg);
-            throw new IllegalArgumentException(errMsg);
-        }
+        Query query = em.createQuery(GET_REFUNDS_SELECT + " where r.code = :refundTypeCode");
 
-        // Create a query:
-        String sql = "select rt from RefundType rt where rt.debitTypeId = :debitTypeId and rt.creditTypeId = :creditTypeId";
-        Query query = em.createQuery(sql);
-        query.setParameter("debitTypeId", debitTypeId);
-        query.setParameter("creditTypeId", creditTypeId);
-        query.setMaxResults(1);
+        query.setParameter("refundTypeCode", refundTypeCode);
 
-        List<RefundType> result = query.getResultList();
-        RefundType refundType;
+        List<RefundType> refundTypes = query.getResultList();
 
-        if (CollectionUtils.isEmpty(result)) {
-            // Create a new RefundType:
-            refundType = new RefundType();
-            refundType.setDebitTypeId(debitTypeId);
-            refundType.setCreditTypeId(creditTypeId);
-            refundType.setCode(debitTypeId + ":" + creditTypeId);
-            refundType.setName("Autogenerated");
-            persistEntity(refundType);
-        } else {
-            refundType = result.get(0);
-        }
-
-        return refundType;
+        return CollectionUtils.isNotEmpty(refundTypes) ? refundTypes.get(0) : null;
     }
+
 
     /**
      * Deletes a <code>RefundType</code> from the persistent storage.
@@ -957,9 +954,15 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         // Get the Refund object:
         Refund refund = getRefund(refundId, true);
 
-        // Check the refund is of an ACH type. Compare the valueof the system setting to RefundType:
+        // Check the refund is of an ACH type. Compare the value of the system setting to RefundType:
         String refundTypeId = refund.getRefundType().getDebitTypeId();
-        String systemPropRefundType = configService.getParameter(Constants.REFUND_ACH_TYPE);
+
+        String systemPropRefundType = configService.getParameter(Constants.REFUND_TYPE_ACH);
+        if (StringUtils.isBlank(systemPropRefundType)) {
+            String errMsg = "Configuration parameter '" + Constants.REFUND_TYPE_ACH + " is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
 
         if (!StringUtils.equalsIgnoreCase(refundTypeId, systemPropRefundType)) {
             throw new InvalidRefundTypeException("Invalid Refund type for an Ach refund. Refund type is [" + refundTypeId + "].");
@@ -1063,7 +1066,14 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         // Check that this refund of of a Check type. Compare the value of the system setting to RefundType:
         String refundTypeId = refund.getRefundType().getDebitTypeId();
-        String systemPropRefundType = configService.getParameter(Constants.REFUND_CHECK_TYPE);
+
+        String systemPropRefundType = configService.getParameter(Constants.REFUND_TYPE_CHECK);
+        if (StringUtils.isBlank(systemPropRefundType)) {
+            String errMsg = "Configuration parameter '" + Constants.REFUND_TYPE_CHECK + " is required";
+            logger.error(errMsg);
+            throw new ConfigurationException(errMsg);
+        }
+
 
         if (!StringUtils.equalsIgnoreCase(refundTypeId, systemPropRefundType)) {
             throw new InvalidRefundTypeException("Invalid Refund type for a Check refund. Refund type is [" + refundTypeId + "].");
@@ -1145,8 +1155,10 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @param refundTransaction Transaction that actually refunded the funds.
      */
     private void addAccountRefundManifest(Refund refund, String accountId, Transaction refundTransaction) {
+
         // Create an Account refund Manifest and add it to the Refund:
         RefundManifest refundManifest = new RefundManifest();
+
         Account refundAccount = accountService.getOrCreateAccount(accountId);
 
         refundManifest.setRefundAccount(refundAccount);
@@ -1301,23 +1313,28 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     private Refund createCashRefund(Payment payment, Date requestDate, Account requestedBy, BigDecimal refundAmount) {
 
         // Figure out the refund type method. Get the overridden value first:
-        String refundTypeMethod = configService.getParameter(Constants.REFUND_METHOD_OVERRIDE);
+        String refundTypeCode = configService.getParameter(Constants.REFUND_METHOD_OVERRIDE);
 
-        if (StringUtils.isBlank(refundTypeMethod)) {
+        if (StringUtils.isBlank(refundTypeCode)) {
 
             // If there is no overridden value, get the configured value:
-            refundTypeMethod = configService.getParameter(Constants.REFUND_TYPE_CASH);
+            refundTypeCode = configService.getParameter(Constants.REFUND_TYPE_CASH);
 
             // If there is still no value, use the User preference:
-            if (StringUtils.isBlank(refundTypeMethod)) {
-                refundTypeMethod = userPreferenceService.getUserPreferenceValue(requestedBy.getId(), Constants.REFUND_TYPE_CASH);
+            if (StringUtils.isBlank(refundTypeCode)) {
+                refundTypeCode = userPreferenceService.getUserPreferenceValue(requestedBy.getId(), Constants.REFUND_TYPE_CASH);
             }
         }
 
         // If there is a valid Refund type, create a new Refund:
-        if (StringUtils.isNotBlank(refundTypeMethod)) {
+        if (StringUtils.isNotBlank(refundTypeCode)) {
 
-            RefundType refundType = getOrCreateRefundType(refundTypeMethod, refundTypeMethod);
+            RefundType refundType = getRefundType(refundTypeCode);
+            if (refundType == null) {
+                String errMsg = "Refund type '" + refundTypeCode + " does not exist";
+                logger.error(errMsg);
+                throw new InvalidRefundTypeException(errMsg);
+            }
 
             // Creating a new Refund
             Refund refund = new Refund();
@@ -1327,12 +1344,13 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
             refund.setRequestedBy(requestedBy);
             refund.setTransaction(payment);
             refund.setRefundType(refundType);
+
             persistEntity(refund);
 
             return refund;
 
         } else {
-            String errMsg = "No default Refund Method found in system configuration or User Preferences.";
+            String errMsg = "No default Refund Type code found in system configuration or User Preferences.";
             logger.error(errMsg);
             throw new InvalidRefundMethodException(errMsg);
         }
@@ -1351,14 +1369,19 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
                                       BigDecimal refundAmount) {
 
         // Create a new Refund:
-        String refundSourceType = configService.getParameter(Constants.REFUND_TYPE_SOURCE);
-        if (StringUtils.isBlank(refundSourceType)) {
+        String refundTypeCode = configService.getParameter(Constants.REFUND_TYPE_SOURCE);
+        if (StringUtils.isBlank(refundTypeCode)) {
             String errMsg = "Configuration parameter '" + Constants.REFUND_TYPE_SOURCE + "' is required";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
 
-        RefundType refundType = getOrCreateRefundType(refundSourceType, refundSourceType);
+        RefundType refundType = getRefundType(refundTypeCode);
+        if (refundType == null) {
+            String errMsg = "Refund type '" + refundTypeCode + " does not exist";
+            logger.error(errMsg);
+            throw new InvalidRefundTypeException(errMsg);
+        }
 
         // Creating a new Refund
         Refund refund = new Refund();
@@ -1493,7 +1516,9 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
         try {
             return DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-        } catch (Exception e) {/* ignored. returning null */}
+        } catch (Exception e) {
+            logger.warn(e.getMessage(), e);
+        }
 
         return null;
     }

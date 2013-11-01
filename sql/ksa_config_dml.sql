@@ -198,6 +198,8 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.ach.bank.type', 'ACH')
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.cash', 'cash');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.account', 'account');
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.source', 'source');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.check', 'check');
+insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.refund.type.ach', 'ach');
 
 -- Charge constants
 insert into KSSA_CONFIG (NAME, VALUE) values ('ksa.charge.cancellation.rule', 'DAYS(10)PERCENTAGE(50)');

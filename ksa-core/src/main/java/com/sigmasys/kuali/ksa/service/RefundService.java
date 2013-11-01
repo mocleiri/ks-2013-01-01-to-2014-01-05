@@ -124,8 +124,8 @@ public interface RefundService {
      * Performs refund validation. Alters the refund amount.
      * Sets the refundStatus to {@link RefundStatus#VERIFIED} and the authorizedBy to the current user.
      *
-     * @param refundId  Refund ID
-     * @param amount    Amount to set on the Refund object.
+     * @param refundId Refund ID
+     * @param amount   Amount to set on the Refund object.
      * @return Refund instance
      */
     Refund validateRefundWithAmount(Long refundId, BigDecimal amount);
@@ -264,14 +264,12 @@ public interface RefundService {
     Refund cancelRefund(Long refundId, String memo);
 
     /**
-     * Either retrieves an existing <code>RefundType</code> with the matching values of
-     * the debit and credit payment types, or creates and persists a new one.
+     * Retrieves the refund type by code.
      *
-     * @param debitTypeId  Debit type ID.
-     * @param creditTypeId Credit type ID.
-     * @return An existing <code>RefundType</code> or a newly created one if there is no existing one.
+     * @param refundTypeCode Credit type ID.
+     * @return RefundType instance
      */
-    RefundType getOrCreateRefundType(String debitTypeId, String creditTypeId);
+    RefundType getRefundType(String refundTypeCode);
 
     /**
      * Deletes a <code>RefundType</code> from the persistent storage.
@@ -323,7 +321,7 @@ public interface RefundService {
     /**
      * Returns a List of Refunds for the given Account ID.
      *
-     * @param userId    ID of an Account for which to get its Refunds.
+     * @param userId ID of an Account for which to get its Refunds.
      * @return A List of all Refund objects linked to the given Account ID.
      */
     List<Refund> getAccountRefunds(String userId);
@@ -331,17 +329,17 @@ public interface RefundService {
     /**
      * Returns all Refunds linked to the Account with the given ID and which fall in the specified date range.
      *
-     * @param userId    Account which Refunds to find.
-     * @param dateFrom  Start of the date range.
-     * @param dateTo    End of the date range.
-     * @return  List of Refunds in the date range for the given Account.
+     * @param userId   Account which Refunds to find.
+     * @param dateFrom Start of the date range.
+     * @param dateTo   End of the date range.
+     * @return List of Refunds in the date range for the given Account.
      */
     List<Refund> getAccountRefunds(String userId, Date dateFrom, Date dateTo);
 
     /**
      * Returns all Refunds belonging to the same group with the specified Group ID (UUID).
      *
-     * @param groupId  Refund Group id.
+     * @param groupId Refund Group id.
      * @return A List of <code>Refund</code>s belonging to the Group with the given ID.
      */
     List<Refund> getRefundGroup(String groupId);
