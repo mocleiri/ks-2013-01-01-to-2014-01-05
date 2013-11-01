@@ -291,9 +291,9 @@ public class TransactionController extends GenericSearchController {
 
         form.setStartingBalance(accountService.getBalance(userId, startDate));
 
-        if(form.getStartingBalance().compareTo(BigDecimal.ZERO) <= 0) {
-            form.getZeroBalanceDates().add(startDate);
-        }
+        //if(form.getStartingBalance().compareTo(BigDecimal.ZERO) <= 0) {
+        //    form.getZeroBalanceDates().add(startDate);
+        //}
 
         form.setChargeTotal(BigDecimal.ZERO);
         form.setPaymentTotal(BigDecimal.ZERO);
@@ -783,6 +783,13 @@ public class TransactionController extends GenericSearchController {
                 unallocated = unallocated.multiply(new BigDecimal(-1));
             }
 
+            // Check the balance before this transaction.  If it is zero then add it to the list
+            if(balance.compareTo(BigDecimal.ZERO) <= 0) {
+                Date dt = DateUtils.addDays(t.getEffectiveDate(), -1);
+                form.getZeroBalanceDates().add(dt);
+            }
+
+
             if (t.getParentTransaction() instanceof Charge) {
                 form.addChargeTotal(amount);
                 balance = balance.add(amount);
@@ -800,10 +807,6 @@ public class TransactionController extends GenericSearchController {
 
             }
             t.setRunningBalance(balance);
-            if(balance.compareTo(BigDecimal.ZERO) <= 0) {
-                Date dt = DateUtils.addDays(t.getEffectiveDate(), 1);
-                form.getZeroBalanceDates().add(dt);
-            }
             unGroupedTransactionModelList.add(t);
 
             Rollup tmRollup = t.getRollup();
