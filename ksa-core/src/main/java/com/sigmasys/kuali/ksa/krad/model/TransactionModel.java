@@ -804,4 +804,15 @@ public class TransactionModel extends Transaction {
     public void setReverseTransactionInternalOnly(boolean reverseTransactionInternalOnly) {
         this.reverseTransactionInternalOnly = reverseTransactionInternalOnly;
     }
+
+    public boolean isReversable() {
+        if(getUnallocatedAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            return false;
+        }
+        if(TransactionStatus.REFUND_REQUESTED.equals(parentTransaction.getStatus())) {
+            return false;
+        }
+        return true;
+
+    }
 }

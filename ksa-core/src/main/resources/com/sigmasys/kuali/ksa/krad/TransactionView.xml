@@ -364,7 +364,7 @@
                                     <bean parent="Uif-HorizontalBoxSection" p:style="float: right;">
                                         <property name="items">
                                             <list>
-                                                <bean parent="Uif-ImageField" p:source="../images/reverse.png" p:style="cursor:pointer; float: right;" p:altText="" p:title="" p:render="@{#line.unallocatedAmount > 0}"
+                                                <bean parent="Uif-ImageField" p:source="../images/reverse.png" p:style="cursor:pointer; float: right;" p:altText="" p:title="" p:render="@{#line.isReversable()}"
                                                       p:onClickScript="showLightboxComponent('TransactionReverseLightbox@{#lineSuffix}');writeHiddenToForm('actionParameters[source]', 'runningBalance');">
                                                     <property name="toolTip">
                                                         <bean parent="Uif-Tooltip" p:tooltipContent="Click to reverse this transaction"/>
@@ -667,7 +667,7 @@
                         <bean parent="Uif-HorizontalBoxSection" p:style="float: right;">
                             <property name="items">
                                 <list>
-                                    <bean parent="Uif-ImageField" p:source="../images/reverse.png" p:style="cursor:pointer; float: right;" p:altText="" p:title="" p:render="@{#line.unallocatedAmount > 0}"
+                                    <bean parent="Uif-ImageField" p:source="../images/reverse.png" p:style="cursor:pointer; float: right;" p:altText="" p:title="" p:render="@{#line.isReversable()}"
                                           p:onClickScript="showLightboxComponent('TransactionReverseLightbox@{#lineSuffix}');writeHiddenToForm('actionParameters[source]', 'rollup');">
                                         <property name="toolTip">
                                             <bean parent="Uif-Tooltip" p:tooltipContent="Click to reverse this transaction"/>
