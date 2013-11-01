@@ -67,11 +67,11 @@
     <!-- A quick menu of options with links to other pages -->
     <bean id="homeQuickOptions" parent="Uif-VerticalBoxSection"
           p:layoutManager.orientation="VERTICAL"
-          p:title="Quick Menu"
-          p:instructionalText="This is the KSA home page. Here you would see a dashboard of actions available to the logged in user.">
+          p:title="Quick Menu">
         <property name="disclosure.render" value="false"/>
         <property name="items">
             <list>
+                <bean parent="Uif-Image" p:source="../images/KSA-Logo-Large.png" p:style="margin-top: 50px;"/>
             </list>
         </property>
     </bean>
