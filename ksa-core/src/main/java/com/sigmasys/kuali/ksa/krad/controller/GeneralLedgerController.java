@@ -150,6 +150,20 @@ public class GeneralLedgerController extends ReportReconciliationController {
         MutableDouble grandTotal = new MutableDouble(0);
         List<GeneralLedgerAccountModel> glAccounts = createPendingTransactionGlAccountsList(grandTotal);
 
+        // Make sure that we're not displaying negative numbers on the screen.
+        // As per Paul,
+        //  if Amount > 0 then credit
+        //  if amount < 0 then debit of abs(#)
+        for(GeneralLedgerAccountModel model : glAccounts) {
+            if(model.getTotalAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                model.setOperationType(GlOperationType.DEBIT);
+                model.setTotalAmount(model.getTotalAmount().abs());
+            } else {
+                model.setOperationType(GlOperationType.CREDIT);
+            }
+        }
+
+
         // Set objects on the form:
         form.setGlAccountsPending(glAccounts);
         form.setAllGlAccountsTotal(TransactionUtils.getFormattedAmount(new BigDecimal(grandTotal.doubleValue())));
