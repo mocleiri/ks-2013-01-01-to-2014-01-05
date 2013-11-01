@@ -214,6 +214,7 @@ class CourseOffering
     if options[:grade_options] != nil
       on CourseOfferingEdit do |page|
         page.set_grading_option(options[:grade_options])
+        @grade_options = options[:grade_options]
       end
     end
 
@@ -385,8 +386,6 @@ class CourseOffering
         options[:cross_listed] ? page.cross_listed_co_set : page.cross_listed_co_clear
       end
     end
-
-    update_options(options)
   end
 
   def save
