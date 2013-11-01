@@ -174,6 +174,7 @@ end
 
 Then /^the holiday start date field is highlighted for the error$/ do
   on CreateEditHolidayCalendar do |page|
+    page.calendar_name.click
     page.holiday_start_date.attribute_value('class').should match /error/
     page.cancel
   end
