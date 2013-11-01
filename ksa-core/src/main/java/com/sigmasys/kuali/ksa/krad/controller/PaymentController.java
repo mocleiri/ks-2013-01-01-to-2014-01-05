@@ -341,7 +341,7 @@ public class PaymentController extends GenericSearchController {
         payment.setAccount(form.getAccount());
 
         String typeIdString = form.getPaymentTransactionTypeId();
-        Date effectiveDate = payment.getEffectiveDate();
+        Date effectiveDate = model.getEffectiveDate();
         if (effectiveDate == null) {
             effectiveDate = new Date();
         }
@@ -406,9 +406,30 @@ public class PaymentController extends GenericSearchController {
         try {
 
             payment = (Payment) transactionService.createTransaction(typeIdString, form.getExternalId(),
-                    payment.getAccount().getId(), effectiveDate, effectiveDate, null, amount, false);
+                    payment.getAccount().getId(), effectiveDate, model.getRecognitionDate(), null, amount, false);
 
+            boolean columnsChanged = false;
             if (payment != null && payment.getId() != null) {
+
+                if(model.getOriginationDate() != null) {
+                    payment.setOriginationDate(model.getOriginationDate());
+                    columnsChanged = true;
+                }
+                if(model.isInternal()) {
+                    payment.setInternal(model.isInternal());
+                    columnsChanged = true;
+                }
+
+                if(! tt.getDescription().equals(model.getStatementText())) {
+                    payment.setStatementText(model.getStatementText());
+                    columnsChanged = true;
+                }
+
+                if(form.getRollupId() != null && ! "".equals(form.getRollupId())) {
+                    Rollup rollup = auditableEntityService.getAuditableEntity(form.getRollupId(), Rollup.class);
+                    payment.setRollup(rollup);
+                    columnsChanged = true;
+                }
 
                 if (nativeAmount != null) {
                     payment.setAmount(amount);
@@ -416,7 +437,7 @@ public class PaymentController extends GenericSearchController {
                     payment.setCurrency(c);
                     payment.setNativeAmount(nativeAmount);
 
-                    transactionService.persistTransaction(payment);
+                    columnsChanged = true;
                 }
 
                 Memo memo = form.getMemoModel();
@@ -428,6 +449,10 @@ public class PaymentController extends GenericSearchController {
                             informationService.associateWithTransaction(memoId, payment.getId());
                         }
                     }
+                }
+
+                if(columnsChanged) {
+                    transactionService.persistTransaction(payment);
                 }
 
                 form.setPayment(new TransactionModel(payment));
