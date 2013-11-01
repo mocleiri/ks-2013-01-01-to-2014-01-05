@@ -92,7 +92,6 @@ public interface Constants {
 
     // Refund constants:
     String REFUND_ACCOUNT_SYSTEM_NAME = "ksa.refund.account.system.name";
-    String REFUND_ACCOUNT_TYPE = "ksa.refund.account.type";
     String REFUND_CHECK_GROUP = "ksa.refund.check.group";
     String REFUND_CHECK_SYSTEM_NAME = "ksa.refund.check.system.name";
     String REFUND_CHECK_TYPE = "ksa.refund.check.type";
@@ -102,9 +101,13 @@ public interface Constants {
     String REFUND_ACH_SYSTEM_NAME = "ksa.refund.ach.system.name";
     String REFUND_ACH_BANK_TYPE = "ksa.refund.ach.bank.type";
     String REFUND_ACH_GROUP_ROLLUP = "ksa.refund.ach.group.rollup";
-    String REFUND_METHOD = "ksa.refund.method";
+
     String REFUND_METHOD_OVERRIDE = "ksa.refund.override.method";
-    String REFUND_SOURCE_TYPE = "ksa.refund.source.type";
+
+    // Refund types
+    String REFUND_TYPE_CASH = "ksa.refund.type.cash";
+    String REFUND_TYPE_SOURCE = "ksa.refund.type.source";
+    String REFUND_TYPE_ACCOUNT = "ksa.refund.type.account";
 
     // Payment Billing constants
     String PAYMENT_BILLING_ROUNDING_PROBLEM_MEMO = "ksa.payment.billing.rounding.problem.memo";

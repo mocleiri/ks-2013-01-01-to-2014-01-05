@@ -467,7 +467,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     public List<Refund> doAccountRefunds(String batch) {
         // Find all Refund object with the given value of "batch":
         String sql = "select r from Refund r where r.batchId = :batchId and r.status = :status and r.refundType.debitTypeId = :refundTypeId";
-        String refundTypeId = configService.getParameter(Constants.REFUND_ACCOUNT_TYPE);
+        String refundTypeId = configService.getParameter(Constants.REFUND_TYPE_ACCOUNT);
         Query query = em.createQuery(sql)
                 .setParameter("batchId", batch)
                 .setParameter("status", RefundStatus.VERIFIED)
@@ -1306,11 +1306,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         if (StringUtils.isBlank(refundTypeMethod)) {
 
             // If there is no overridden value, get the configured value:
-            refundTypeMethod = configService.getParameter(Constants.REFUND_METHOD);
+            refundTypeMethod = configService.getParameter(Constants.REFUND_TYPE_CASH);
 
             // If there is still no value, use the User preference:
             if (StringUtils.isBlank(refundTypeMethod)) {
-                refundTypeMethod = userPreferenceService.getUserPreferenceValue(requestedBy.getId(), Constants.REFUND_METHOD);
+                refundTypeMethod = userPreferenceService.getUserPreferenceValue(requestedBy.getId(), Constants.REFUND_TYPE_CASH);
             }
         }
 
@@ -1351,9 +1351,9 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
                                       BigDecimal refundAmount) {
 
         // Create a new Refund:
-        String refundSourceType = configService.getParameter(Constants.REFUND_SOURCE_TYPE);
+        String refundSourceType = configService.getParameter(Constants.REFUND_TYPE_SOURCE);
         if (StringUtils.isBlank(refundSourceType)) {
-            String errMsg = "Configuration parameter '" + Constants.REFUND_SOURCE_TYPE + "' is required";
+            String errMsg = "Configuration parameter '" + Constants.REFUND_TYPE_SOURCE + "' is required";
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
