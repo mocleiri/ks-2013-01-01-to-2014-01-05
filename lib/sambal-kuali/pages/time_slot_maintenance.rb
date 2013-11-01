@@ -4,6 +4,7 @@ class TimeSlotMaintenance < BasePage
   frame_element
   validation_elements
 
+  expected_element :time_slot_type_selector_list
 
   element(:time_slot_error_message) { |b| b.frm.div(id: "timeSlotPage").li(class: "uif-errorMessageItem") }
 
