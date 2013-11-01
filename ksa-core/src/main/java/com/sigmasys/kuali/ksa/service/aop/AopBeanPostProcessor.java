@@ -9,7 +9,6 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Service;
 
-import javax.jws.WebService;
 import java.util.List;
 
 /**
@@ -32,15 +31,7 @@ public class AopBeanPostProcessor implements BeanPostProcessor, BeanFactoryAware
         if (bean instanceof AopProxy) {
             List<Advice> advices = ((AopProxy) bean).getAdvices(beanFactory);
             if (advices != null && !advices.isEmpty()) {
-                Advised advised;
-                if (bean instanceof Advised) {
-                    advised = (Advised) bean;
-                } else {
-                    ProxyFactory proxyFactory = new ProxyFactory(bean);
-                    proxyFactory.setProxyTargetClass(true);
-                    proxyFactory.setTargetClass(bean.getClass());
-                    advised = proxyFactory;
-                }
+                Advised advised = (bean instanceof Advised) ? (Advised) bean : new ProxyFactory(bean);
                 for (Advice advice : advices) {
                     advised.addAdvice(advice);
                 }

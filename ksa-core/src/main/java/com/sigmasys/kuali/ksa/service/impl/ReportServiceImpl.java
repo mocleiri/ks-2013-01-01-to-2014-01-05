@@ -101,10 +101,9 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         if (advices == null) {
             advices = new LinkedList<Advice>();
         }
-        MethodInterceptor methodInterceptor = new AbstractMethodInterceptor() {
+        MethodInterceptor methodInterceptor = new AbstractMethodInterceptor(this) {
             @Override
             public Object invoke(MethodInvocation invocation) throws Throwable {
-                setTargetObject(ReportServiceImpl.this);
                 Method method = invocation.getMethod();
                 if (method.getReturnType() != null && method.getReturnType().equals(String.class)) {
                     String reportXml = (String) invocation.proceed();

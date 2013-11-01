@@ -62,10 +62,9 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
         if (advices == null) {
             advices = new LinkedList<Advice>();
         }
-        MethodInterceptor methodInterceptor = new AbstractMethodInterceptor() {
+        MethodInterceptor methodInterceptor = new AbstractMethodInterceptor(this) {
             @Override
             public Object invoke(MethodInvocation invocation) throws Throwable {
-                setTargetObject(BrmPaymentServiceImpl.this);
                 Method method = invocation.getMethod();
                 int brmContextIndex = Arrays.asList(method.getParameterTypes()).indexOf(BrmContext.class);
                 if (brmContextIndex >= 0) {

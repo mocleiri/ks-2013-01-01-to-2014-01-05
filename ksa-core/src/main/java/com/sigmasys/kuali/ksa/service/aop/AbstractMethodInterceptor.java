@@ -22,8 +22,8 @@ public class AbstractMethodInterceptor implements MethodInterceptor {
     private Object targetObject;
 
 
-    public void setTargetObject(Object target) {
-        this.targetObject = target;
+    public AbstractMethodInterceptor(Object targetObject) {
+        this.targetObject = targetObject;
     }
 
     public Object getTargetObject() {

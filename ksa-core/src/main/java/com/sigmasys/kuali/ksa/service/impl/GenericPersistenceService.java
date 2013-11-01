@@ -35,6 +35,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -115,21 +116,21 @@ public class GenericPersistenceService implements PersistenceService, BeanFactor
         LinkedList<Advice> advices = new LinkedList<Advice>();
         if (configService != null && Boolean.valueOf(configService.getParameter(Constants.LOGGING_OPERATION))) {
             // Setting up the logging interceptor
-            LoggingInterceptor loggingInterceptor = beanFactory.getBean(LoggingInterceptor.class);
-            loggingInterceptor.setTargetObject(this);
-            advices.add(loggingInterceptor);
+            advices.add(new LoggingInterceptor(this));
         }
         // Adding @PermissionsAllowed annotation processor
-        advices.add(new AbstractMethodInterceptor() {
+        advices.add(new AbstractMethodInterceptor(this) {
             @Override
             public Object invoke(MethodInvocation invocation) throws Throwable {
-                setTargetObject(GenericPersistenceService.this);
-                PermissionsAllowedAnnotationResolver resolver = beanFactory.getBean(PermissionsAllowedAnnotationResolver.class);
-                PermissionsAllowed permissionsAllowed = resolver.resolve(getTargetObject(), invocation.getMethod());
-                if (permissionsAllowed != null) {
-                    Permission[] permissions = permissionsAllowed.value();
-                    if (permissions != null && permissions.length > 0) {
-                        PermissionUtils.checkPermissions(permissions);
+                Method method = invocation.getMethod();
+                if (method != null && !"hasPermission".equals(method.getName())) {
+                    PermissionsAllowedAnnotationResolver resolver = beanFactory.getBean(PermissionsAllowedAnnotationResolver.class);
+                    PermissionsAllowed permissionsAllowed = resolver.resolve(getTargetObject(), method);
+                    if (permissionsAllowed != null) {
+                        Permission[] permissions = permissionsAllowed.value();
+                        if (permissions != null && permissions.length > 0) {
+                            PermissionUtils.checkPermissions(permissions);
+                        }
                     }
                 }
                 return super.invoke(invocation);

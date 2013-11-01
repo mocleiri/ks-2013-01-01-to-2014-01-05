@@ -1,13 +1,10 @@
 package com.sigmasys.kuali.ksa.service.aop;
 
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
+import com.sigmasys.kuali.ksa.util.ContextUtils;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
 
@@ -16,16 +13,18 @@ import java.lang.reflect.Method;
  *
  * @author Michael Ivanov
  */
-@Service
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class LoggingInterceptor extends AbstractMethodInterceptor {
 
     private final Log logger = LogFactory.getLog(getClass());
 
     private static final String UNKNOWN_USER_ID = "Unknown";
 
-    @Autowired
     private UserSessionManager userSessionManager;
+
+
+    public LoggingInterceptor(Object targetObject) {
+        super(targetObject);
+    }
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
@@ -37,6 +36,13 @@ public class LoggingInterceptor extends AbstractMethodInterceptor {
             }
         }
         return super.invoke(invocation);
+    }
+
+    private UserSessionManager getUserSessionManager() {
+        if (userSessionManager == null) {
+            userSessionManager = ContextUtils.getBean(UserSessionManager.class);
+        }
+        return userSessionManager;
     }
 
     private boolean methodsMatch(Method method1, Method method2) {
@@ -63,7 +69,7 @@ public class LoggingInterceptor extends AbstractMethodInterceptor {
         Object[] arguments = invocation.getArguments();
         Class<?>[] paramTypes = method.getParameterTypes();
 
-        String userId = userSessionManager.getUserId();
+        String userId = getUserSessionManager().getUserId();
 
         if (userId == null) {
             userId = UNKNOWN_USER_ID;

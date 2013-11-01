@@ -12,6 +12,7 @@ import javax.jws.WebService;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.*;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
@@ -3426,9 +3427,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return Cancellation amount
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public BigDecimal getCancellationAmount(Long chargeId, Date cancellationDate) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
 
         Charge charge = getCharge(chargeId);
         if (charge == null) {
@@ -3494,9 +3494,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CANCEL_CHARGE)
     public Charge cancelCharge(Long chargeId, String memoText) {
-
-        PermissionUtils.checkPermission(Permission.CANCEL_CHARGE);
 
         Charge charge = getCharge(chargeId);
         if (charge == null) {
@@ -3563,9 +3562,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CONTEST_CHARGE)
     public Charge contestCharge(Long chargeId, Date expirationDate, String memoText) {
-
-        PermissionUtils.checkPermission(Permission.CONTEST_CHARGE);
 
         Charge charge = getCharge(chargeId);
         if (charge == null) {
@@ -3608,10 +3606,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DISCOUNT_CHARGE)
     public Charge discountCharge(Long chargeId, String transactionTypeId, BigDecimal amount, String memoText,
                                  String statementPrefix) {
-
-        PermissionUtils.checkPermission(Permission.DISCOUNT_CHARGE);
 
         Charge charge = getCharge(chargeId);
         if (charge == null) {
@@ -3635,9 +3632,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.BOUNCE_PAYMENT)
     public Payment bouncePayment(Long paymentId, String memoText) {
-
-        PermissionUtils.checkPermission(Permission.BOUNCE_PAYMENT);
 
         Payment payment = getPayment(paymentId);
         if (payment == null) {
@@ -3721,9 +3717,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.ASSIGN_TAG_TO_TRANSACTION_TYPE)
     public Transaction addTagsToTransaction(Long transactionId, List<Tag> tags) {
-
-        PermissionUtils.checkPermission(Permission.ASSIGN_TAG_TO_TRANSACTION);
 
         Transaction transaction = getTransaction(transactionId);
         if (transaction == null) {
@@ -3795,9 +3790,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.ASSIGN_TAG_TO_TRANSACTION_TYPE)
     public TransactionType addTagsToTransactionType(TransactionTypeId typeId, List<Tag> tags) {
-
-        PermissionUtils.checkPermission(Permission.ASSIGN_TAG_TO_TRANSACTION_TYPE);
 
         TransactionType transactionType = getTransactionType(typeId);
         if (transactionType == null) {
@@ -3818,9 +3812,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return the number of transactions
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public long getNumberOfTransactions(TransactionTypeId transactionTypeId) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
 
         Query query = em.createQuery("select count(id) from Transaction where transactionType.id = :transactionTypeId");
 
@@ -3838,9 +3831,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed({Permission.REMOVE_ALLOCATION, Permission.REVERSE_TRANSACTION})
     public Set<AllocationReversalType> reverseAllocations(Long transactionId, BigDecimal amount) {
-
-        PermissionUtils.checkPermissions(Permission.REMOVE_ALLOCATION, Permission.REVERSE_TRANSACTION);
 
         Transaction transaction = getTransaction(transactionId);
         if (transaction == null) {
@@ -4012,9 +4004,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return list ofTransaction instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Transaction> getTransactionsByGlTransactionId(Long glTransactionId) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
 
         Query query = em.createQuery("select t from Transaction t, GlTransaction gt " + GET_TRANSACTION_JOIN +
                 " inner join gt.transactions gts where t.id = gts.id and gt.id = :id");
@@ -4045,9 +4036,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return list of Payment instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Payment> getPotentialRefunds(String accountId, Date startDate, Date endDate) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
 
         StringBuilder queryBuilder = new StringBuilder("select t from Payment t ");
 
