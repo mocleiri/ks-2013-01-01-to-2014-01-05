@@ -47,7 +47,8 @@ Feature: WC.Edit Course Offerings
     And I modify a delivery format option
     Then I can submit and the modified delivery formats are updated
 
-  @pending # KSENROLL-8931 breaks this scenario
+  # KSENROLL-8931 breaks this scenario
+  @pending
   Scenario: Edit an existing course offering and delete a delivery format line
     Given I edit a course offering with multiple delivery format types
     And I add a delivery format option
