@@ -21,34 +21,9 @@ Then /^I do not have access to seat pools$/ do
   end
 end
 
-When /^I attempt to edit a course not in my admin org$/ do
-  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
-  @course_offering.search_by_coursecode
-end
-
 Then /^I do not have access to edit the course offering$/ do
   on ManageCourseOfferings do |page|
     page.edit_course_offering_link.present?.should be_false
-  end
-end
-
-#means checkbox is present, button disabled
-Then /^I do not have access to delete the listed course offering$/ do
-  on ManageCourseOfferingList do |page|
-    #page.target_row(@course_offering.course).checkbox.present?.should be_false
-    page.select_cos([@course_offering.course])
-    page.delete_cos_button.enabled?.should be_false
-    page.deselect_cos([@course_offering.course])
-  end
-end
-
-#means checkbox is present, button disabled
-Then /^I do not have access to approve the listed course offering$/ do
-  on ManageCourseOfferingList do |page|
-    #page.target_row(@course_offering.course).checkbox.present?.should be_false
-    page.select_cos([@course_offering.course])
-    page.approve_course_offering_button.enabled?.should be_false
-    page.deselect_cos([@course_offering.course])
   end
 end
 
@@ -70,18 +45,6 @@ Then /^I do not have access to add course offerings$/ do
   end
 end
 
-Then /^I do not have access to manage registration groups$/ do
-  on ManageCourseOfferings do |page|
-    page.manage_registration_groups_link.attribute_value("class").should match /disabled/
-  end
-end
-
-Then /^an authorization error is displayed when I attempt to edit the course offering$/ do
-  on ManageCourseOfferings do |page|
-    page.auth_error.present?.should be_true
-  end
-end
-
 Then /^an authorization error is displayed when I attempt to create the course offering$/ do
   on CreateCourseOffering do |page|
     page.choose_from_catalog
@@ -98,11 +61,6 @@ Then /^an authorization error is displayed when I attempt to create the course o
   #on ErrorPage do |page|
   #  page.error_401.should == true
   #end
-end
-
-When /^I manage course offerings for a subject in my admin org$/ do
-  @course_offering = make CourseOffering, :course=>"ENGL346", :term=>Rollover::FINAL_EDITS_SOC_TERM
-  @course_offering.search_by_coursecode
 end
 
 When /^I manage a course offering for a subject code not in my admin org$/ do
@@ -170,19 +128,6 @@ Then /^I do not have access to approve course offerings for scheduling$/ do
     page.select_cos([@course_offering.course])
     page.approve_course_offering_button.enabled?.should be_false
     page.deselect_cos([@course_offering.course])
-  end
-end
-
-Then /^I have access to approve the subject code for scheduling$/ do
-  on ManageCourseOfferingList do |page|
-    page.approve_subject_code_for_scheduling_link.present?.should be_true
-    page.approve_subject_code_for_scheduling_link.attribute_value("class").should_not match /disabled/
-  end
-end
-
-Then /^I do not have access to approve the subject code for scheduling$/ do
-  on ManageCourseOfferingList do |page|
-    page.approve_subject_code_for_scheduling_link.present?.should be_false
   end
 end
 
@@ -312,14 +257,6 @@ Then /^I have access to delete an activity offering$/ do
   end
 end
 
-Then /^I do not have access to delete an activity offering$/ do
-  on ManageCourseOfferings do |page|
-    page.select_aos([@activity_offering.code])
-    page.delete_aos_button.enabled?.should be_false
-    page.deselect_aos([@activity_offering.code])
-  end
-end
-
 Then /^I have access to approve an activity offering$/ do
   on ManageCourseOfferings do |page|
     page.select_aos([@activity_offering.code])
@@ -433,58 +370,14 @@ When /^there is an activity in "([^"]*)" status/ do |ao_status|
   @course_offering.check_activity_offering_in_status(:ao_status => ao_status)
 end
 
-# About "CL 1", probably should not hard-code, but how to get the private name?
-When /^there is a Planned course offering with 2 activity offerings present/ do
-  step "I am logged in as a Schedule Coordinator"
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL243", :term=>@term_for_test)
-  @course_offering.approve_co
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.copy("A")
-    if page.cluster_select_all_aos("CL 1") then
-      page.draft_activity_button.wait_until_present(5)
-      page.draft_activity
-    end
-  end
-end
-
-When /^there is a Draft course offering with 2 activity offerings present/ do
-  step "I am logged in as a Schedule Coordinator"
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL245", :term=>@term_for_test)
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.copy("A")
-  end
-end
-
 When /^I have access to delete an activity offering in "([^"]*)" status for the course offering$/ do |aostate|
   @course_offering.manage_and_init
   @course_offering.attempt_ao_delete_by_status(aostate).should be_true
 end
 
-Then /^I have access to delete a course offering in a "([^"]*)" state for a course in my admin org$/ do |costate|
-  @course_offering.search_by_subjectcode
-  @course_offering.attempt_co_delete_by_status(costate).should be_true
-end
-
 Then /^I do not have access to view the activity offerings$/ do
   on ManageCourseOfferings do |page|
     page.auth_error.present?.should == true
-  end
-end
-
-Then /^I do not have access to view the course offering list$/ do
-  on ManageCourseOfferings do |page|
-    page.auth_error.present?.should == true
-  end
-end
-
-When /^I edit a course offering in my admin org$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL222"
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
   end
 end
 
@@ -494,15 +387,6 @@ When /^I edit a course offering in my admin org that has multiple credit types$/
   @course_offering.manage
   on ManageCourseOfferings do |page|
     page.edit_course_offering
-  end
-end
-
-When /^I attempt to edit a course offering in my admin org$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :term => @term_for_test, :course=>"ENGL222"
-  @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering_link.present?.should be_false
   end
 end
 
@@ -692,15 +576,6 @@ Then /^I do not have access to copy activity offerings$/ do
   on ManageCourseOfferings do |page|
     page.codes_list.each do |ao_code|
       page.copy_link(ao_code).present?.should be_false
-    end
-  end
-end
-
-
-Then /^I have access to edit activity offerings$/ do
-  on ManageCourseOfferings do |page|
-    page.codes_list.each do |ao_code|
-      page.edit_link(ao_code).present?.should be_true
     end
   end
 end

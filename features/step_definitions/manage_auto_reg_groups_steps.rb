@@ -1,20 +1,5 @@
-Given /^I manage registration groups for (?:a|the) course offering$/ do
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM237", :term => Rollover::MAIN_TEST_TERM_TARGET)
-  @course_offering.manage_and_init
-end
-
 When /^I move an activity offering to the cluster$/ do
   @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("A",@course_offering.activity_offering_cluster_list[1])
-end
-
-Then /^the activity offering is shown as part of the cluster$/ do
-  #validate all ao_clusters
-  @course_offering.activity_offering_cluster_list.each do |cluster|
-    on ManageCourseOfferings do |page|
-      actual_aos = page.get_cluster_assigned_ao_list(cluster.private_name)
-      actual_aos.sort.should == cluster.ao_code_list.sort unless actual_aos == nil
-    end
-  end
 end
 
 Given /^I have created an additional activity offering cluster for a catalog course offering$/ do
@@ -44,24 +29,6 @@ Then /^the new activity offering cluster is present$/ do
   found_it.should == true
 end
 
-Given /^the default activity offering cluster is present$/ do
-   on ManageCourseOfferings do |page|
-     #page.view_by_clusters
-     page.cluster_div_list.length.should == 1
-   end
-end
-
-Given /^all activity offerings are assigned to the ARG cluster$/ do
-  on ManageCourseOfferings do |page|
-    page.cluster_div_list.each do |cluster|
-      private_name = page.cluster_div_private_name(cluster)
-      #puts "private name: #{private_name}"
-      #puts "#{private_name} list: #{page.get_cluster_assigned_ao_list(private_name)}"
-      page.view_cluster_reg_groups(private_name)
-    end
-  end
-end
-
 Given /^there are default registration groups for a course offering$/ do
   @course_offering = make CourseOffering, :course=>"CHEM277", :term=>Rollover::OPEN_SOC_TERM
   @course_offering.manage_and_init
@@ -85,11 +52,6 @@ Given /^there are default registration groups for a catalog course offering$/ do
 end
 
 
-Given /^there is registration groups for a catalog course offering$/ do
-  @course_offering = make CourseOffering, :term=>Rollover::SOC_STATES_SOURCE_TERM, :course=>"BSCI425"
-
-end
-
 When /^I try to create a second activity offering cluster with the same private name$/ do
   @ao_cluster2 = create ActivityOfferingCluster, :private_name=>@ao_cluster.private_name
 end
@@ -101,12 +63,6 @@ end
 Then /^a cluster error message appears stating "(.*?)"$/ do |errMsg|
   on ManageCourseOfferings do |page|
     page.get_cluster_error_msgs.should include errMsg
-  end
-end
-
-Then /^a cluster warning message appears stating "(.*?)"$/ do |errMsg|
-  on ManageCourseOfferings do |page|
-    page.get_cluster_warning_msgs.should include errMsg
   end
 end
 
@@ -180,10 +136,6 @@ end
 When /^Move one lab and one lecture activity offering to the second cluster$/ do
     @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("A", @course_offering.activity_offering_cluster_list[1])
     @course_offering.activity_offering_cluster_list[0].move_ao_to_another_cluster("J", @course_offering.activity_offering_cluster_list[1])
-end
-
-Then /^the new course offering is formatted the same as the original$/ do
-  @course_offering_copy.activity_offering_cluster_list.should ==  @course_offering.activity_offering_cluster_list
 end
 
 Then /^the cluster and pertaining AO's are deleted$/ do

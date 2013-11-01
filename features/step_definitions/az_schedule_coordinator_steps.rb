@@ -49,13 +49,6 @@ When /^I manage course offerings for the specified subject code$/ do
   @course_offering.search_by_subjectcode
 end
 
-When /^I manage a course offering for a subject code in "Draft" state$/ do
-  @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
-  @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
-  @course_offering.manage
-  @activity_offering = make ActivityOffering, :code=>"A"
-end
-
 When /^I manage a course offering$/ do
   @term_for_test = Rollover::OPEN_SOC_TERM unless @term_for_test != nil
   @course_offering = make CourseOffering, :course=>"CHEM611", :term=>@term_for_test
@@ -73,19 +66,9 @@ Then /^I have access to delete a course offering in a "([^"]*)" state$/ do |cost
   @course_offering.attempt_co_delete_by_status(costate).should == true
 end
 
-Then /^I do not have access to delete an activity offering in a "([^"]*)" state$/ do |aostate|
-  @course_offering.manage
-  @course_offering.attempt_ao_delete_by_status(aostate).should == false
-end
-
 Then /^I do not have access to select an activity offering in a "([^"]*)" state$/ do |aostate|
   @course_offering.manage
   @course_offering.ao_has_checkbox_by_status(aostate).should == false
-end
-
-Then /^I do not have access to delete a course offering in a "([^"]*)" state$/ do |costate|
-  @course_offering.search_by_subjectcode
-  @course_offering.attempt_co_delete_by_status(costate).should be_false
 end
 
 Then /^I have access to create a new joint offered course offering$/ do
@@ -176,14 +159,6 @@ Then /^the expected.*state of the AO toolbar is: Create: "([^"]*)"; Approve: "([
   end
 end
 
-When /^I set the activity offering as draft$/ do
-  on ManageCourseOfferings do |page|
-    page.draft_activity_button.wait_until_present(5)
-    page.draft_activity
-#    page.set_ao_as_draft
-  end
-end
-
 When /^I select a course offering in "([^"]*)" status$/ do |co_status|
   on ManageCourseOfferingList do |page|
     page.select_co_by_status(co_status)
@@ -193,23 +168,6 @@ end
 When /^I select an activity offering in "([^"]*)" status$/ do |ao_status|
   on ManageCourseOfferings do |page|
     page.select_ao_by_status(ao_status)
-  end
-end
-
-When /^I select the second activity offering$/ do
-  on ManageCourseOfferings do |page|
-    page.select_ao("B")
-  end
-end
-
-When /^I deselect the first activity offering$/ do
-  on ManageCourseOfferings do |page|
-    page.deselect_ao("A")
-  end
-end
-When /^I deselect the second activity offering$/ do
-  on ManageCourseOfferings do |page|
-    page.deselect_ao("B")
   end
 end
 
