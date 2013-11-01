@@ -31,13 +31,6 @@ And /^I verify that the registration window is not created$/ do
   end
 end
 
-And /^I verify that the Registration Window is created$/ do
-  puts "Verifying the registration window #{@registration_window.appointment_window_info_name} for priod #{@registration_window.period_key} is created."
-  on RegistrationWindowsCreate do |page|
-    page.is_window_created(@registration_window.appointment_window_info_name, period_key = @registration_window.period_key).should be_true
-  end
-end
-
 Then /^I verify that no field is editable in Registration Window and the Window Name is a link to a popup$/ do
   puts "Verifying that no field is editable in registration window #{@registration_window.appointment_window_info_name} for priod #{@registration_window.period_key}."
   on RegistrationWindowsCreate do |page|
@@ -81,12 +74,6 @@ Then /^I verify each Registration Window is created within each period/ do
   end
   @registration_window.delete
   on(RegistrationWindowsCreate).cancel_and_leave
-end
-
-Then /^verify error exists for the registration page/ do
-  on RegistrationWindowsCreate do |page|
-    page.exists_error_message.should be_true
-  end
 end
 
 Then /^I verify that the Registration Window is not modified$/ do
