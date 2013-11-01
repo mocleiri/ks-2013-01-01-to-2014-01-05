@@ -91,7 +91,7 @@ class CourseOfferingEdit < BasePage
   end
 
   def delete_delivery_format(format)
-    delivery_format_row(format).cells[ACTIONS_COLUMN].link(text: "delete").click
+    delivery_format_row(format).cells[ACTIONS_COLUMN].link(text: "Delete").click
   end
 
   def edit_random_delivery_format

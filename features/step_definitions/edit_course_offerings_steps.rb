@@ -25,17 +25,13 @@ end
 When /^I edit a course offering with multiple format types$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM132")
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
+  @course_offering.edit_offering
 end
 
 When /^I edit a course offering with 2 format types$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL271")
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
+  @course_offering.edit_offering
 end
 
 When /^I edit a course offering with multiple (\w+) options$/ do |opt|
@@ -45,21 +41,16 @@ When /^I edit a course offering with multiple (\w+) options$/ do |opt|
     @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM399A", :pass_fail_flag=>true, :audit_flag=>true, :credit_type => "multiple")
   end
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
 end
 
 When /^I edit a course offering with multiple delivery format types$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL222")
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
+  @course_offering.edit_offering
 end
 
 When /^I select a final exam type of "([^"]*)"$/ do |final_option|
-     @course_offering.edit_offering :final_exam_type => final_option
+     @course_offering.edit_offering :final_exam_type => final_option, :edit_in_progress => true
 end
 
 And /^I clear the registration options checkboxes$/ do
@@ -71,7 +62,7 @@ When /^I change the credit type from multiple to fixed$/ do
 end
 
 And /^I change the number of credits$/ do
-  @course_offering.edit_offering :fixed_credit_count => "2.5"
+  @course_offering.edit_offering :fixed_credit_count => "2.5", :edit_in_progress => true
 end
 
 And /^I change the multiple credit values$/ do
@@ -92,10 +83,7 @@ Then /^I can submit and the credit options are changed$/ do
 end
 
 Then /^I can submit and the credit values are changed$/ do
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
-
+  @course_offering.save
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
 
@@ -107,19 +95,11 @@ end
 When /^I change the delivery format options$/ do
   delivery_format_list = {}
   delivery_format_list[0] = make DeliveryFormat, :format=>"Lab Only"
-  @course_offering.edit_offering :delivery_format_list => delivery_format_list
+  @course_offering.edit_offering :delivery_format_list => delivery_format_list, :edit_in_progress => true
 end
 
 And /^I add a delivery format option$/ do
-  on CourseOfferingEdit do |page|
-    page.delivery_format_add
-    delivery_format = make DeliveryFormat,
-                           :format => "Lecture",
-                           :grade_format => "Lecture",
-                           #:grade_format => "Lecture",
-                           :final_exam_activity => "Lecture"
-    page.select_delivery_format(2,delivery_format)
-  end
+  @course_offering.add_delivery_format :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture"
 end
 
 And /^I add a delivery format option of Discussion Lecture$/ do
@@ -146,12 +126,8 @@ end
 
 Then /^I delete the added delivery format option$/ do
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.delete_delivery_format("Lecture Only")
-  end
+  @course_offering.edit_offering
+  @course_offering.delete_delivery_format("Lecture Only")
 end
 Then /^I can submit and the course offering is updated$/ do
   on CourseOfferingEdit do |page|
@@ -246,18 +222,15 @@ end
 
 When /^I edit a course offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM132")
-
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
+  @course_offering.edit_offering
 end
 
 When /^I add an affiliated person$/ do
   personnel_list = {}
   personnel_list[0] = make Personnel, :id=> "admin", :affiliation =>"Instructor"
 
-  @course_offering.edit_offering :affiliated_person_list => personnel_list
+  @course_offering.edit_offering :affiliated_person_list => personnel_list, :edit_in_progress => true
 end
 
 Then /^the changes of the affiliated person are persisted$/ do
@@ -274,14 +247,14 @@ Then /^the changes of the affiliated person are persisted$/ do
 end
 
 When /^I "(activate|deactivate)" the wait list$/ do |activate|
-    @course_offering.edit_offering :waitlist => true
+    @course_offering.edit_offering :waitlist => true, :edit_in_progress => true
 end
 
 When /^I add an administering organization and activate the honors flag$/ do
  organization_list = {}
  organization_list[0] = make AffiliatedOrg
 
- @course_offering.edit_offering  :honors_flag => "YES", :affiliated_org_list=> organization_list
+ @course_offering.edit_offering  :honors_flag => "YES", :affiliated_org_list=> organization_list, :edit_in_progress => true
 
 end
 
@@ -308,7 +281,7 @@ When /^I "(set|unset)" the Honors Course selection$/ do |shouldSetHonorsCourse|
   if shouldSetHonorsCourse == "set"
     honors_flag = "YES"
   end
-  @course_offering.edit_offering :honors_flag => honors_flag
+  @course_offering.edit_offering :honors_flag => honors_flag, :edit_in_progress => true
 end
 
 And /^I save the changes and remain on the Edit CO page$/ do

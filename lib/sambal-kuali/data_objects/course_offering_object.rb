@@ -206,6 +206,9 @@ class CourseOffering
   #
   # @param opts [Hash] key => value for attribute to be updated
   def edit_offering options={}
+
+    on(ManageCourseOfferings).edit_course_offering unless options[:edit_in_progress]
+
     #TODO change method name to 'edit'
     if options[:suffix] != @suffix
       #TODO:Add Suffix to edit method Course Offerings
@@ -651,6 +654,29 @@ class CourseOffering
         page.select_all_cos
         page.approve_course_offering
       end
+    end
+  end
+
+# TEMPORARY - This will eventually be replaced by a call to course_offering.delivery_format_list,
+# the new format added to the list and the new list passed on the options hash to course_offering.edit_offering
+
+ def add_delivery_format (opts)
+    on CourseOfferingEdit do |page|
+      page.delivery_format_add
+      delivery_format = make DeliveryFormat,
+                             :format => opts[:format],
+                             :grade_format => opts[:grade_format],
+                             :final_exam_activity => opts[:final_exam_activity]
+      page.select_delivery_format(2,delivery_format)
+    end
+  end
+
+# TEMPORARY - This will eventually be replaced by a call to course_offering.delivery_format_list,
+# the format deleted from the list and the new list passed on the options hash to course_offering.edit_offering
+
+  def delete_delivery_format (format)
+    on CourseOfferingEdit do |page|
+      page.delete_delivery_format(format)
     end
   end
 
