@@ -13,6 +13,7 @@
         <property name="headerText" value="Refund"/>
         <property name="entryPageId" value="AccountRefundPage"/>
         <property name="navigation" ref="KsaAccountNavigation"/>
+		<property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.AccountRefundForm"/>
 		<property name="items">
             <list merge="true">
 				<!-- Account Refund Main Page -->
@@ -43,7 +44,6 @@
 				</bean>
 			</list>
 		</property>
-		<property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.AccountRefundForm"/>
 	</bean>
 	
 	
@@ -208,7 +208,7 @@
 				<bean parent="Uif-Disclosure-VerticalBoxSection" p:headerText="Eligible for Refund Request">
 					<property name="items">
 						<list>
-							<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="6" p:displayCollectionSize="10">
+							<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="7" p:displayCollectionSize="10">
 								<property name="title" value="Eligible for Refund Request"/>
 								<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel"/>
 								<property name="propertyName" value="requestRefundSummary.eligiblePotentialRefunds" />
@@ -237,6 +237,7 @@
 										<bean parent="Uif-InputField" p:propertyName="allocatedLockedAllocated" p:label="Allocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
 										<bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
 										<bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Amount to Refund" p:readOnly="true"/>
+										<bean parent="Uif-MessageField" p:messageText="@{(#line.generatedRefund != null) ? #line.generatedRefund.status.toString() : ''}" p:label="Refund Status"/>
 									</list>
 								</property>
 							</bean>

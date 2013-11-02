@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
+import com.sigmasys.kuali.ksa.model.Refund;
 import com.sigmasys.kuali.ksa.model.Transaction;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
  */
 public class PotentialRefundModel extends TransactionModel {
 
+    private Refund      generatedRefund;
     private String      overrideDescription;
     private BigDecimal  refundAmount;
     private boolean     selected = true;
@@ -51,5 +53,13 @@ public class PotentialRefundModel extends TransactionModel {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public Refund getGeneratedRefund() {
+        return generatedRefund;
+    }
+
+    public void setGeneratedRefund(Refund generatedRefund) {
+        this.generatedRefund = generatedRefund;
     }
 }

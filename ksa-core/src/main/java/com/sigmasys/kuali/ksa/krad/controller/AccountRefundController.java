@@ -414,6 +414,7 @@ public class AccountRefundController extends DownloadController {
                 if (refund != null) {
                     logger.info(String.format("Successfully generated a Refund for Payment with ID %d", paymentId));
                     eligibleForRefund.add(potentialRefund);
+                    potentialRefund.setGeneratedRefund(refund);
                 } else {
                     // If no Refund was generated, log an error and add to ineligible:
                     logger.error(String.format("Error generating refund for Payment ID %d", paymentId));
