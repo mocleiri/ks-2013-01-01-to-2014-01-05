@@ -44,11 +44,11 @@ public class PermissionsAllowedAnnotationResolver {
             }
 
             if (permissionsAllowed != null) {
-                logger.debug("Resolved @PermissionsAllowed annotation, method = " + method.getName());
+                logger.debug("Resolved @PermissionsAllowed annotation on the method: " + method.getName());
             }
 
         } catch (Exception e) {
-            logger.error("Internal error, unable to find @PermissionsAllowed annotation on the method: " + method, e);
+            logger.error("Unable to find @PermissionsAllowed annotation on the method: " + method.getName(), e);
         }
 
         return permissionsAllowed;
