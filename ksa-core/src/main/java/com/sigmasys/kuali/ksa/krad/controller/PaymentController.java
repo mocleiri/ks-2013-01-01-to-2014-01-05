@@ -420,7 +420,8 @@ public class PaymentController extends GenericSearchController {
                     columnsChanged = true;
                 }
 
-                if(! tt.getDescription().equals(model.getStatementText())) {
+                String statementText = model.getStatementText();
+                if(statementText != null && (! "".equals(statementText)) && (! tt.getDescription().equals(statementText))) {
                     payment.setStatementText(model.getStatementText());
                     columnsChanged = true;
                 }
