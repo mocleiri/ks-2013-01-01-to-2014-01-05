@@ -4017,6 +4017,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @WebMethod(exclude = true)
     public List<Payment> getPotentialRefunds(String accountId) {
+
         return getPotentialRefunds(accountId, null, null);
     }
 
@@ -4032,48 +4033,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Payment> getPotentialRefunds(String accountId, Date startDate, Date endDate) {
 
-        StringBuilder queryBuilder = new StringBuilder("select t from Payment t ");
-
-        queryBuilder.append(GET_TRANSACTION_JOIN);
-
-        queryBuilder.append(" where t.refundable = true and a.id = :accountId and t.clearDate < CURRENT_DATE ");
-
-        if (startDate != null) {
-            queryBuilder.append(" and t.effectiveDate >= :startDate ");
-        }
-
-        if (endDate != null) {
-            queryBuilder.append(" and t.effectiveDate <= :endDate ");
-        }
-
-        queryBuilder.append(" order by t.id desc");
-
-        Query query = em.createQuery(queryBuilder.toString());
-
-        query.setParameter("accountId", accountId);
-
-        if (startDate != null) {
-            query.setParameter("startDate", CalendarUtils.removeTime(startDate), TemporalType.DATE);
-        }
-
-
-        if (endDate != null) {
-            query.setParameter("endDate", CalendarUtils.removeTime(endDate), TemporalType.DATE);
-        }
-
-        List<Payment> results = query.getResultList();
-
-        List<Payment> payments = new LinkedList<Payment>();
-
-        if (CollectionUtils.isNotEmpty(results)) {
-            for (Payment payment : results) {
-                if (payment.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0) {
-                    payments.add(payment);
-                }
-            }
-        }
-
-        return payments;
+        return getPotentialRefundsForAccounts(Arrays.asList(accountId), startDate, endDate);
     }
 
 
@@ -4124,4 +4084,75 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return persistentTags;
     }
 
+    /**
+     * Returns a list of potential refunds (payments) for all specified Accounts.
+     * @param accounts  Account IDs.
+     * @return List of payment instances.
+     */
+    @WebMethod(exclude = true)
+    @Override
+    public List<Payment> getPotentialRefundsForAccounts(List<String> accounts) {
+
+        return getPotentialRefundsForAccounts(accounts, null, null);
+    }
+
+    /**
+     * Returns a list of potential refunds (payments) for all specified Accounts and date range.
+     *
+     * @param accounts  Accounts for which to get potential refunds.
+     * @param startDate Start date.
+     * @param endDate   End date
+     * @return List of payment instances.
+     */
+    @Override
+    public List<Payment> getPotentialRefundsForAccounts(List<String> accounts, Date startDate, Date endDate) {
+
+        if (CollectionUtils.isEmpty(accounts)) {
+            return new ArrayList<Payment>();
+        }
+
+        StringBuilder queryBuilder = new StringBuilder("select t from Payment t ");
+
+        queryBuilder.append(GET_TRANSACTION_JOIN);
+
+        queryBuilder.append(" where t.refundable = true and a.id in (:accountIds) and t.clearDate < CURRENT_DATE ");
+        queryBuilder.append(" and t.statusCode in (:statusCodes) ");
+
+        if (startDate != null) {
+            queryBuilder.append(" and t.effectiveDate >= :startDate ");
+        }
+
+        if (endDate != null) {
+            queryBuilder.append(" and t.effectiveDate <= :endDate ");
+        }
+
+        queryBuilder.append(" order by t.id desc");
+
+        Query query = em.createQuery(queryBuilder.toString());
+
+        query.setParameter("accountIds", accounts);
+        query.setParameter("statusCodes", Arrays.asList(TransactionStatus.ACTIVE.getId()));
+
+        if (startDate != null) {
+            query.setParameter("startDate", CalendarUtils.removeTime(startDate), TemporalType.DATE);
+        }
+
+        if (endDate != null) {
+            query.setParameter("endDate", CalendarUtils.removeTime(endDate), TemporalType.DATE);
+        }
+
+        List<Payment> results = query.getResultList();
+
+        List<Payment> payments = new LinkedList<Payment>();
+
+        if (CollectionUtils.isNotEmpty(results)) {
+            for (Payment payment : results) {
+                if (payment.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0) {
+                    payments.add(payment);
+                }
+            }
+        }
+
+        return payments;
+    }
 }
