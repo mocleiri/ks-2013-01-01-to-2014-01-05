@@ -35,7 +35,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 
 /**
- * Transaction service JPA implementation.
+ * Transaction service implementation.
  * <p/>
  *
  * @author Michael Ivanov
@@ -55,7 +55,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                     " left outer join fetch t.account a " +
                     " left outer join fetch t.currency c " +
                     " left outer join fetch t.rollup r " +
-                    " left outer join fetch t.document d ";
+                    " left outer join fetch t.document d " +
+                    " left outer join fetch t.tags tags ";
 
     @Autowired
     private AccountService accountService;
@@ -4009,31 +4010,99 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     /**
-     * Returns a list of potential refunds (payments) for the given Account ID.
+     * Returns a list of potential refunds (payments) for specified Account IDs.
      *
-     * @param accountId Account ID
+     * @param accountIds Account IDs
      * @return list of Payment instances
      */
     @Override
     @WebMethod(exclude = true)
-    public List<Payment> getPotentialRefunds(String accountId) {
-
-        return getPotentialRefunds(accountId, null, null);
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
+    public List<Payment> getPotentialRefunds(Set<String> accountIds) {
+        return getPotentialRefunds(accountIds, null, null);
     }
 
     /**
-     * Returns a list of potential refunds (payments) for the given Account ID and date range.
+     * Returns a list of potential refunds (payments) for specified Account IDs and date range.
      *
-     * @param accountId Account ID
-     * @param startDate Start date
-     * @param endDate   End date
+     * @param accountIds Account IDs
+     * @param startDate  Start date
+     * @param endDate    End date
      * @return list of Payment instances
      */
     @Override
+    @WebMethod(exclude = true)
     @PermissionsAllowed(Permission.READ_TRANSACTION)
-    public List<Payment> getPotentialRefunds(String accountId, Date startDate, Date endDate) {
+    public List<Payment> getPotentialRefunds(Set<String> accountIds, Date startDate, Date endDate) {
+        return getPotentialRefunds(accountIds, startDate, endDate, null);
+    }
 
-        return getPotentialRefundsForAccounts(Arrays.asList(accountId), startDate, endDate);
+    /**
+     * Returns a list of potential refunds (payments) for specified Account IDs, date range and Tag IDs.
+     *
+     * @param accountIds Account IDs
+     * @param startDate  Start date
+     * @param endDate    End date
+     * @param tagIds     Tag IDs
+     * @return List of Payment instances
+     */
+    @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
+    public List<Payment> getPotentialRefunds(Set<String> accountIds, Date startDate, Date endDate, Set<Long> tagIds) {
+
+        StringBuilder queryBuilder = new StringBuilder("select t from Payment t ");
+
+        queryBuilder.append(GET_TRANSACTION_JOIN);
+
+        queryBuilder.append(" where t.refundable = true and a.id in (:accountIds) and t.clearDate < CURRENT_DATE ");
+        queryBuilder.append(" and t.statusCode = :statusCode ");
+
+        if (startDate != null) {
+            queryBuilder.append(" and t.effectiveDate >= :startDate ");
+        }
+
+        if (endDate != null) {
+            queryBuilder.append(" and t.effectiveDate <= :endDate ");
+        }
+
+        boolean tagIdsExist = CollectionUtils.isNotEmpty(tagIds);
+
+        if (tagIdsExist) {
+            queryBuilder.append(" and tags in (select tag from Tag tag where tag.id in (:tagIds))");
+        }
+
+        queryBuilder.append(" order by t.id desc");
+
+        Query query = em.createQuery(queryBuilder.toString());
+
+        query.setParameter("accountIds", new ArrayList<String>(accountIds));
+        query.setParameter("statusCode", TransactionStatus.ACTIVE.getId());
+
+        if (startDate != null) {
+            query.setParameter("startDate", CalendarUtils.removeTime(startDate), TemporalType.DATE);
+        }
+
+        if (endDate != null) {
+            query.setParameter("endDate", CalendarUtils.removeTime(endDate), TemporalType.DATE);
+        }
+
+        if (tagIdsExist) {
+            query.setParameter("tagIds", new ArrayList<Long>(tagIds));
+        }
+
+        List<Payment> results = query.getResultList();
+
+        List<Payment> payments = new LinkedList<Payment>();
+
+        if (CollectionUtils.isNotEmpty(results)) {
+            for (Payment payment : results) {
+                if (payment.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0) {
+                    payments.add(payment);
+                }
+            }
+        }
+
+        return payments;
     }
 
 
@@ -4084,75 +4153,4 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return persistentTags;
     }
 
-    /**
-     * Returns a list of potential refunds (payments) for all specified Accounts.
-     * @param accounts  Account IDs.
-     * @return List of payment instances.
-     */
-    @WebMethod(exclude = true)
-    @Override
-    public List<Payment> getPotentialRefundsForAccounts(List<String> accounts) {
-
-        return getPotentialRefundsForAccounts(accounts, null, null);
-    }
-
-    /**
-     * Returns a list of potential refunds (payments) for all specified Accounts and date range.
-     *
-     * @param accounts  Accounts for which to get potential refunds.
-     * @param startDate Start date.
-     * @param endDate   End date
-     * @return List of payment instances.
-     */
-    @Override
-    public List<Payment> getPotentialRefundsForAccounts(List<String> accounts, Date startDate, Date endDate) {
-
-        if (CollectionUtils.isEmpty(accounts)) {
-            return new ArrayList<Payment>();
-        }
-
-        StringBuilder queryBuilder = new StringBuilder("select t from Payment t ");
-
-        queryBuilder.append(GET_TRANSACTION_JOIN);
-
-        queryBuilder.append(" where t.refundable = true and a.id in (:accountIds) and t.clearDate < CURRENT_DATE ");
-        queryBuilder.append(" and t.statusCode in (:statusCodes) ");
-
-        if (startDate != null) {
-            queryBuilder.append(" and t.effectiveDate >= :startDate ");
-        }
-
-        if (endDate != null) {
-            queryBuilder.append(" and t.effectiveDate <= :endDate ");
-        }
-
-        queryBuilder.append(" order by t.id desc");
-
-        Query query = em.createQuery(queryBuilder.toString());
-
-        query.setParameter("accountIds", accounts);
-        query.setParameter("statusCodes", Arrays.asList(TransactionStatus.ACTIVE.getId()));
-
-        if (startDate != null) {
-            query.setParameter("startDate", CalendarUtils.removeTime(startDate), TemporalType.DATE);
-        }
-
-        if (endDate != null) {
-            query.setParameter("endDate", CalendarUtils.removeTime(endDate), TemporalType.DATE);
-        }
-
-        List<Payment> results = query.getResultList();
-
-        List<Payment> payments = new LinkedList<Payment>();
-
-        if (CollectionUtils.isNotEmpty(results)) {
-            for (Payment payment : results) {
-                if (payment.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0) {
-                    payments.add(payment);
-                }
-            }
-        }
-
-        return payments;
-    }
 }

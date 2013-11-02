@@ -760,7 +760,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             throw new IllegalArgumentException(errMsg);
         }
 
-        BigDecimal paymentAmount = totalAmount.multiply(percentage).divide(new BigDecimal(100));
+        BigDecimal paymentAmount = totalAmount.multiply(percentage).divide(new BigDecimal(100), RoundingMode.HALF_UP);
 
         if (roundingFactor == 0) {
             return paymentAmount.setScale(2, RoundingMode.HALF_UP);
@@ -960,12 +960,16 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             });
 
             BigDecimal totalFinancedAmount = getTotalFinancedAmount(billingTransactions);
+            if (totalFinancedAmount.compareTo(BigDecimal.ZERO) == 0) {
+                String errMsg = "Total financed amount cannot be 0";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
+            }
 
             // Calculating the finance ratio and setting it for each PB transaction
             for (PaymentBillingTransaction billingTransaction : billingTransactions) {
-                billingTransaction.setRatio(billingTransaction.getFinancedAmount().divide(totalFinancedAmount));
+                billingTransaction.setRatio(billingTransaction.getFinancedAmount().divide(totalFinancedAmount, RoundingMode.HALF_DOWN));
             }
-
 
             for (PaymentBillingSchedule billingSchedule : billingSchedules) {
 
@@ -981,7 +985,9 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
                     if (billingTransaction.getRemainingAmount().compareTo(BigDecimal.ZERO) > 0) {
 
-                        BigDecimal tempAmount = billingSchedule.getAmount().multiply(billingTransaction.getRatio()).setScale(2, RoundingMode.HALF_DOWN);
+                        BigDecimal ratio = billingTransaction.getRatio();
+
+                        BigDecimal tempAmount = billingSchedule.getAmount().multiply(ratio).setScale(2, RoundingMode.HALF_DOWN);
 
                         if (tempAmount.compareTo(billingTransaction.getRemainingAmount()) > 0) {
                             tempAmount = billingTransaction.getRemainingAmount();

@@ -8,15 +8,13 @@ import java.util.TreeMap;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.exception.GlTransactionFailedException;
-import com.sigmasys.kuali.ksa.exception.InvalidTransactionTypeException;
 import com.sigmasys.kuali.ksa.model.*;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 
 /**
- * Transaction service declares business operations on Transaction and related
- * objects
+ * Transaction service declares business operations on Transaction and related objects.
  * <p/>
  *
  * @author Michael Ivanov
@@ -1138,40 +1136,34 @@ public interface TransactionService {
     List<Transaction> getTransactionsByGlTransactionId(Long glTransactionId);
 
     /**
-     * Returns a list of potential refunds (payments) for the given Account ID.
+     * Returns a list of potential refunds (payments) for specified Account IDs.
      *
-     * @param accountId Account ID
+     * @param accountIds Account IDs
      * @return list of Payment instances
      */
     @WebMethod(exclude = true)
-    List<Payment> getPotentialRefunds(String accountId);
+    List<Payment> getPotentialRefunds(Set<String> accountIds);
 
     /**
-     * Returns a list of potential refunds (payments) for the given Account ID and date range.
+     * Returns a list of potential refunds (payments) for specified Account IDs and date range.
      *
-     * @param accountId Account ID
-     * @param startDate Start date
-     * @param endDate   End date
+     * @param accountIds Account IDs
+     * @param startDate  Start date
+     * @param endDate    End date
      * @return list of Payment instances
      */
-    List<Payment> getPotentialRefunds(String accountId, Date startDate, Date endDate);
-
-    /**
-     * Returns a list of potential refunds (payments) for all specified Accounts.
-     * @param accounts  Account IDs.
-     * @return List of payment instances.
-     */
     @WebMethod(exclude = true)
-    List<Payment> getPotentialRefundsForAccounts(List<String> accounts);
+    List<Payment> getPotentialRefunds(Set<String> accountIds, Date startDate, Date endDate);
 
     /**
-     * Returns a list of potential refunds (payments) for all specified Accounts and date range.
+     * Returns a list of potential refunds (payments) for specified Account IDs, date range and Tag IDs.
      *
-     * @param accounts  Accounts for which to get potential refunds.
-     * @param startDate Start date.
-     * @param endDate   End date
-     * @return List of payment instances.
+     * @param accountIds Account IDs
+     * @param startDate  Start date
+     * @param endDate    End date
+     * @param tagIds     Tag IDs
+     * @return List of Payment instances
      */
-    List<Payment> getPotentialRefundsForAccounts(List<String> accounts, Date startDate, Date endDate);
+    List<Payment> getPotentialRefunds(Set<String> accountIds, Date startDate, Date endDate, Set<Long> tagIds);
 
 }

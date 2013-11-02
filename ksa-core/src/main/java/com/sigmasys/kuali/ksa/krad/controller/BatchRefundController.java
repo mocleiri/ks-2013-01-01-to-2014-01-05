@@ -388,7 +388,8 @@ public class BatchRefundController extends DownloadController {
         // Get Payments for the current account within the specified date range.
         List<Account> filterAccounts = form.getFilterAccounts();
         List<String> accountIds = getAccountIds(filterAccounts);
-        List<Payment> payments = transactionService.getPotentialRefundsForAccounts(accountIds, dateFrom, dateTo);
+
+        List<Payment> payments = transactionService.getPotentialRefunds(new HashSet<String>(accountIds), dateFrom, dateTo);
 
         List<PotentialRefundModel> potentialRefundModels = new ArrayList<PotentialRefundModel>(payments.size());
 

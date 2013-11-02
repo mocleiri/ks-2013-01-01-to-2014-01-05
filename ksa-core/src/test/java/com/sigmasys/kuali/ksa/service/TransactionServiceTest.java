@@ -2244,7 +2244,8 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         notNull(transactions);
         notEmpty(transactions);
-        isTrue(transactions.size() == 2);
+
+        isTrue(transactions.size() >= 2);
 
     }
 
@@ -2281,7 +2282,10 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         transactionService.persistTransaction(transaction2);
 
-        List<Payment> payments = transactionService.getPotentialRefunds(TEST_USER_ID);
+        Set<String> userIds = new HashSet<String>(1);
+        userIds.add(TEST_USER_ID);
+
+        List<Payment> payments = transactionService.getPotentialRefunds(userIds);
 
         notNull(payments);
         notEmpty(payments);
@@ -2347,7 +2351,100 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         transactionService.persistTransaction(transaction2);
 
-        List<Payment> payments = transactionService.getPotentialRefunds(TEST_USER_ID, new Date(), new Date());
+        Set<String> userIds = new HashSet<String>(1);
+        userIds.add(TEST_USER_ID);
+
+        List<Payment> payments = transactionService.getPotentialRefunds(userIds, new Date(), new Date());
+
+        notNull(payments);
+        notEmpty(payments);
+
+        isTrue(payments.size() >= 2);
+
+        boolean payment1Exists = false;
+        boolean payment2Exists = false;
+
+        for (Payment payment : payments) {
+
+            notNull(payment);
+            notNull(payment.getId());
+
+            isTrue(payment.isRefundable());
+
+            isTrue(payment.getUnallocatedAmount().compareTo(BigDecimal.ZERO) > 0);
+
+            isTrue(payment.getClearDate().before(new Date()));
+
+            if (payment.getId().equals(transaction1.getId())) {
+                payment1Exists = true;
+            } else if (payment.getId().equals(transaction2.getId())) {
+                payment2Exists = true;
+            }
+        }
+
+        isTrue(payment1Exists);
+        isTrue(payment2Exists);
+
+    }
+
+    @Test
+    public void getPotentialRefunds3() {
+
+        String typeId = "chip";
+
+        Tag tag1 = auditableEntityService.createAuditableEntity("tag_1", "Tag 1", "Tag 1 Desc", Tag.class);
+        Tag tag2 = auditableEntityService.createAuditableEntity("tag_2", "Tag 2", "Tag 2 Desc", Tag.class);
+
+        notNull(tag1);
+        notNull(tag1.getId());
+
+        notNull(tag2);
+        notNull(tag2.getId());
+
+        Transaction transaction1 = transactionService.createTransaction(typeId, TEST_USER_ID, new Date(), new BigDecimal(10e7));
+
+        notNull(transaction1);
+        notNull(transaction1.getId());
+
+        isTrue(transaction1 instanceof Payment);
+
+        if (transaction1 instanceof Payment) {
+            ((Payment) transaction1).setRefundable(true);
+            ((Payment) transaction1).setClearDate(CalendarUtils.addCalendarDays(new Date(), -1));
+        }
+
+        transactionService.persistTransaction(transaction1);
+
+        transaction1 = transactionService.addTagsToTransaction(transaction1.getId(), Arrays.asList(tag1));
+
+        notNull(transaction1);
+
+        Transaction transaction2 = transactionService.createTransaction(typeId, TEST_USER_ID, new Date(), new BigDecimal(2000.45));
+
+        notNull(transaction2);
+        notNull(transaction2.getId());
+
+        isTrue(transaction2 instanceof Payment);
+
+        if (transaction2 instanceof Payment) {
+            ((Payment) transaction2).setRefundable(true);
+            ((Payment) transaction2).setClearDate(CalendarUtils.addCalendarDays(new Date(), -2));
+        }
+
+        transactionService.persistTransaction(transaction2);
+
+        transaction2 = transactionService.addTagsToTransaction(transaction2.getId(), Arrays.asList(tag2));
+
+        notNull(transaction2);
+
+        Set<String> userIds = new HashSet<String>(1);
+        userIds.add(TEST_USER_ID);
+
+        Set<Long> tagIds = new HashSet<Long>(2);
+        tagIds.add(tag1.getId());
+        tagIds.add(tag2.getId());
+
+        List<Payment> payments = transactionService.getPotentialRefunds(userIds, new Date(), new Date(), tagIds);
 
         notNull(payments);
         notEmpty(payments);

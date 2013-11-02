@@ -8,7 +8,6 @@ import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
-import com.sigmasys.kuali.ksa.util.EnumUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,7 +219,7 @@ public class AccountRefundController extends DownloadController {
 
         for (RefundModel refund : allRefunds) {
 
-            if(refund.getId().compareTo(refundId) == 0) {
+            if (refund.getId().compareTo(refundId) == 0) {
 
                 // Validate the refund and adjust the status:
                 adjustRefundStatus(refund);
@@ -378,7 +377,10 @@ public class AccountRefundController extends DownloadController {
 
         // Get Payments for the current account within the specified date range.
 
-        List<Payment> payments = transactionService.getPotentialRefunds(userId, dateFrom, dateTo);
+        Set<String> userIds = new HashSet<String>(1);
+        userIds.add(userId);
+
+        List<Payment> payments = transactionService.getPotentialRefunds(userIds, dateFrom, dateTo);
 
         List<PotentialRefundModel> potentialRefundModels = new ArrayList<PotentialRefundModel>(payments.size());
 
