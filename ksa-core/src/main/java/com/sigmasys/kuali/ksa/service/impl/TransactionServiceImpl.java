@@ -98,8 +98,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     private <T extends Transaction> List<T> getTransactions(Class<T> entityType, Date fromDate, Date toDate,
                                                             String... userIds) {
 
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
-
         Query query = em.createQuery("select t from " + entityType.getName() + " t " + GET_TRANSACTION_JOIN +
                 ((userIds != null && userIds.length > 0) ? " where t.account.id in (:userIds) " : "") +
                 (fromDate != null ? " and to_date(t.effectiveDate) >= :fromDate " : "") +
@@ -123,8 +121,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
     private <T extends Transaction> T getTransaction(Long id, Class<T> entityType) {
 
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
-
         Query query = em.createQuery("select t from " + entityType.getName() + " t " + GET_TRANSACTION_JOIN +
                 " where t.id = :id ");
         query.setParameter("id", id);
@@ -144,6 +140,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_CHARGE)
     public Charge createCharge(String debitTypeId, String userId, Date effectiveDate, BigDecimal amount) {
 
         TransactionType transactionType = getTransactionType(debitTypeId, effectiveDate);
@@ -168,6 +165,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_PAYMENT)
     public Payment createPayment(String creditTypeId, String userId, Date effectiveDate, BigDecimal amount) {
 
         TransactionType transactionType = getTransactionType(creditTypeId, effectiveDate);
@@ -193,6 +191,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_DEFERMENT)
     public Deferment createDeferment(String creditTypeId, String userId, Date effectiveDate, Date expirationDate, BigDecimal amount) {
 
         if (expirationDate == null) {
@@ -289,7 +288,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         if (recognitionDate == null) {
             recognitionDate = effectiveDate;
         }
+
         TransactionTypeId id = getTransactionType(transactionTypeId, recognitionDate).getId();
+
         return createTransaction(id, externalId, userId, effectiveDate, recognitionDate, expirationDate, amount, overrideBlocks);
     }
 
@@ -303,9 +304,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return TransactionType instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION_TYPE)
     public TransactionType getTransactionType(String transactionTypeId, Date date) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
 
         date = CalendarUtils.removeTime(date);
 
@@ -331,9 +331,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION_TYPE)
     public TransactionType getTransactionType(TransactionTypeId transactionTypeId) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
 
         Query query = em.createQuery("select t from TransactionType t " +
                 "left outer join fetch t.rollup " +
@@ -356,6 +355,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION_TYPE)
     public <T extends TransactionType> List<T> getTransactionTypesByNamePattern(String pattern, Class<T> entityType) {
         return getTransactionTypesByNamePattern(pattern, entityType, null);
     }
@@ -370,11 +370,10 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION_TYPE)
     public <T extends TransactionType> List<T> getTransactionTypesByNamePattern(String pattern,
                                                                                 Class<T> entityType,
                                                                                 Date effectiveDate) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
 
         if (StringUtils.isBlank(pattern)) {
             String errMsg = "Name pattern cannot be empty";
@@ -415,6 +414,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_TRANSACTION_TYPE)
     public DebitType createDebitType(String debitTypeId, String name, Date startDate, int priority, String description) {
         return createTransactionType(debitTypeId, 0, name, startDate, priority, description, DebitType.class, true);
     }
@@ -431,6 +431,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_TRANSACTION_TYPE)
     public CreditType createCreditType(String creditTypeId, String name, Date startDate, int priority, String description) {
         return createTransactionType(creditTypeId, 0, name, startDate, priority, description, CreditType.class, true);
     }
@@ -445,6 +446,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_TRANSACTION_TYPE)
     public DebitType createDebitSubType(String debitTypeId, Date startDate) {
         return createTransactionType(debitTypeId, startDate, DebitType.class);
     }
@@ -459,6 +461,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_TRANSACTION_TYPE)
     public CreditType createCreditSubType(String creditTypeId, Date startDate) {
         return createTransactionType(creditTypeId, startDate, CreditType.class);
     }
@@ -466,7 +469,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     private synchronized <T extends TransactionType> T createTransactionType(String transactionTypeId,
                                                                              Date startDate,
                                                                              Class<T> entityType) {
-        PermissionUtils.checkPermission(Permission.CREATE_TRANSACTION_TYPE);
 
         T transactionType = getActiveTransactionType(transactionTypeId, entityType);
         if (transactionType == null) {
@@ -515,8 +517,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                                                                 Date startDate, int priority, String description,
                                                                 Class<T> entityType, boolean createNewType) {
 
-        PermissionUtils.checkPermission(Permission.CREATE_TRANSACTION_TYPE);
-
         logger.debug("Creating new Transaction Type with ID = " + transactionTypeId + " and sub-code = " + subCode);
 
         if (subCode > 0 && createNewType) {
@@ -562,6 +562,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return "true" if the transaction type exists, false - otherwise
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION_TYPE)
     public boolean transactionTypeExists(String transactionTypeId) {
         Query query = em.createQuery("select 1 from TransactionType where id.id = :id");
         query.setParameter("id", transactionTypeId);
@@ -577,9 +578,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.EDIT_TRANSACTION)
     public void setGeneralLedgerType(Long transactionId, Long glTypeId) {
-
-        PermissionUtils.checkPermission(Permission.EDIT_TRANSACTION);
 
         Transaction transaction = getTransaction(transactionId);
         if (transaction == null) {
@@ -767,6 +767,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return Transaction instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public Transaction getTransaction(Long id) {
         return getTransaction(id, Transaction.class);
     }
@@ -778,6 +779,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return Charge instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public Charge getCharge(Long id) {
         return getTransaction(id, Charge.class);
     }
@@ -789,6 +791,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return Payment instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public Payment getPayment(Long id) {
         return getTransaction(id, Payment.class);
     }
@@ -800,6 +803,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return Deferment instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public Deferment getDeferment(Long id) {
         return getTransaction(id, Deferment.class);
     }
@@ -812,6 +816,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Transaction> getTransactions() {
         return getTransactions(Transaction.class, null, null);
     }
@@ -823,6 +828,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Charge> getCharges() {
         return getTransactions(Charge.class, null, null);
     }
@@ -835,6 +841,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Charge> getCharges(String userId) {
         return getTransactions(Charge.class, null, null, userId);
     }
@@ -846,6 +853,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Payment> getPayments() {
         return getTransactions(Payment.class, null, null);
     }
@@ -858,6 +866,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Payment> getPayments(String userId) {
         return getTransactions(Payment.class, null, null, userId);
     }
@@ -870,6 +879,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Deferment> getDeferments() {
         return getTransactions(Deferment.class, null, null);
     }
@@ -882,6 +892,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Deferment> getDeferments(String userId) {
         return getTransactions(Deferment.class, null, null, userId);
     }
@@ -894,6 +905,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Transaction> getTransactions(String userId) {
         return getTransactions(Transaction.class, null, null, userId);
     }
@@ -907,6 +919,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return List of transactions
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Transaction> getTransactions(String userId, Date fromDate, Date toDate) {
         return getTransactions(Transaction.class, fromDate, toDate, userId);
     }
@@ -920,6 +933,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return List of charges
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Charge> getCharges(String userId, Date fromDate, Date toDate) {
         return getTransactions(Charge.class, fromDate, toDate, userId);
     }
@@ -933,6 +947,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return List of payments
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Payment> getPayments(String userId, Date fromDate, Date toDate) {
         return getTransactions(Payment.class, fromDate, toDate, userId);
     }
@@ -946,6 +961,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return List of deferments
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Deferment> getDeferments(String userId, Date fromDate, Date toDate) {
         return getTransactions(Deferment.class, fromDate, toDate, userId);
     }
@@ -962,9 +978,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Transaction> getTransactions(String userId, Date fromDate, Date toDate, TransactionStatus... statuses) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
 
         List<String> statusCodes = new ArrayList<String>(statuses.length);
         for (TransactionStatus status : statuses) {
@@ -1000,10 +1015,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.EDIT_TRANSACTION)
     public Long persistTransaction(Transaction transaction) {
-
-        PermissionUtils.checkPermission(Permission.EDIT_TRANSACTION);
-
         return persistEntity(transaction);
     }
 
@@ -1016,10 +1029,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.EDIT_TRANSACTION_TYPE)
     public TransactionTypeId persistTransactionType(TransactionType transactionType) {
-
-        PermissionUtils.checkPermission(Permission.EDIT_TRANSACTION_TYPE);
-
         return persistEntity(transactionType);
     }
 
@@ -1031,10 +1042,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.EDIT_TRANSACTION)
     public boolean deleteTransaction(Long id) {
-
-        PermissionUtils.checkPermission(Permission.EDIT_TRANSACTION);
-
         return deleteEntity(id, Transaction.class);
     }
 
@@ -1320,9 +1329,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                                                                       boolean isOppositeGlOperation,
                                                                       boolean isQueued) {
 
-        PermissionUtils.checkPermission(Permission.CREATE_GL_TRANSACTION);
-
-
         final TransactionType transactionType1 = transaction1.getTransactionType();
         final TransactionType transactionType2 = transaction2.getTransactionType();
 
@@ -1455,9 +1461,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return list of allocations
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ALLOCATION)
     public List<Allocation> getAllocations(Long transactionId) {
-
-        PermissionUtils.checkPermission(Permission.READ_ALLOCATION);
 
         Query query = em.createQuery("select a from Allocation a " +
                 " left outer join fetch a.account ac " +
@@ -1846,7 +1851,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false, timeout = 3600)
-    public synchronized int makeFailedTransactionsEffective() {
+    @PermissionsAllowed(Permission.CREATE_GL_TRANSACTION)
+    public int makeFailedTransactionsEffective() {
 
         Query query = em.createQuery("select distinct f.transaction.id from FailedGlTransaction f " +
                 " where f.fixed <> true and f.transaction.id <> null");
@@ -1875,7 +1881,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return the number of effective transactions
      */
     @Override
-    public synchronized int makeAllTransactionsEffective(boolean forceEffective) {
+    @Transactional(readOnly = false, timeout = 3600)
+    @PermissionsAllowed(Permission.CREATE_GL_TRANSACTION)
+    public int makeAllTransactionsEffective(boolean forceEffective) {
 
         StringBuilder queryBuilder = new StringBuilder("select id from Transaction where glEntryGenerated <> true");
 
@@ -1907,9 +1915,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false, noRollbackFor = GlTransactionFailedException.class)
+    @PermissionsAllowed(Permission.CREATE_GL_TRANSACTION)
     public boolean makeEffective(Long transactionId, boolean forceEffective) throws GlTransactionFailedException {
-
-        PermissionUtils.checkPermission(Permission.CREATE_GL_TRANSACTION);
 
         Transaction transaction = getTransaction(transactionId);
         if (transaction == null) {
@@ -2049,6 +2056,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_ALLOCATION)
     public List<GlTransaction> allocateReversals(String accountId) {
         return allocateReversals(accountId, true);
     }
@@ -2068,6 +2076,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_ALLOCATION)
     public List<GlTransaction> allocateReversals(String accountId, boolean isQueued) {
         return allocateReversals(getTransactions(accountId), isQueued);
     }
@@ -2081,6 +2090,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_ALLOCATION)
     public List<GlTransaction> allocateReversals(List<Transaction> transactions) {
         return allocateReversals(transactions, true);
     }
@@ -2095,6 +2105,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_ALLOCATION)
     public List<GlTransaction> allocateReversals(List<Transaction> transactions, boolean isQueued) {
 
         List<GlTransaction> glTransactions = new LinkedList<GlTransaction>();
@@ -2151,8 +2162,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
     protected Transaction reverseTransaction(Transaction transaction, String reversalTransactionTypeId, String memoText,
                                              BigDecimal reversalAmount, String statementPrefix, TransactionStatus reversalStatus) {
-
-        PermissionUtils.checkPermission(Permission.REVERSE_TRANSACTION);
 
         if (reversalTransactionTypeId == null) {
             String errMsg = "Reversal transaction type ID cannot be null";
@@ -2345,6 +2354,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REVERSE_TRANSACTION)
     public Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount,
                                           String statementPrefix, TransactionStatus reversalStatus) {
 
@@ -2378,6 +2388,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REVERSE_TRANSACTION)
     public Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount) {
         return reverseTransaction(transactionId, memoText, reversalAmount, null);
     }
@@ -2401,6 +2412,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REVERSE_TRANSACTION)
     public Transaction reverseTransaction(Long transactionId, String memoText, BigDecimal reversalAmount,
                                           String statementPrefix) {
         return reverseTransaction(transactionId, memoText, reversalAmount, statementPrefix, null);
@@ -2426,6 +2438,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REVERSE_TRANSACTION)
     public Transaction reverseTransaction(Long transactionId, String reversalTransactionTypeId, String memoText,
                                           BigDecimal reversalAmount, String statementPrefix, TransactionStatus reversalStatus) {
 
@@ -2440,8 +2453,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
     protected void expireDeferment(Deferment deferment) {
-
-        PermissionUtils.checkPermission(Permission.EXPIRE_DEFERMENT);
 
         // Removing all allocations for the deferment
         removeAllAllocations(deferment.getId());
@@ -2464,6 +2475,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.EXPIRE_DEFERMENT)
     public void expireDeferment(Long defermentId) {
 
         Deferment deferment = getDeferment(defermentId);
@@ -2484,18 +2496,19 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.EXPIRE_DEFERMENT)
     public void expireDeferments(String userId) {
 
         Date currentDate = new Date();
 
         List<Deferment> deferments = getDeferments(userId);
+
         for (Deferment deferment : deferments) {
             Date expirationDate = deferment.getExpirationDate();
             if (expirationDate != null && expirationDate.before(currentDate)) {
                 expireDeferment(deferment);
             }
         }
-
     }
 
 
@@ -2507,9 +2520,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION_TYPE)
     public <T extends TransactionType> Class<T> getTransactionTypeClass(String transactionTypeId) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
 
         Query query = em.createQuery("select t from TransactionType t " +
                 " where t.id.id = :transactionTypeId");
@@ -2672,9 +2684,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_CREDIT_PERMISSION)
     public CreditPermission createCreditPermission(TransactionTypeId creditTypeId, String allowableDebitType, int priority) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_CREDIT_PERMISSION);
 
         if (creditTypeId == null) {
             String errMsg = "Credit Type ID is required";
@@ -2713,10 +2724,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_CREDIT_PERMISSION)
     public Long persistCreditPermission(CreditPermission creditPermission) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_CREDIT_PERMISSION);
-
         return persistEntity(creditPermission);
     }
 
@@ -2728,10 +2737,8 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_CREDIT_PERMISSION)
     public boolean deleteCreditPermission(Long creditPermissionId) {
-
-        PermissionUtils.checkPermission(Permission.DELETE_CREDIT_PERMISSION);
-
         return deleteEntity(creditPermissionId, CreditPermission.class);
     }
 
@@ -2744,6 +2751,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_CREDIT_PERMISSION)
     public List<CreditPermission> getCreditPermissions(TransactionTypeId transactionTypeId) {
         return getCreditPermissions(transactionTypeId, null, null);
     }
@@ -2758,22 +2766,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return list of CreditPermission instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_CREDIT_PERMISSION)
     public List<CreditPermission> getCreditPermissions(TransactionTypeId transactionTypeId,
                                                        Integer priorityFrom, Integer priorityTo) {
         Set<TransactionTypeId> typeIds = new HashSet<TransactionTypeId>(1);
         typeIds.add(transactionTypeId);
         return getCreditPermissions(typeIds, priorityFrom, priorityTo);
-    }
-
-    /**
-     * Returns a list of credit permissions for the given set of transaction types sorted by
-     * priority in descending order.
-     *
-     * @param transactionTypeIds a set of Transaction Type IDs
-     * @return list of CreditPermission instances
-     */
-    private List<CreditPermission> getCreditPermissions(Set<TransactionTypeId> transactionTypeIds) {
-        return getCreditPermissions(transactionTypeIds, null, null);
     }
 
     /**
@@ -2787,8 +2785,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     private List<CreditPermission> getCreditPermissions(Set<TransactionTypeId> transactionTypeIds,
                                                         Integer priorityFrom, Integer priorityTo) {
-
-        PermissionUtils.checkPermission(Permission.READ_CREDIT_PERMISSION);
 
         StringBuilder queryBuilder =
                 new StringBuilder("select distinct cp from CreditPermission cp where cp.creditType.id in (:typeIds)");
@@ -2835,6 +2831,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      * @return List of Transaction instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Transaction> findTransactionsByStatementPattern(String pattern) {
 
         PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
@@ -2872,8 +2869,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     protected Transaction writeOffTransaction(Transaction transaction, TransactionType transactionType,
                                               String memoText, String statementPrefix) {
-
-        PermissionUtils.checkPermission(Permission.WRITE_OFF_TRANSACTION);
 
         if (transactionType == null) {
             String errMsg = "Transaction Type cannot be null";
@@ -2926,7 +2921,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         String rollupCode = configService.getParameter(Constants.DEFAULT_WRITE_OFF_ROLLUP);
 
         if (StringUtils.isNotBlank(rollupCode)) {
-            Rollup rollup = getRollupByCode(rollupCode);
+            Rollup rollup = auditableEntityService.getAuditableEntity(rollupCode, Rollup.class);
             if (rollup != null) {
                 writeOffTransaction.setRollup(rollup);
             }
@@ -2949,6 +2944,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.WRITE_OFF_TRANSACTION)
     public Transaction writeOffTransaction(Long transactionId, TransactionTypeId transactionTypeId,
                                            String memoText, String statementPrefix) {
 
@@ -2976,6 +2972,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.WRITE_OFF_TRANSACTION)
     public Transaction writeOffTransaction(Long transactionId, String memoText, String statementPrefix) {
 
         Transaction transaction = getTransaction(transactionId);
@@ -2988,14 +2985,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         return writeOffTransaction(transaction, transaction.getTransactionType(), memoText, statementPrefix);
     }
 
-    private Rollup getRollupByCode(String code) {
-
-        PermissionUtils.checkPermission(Permission.READ_ROLLUP);
-
-        return auditableEntityService.getAuditableEntity(code, Rollup.class);
-    }
-
-
     /**
      * Checks if Transactions that meet the specified search criteria exist.
      *
@@ -3005,6 +2994,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public boolean transactionExists(String accountId, String transactionTypeId) {
         return transactionExistsInternal(accountId, transactionTypeId, null, null, null, null);
     }
@@ -3021,6 +3011,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public boolean transactionExists(String accountId, String transactionTypeId, Date effectiveDateFrom, Date effectiveDateTo) {
         return transactionExistsInternal(accountId, transactionTypeId, null, null, effectiveDateFrom, effectiveDateTo);
     }
@@ -3036,6 +3027,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public boolean transactionExists(String accountId, String transactionTypeId, BigDecimal amountFrom, BigDecimal amountTo) {
         return transactionExistsInternal(accountId, transactionTypeId, amountFrom, amountTo, null, null);
     }
@@ -3053,6 +3045,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      *         with the Effective Dates that fall into the specified range exists.
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public boolean transactionExists(String accountId, String transactionTypeId, BigDecimal amountFrom,
                                      BigDecimal amountTo, Date effectiveDateFrom, Date effectiveDateTo) {
         return transactionExistsInternal(accountId, transactionTypeId, amountFrom, amountTo, effectiveDateFrom, effectiveDateTo);
@@ -3121,10 +3114,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed({Permission.READ_TRANSACTION, Permission.READ_TRANSACTION_TYPE})
     public BigDecimal getUnallocatedAmount(List<Transaction> transactions, TransactionTypeValue transactionType,
                                            boolean restricted) {
-
-        PermissionUtils.checkPermissions(Permission.READ_TRANSACTION, Permission.READ_TRANSACTION_TYPE);
 
         BigDecimal unallocatedAmount = BigDecimal.ZERO;
 
@@ -3414,6 +3406,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_TRANSACTION)
     public BigDecimal getCancellationAmount(Long chargeId) {
         return getCancellationAmount(chargeId, new Date());
     }
