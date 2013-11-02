@@ -238,6 +238,7 @@
 										<bean parent="Uif-InputField" p:propertyName="unallocatedAmount" p:label="Unallocated" p:style="text-align: right; width: 10%;" p:readOnly="true"/>
 										<bean parent="Uif-InputField" p:propertyName="refundAmount" p:label="Amount to Refund" p:readOnly="true"/>
 										<bean parent="Uif-MessageField" p:messageText="@{(#line.generatedRefund != null) ? #line.generatedRefund.status.toString() : ''}" p:label="Refund Status"/>
+										<bean parent="Uif-MessageField" p:messageText="@{(#line.generatedRefund != null) ? #line.generatedRefund.refundType.name : ''}" p:label="Refund Type"/>
 									</list>
 								</property>
 							</bean>
@@ -452,14 +453,6 @@
 					</property>
 				</bean>
 				
-				<!-- View Generated Refund Transaction button -->
-				<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="View Generated Refund Transaction"
-						p:onClickScript="alert('Refund Transaction Details');"/>
-						
-						<!-- p:onClickScript="showLightboxComponent('transactionDetailLightboxRunningTotal@{refund.getTransaction().getId()}');" -->
-						
-				<ref bean="transactionDetailLightboxRunningTotal"/>
-						
 				<!-- View Refund Manifest Information section -->
 				<bean parent="Uif-Disclosure-HorizontalBoxSection" p:readOnly="true" p:headerText="View Refund Manifest Information" p:style="width: 100%;">
 					<property name="items">
