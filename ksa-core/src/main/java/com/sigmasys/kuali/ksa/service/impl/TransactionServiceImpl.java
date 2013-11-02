@@ -4050,6 +4050,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Payment> getPotentialRefunds(Set<String> accountIds, Date startDate, Date endDate, Set<Long> tagIds) {
 
+        if (CollectionUtils.isEmpty(accountIds)) {
+            String errMsg = "Account IDs are required";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
         StringBuilder queryBuilder = new StringBuilder("select distinct t from Payment t ");
 
         queryBuilder.append(GET_TRANSACTION_JOIN);
