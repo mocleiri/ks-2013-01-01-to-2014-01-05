@@ -343,4 +343,22 @@ public interface RefundService {
      * @return A List of <code>Refund</code>s belonging to the Group with the given ID.
      */
     List<Refund> getRefundGroup(String groupId);
+
+    /**
+     * Returns Refunds for all specified Accounts.
+     *
+     * @param accounts Accounts for which to return Refunds.
+     * @return Refunds for the given Accounts.
+     */
+    List<Refund> getAccountsRefunds(List<String> accounts);
+
+    /**
+     * Returns Refunds for all specified Accounts and date range.
+     *
+     * @param accounts Accounts for which to return Refunds.
+     * @param dateFrom Start of the date range.
+     * @param dateTo   End of the date range.
+     * @return Refunds for the given Accounts.
+     */
+    List<Refund> getAccountsRefunds(List<String> accounts, Date dateFrom, Date dateTo);
 }

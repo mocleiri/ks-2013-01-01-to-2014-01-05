@@ -18,6 +18,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.displaytag.util.CollectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import com.sigmasys.kuali.ksa.jaxb.BatchAch;
 import com.sigmasys.kuali.ksa.jaxb.BatchCheck;
 import com.sigmasys.kuali.ksa.jaxb.Check;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * The refund service is the core of KSA-RM-RM. It handles the production of refunds from the system.
@@ -898,12 +900,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Transactional(readOnly = true)
     public List<Refund> getAccountRefunds(String userId) {
 
-        // Create a run a query to get all refunds with matching Account IDs
-        Query query = em.createQuery(GET_REFUNDS_SELECT + " where t.account.id = :accountId ");
-
-        query.setParameter("accountId", userId);
-
-        return query.getResultList();
+        return getAccountsRefunds(Arrays.asList(userId));
     }
 
     /**
@@ -918,15 +915,64 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Transactional(readOnly = true)
     public List<Refund> getAccountRefunds(String userId, Date dateFrom, Date dateTo) {
 
-        // Create a run a query to get all refunds with matching Account IDs
-        Query query = em.createQuery(GET_REFUNDS_SELECT +
-                " where t.account.id = :accountId and t.effectiveDate between :dateFrom and :dateTo ");
+        return getAccountsRefunds(Arrays.asList(userId), dateFrom, dateTo);
+    }
 
-        query.setParameter("accountId", userId);
-        query.setParameter("dateFrom", CalendarUtils.removeTime(dateFrom), TemporalType.DATE);
-        query.setParameter("dateTo", CalendarUtils.removeTime(dateTo), TemporalType.DATE);
+    /**
+     * Returns Refunds for all specified Accounts.
+     *
+     * @param accounts Accounts for which to return Refunds.
+     * @return Refunds for the given Accounts.
+     */
+    @Override
+    public List<Refund> getAccountsRefunds(List<String> accounts) {
 
-        return query.getResultList();
+        return getAccountsRefunds(accounts, null, null);
+    }
+
+    /**
+     * Returns Refunds for all specified Accounts and date range.
+     *
+     * @param accounts Accounts for which to return Refunds.
+     * @param dateFrom Start of the date range.
+     * @param dateTo   End of the date range.
+     * @return Refunds for the given Accounts.
+     */
+    @Override
+    public List<Refund> getAccountsRefunds(List<String> accounts, Date dateFrom, Date dateTo) {
+
+        if (CollectionUtils.isEmpty(accounts)) {
+
+            return new ArrayList<Refund>();
+        } else {
+
+            // Create a run a query to get all refunds with matching Account IDs
+            StringBuilder sql = new StringBuilder(GET_REFUNDS_SELECT + " where t.account.id in (:accountIds) ");
+            boolean hasDateFrom = (dateFrom != null);
+            boolean hasDateTo = (dateTo != null);
+
+            if (hasDateFrom) {
+                sql.append(" and t.effectiveDate >= :dateFrom ");
+            }
+
+            if (hasDateTo) {
+                sql.append(" and t.effectiveDate <= :dateTo ");
+            }
+
+            Query query = em.createQuery(sql.toString());
+
+            query.setParameter("accountIds", accounts);
+
+            if (hasDateFrom) {
+                query.setParameter("dateFrom", CalendarUtils.removeTime(dateFrom), TemporalType.DATE);
+            }
+
+            if (hasDateTo) {
+                query.setParameter("dateTo", CalendarUtils.removeTime(dateTo), TemporalType.DATE);
+            }
+
+            return query.getResultList();
+        }
     }
 
     /* ****************************************************************
