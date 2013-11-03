@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.model.Information;
 import com.sigmasys.kuali.ksa.model.Memo;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,7 +42,8 @@ public class MemoModel extends InformationModel {
             Memo memo = new Memo();
             Information parent = this.getParentEntity();
             if(parent != null) {
-                memo.setEffectiveDate(parent.getEffectiveDate());
+                memo.setEffectiveDate(new Date());
+                memo.setExpirationDate(parent.getExpirationDate());
             }
             followupMemoModel.setParentEntity(memo);
         }
