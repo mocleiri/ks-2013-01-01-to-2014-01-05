@@ -28,7 +28,7 @@ public class AccountRefundForm extends TransactionForm {
      * Refund status to filter on.
      * A <code>null</code> refund status means "Show All Status Types".
      */
-    private RefundStatus refundStatusCode;
+    private String filterRefundStatusCode;
 
     /**
      * A list of PotentialRefundModel objects.
@@ -62,6 +62,12 @@ public class AccountRefundForm extends TransactionForm {
     private RequestPotentialRefundSummaryModel requestRefundSummary;
 
     /**
+     * Tag lookup support.
+     */
+    private String newTag;
+
+
+    /**
      * End of the filter date range
      */
     private Date filterDateTo;
@@ -84,12 +90,12 @@ public class AccountRefundForm extends TransactionForm {
         this.account = account;
     }
 
-    public RefundStatus getRefundStatusCode() {
-        return refundStatusCode;
+    public String getFilterRefundStatusCode() {
+        return filterRefundStatusCode;
     }
 
-    public void setRefundStatusCode(RefundStatus refundStatusCode) {
-        this.refundStatusCode = refundStatusCode;
+    public void setFilterRefundStatusCode(String refundStatusCode) {
+        this.filterRefundStatusCode = refundStatusCode;
     }
 
     public List<PotentialRefundModel> getPotentialRefunds() {
@@ -141,5 +147,13 @@ public class AccountRefundForm extends TransactionForm {
 
     public void setRequestRefundSummary(RequestPotentialRefundSummaryModel requestRefundSummary) {
         this.requestRefundSummary = requestRefundSummary;
+    }
+
+    public String getNewTag() {
+        return newTag;
+    }
+
+    public void setNewTag(String newTag) {
+        this.newTag = newTag;
     }
 }

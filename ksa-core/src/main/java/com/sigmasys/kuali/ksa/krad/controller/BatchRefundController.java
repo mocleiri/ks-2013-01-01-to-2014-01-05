@@ -84,6 +84,38 @@ public class BatchRefundController extends DownloadController {
         }
 
         findAllRefunds(form);
+
+        return getUIFModelAndView(form);
+    }
+
+    /**
+     * Invoked when the "Remove" icon is clicked next to a filter Account.
+     *
+     * @param form      The form object.
+     * @param accountId ID of the account to be removed from the filter.
+     * @return ModelAndView
+     * @throws Exception If an error occurs.
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeFilterAccount")
+    public ModelAndView removeFilterAccount(@ModelAttribute("KualiForm") BatchRefundForm form,
+                                            @RequestParam("accountId") String accountId) throws Exception {
+
+        // Find the filter Account with the specified ID and remove it from filtering:
+        List<Account> filterAccounts = form.getFilterAccounts();
+
+        if (filterAccounts != null) {
+
+            for (Account filterAccount : filterAccounts) {
+                if (StringUtils.equals(filterAccount.getId(), accountId)) {
+                    filterAccounts.remove(filterAccount);
+
+                    break;
+                }
+            }
+        }
+
+        findAllRefunds(form);
+
         return getUIFModelAndView(form);
     }
 
@@ -106,6 +138,37 @@ public class BatchRefundController extends DownloadController {
 
         if (newFilterTag != null) {
             filterTags.add(newFilterTag);
+        }
+
+        findAllRefunds(form);
+
+        return getUIFModelAndView(form);
+    }
+
+    /**
+     * Invoked when the "Remove" icon is clicked next to a filter Tag.
+     *
+     * @param form  The form object.
+     * @param tagId ID of the account to be removed from the filter.
+     * @return ModelAndView
+     * @throws Exception If an error occurs.
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeFilterTag")
+    public ModelAndView removeFilterTag(@ModelAttribute("KualiForm") BatchRefundForm form,
+                                            @RequestParam("tagId") Long tagId) throws Exception {
+
+        // Find the filter Tag with the specified ID and remove it from filtering:
+        List<Tag> filterTags = form.getFilterTags();
+
+        if ((filterTags != null) && (tagId != null)) {
+
+            for (Tag filterTag : filterTags) {
+                if (filterTag.getId().compareTo(tagId) == 0) {
+                    filterTags.remove(filterTag);
+
+                    break;
+                }
+            }
         }
 
         findAllRefunds(form);
@@ -267,8 +330,8 @@ public class BatchRefundController extends DownloadController {
         }
 
         // Create model objects to display in the tables:
-        List<RefundModel> refundModels = createRefundModelList(form, filterDateFrom, filterDateTo);
         List<PotentialRefundModel> potentialRefundModels = createPotentialRefundList(form, filterDateFrom, filterDateTo);
+        List<RefundModel> refundModels = createRefundModelList(form, filterDateFrom, filterDateTo);
 
         form.setAllRefunds(refundModels);
         form.setPotentialRefunds(potentialRefundModels);
@@ -285,19 +348,21 @@ public class BatchRefundController extends DownloadController {
     private List<RefundModel> createRefundModelList(BatchRefundForm form, Date dateFrom, Date dateTo) {
 
         // Get all Refunds for all Accounts:
-        List<Account> filterAccounts = form.getFilterAccounts();
-        List<String> accountIds = getAccountIds(filterAccounts);
-        List<Refund> refunds = refundService.getAccountsRefunds(accountIds, dateFrom, dateTo);
-
-        // Create a list of RefundModel objects:
+        Set<String> filterAccountIds = getFilterAccountIds(form);
         List<RefundModel> refundModels = new ArrayList<RefundModel>();
 
-        if (refunds != null) {
-            for (Refund refund : refunds) {
-                // Create a new RefundModel object:
-                RefundModel refundModel = createRefundModel(refund);
+        if ((filterAccountIds != null) && !filterAccountIds.isEmpty()) {
 
-                refundModels.add(refundModel);
+            // Get Refunds for the selected Account IDs:
+            List<Refund> refunds = refundService.getAccountsRefunds(filterAccountIds, dateFrom, dateTo);
+
+            if (refunds != null) {
+                for (Refund refund : refunds) {
+                    // Create a new RefundModel object:
+                    RefundModel refundModel = createRefundModel(refund);
+
+                    refundModels.add(refundModel);
+                }
             }
         }
 
@@ -386,36 +451,65 @@ public class BatchRefundController extends DownloadController {
     private List<PotentialRefundModel> createPotentialRefundList(BatchRefundForm form, Date dateFrom, Date dateTo) {
 
         // Get Payments for the current account within the specified date range.
-        List<Account> filterAccounts = form.getFilterAccounts();
-        List<String> accountIds = getAccountIds(filterAccounts);
+        Set<String> filterAccountIds = getFilterAccountIds(form);
+        List<PotentialRefundModel> potentialRefundModels = new ArrayList<PotentialRefundModel>();
 
-        List<Payment> payments = transactionService.getPotentialRefunds(new HashSet<String>(accountIds), dateFrom, dateTo);
+        if ((filterAccountIds != null) && !filterAccountIds.isEmpty()) {
 
-        List<PotentialRefundModel> potentialRefundModels = new ArrayList<PotentialRefundModel>(payments.size());
+            Set<Long> filterTagIds = getFilterTagIds(form);
+            List<Payment> payments = transactionService.getPotentialRefunds(filterAccountIds, dateFrom, dateTo, filterTagIds);
 
-        for (Payment payment : payments) {
-            potentialRefundModels.add(new PotentialRefundModel(payment));
+            for (Payment payment : payments) {
+                potentialRefundModels.add(new PotentialRefundModel(payment));
+            }
         }
 
         return potentialRefundModels;
     }
 
     /**
-     * Returns a List of Account IDs of the given Accounts.
-     * @param accounts A List of Accounts which IDs to return.
-     * @return A List of Account IDs.
+     * Returns a List of filter Account IDs of the given form object.
+     * @param form The form object.
+     * @return A List of filter Account IDs.
      */
-    private List<String> getAccountIds(List<Account> accounts) {
+    private Set<String> getFilterAccountIds(BatchRefundForm form) {
 
-        List<String> accountIds = new ArrayList<String>();
+        List<Account> filterAccounts = form.getFilterAccounts();
+        Set<String> filterAccountIds = null;
 
-        if (accounts != null) {
-            for (Account account : accounts) {
-                accountIds.add(account.getId());
+        if ((filterAccounts != null) && !filterAccounts.isEmpty()) {
+
+            filterAccountIds = new HashSet<String>(filterAccounts.size());
+
+            for (Account account : filterAccounts) {
+                filterAccountIds.add(account.getId());
             }
         }
 
-        return accountIds;
+        return filterAccountIds;
+    }
+
+    /**
+     * Returns a List of IDs of the currently selected Tags.
+     *
+     * @param form The form object.
+     * @return
+     */
+    private Set<Long> getFilterTagIds(BatchRefundForm form) {
+
+        List<Tag> filterTags = form.getFilterTags();
+        Set<Long> filterTagIds = null;
+
+        if ((filterTags != null) && !filterTags.isEmpty()) {
+
+            filterTagIds = new HashSet<Long>(filterTags.size());
+
+            for (Tag filterTag : filterTags) {
+                filterTagIds.add(filterTag.getId());
+            }
+        }
+
+        return filterTagIds;
     }
 
     /**

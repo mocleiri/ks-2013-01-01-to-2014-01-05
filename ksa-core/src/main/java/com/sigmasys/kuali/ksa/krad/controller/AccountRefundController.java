@@ -7,7 +7,10 @@ import com.sigmasys.kuali.ksa.krad.model.RequestPotentialRefundSummaryModel;
 import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.service.*;
+import com.sigmasys.kuali.ksa.service.AccountService;
+import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.PaymentService;
+import com.sigmasys.kuali.ksa.service.RefundService;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,9 @@ public class AccountRefundController extends DownloadController {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private AuditableEntityService auditableEntityService;
 
 
     /**
@@ -76,6 +82,65 @@ public class AccountRefundController extends DownloadController {
         AccountUtils.populateTransactionHeading(form, userId);
 
         return form;
+    }
+
+    /**
+     * Tag filtering supprot callback.
+     * @param form The form object.
+     * @return ModelAndView.
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterTags")
+    public ModelAndView filterTags(@ModelAttribute("KualiForm") AccountRefundForm form,
+                                   @RequestParam("userId") String userId) throws Exception {
+
+        String newFilterTagCode = form.getNewTag();
+        Tag newFilterTag = auditableEntityService.getAuditableEntity(newFilterTagCode, Tag.class);
+        List<Tag> filterTags = form.getFilterTags();
+
+        if (filterTags == null) {
+            filterTags = new ArrayList<Tag>();
+            form.setFilterTags(filterTags);
+        }
+
+        if (newFilterTag != null) {
+            filterTags.add(newFilterTag);
+        }
+
+        findAllRefunds(form, userId);
+
+        return getUIFModelAndView(form);
+    }
+
+    /**
+     * Invoked when the "Remove" icon is clicked next to a filter Tag.
+     *
+     * @param form  The form object.
+     * @param tagId ID of the account to be removed from the filter.
+     * @return ModelAndView
+     * @throws Exception If an error occurs.
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeFilterTag")
+    public ModelAndView removeFilterTag(@ModelAttribute("KualiForm") AccountRefundForm form,
+                                        @RequestParam("tagId") Long tagId,
+                                        @RequestParam("userId") String userId) throws Exception {
+
+        // Find the filter Tag with the specified ID and remove it from filtering:
+        List<Tag> filterTags = form.getFilterTags();
+
+        if ((filterTags != null) && (tagId != null)) {
+
+            for (Tag filterTag : filterTags) {
+                if (filterTag.getId().compareTo(tagId) == 0) {
+                    filterTags.remove(filterTag);
+
+                    break;
+                }
+            }
+        }
+
+        findAllRefunds(form, userId);
+
+        return getUIFModelAndView(form);
     }
 
     /**
@@ -246,20 +311,17 @@ public class AccountRefundController extends DownloadController {
      */
     private void findAllRefunds(AccountRefundForm form, String userId) {
 
-        Date filterDateFrom;
-        Date filterDateTo;
+        Date filterDateFrom = null;
+        Date filterDateTo = null;
 
         if (StringUtils.equals(form.getDateRangeType(), RefundDateRangeKeyValuesFinder.RANGE)) {
-            filterDateFrom = (form.getFilterDateFrom() != null) ? form.getFilterDateFrom() : new Date(0);
-            filterDateTo = (form.getFilterDateTo() != null) ? form.getFilterDateTo() : new Date();
-        } else { // ALL Dates
-            filterDateFrom = new Date(0);
-            filterDateTo = new Date();
+            filterDateFrom = form.getFilterDateFrom();
+            filterDateTo = form.getFilterDateTo();
         }
 
         // Create model objects to display in the tables:
-        List<RefundModel> refundModels = createRefundModelList(userId, filterDateFrom, filterDateTo);
-        List<PotentialRefundModel> potentialRefundModels = createPotentialRefundList(userId, filterDateFrom, filterDateTo);
+        List<PotentialRefundModel> potentialRefundModels = createPotentialRefundList(form,  userId, filterDateFrom, filterDateTo);
+        List<RefundModel> refundModels = createRefundModelList(form, userId, filterDateFrom, filterDateTo);
 
         form.setAllRefunds(refundModels);
         form.setPotentialRefunds(potentialRefundModels);
@@ -268,25 +330,32 @@ public class AccountRefundController extends DownloadController {
     /**
      * Creates a list of RefundModel objects to be displayed in the "Refund Status" table.
      *
+     * @param form     The form object.
      * @param userId   The current account Id.
      * @param dateFrom Filtering date from.
      * @param dateTo   Filtering date to.
      * @return list of RefundModel instances
      */
-    private List<RefundModel> createRefundModelList(String userId, Date dateFrom, Date dateTo) {
+    private List<RefundModel> createRefundModelList(AccountRefundForm form, String userId, Date dateFrom, Date dateTo) {
 
         // Get all Refunds for the current Account:
         List<Refund> refunds = refundService.getAccountRefunds(userId, dateFrom, dateTo);
 
         // Create a list of RefundModel objects:
         List<RefundModel> refundModels = new ArrayList<RefundModel>();
+        String filterRefundStatusCode = form.getFilterRefundStatusCode();
 
         if (refunds != null) {
             for (Refund refund : refunds) {
-                // Create a new RefundModel object:
-                RefundModel refundModel = createRefundModel(refund);
 
-                refundModels.add(refundModel);
+                if (StringUtils.isBlank(filterRefundStatusCode) ||
+                        StringUtils.equals(filterRefundStatusCode, refund.getStatus().getId())) {
+
+                    // Create a new RefundModel object:
+                    RefundModel refundModel = createRefundModel(refund);
+
+                    refundModels.add(refundModel);
+                }
             }
         }
 
@@ -368,19 +437,21 @@ public class AccountRefundController extends DownloadController {
     /**
      * Creates a list of PotentialRefundModel objects to be displayed in the "Refund Status" table.
      *
-     * @param userId   The current account Id.
-     * @param dateFrom Filtering date from.
-     * @param dateTo   Filtering date to.
+     * @param form      The form object.
+     * @param userId    The current account Id.
+     * @param dateFrom  Filtering date from.
+     * @param dateTo    Filtering date to.
      * @return list of potential refunds
      */
-    private List<PotentialRefundModel> createPotentialRefundList(String userId, Date dateFrom, Date dateTo) {
+    private List<PotentialRefundModel> createPotentialRefundList(AccountRefundForm form, String userId, Date dateFrom, Date dateTo) {
 
         // Get Payments for the current account within the specified date range.
 
         Set<String> userIds = new HashSet<String>(1);
         userIds.add(userId);
 
-        List<Payment> payments = transactionService.getPotentialRefunds(userIds, dateFrom, dateTo);
+        Set<Long> filterTagIds = getFilterTagIds(form);
+        List<Payment> payments = transactionService.getPotentialRefunds(userIds, dateFrom, dateTo, filterTagIds);
 
         List<PotentialRefundModel> potentialRefundModels = new ArrayList<PotentialRefundModel>(payments.size());
 
@@ -481,6 +552,29 @@ public class AccountRefundController extends DownloadController {
         }
 
         return selectedRefunds;
+    }
+
+    /**
+     * Returns a List of IDs of the currently selected Tags.
+     *
+     * @param form The form object.
+     * @return IDs of the filter Tags.
+     */
+    private Set<Long> getFilterTagIds(AccountRefundForm form) {
+
+        List<Tag> filterTags = form.getFilterTags();
+        Set<Long> filterTagIds = null;
+
+        if ((filterTags != null) && !filterTags.isEmpty()) {
+
+            filterTagIds = new HashSet<Long>(filterTags.size());
+
+            for (Tag filterTag : filterTags) {
+                filterTagIds.add(filterTag.getId());
+            }
+        }
+
+        return filterTagIds;
     }
 
     /**
