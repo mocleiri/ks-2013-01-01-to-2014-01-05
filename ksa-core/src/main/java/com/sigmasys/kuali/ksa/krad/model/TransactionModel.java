@@ -145,6 +145,13 @@ public class TransactionModel extends Transaction {
         setGeneralLedgerType(transaction.getGeneralLedgerType());
         setGlOverridden(transaction.isGlOverridden());
 
+        if (parentTransaction != null) {
+            parentTransaction.getCurrency().getCode();
+            parentTransaction.getGeneralLedgerType().getDescription();
+            parentTransaction.getTransactionType().getId().getId();
+            parentTransaction.getRollup().getDescription();
+        }
+
         // charge, payment or deferment specific data members
         BigDecimal amount = transaction.getAmount();
 
