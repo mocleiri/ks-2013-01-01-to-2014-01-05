@@ -604,7 +604,10 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                 List<Object> results = query.getResultList();
 
                 if (CollectionUtils.isNotEmpty(results)) {
-                    chargeRemainingFund = chargeRemainingFund.subtract(new BigDecimal(results.get(0).toString()));
+                    Object result = results.get(0);
+                    if (result != null) {
+                        chargeRemainingFund = chargeRemainingFund.subtract(new BigDecimal(result.toString()));
+                    }
                 }
             }
 
