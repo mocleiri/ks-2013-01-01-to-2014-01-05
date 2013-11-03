@@ -605,8 +605,11 @@ public class PaymentPlanController extends GenericSearchController {
                 }catch (Throwable t) {
                     throw new RuntimeException(t);
                 }
-
+                thirdPartyAllowableChargeModel.setMaxPercentage(thirdPartyAllowableChargeModel.getMaxPercentage().divide(new BigDecimal(100)));
+                allowableChargeModels.add(thirdPartyAllowableChargeModel);
             }
+
+            model.setThirdPartyAllowableCharges(allowableChargeModels);
 
             List<ThirdPartyTransferDetail> transferDetails = thirdPartyTransferService.getThirdPartyTransfersByPlanId(plan.getId());
 
