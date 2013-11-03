@@ -146,10 +146,18 @@ public class TransactionModel extends Transaction {
         setGlOverridden(transaction.isGlOverridden());
 
         if (parentTransaction != null) {
-            parentTransaction.getCurrency().getCode();
-            parentTransaction.getGeneralLedgerType().getDescription();
-            parentTransaction.getTransactionType().getId().getId();
-            parentTransaction.getRollup().getDescription();
+            if (parentTransaction.getCurrency() != null) {
+                parentTransaction.getCurrency().getCode();
+            }
+            if (parentTransaction.getGeneralLedgerType() != null) {
+                parentTransaction.getGeneralLedgerType().getDescription();
+            }
+            if (parentTransaction.getTransactionType() != null) {
+                parentTransaction.getTransactionType().getId().getId();
+            }
+            if (parentTransaction.getRollup() != null) {
+                parentTransaction.getRollup().getDescription();
+            }
         }
 
         // charge, payment or deferment specific data members
