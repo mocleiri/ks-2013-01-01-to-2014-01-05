@@ -331,6 +331,8 @@ public class TransactionController extends GenericSearchController {
             // Set the list of allocations
             m.setAllocations(transactionService.getAllocations(t.getId()));
 
+            m.setRefundAmount(t.getUnallocatedAmount());
+
             // Add the memos
             m.setMemos(informationService.getMemos(t.getId()));
             models.add(m);
