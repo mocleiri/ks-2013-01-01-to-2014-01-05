@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.sigmasys.kuali.ksa.model.PostalAddress;
 import com.sigmasys.kuali.ksa.model.Refund;
@@ -350,7 +351,7 @@ public interface RefundService {
      * @param accounts Accounts for which to return Refunds.
      * @return Refunds for the given Accounts.
      */
-    List<Refund> getAccountsRefunds(List<String> accounts);
+    List<Refund> getAccountsRefunds(Set<String> accounts);
 
     /**
      * Returns Refunds for all specified Accounts and date range.
@@ -360,5 +361,5 @@ public interface RefundService {
      * @param dateTo   End of the date range.
      * @return Refunds for the given Accounts.
      */
-    List<Refund> getAccountsRefunds(List<String> accounts, Date dateFrom, Date dateTo);
+    List<Refund> getAccountsRefunds(Set<String> accounts, Date dateFrom, Date dateTo);
 }

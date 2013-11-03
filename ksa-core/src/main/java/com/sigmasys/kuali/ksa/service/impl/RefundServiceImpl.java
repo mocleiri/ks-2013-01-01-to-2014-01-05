@@ -1,18 +1,16 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
-import java.math.BigDecimal;
-import java.util.*;
-
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import com.sigmasys.kuali.ksa.exception.*;
+import com.sigmasys.kuali.ksa.jaxb.Ach;
+import com.sigmasys.kuali.ksa.jaxb.BatchAch;
+import com.sigmasys.kuali.ksa.jaxb.BatchCheck;
+import com.sigmasys.kuali.ksa.jaxb.Check;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
+import com.sigmasys.kuali.ksa.util.RequestUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -22,12 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sigmasys.kuali.ksa.jaxb.Ach;
-import com.sigmasys.kuali.ksa.jaxb.BatchAch;
-import com.sigmasys.kuali.ksa.jaxb.BatchCheck;
-import com.sigmasys.kuali.ksa.jaxb.Check;
-import com.sigmasys.kuali.ksa.util.RequestUtils;
-import org.springframework.util.CollectionUtils;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
+import java.util.*;
 
 
 
@@ -247,12 +245,12 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     }
 
     /**
-     * A convenience methods that checks for unverified Refunds for each of the specified accounts in the specified date range.
+     * A convenience methods that checks for unverified Refunds for each of the specified accountIds in the specified date range.
      *
-     * @param accountIds Student accounts for which to look for unverified refunds.
+     * @param accountIds Student accountIds for which to look for unverified refunds.
      * @param dateFrom   Beginning of the Date range in which to search for refunds.
      * @param dateTo     End of the Date range in which to search for refunds.
-     * @return List of unverified refunds for all specified accounts.
+     * @return List of unverified refunds for all specified accountIds.
      */
     @Override
     @Transactional(readOnly = false)
@@ -272,7 +270,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      *
      * @param dateFrom Beginning of the Date range in which to search for refunds.
      * @param dateTo   End of the Date range in which to search for refunds.
-     * @return List of unverified refunds for all accounts in the given date range.
+     * @return List of unverified refunds for all accountIds in the given date range.
      */
     @Override
     @Transactional(readOnly = false)
@@ -290,7 +288,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     /**
      * For each account in the system, searches for refunds for the entire life.
      *
-     * @return List of all Refunds for all accounts in the system for the entire life.
+     * @return List of all Refunds for all accountIds in the system for the entire life.
      */
     @Override
     @Transactional(readOnly = false)
@@ -901,7 +899,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Transactional(readOnly = true)
     public List<Refund> getAccountRefunds(String userId) {
 
-        return getAccountsRefunds(Arrays.asList(userId));
+        return getAccountRefunds(userId, null, null);
     }
 
     /**
@@ -916,17 +914,21 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Transactional(readOnly = true)
     public List<Refund> getAccountRefunds(String userId, Date dateFrom, Date dateTo) {
 
-        return getAccountsRefunds(Arrays.asList(userId), dateFrom, dateTo);
+        Set<String> accountIds = new HashSet<String>(1);
+
+        accountIds.add(userId);
+
+        return getAccountsRefunds(accountIds, dateFrom, dateTo);
     }
 
     /**
      * Returns Refunds for all specified Accounts.
      *
-     * @param accounts Accounts for which to return Refunds.
+     * @param accounts Account IDs for which to return Refunds.
      * @return Refunds for the given Accounts.
      */
     @Override
-    public List<Refund> getAccountsRefunds(List<String> accounts) {
+    public List<Refund> getAccountsRefunds(Set<String> accounts) {
 
         return getAccountsRefunds(accounts, null, null);
     }
@@ -934,46 +936,46 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     /**
      * Returns Refunds for all specified Accounts and date range.
      *
-     * @param accounts Accounts for which to return Refunds.
+     * @param accountIds Accounts for which to return Refunds.
      * @param dateFrom Start of the date range.
      * @param dateTo   End of the date range.
      * @return Refunds for the given Accounts.
      */
     @Override
-    public List<Refund> getAccountsRefunds(List<String> accounts, Date dateFrom, Date dateTo) {
+    public List<Refund> getAccountsRefunds(Set<String> accountIds, Date dateFrom, Date dateTo) {
 
-        if (CollectionUtils.isEmpty(accounts)) {
-
-            return new ArrayList<Refund>();
-        } else {
-
-            // Create a run a query to get all refunds with matching Account IDs
-            StringBuilder sql = new StringBuilder(GET_REFUNDS_SELECT + " where t.account.id in (:accountIds) ");
-            boolean hasDateFrom = (dateFrom != null);
-            boolean hasDateTo = (dateTo != null);
-
-            if (hasDateFrom) {
-                sql.append(" and t.effectiveDate >= :dateFrom ");
-            }
-
-            if (hasDateTo) {
-                sql.append(" and t.effectiveDate <= :dateTo ");
-            }
-
-            Query query = em.createQuery(sql.toString());
-
-            query.setParameter("accountIds", accounts);
-
-            if (hasDateFrom) {
-                query.setParameter("dateFrom", CalendarUtils.removeTime(dateFrom), TemporalType.DATE);
-            }
-
-            if (hasDateTo) {
-                query.setParameter("dateTo", CalendarUtils.removeTime(dateTo), TemporalType.DATE);
-            }
-
-            return query.getResultList();
+        if (CollectionUtils.isEmpty(accountIds)) {
+            String errMsg = "Account IDs are required";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
         }
+
+        // Create a run a query to get all refunds with matching Account IDs
+        StringBuilder sql = new StringBuilder(GET_REFUNDS_SELECT + " where t.account.id in (:accountIds) ");
+        boolean hasDateFrom = (dateFrom != null);
+        boolean hasDateTo = (dateTo != null);
+
+        if (hasDateFrom) {
+            sql.append(" and t.effectiveDate >= :dateFrom ");
+        }
+
+        if (hasDateTo) {
+            sql.append(" and t.effectiveDate <= :dateTo ");
+        }
+
+        Query query = em.createQuery(sql.toString());
+
+        query.setParameter("accountIds", new ArrayList<String>(accountIds));
+
+        if (hasDateFrom) {
+            query.setParameter("dateFrom", CalendarUtils.removeTime(dateFrom), TemporalType.DATE);
+        }
+
+        if (hasDateTo) {
+            query.setParameter("dateTo", CalendarUtils.removeTime(dateTo), TemporalType.DATE);
+        }
+
+        return query.getResultList();
     }
 
     /* ****************************************************************
