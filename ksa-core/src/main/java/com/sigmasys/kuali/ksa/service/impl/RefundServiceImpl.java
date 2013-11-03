@@ -18,7 +18,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.displaytag.util.CollectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +28,8 @@ import com.sigmasys.kuali.ksa.jaxb.BatchCheck;
 import com.sigmasys.kuali.ksa.jaxb.Check;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
 import org.springframework.util.CollectionUtils;
+
+
 
 /**
  * The refund service is the core of KSA-RM-RM. It handles the production of refunds from the system.
