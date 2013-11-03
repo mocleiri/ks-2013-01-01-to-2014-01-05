@@ -371,7 +371,7 @@ public class MemoController extends GenericSearchController {
 
         informationService.persistInformation(memo);
 
-        List<Memo> memos = informationService.getMemos();
+        List<Memo> memos = informationService.getMemos(userId);
         form.setMemos(memos);
 
         GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Memo expired");

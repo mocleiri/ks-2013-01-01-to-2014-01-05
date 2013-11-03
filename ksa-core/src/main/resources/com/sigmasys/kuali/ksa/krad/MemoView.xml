@@ -146,6 +146,7 @@
             <list>
                 <bean parent="Uif-ImageField" p:source="../images/memo.png"/>
                 <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective Date"/>
+                <bean parent="Uif-InputField" p:propertyName="expirationDate" p:label="Expiration Date"/>
                 <bean parent="Uif-InputField" p:propertyName="text" p:label="Description"/>
                 <bean parent="Uif-HorizontalFieldGroup" p:label="Actions">
                     <property name="items">
@@ -210,6 +211,7 @@
             <list>
                 <bean parent="Uif-ImageField" p:source="../images/memo.png"/>
                 <bean parent="Uif-InputField" p:propertyName="effectiveDate" p:label="Effective Date"/>
+                <bean parent="Uif-InputField" p:propertyName="expirationDate" p:label="Expiration Date"/>
                 <bean parent="Uif-InputField" p:propertyName="text" p:label="Description"/>
                 <bean parent="Uif-HorizontalFieldGroup" p:label="Actions">
                     <property name="items">
