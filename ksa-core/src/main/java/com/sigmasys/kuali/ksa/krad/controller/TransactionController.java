@@ -700,7 +700,7 @@ public class TransactionController extends GenericSearchController {
 
         String reason = modelToReverse.getReverseTransactionReason();
         if(reason == null || "".equals(reason)) {
-            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Refund reason is required");
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Reverse reason is required");
             return getUIFModelAndView(form);
         }
 
