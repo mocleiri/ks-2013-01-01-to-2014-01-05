@@ -3,34 +3,40 @@ Feature: WC.Edit Course Offerings
   Background:
     Given I am logged in as a Schedule Coordinator
 
-    Scenario: Verify course offering pages are accessible
+  #KSENROLL-1499
+  Scenario: Verify course offering pages are accessible
     When I search course offerings by subject code
     Then I view the course offering details
     And I can edit the course offering
     And I can return to search using the cancel button
 
+  #KSENROLL-9443
   Scenario: Edit an existing course offering changing the student registration options
     When I edit a course offering with multiple registration options
     And I clear the registration options checkboxes
     Then I can submit and the registration options are changed
 
+  #KSENROLL-9443
   Scenario: Edit an existing course offering changing credit type and credit count
     When I edit a course offering with multiple credit options
     And I change the credit type from multiple to fixed
     And I change the number of credits
     Then I can submit and the credit options are changed
 
+  #KSENROLL-9443
   Scenario: Edit an existing course offering changing credit count values
     When I edit a course offering with multiple credit options
     And I change the multiple credit values
     Then I can submit and the credit values are changed
 
+  #KSENROLL-1503.1
   Scenario: Edit an existing course offering deactivating final examinations and update the grade roster level
     When I edit a course offering with multiple format types
     And I select a final exam type of "No final exam or assessment"
     And I change the delivery format options
     Then I can submit and the course offering is updated
 
+  #KSENROLL-1503.2
   @smoke_test
   Scenario: Edit an existing course offering activating final examinations and update the grade roster level
     When I edit a course offering with multiple format types
@@ -57,6 +63,7 @@ Feature: WC.Edit Course Offerings
     When I delete the added delivery format option
     Then I can submit and the added delivery format is not present
 
+  #KSENROLL-9263
   Scenario: Edit an existing course offering's wait list options
     When I edit a course offering
     And I "deactivate" the wait list
@@ -65,17 +72,20 @@ Feature: WC.Edit Course Offerings
     And I "activate" the wait list
     Then I can submit and the course offering is updated
 
+  #KSENROLL-1505
   Scenario: Edit an existing course offering's affiliated personnel
     When I edit a course offering
     And I add an affiliated person
     Then I can submit and the course offering is updated
     And the changes of the affiliated person are persisted
 
+  #KSENROLL-1506
   Scenario: Edit an existing course offering's administering organizations and honors flag
     When I edit a course offering
     And I add an administering organization and activate the honors flag
     Then I can submit and the course offering is updated
 
+  # KSENROLL-2860/3022
   Scenario: Test that user is unable to manage course offerings when SOC is in certain states
     When I manually change a given soc-state to "Publishing"
     Then I verify that I "cannot" manage course offerings
