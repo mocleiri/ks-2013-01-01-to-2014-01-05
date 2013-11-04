@@ -44,14 +44,14 @@ public class BatchTransactionsController extends GenericSearchController {
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
-    public ModelAndView get(@ModelAttribute("KualiForm") FileUploadForm form) {
+    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=displayInitialPage")
+    public ModelAndView displayInitialPage(@ModelAttribute("KualiForm") FileUploadForm form) {
         return getUIFModelAndView(form);
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=submit")
-    public ModelAndView submit(@ModelAttribute("KualiForm") FileUploadForm form) {
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, params = "methodToCall=uploadFile")
+    public ModelAndView uploadFile(@ModelAttribute("KualiForm") FileUploadForm form) {
 
         // do submit stuff...
         // org.springframework.web.multipart.MaxUploadSizeExceededException:

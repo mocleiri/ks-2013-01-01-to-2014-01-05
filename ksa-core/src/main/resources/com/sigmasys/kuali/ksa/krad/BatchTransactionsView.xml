@@ -105,6 +105,9 @@
             <list>
                 <bean parent="Uif-InputField" p:propertyName="uploadFile" p:label="@{getLValue('ksa.label.upload.xml.file')}">
                     <property name="instructionalText" value="Select an XML file to Upload and Process. The file will be validated during the process task."/>
+					<property name="propertyEditor">
+						<bean class="com.sigmasys.kuali.ksa.krad.util.MultipartFilePropertyEditor"/>
+					</property>
                     <property name="control">
                         <bean parent="Uif-FileControl" p:size="30"/>
                     </property>
@@ -114,7 +117,7 @@
                     <property name="disclosure.render" value="false"/>
                     <property name="items">
                         <list>
-                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="submit"
+                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="uploadFile"
                                   p:actionLabel="@{getLValue('ksa.label.upload.file')}">
                                 <!--<property name="actionImage">
                                     <bean parent="Uif-ImageField"
@@ -142,7 +145,5 @@
             </list>
         </property>
     </bean>
-
-
 
 </beans>
