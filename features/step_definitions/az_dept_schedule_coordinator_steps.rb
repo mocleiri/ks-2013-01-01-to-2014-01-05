@@ -430,6 +430,14 @@ Then /^I have access to edit the format type$/ do
   end
 end
 
+Then /^I do not have access to edit the format type$/ do
+  on CourseOfferingEdit do |page|
+    page.select_format_type_add.present?.should be_false
+    page.select_grade_roster_level_add.present?.should be_false
+    page.delivery_format_add_element.present?.should be_false
+  end
+end
+
 Then /^I have access to edit the waitlists flag$/ do
   on CourseOfferingEdit do |page|
     page.waitlist_checkbox.enabled?.should be_true

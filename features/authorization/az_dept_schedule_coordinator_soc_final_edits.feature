@@ -5,13 +5,14 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Final Edits
     Given I am logged in as a Department Schedule Coordinator
     Given I am working on a term in "Final Edits" SOC state
 
+  @pending @KSENROLL-9589
   Scenario: AZ 6.2/Full_final_edits.8 Verify Department Schedule Coordinator Carol edit course offering details(in admin org) for a term
     When I edit a course offering in my admin org that has multiple credit types
     Then I have access to edit the course code suffix
     And I have access to edit the grading options
     And I have access to edit the registration options
     And I have access to edit the credit type
-    #And I have access to edit the format type #need to update after changes here  KSENROLL-9589
+    And I do not have access to edit the format type
     And I have access to edit the waitlists flag
     And I have access to edit the affiliated personnel
     And I have access to edit the administrating org
