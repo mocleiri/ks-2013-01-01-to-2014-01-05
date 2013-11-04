@@ -20,7 +20,7 @@ public class ThirdPartyPlanModel {
 
     private List<ThirdPartyAllowableChargeModel> thirdPartyAllowableCharges;
 
-    private List<ThirdPartyTransferDetail> planMembers;
+    private List<ThirdPartyMemberModel> planMembers;
     private List<ThirdPartyPlanMember> queuedMembers;
     private List<ThirdPartyTransferDetail> reversedMembers;
 
@@ -142,14 +142,14 @@ public class ThirdPartyPlanModel {
         this.thirdPartyAllowableCharges = thirdPartyAllowableCharges;
     }
 
-    public List<ThirdPartyTransferDetail> getPlanMembers() {
+    public List<ThirdPartyMemberModel> getPlanMembers() {
         if(planMembers == null){
-            planMembers = new ArrayList<ThirdPartyTransferDetail>();
+            planMembers = new ArrayList<ThirdPartyMemberModel>();
         }
         return planMembers;
     }
 
-    public void setPlanMembers(List<ThirdPartyTransferDetail> planMembers) {
+    public void setPlanMembers(List<ThirdPartyMemberModel> planMembers) {
         this.planMembers = planMembers;
     }
 

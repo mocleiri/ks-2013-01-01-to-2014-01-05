@@ -203,6 +203,90 @@ public class PaymentPlanController extends GenericSearchController {
         return getUIFModelAndView(form);
     }
 
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=reverseThirdPartyPlan")
+    public ModelAndView reverseThirdPartyPlan(@ModelAttribute("KualiForm") PaymentPlanForm form, BindingResult result,
+                                              HttpServletRequest request, HttpServletResponse response) {
+
+        String planString = request.getParameter("actionParameters[planId]");
+        Long planId;
+        try {
+            planId = Long.parseLong(planString);
+        } catch(NumberFormatException e) {
+            String errorMessage = planString + " is not a valid Third Party Plan Id";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        if(planId == 0L) {
+            String errorMessage = planString + " is not a valid Third Party Plan Id";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+
+        String transferDetailIdString = request.getParameter("actionParameters[transferDetailId]");
+        Long transferDetailId;
+
+        try {
+            transferDetailId = Long.parseLong(transferDetailIdString);
+        } catch(NumberFormatException e) {
+            String errorMessage = transferDetailIdString + " is not a valid Third Party Transfer Detail Id";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        if(transferDetailId == 0L) {
+            String errorMessage = transferDetailIdString + " is not a valid Third Party Transfer Detail Id";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+
+
+        List<ThirdPartyPlanModel> planModels = form.getThirdPartyPlans();
+
+        String memoText = null;
+
+        ThirdPartyPlanModel planModel = null;
+
+        for(ThirdPartyPlanModel plan : planModels) {
+            if(planId.equals(plan.getParent().getId())){
+                planModel = plan;
+                break;
+            }
+        }
+
+        if(planModel == null) {
+            String errorMessage = planString + " is not found in the list of Third Party Plans";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        List<ThirdPartyMemberModel> memberModels = planModel.getPlanMembers();
+        // Need to loop through and find the right one to get the memo text
+        for(ThirdPartyMemberModel model : memberModels) {
+            if(model.getTransferDetail() != null && transferDetailId.equals(model.getTransferDetail().getId())) {
+                memoText = model.getMemo().getText();
+                break;
+            }
+        }
+
+        if(memoText == null || "".equals(memoText)) {
+            String errorMessage = "Memo description is required when reversing a Third Party Payment Plan.  Plan not reversed.";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        thirdPartyTransferService.reverseThirdPartyTransfer(transferDetailId, memoText);
+
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan reversed");
+
+        populateThirdPartyForm(form);
+
+        return getUIFModelAndView(form);
+    }
+
+
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterThirdPartyPlans")
     public ModelAndView filterThirdPartyPlans(@ModelAttribute("KualiForm") PaymentPlanForm form) {
         String planString = form.getFilterPlanName();
@@ -642,7 +726,11 @@ public class PaymentPlanController extends GenericSearchController {
                 transferDetail.getDirectChargeAccount().getCompositeDefaultPersonName();
 
                 if(ThirdPartyChargeStatus.ACTIVE.equals(status)){
-                    model.getPlanMembers().add(transferDetail);
+                    ThirdPartyMemberModel memberModel = new ThirdPartyMemberModel();
+                    memberModel.setTransferDetail(transferDetail);
+                    memberModel.setPlan(plan);
+
+                    model.getPlanMembers().add(memberModel);
                 } else if(ThirdPartyChargeStatus.REVERSED.equals(status)) {
                     model.getReversedMembers().add(transferDetail);
                 }
