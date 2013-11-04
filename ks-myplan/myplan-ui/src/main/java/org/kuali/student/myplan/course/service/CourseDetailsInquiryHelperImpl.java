@@ -284,12 +284,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
         try {
             QueryByCriteria predicates = QueryByCriteria.Builder.fromPredicates(equalIgnoreCase("query", PlanConstants.PUBLISHED));
-            //List<TermInfo> termInfos = getAcademicCalendarService().searchForTerms(predicates, CourseSearchConstants.CONTEXT_INFO);
-            TermInfo termInfo = new TermInfo();
-            termInfo.setName("autumn 2013");
-            termInfo.setId("20134");
-            List<TermInfo> termInfos = new ArrayList<TermInfo>();
-            termInfos.add(termInfo);
+            List<TermInfo> termInfos = getAcademicCalendarService().searchForTerms(predicates, CourseSearchConstants.CONTEXT_INFO);
             for (TermInfo term : termInfos) {
                 /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
                 String id = getCourseHelper().getKeyForCourseOffering(courseDetails.getCourseId(), courseDetails.getSubjectArea().trim(), courseDetails.getCourseNumber().trim());
