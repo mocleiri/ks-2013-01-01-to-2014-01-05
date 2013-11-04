@@ -188,8 +188,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
         final TrailerType trailerType = objectFactory.createTrailerType();
 
         final String balanceTypeCode = configService.getParameter(KFS_BALANCE_TYPE_CODE_PARAM_NAME);
-        // TODO: figure out what 'kfs.object.type.code' value should be
-        //final String objectTypeCode = configService.getParameter(KFS_OBJECT_TYPE_CODE_PARAM_NAME);
+        final String objectTypeCode = configService.getParameter(KFS_OBJECT_TYPE_CODE_PARAM_NAME);
         final String documentTypeCode = configService.getParameter(KFS_DOCUMENT_TYPE_CODE_PARAM_NAME);
         final String documentNumberPrefix = configService.getParameter(KFS_DOCUMENT_NUMBER_PREFIX_PARAM_NAME);
         final String originationCode = configService.getParameter(KFS_ORIGINATION_CODE_PARAM_NAME);
@@ -211,9 +210,9 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
 
             final String recognitionPeriodCode = glTransmission.getRecognitionPeriod().getCode();
 
-            final int fiscalYear = glTransmission.getRecognitionPeriod().getFiscalYear();
+            final Integer fiscalYear = glTransmission.getRecognitionPeriod().getFiscalYear();
 
-            final String documentNumber = documentNumberPrefix + glTransmission.getId();
+            final String documentNumber = CommonUtils.nvl(documentNumberPrefix) + glTransmission.getId();
 
             final List<String> parsedGlAccount = parseGlAccount(glTransmission.getGlAccountId());
 
@@ -224,11 +223,16 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
             glEntryType.setBalanceTypeCode(balanceTypeCode);
             glEntryType.setDebitOrCreditCode(glTransmission.getGlOperation().getId());
             glEntryType.setDocumentNumber(documentNumber);
+
             // TODO Mapping to what ?????
             //glEntryType.setDocumentReversalDate();
+
             glEntryType.setDocumentTypeCode(documentTypeCode);
-            // TODO: figure out what 'kfs.object.type.code' value should be
-            //glEntryType.setObjectTypeCode(objectTypeCode);
+
+            if (!StringUtils.isEmpty(objectTypeCode)) {
+                glEntryType.setObjectTypeCode(objectTypeCode);
+            }
+
             // TODO Mapping to what ?????
             //glEntryType.setEncumbranceUpdateCode();
             // TODO Mapping to what ?????
@@ -251,16 +255,24 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
             glEntryType.setTransactionDate(currentStringDate);
             // TODO Mapping to what ?????
             //glEntryType.setTransactionEntrySequenceId();
+
             glEntryType.setTransactionLedgerEntryAmount(formatAmount(glTransmission.getAmount()));
             glEntryType.setTransactionLedgerEntryDescription(glEntryDesc);
 
-            glEntryType.setUniversityFiscalAccountingPeriod(recognitionPeriodCode);
-            glEntryType.setUniversityFiscalYear(String.valueOf(fiscalYear));
+            if (!StringUtils.isEmpty(recognitionPeriodCode)) {
+                glEntryType.setUniversityFiscalAccountingPeriod(recognitionPeriodCode);
+            }
+
+            if (fiscalYear != null) {
+                glEntryType.setUniversityFiscalYear(String.valueOf(fiscalYear));
+            }
 
             // Adding GLEntryType and DetailType instances to "glEntryAndDetail" list of BatchType
             batchType.getGlEntryAndDetail().add(glEntryType);
 
-            if (!glTypeAccounts.contains(glTransmission.getGlAccountId())) {
+            if (fiscalYear != null &&
+                    !StringUtils.isEmpty(recognitionPeriodCode) &&
+                    !glTypeAccounts.contains(glTransmission.getGlAccountId())) {
 
                 // Creating DetailType instance
                 DetailType detailType = objectFactory.createDetailType();
@@ -276,10 +288,14 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
                 detailType.setCreateDate(currentXmlDate);
                 // TODO Mapping to what ?????
                 //detailType.setDetailText();
-                // TODO: figure out what 'kfs.object.type.code' value should be
-                //detailType.setObjectTypeCode(objectTypeCode);
+
+                if (!StringUtils.isEmpty(objectTypeCode)) {
+                    detailType.setObjectTypeCode(objectTypeCode);
+                }
+
                 detailType.setDocumentTypeCode(documentTypeCode);
                 detailType.setDocumentNumber(documentNumber);
+
                 // TODO Mapping to what ?????
                 //detailType.setSubObjectCode();
                 // TODO Mapping to what ?????
@@ -326,7 +342,6 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
         String errMsg = "XML content is invalid:\n" + xml;
         logger.error(errMsg);
         throw new RuntimeException(errMsg);
-
     }
 
 

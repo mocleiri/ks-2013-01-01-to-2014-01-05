@@ -134,7 +134,7 @@ public interface Constants {
     String KFS_DEPARTMENT_NAME_PARAM_NAME = "kfs.department.name";
     String KFS_BALANCE_TYPE_CODE_PARAM_NAME = "kfs.balance.type.code";
     String KFS_DOCUMENT_TYPE_CODE_PARAM_NAME = "kfs.document.type.code";
-    //String KFS_OBJECT_TYPE_CODE_PARAM_NAME = "kfs.object.type.code";
+    String KFS_OBJECT_TYPE_CODE_PARAM_NAME = "kfs.object.type.code";
     String KFS_ORIGINATION_CODE_PARAM_NAME = "kfs.origination.code";
     String KFS_TRANSACTION_GL_ENTRY_DESCRIPTION_PARAM_NAME = "kfs.transaction.gl.entry.description";
 
