@@ -27,7 +27,7 @@
         <property name="headerText"
                   value="Course Syllabus - @{dataObject.subject} @{dataObject.number} @{dataObject.title} (@{dataObject.credit})"/>
         <property name="header">
-            <bean parent="Uif-HeaderTwo" p:style="background-color:lightgray;"/>
+            <bean parent="Uif-HeaderThree" p:style="background-color:lightgray;"/>
         </property>
         <property name="style" value="width: 800px;"/>
         <property name="page">
