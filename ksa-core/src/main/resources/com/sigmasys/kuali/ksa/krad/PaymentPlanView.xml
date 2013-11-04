@@ -1081,7 +1081,8 @@
                                         this account was enrolled then the new settings (percentages, schedule of payments, etc.)&lt;br&gt;
                                         will apply upon re-execution of the plan."/>
 
-                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="reexecute" p:actionLabel="Re-execute Plan"  p:onClickScript="jQuery.fancybox.close();"/>
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="reexecuteThirdParty" p:actionLabel="Re-execute Plan"
+                      p:actionParameters="planId:@{#line.plan.id},accountId:@{#line.directChargeAccount.id}" p:onClickScript="jQuery.fancybox.close();"/>
             </list>
         </property>
     </bean>

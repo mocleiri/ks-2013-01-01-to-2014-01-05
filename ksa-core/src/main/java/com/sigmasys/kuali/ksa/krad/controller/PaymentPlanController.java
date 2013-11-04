@@ -517,6 +517,30 @@ public class PaymentPlanController extends GenericSearchController {
     }
 
 
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=reexecuteThirdParty")
+    public ModelAndView reexecuteThirdParty(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+        String planIdString = request.getParameter("actionParameters[planId]");
+        Long planId;
+
+        try {
+            planId = Long.parseLong(planIdString);
+        } catch(NumberFormatException e) {
+            String errorMessage = planIdString + " is not a valid Third Party Plan";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        String userId = request.getParameter("actionParameters[accountId]");
+
+        thirdPartyTransferService.generateThirdPartyTransfer (planId, userId, new Date());
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan re-executed for user " + userId);
+
+
+        populateThirdPartyForm(form);
+
+        return getUIFModelAndView(form);
+    }
+
     public KeyValuesFinder getTransferTypeOptionsFinder() {
         // Don't cache the values finder or else new entries will not show when added
         return new AuditableEntityKeyValuesFinder<TransferType>(TransferType.class);
