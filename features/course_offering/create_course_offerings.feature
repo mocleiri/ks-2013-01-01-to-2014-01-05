@@ -3,6 +3,7 @@ Feature: EC.Create Course Offerings
 Background:
   Given I am logged in as a Schedule Coordinator
 
+  @smoke_test
   Scenario: Create Course Offerings with random delivery formats
     When I create a Course Offering with random Delivery Formats
     Then the new Course Offering should contain only the selected delivery formats
@@ -15,6 +16,7 @@ Background:
     When I create a Course Offering with "2" delivery Formats
     Then the new Course Offering should contain only the selected delivery formats
 
+  @smoke_test
   Scenario: Copy existing Course Offering
     When I copy a course offering from an existing offering
     Then the new Course Offering should be displayed in the list of available offerings

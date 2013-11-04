@@ -18,6 +18,7 @@ Feature: EC.Copy course offerings - activity offering clusters
     Then the activity offering clusters and assigned AOs are copied over with the course offering
     And the registration groups are automatically generated
 
+  @smoke_test
   Scenario: Create course offering by copying from a previous term and ensure default activity offering cluster is copied
     Given there are default registration groups for a catalog course offering
     When I create a new course offering in a subsequent term by copying the existing course offering

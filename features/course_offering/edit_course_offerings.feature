@@ -25,13 +25,14 @@ Feature: WC.Edit Course Offerings
     And I change the multiple credit values
     Then I can submit and the credit values are changed
 
-    Scenario: Edit an existing course offering deactivating final examinations and update the grade roster level
+  Scenario: Edit an existing course offering deactivating final examinations and update the grade roster level
     When I edit a course offering with multiple format types
     And I select a final exam type of "No final exam or assessment"
     And I change the delivery format options
     Then I can submit and the course offering is updated
 
-    Scenario: Edit an existing course offering activating final examinations and update the grade roster level
+  @smoke_test
+  Scenario: Edit an existing course offering activating final examinations and update the grade roster level
     When I edit a course offering with multiple format types
     And I select a final exam type of "Standard final Exam"
     And I change the delivery format options
