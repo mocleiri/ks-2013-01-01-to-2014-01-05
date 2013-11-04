@@ -1,6 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
-import com.sigmasys.kuali.ksa.krad.form.BatchRefundForm;
+import com.sigmasys.kuali.ksa.krad.form.RefundForm;
 import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RequestPotentialRefundSummaryModel;
@@ -26,9 +26,12 @@ import java.util.*;
 
 import static java.lang.String.format;
 
+/**
+ * This controller serves requests from the "Batch Refunds" view.
+ */
 @Controller
 @RequestMapping(value = "/batchRefundView")
-public class BatchRefundController extends DownloadController {
+public class BatchRefundController extends GenericSearchController {
 
     private static final Log logger = LogFactory.getLog(BatchRefundController.class);
 
@@ -45,8 +48,8 @@ public class BatchRefundController extends DownloadController {
      * @see org.kuali.rice.krad.web.controller.UifControllerBase#createInitialForm(javax.servlet.http.HttpServletRequest)
      */
     @Override
-    protected BatchRefundForm createInitialForm(HttpServletRequest request) {
-        BatchRefundForm form = new BatchRefundForm();
+    protected RefundForm createInitialForm(HttpServletRequest request) {
+        RefundForm form = new RefundForm();
 
         // Set the defaults:
         Calendar calendar = Calendar.getInstance();
@@ -58,6 +61,7 @@ public class BatchRefundController extends DownloadController {
         form.setPotentialRefunds(new ArrayList<PotentialRefundModel>());
         form.setAllRefunds(new ArrayList<RefundModel>());
         form.setAccounts(new ArrayList<Account>());
+        form.setBatch(true);
 
         return form;
     }
@@ -68,15 +72,15 @@ public class BatchRefundController extends DownloadController {
      * @return ModelAndView.
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterAccounts")
-    public ModelAndView filterAccounts(@ModelAttribute("KualiForm") BatchRefundForm form) {
+    public ModelAndView filterAccounts(@ModelAttribute("KualiForm") RefundForm form) {
 
         String newFilterAccountId = form.getNewAccount();
         Account newFilterAccount = accountService.getFullAccount(newFilterAccountId);
-        List<Account> filterAccounts = form.getFilterAccounts();
+        List<Account> filterAccounts = form.getAccounts();
 
         if (filterAccounts == null) {
             filterAccounts = new ArrayList<Account>();
-            form.setFilterAccounts(filterAccounts);
+            form.setAccounts(filterAccounts);
         }
 
         if ((newFilterAccount != null) && !filterAccounts.contains(newFilterAccount)) {
@@ -97,11 +101,11 @@ public class BatchRefundController extends DownloadController {
      * @throws Exception If an error occurs.
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeFilterAccount")
-    public ModelAndView removeFilterAccount(@ModelAttribute("KualiForm") BatchRefundForm form,
+    public ModelAndView removeFilterAccount(@ModelAttribute("KualiForm") RefundForm form,
                                             @RequestParam("accountId") String accountId) throws Exception {
 
         // Find the filter Account with the specified ID and remove it from filtering:
-        List<Account> filterAccounts = form.getFilterAccounts();
+        List<Account> filterAccounts = form.getAccounts();
 
         if (filterAccounts != null) {
 
@@ -125,7 +129,7 @@ public class BatchRefundController extends DownloadController {
      * @return ModelAndView.
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=filterTags")
-    public ModelAndView filterTags(@ModelAttribute("KualiForm") BatchRefundForm form) {
+    public ModelAndView filterTags(@ModelAttribute("KualiForm") RefundForm form) throws Exception {
 
         String newFilterTagCode = form.getNewTag();
         Tag newFilterTag = auditableEntityService.getAuditableEntity(newFilterTagCode, Tag.class);
@@ -154,7 +158,7 @@ public class BatchRefundController extends DownloadController {
      * @throws Exception If an error occurs.
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeFilterTag")
-    public ModelAndView removeFilterTag(@ModelAttribute("KualiForm") BatchRefundForm form,
+    public ModelAndView removeFilterTag(@ModelAttribute("KualiForm") RefundForm form,
                                             @RequestParam("tagId") Long tagId) throws Exception {
 
         // Find the filter Tag with the specified ID and remove it from filtering:
@@ -184,7 +188,7 @@ public class BatchRefundController extends DownloadController {
      * @throws Exception If any errors occur.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=displayInitialPage")
-    public ModelAndView displayInitialPage(@ModelAttribute("KualiForm") BatchRefundForm form) throws Exception {
+    public ModelAndView displayInitialPage(@ModelAttribute("KualiForm") RefundForm form) throws Exception {
         // Find all refunds:
         findAllRefunds(form);
 
@@ -200,7 +204,7 @@ public class BatchRefundController extends DownloadController {
      * @throws Exception If there are any errors search for Refunds.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=searchForRefunds")
-    public ModelAndView searchForRefunds(@ModelAttribute("KualiForm") BatchRefundForm form) throws Exception {
+    public ModelAndView searchForRefunds(@ModelAttribute("KualiForm") RefundForm form) throws Exception {
         // Refresh the view with the updated filtering criteria:
         findAllRefunds(form);
 
@@ -215,14 +219,14 @@ public class BatchRefundController extends DownloadController {
      * @throws Exception If an error occurs.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=requestRefund")
-    public ModelAndView requestRefund(@ModelAttribute("KualiForm") BatchRefundForm form) throws Exception {
+    public ModelAndView requestRefund(@ModelAttribute("KualiForm") RefundForm form) throws Exception {
 
         // Run the Payment Application for each Account ID, if selected:
         if (form.isRunPaymentApplication()) {
-            List<Account> filterAccounts = form.getFilterAccounts();
+            List<Account> filterAccounts = form.getAccounts();
 
             if (filterAccounts != null) {
-                for (Account account : form.getFilterAccounts()) {
+                for (Account account : form.getAccounts()) {
                     paymentService.paymentApplication(account.getId());
                 }
             }
@@ -242,7 +246,7 @@ public class BatchRefundController extends DownloadController {
      * @throws Exception If there are any errors.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=verifySelectedRefunds")
-    public ModelAndView verifySelectedRefunds(@ModelAttribute("KualiForm") BatchRefundForm form) throws Exception {
+    public ModelAndView verifySelectedRefunds(@ModelAttribute("KualiForm") RefundForm form) throws Exception {
 
         // Get the selected Refunds:
         List<RefundModel> selectedRefunds = getSelectedRefunds(form);
@@ -267,7 +271,7 @@ public class BatchRefundController extends DownloadController {
      * @throws Exception If there are any errors.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=cancelSelectedRefunds")
-    public ModelAndView cancelSelectedRefunds(@ModelAttribute("KualiForm") BatchRefundForm form) throws Exception {
+    public ModelAndView cancelSelectedRefunds(@ModelAttribute("KualiForm") RefundForm form) throws Exception {
 
         // Get the selected Refunds:
         List<RefundModel> selectedRefunds = getSelectedRefunds(form);
@@ -285,7 +289,7 @@ public class BatchRefundController extends DownloadController {
     }
 
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=verifySingleRefund")
-    public ModelAndView verifySingleRefund(@ModelAttribute("KualiForm") BatchRefundForm form,
+    public ModelAndView verifySingleRefund(@ModelAttribute("KualiForm") RefundForm form,
                                            @RequestParam("verificationRefundId") Long refundId) throws Exception {
 
 
@@ -319,7 +323,7 @@ public class BatchRefundController extends DownloadController {
      *
      * @param form The form object.
      */
-    private void findAllRefunds(BatchRefundForm form) {
+    private void findAllRefunds(RefundForm form) {
 
         Date filterDateFrom = null;
         Date filterDateTo = null;
@@ -345,7 +349,7 @@ public class BatchRefundController extends DownloadController {
      * @param dateTo    Filtering date to.
      * @return list of RefundModel instances
      */
-    private List<RefundModel> createRefundModelList(BatchRefundForm form, Date dateFrom, Date dateTo) {
+    private List<RefundModel> createRefundModelList(RefundForm form, Date dateFrom, Date dateTo) {
 
         // Get all Refunds for all Accounts:
         Set<String> filterAccountIds = getFilterAccountIds(form);
@@ -357,11 +361,19 @@ public class BatchRefundController extends DownloadController {
             List<Refund> refunds = refundService.getAccountsRefunds(filterAccountIds, dateFrom, dateTo);
 
             if (refunds != null) {
-                for (Refund refund : refunds) {
-                    // Create a new RefundModel object:
-                    RefundModel refundModel = createRefundModel(refund);
 
-                    refundModels.add(refundModel);
+                String filterRefundStatusCode = form.getFilterRefundStatusCode();
+                boolean allRefundsMatch = StringUtils.isBlank(filterRefundStatusCode);
+
+                for (Refund refund : refunds) {
+
+                    if (allRefundsMatch || filterRefundStatusCode.equals(refund.getStatus().getId())) {
+
+                        // Create a new RefundModel object:
+                        RefundModel refundModel = createRefundModel(refund);
+
+                        refundModels.add(refundModel);
+                    }
                 }
             }
         }
@@ -448,7 +460,7 @@ public class BatchRefundController extends DownloadController {
      * @param dateTo   Filtering date to.
      * @return list of potential refunds
      */
-    private List<PotentialRefundModel> createPotentialRefundList(BatchRefundForm form, Date dateFrom, Date dateTo) {
+    private List<PotentialRefundModel> createPotentialRefundList(RefundForm form, Date dateFrom, Date dateTo) {
 
         // Get Payments for the current account within the specified date range.
         Set<String> filterAccountIds = getFilterAccountIds(form);
@@ -472,9 +484,9 @@ public class BatchRefundController extends DownloadController {
      * @param form The form object.
      * @return A List of filter Account IDs.
      */
-    private Set<String> getFilterAccountIds(BatchRefundForm form) {
+    private Set<String> getFilterAccountIds(RefundForm form) {
 
-        List<Account> filterAccounts = form.getFilterAccounts();
+        List<Account> filterAccounts = form.getAccounts();
         Set<String> filterAccountIds = null;
 
         if ((filterAccounts != null) && !filterAccounts.isEmpty()) {
@@ -495,7 +507,7 @@ public class BatchRefundController extends DownloadController {
      * @param form The form object.
      * @return
      */
-    private Set<Long> getFilterTagIds(BatchRefundForm form) {
+    private Set<Long> getFilterTagIds(RefundForm form) {
 
         List<Tag> filterTags = form.getFilterTags();
         Set<Long> filterTagIds = null;
@@ -517,7 +529,7 @@ public class BatchRefundController extends DownloadController {
      *
      * @param form The form object.
      */
-    private void processRequestPotentialRefund(BatchRefundForm form) {
+    private void processRequestPotentialRefund(RefundForm form) {
 
         // Figure out the eligibility for a Refund Request:
         List<PotentialRefundModel> selectedPotentialRefunds = getSelectedPotentialRefunds(form);
@@ -566,7 +578,7 @@ public class BatchRefundController extends DownloadController {
      * @param form The form
      * @return Only the selected Potential Refunds.
      */
-    List<PotentialRefundModel> getSelectedPotentialRefunds(BatchRefundForm form) {
+    List<PotentialRefundModel> getSelectedPotentialRefunds(RefundForm form) {
 
         List<PotentialRefundModel> allPotentialRefunds = form.getPotentialRefunds();
         List<PotentialRefundModel> selectedRefunds = new LinkedList<PotentialRefundModel>();
@@ -588,7 +600,7 @@ public class BatchRefundController extends DownloadController {
      * @param form The form object.
      * @return Only the selected Refunds.
      */
-    List<RefundModel> getSelectedRefunds(BatchRefundForm form) {
+    List<RefundModel> getSelectedRefunds(RefundForm form) {
 
         List<RefundModel> allRefunds = form.getAllRefunds();
         List<RefundModel> selectedRefunds = new ArrayList<RefundModel>();

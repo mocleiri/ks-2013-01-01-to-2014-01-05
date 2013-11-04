@@ -3,26 +3,27 @@ package com.sigmasys.kuali.ksa.krad.form;
 import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RequestPotentialRefundSummaryModel;
-import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.RefundStatus;
+import com.sigmasys.kuali.ksa.model.Tag;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Sergey
- * Date: 5/18/13
- * Time: 7:52 PM
- * To change this template use File | Settings | File Templates.
+ * The form object behind the Batch and Account Refund screens.
  */
-public class AccountRefundForm extends TransactionForm {
+public class RefundForm extends AbstractViewModel {
 
+    /*
+    Lookup Account and Tag support.
+     */
+    private String newAccount;
+    private String newTag;
 
     /**
-     * Account associated with this form.
+     * A list of Tags to filter Transactions on.
      */
-    private Account account;
+    private List<Tag> filterTags;
 
     /**
      * Refund status to filter on.
@@ -36,14 +37,19 @@ public class AccountRefundForm extends TransactionForm {
     private List<PotentialRefundModel> potentialRefunds;
 
     /**
+     * A list of all Refunds displayed on the "Refund Status" tab.
+     */
+    private List<RefundModel> allRefunds;
+
+    /**
      * Start of the filtering date range. (Optional)
      */
     private Date filterDateFrom;
 
     /**
-     * A list of all Refunds displayed on the "Refund Status" tab.
+     * End of the filter date range
      */
-    private List<RefundModel> allRefunds;
+    private Date filterDateTo;
 
     /**
      * Whether to run the Payment Application.
@@ -57,37 +63,38 @@ public class AccountRefundForm extends TransactionForm {
     private String dateRangeType;
 
     /**
-     * Potential Refund requets summary.
+     * Potential Refund request summary.
      */
     private RequestPotentialRefundSummaryModel requestRefundSummary;
 
     /**
-     * Tag lookup support.
+     * Whether this form is a for a batch Refund.
      */
-    private String newTag;
+    private boolean isBatch;
 
 
-    /**
-     * End of the filter date range
-     */
-    private Date filterDateTo;
-
-    public String getDateRangeType() {
-        return dateRangeType;
+    public boolean isBatch() {
+        return isBatch;
     }
 
-
-
-    public void setDateRangeType(String dateRangeType) {
-        this.dateRangeType = dateRangeType;
+    public void setBatch(boolean batch) {
+        isBatch = batch;
     }
 
-    public Account getAccount() {
-        return account;
+    public String getNewAccount() {
+        return newAccount;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setNewAccount(String newAccount) {
+        this.newAccount = newAccount;
+    }
+
+    public String getNewTag() {
+        return newTag;
+    }
+
+    public void setNewTag(String newTag) {
+        this.newTag = newTag;
     }
 
     public String getFilterRefundStatusCode() {
@@ -106,22 +113,6 @@ public class AccountRefundForm extends TransactionForm {
         this.potentialRefunds = potentialRefunds;
     }
 
-    public List<RefundModel> getAllRefunds() {
-        return allRefunds;
-    }
-
-    public void setAllRefunds(List<RefundModel> allRefunds) {
-        this.allRefunds = allRefunds;
-    }
-
-    public boolean isRunPaymentApplication() {
-        return runPaymentApplication;
-    }
-
-    public void setRunPaymentApplication(boolean runPaymentApplication) {
-        this.runPaymentApplication = runPaymentApplication;
-    }
-
     public Date getFilterDateFrom() {
         return filterDateFrom;
     }
@@ -138,10 +129,31 @@ public class AccountRefundForm extends TransactionForm {
         this.filterDateTo = filterDateTo;
     }
 
+    public List<RefundModel> getAllRefunds() {
+        return allRefunds;
+    }
+
+    public void setAllRefunds(List<RefundModel> allRefunds) {
+        this.allRefunds = allRefunds;
+    }
+
+    public boolean isRunPaymentApplication() {
+        return runPaymentApplication;
+    }
+
+    public void setRunPaymentApplication(boolean runPaymentApplication) {
+        this.runPaymentApplication = runPaymentApplication;
+    }
+
+    public String getDateRangeType() {
+        return dateRangeType;
+    }
+
+    public void setDateRangeType(String dateRangeType) {
+        this.dateRangeType = dateRangeType;
+    }
+
     public RequestPotentialRefundSummaryModel getRequestRefundSummary() {
-        if (requestRefundSummary == null) {
-            requestRefundSummary = new RequestPotentialRefundSummaryModel();
-        }
         return requestRefundSummary;
     }
 
@@ -149,11 +161,11 @@ public class AccountRefundForm extends TransactionForm {
         this.requestRefundSummary = requestRefundSummary;
     }
 
-    public String getNewTag() {
-        return newTag;
+    public List<Tag> getFilterTags() {
+        return filterTags;
     }
 
-    public void setNewTag(String newTag) {
-        this.newTag = newTag;
+    public void setFilterTags(List<Tag> filterTags) {
+        this.filterTags = filterTags;
     }
 }

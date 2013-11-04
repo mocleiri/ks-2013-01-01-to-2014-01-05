@@ -1,25 +1,15 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 
-import com.sigmasys.kuali.ksa.krad.form.BatchRefundForm;
-import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
-import com.sigmasys.kuali.ksa.model.Credit;
-import com.sigmasys.kuali.ksa.model.Currency;
-import com.sigmasys.kuali.ksa.model.Rollup;
 import com.sigmasys.kuali.ksa.service.AbstractServiceTest;
 import com.sigmasys.kuali.ksa.service.ServiceTestSuite;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -43,7 +33,7 @@ public class BatchRefundControllerTest extends AbstractServiceTest {
 //        // Passing request parameters needed to perform get() method
 //        MockHttpServletRequest request = getRequest();
 //
-//        BatchRefundForm form = batchRefundController.createInitialForm(request);
+//        RefundForm form = batchRefundController.createInitialForm(request);
 //
 //        form.setNewAccount("user1");
 //        ModelAndView modelAndView = batchRefundController.filterAccounts(form);
