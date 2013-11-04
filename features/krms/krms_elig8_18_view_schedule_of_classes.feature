@@ -8,7 +8,8 @@ Feature: SA.ELIG8-18 View changes made to AO or CO Requisites on Schedule of Cla
 
   #ELIG8.18.EB1 (KSENROLL-9795)
   Scenario: Verify that the Schedule of Classes shows the ref data when no changes are made to the CO Requisites
-    Given I am using the schedule of classes page
+    Given I have made no chages to the CO Requisites of a course
+    And I am using the schedule of classes page
     When I search for course offerings by course
     And I select a course that has existing course offering requisites
     Then the course offering requisites should be displayed with the course data
