@@ -736,3 +736,22 @@ Skip dirty check
  function skipDirtyChecks() {
  dirtyFormState.skipDirtyChecks=true;
  }
+
+function retrieveFinalExamMatrix (id, methodToCall, dropdownId) {
+    var dropDownElement = jQuery('#' + dropdownId + '_control');
+    if (dropDownElement.val() != 'na') {
+        retrieveComponent(id, methodToCall);
+    }
+}
+
+function toggleShowButton() {
+
+    var termCodeVal = jQuery("#termCode_control").val();
+    var inputCodeVal = jQuery("#inputCode_control").val();
+    if (termCodeVal != '' && inputCodeVal != '') {
+        jQuery("#show_button").removeAttr("disabled");
+    } else {
+        jQuery("#show_button").attr("disabled", "disabled");
+    }
+
+}
