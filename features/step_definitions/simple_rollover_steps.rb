@@ -33,10 +33,10 @@ When /^I initiate a rollover to create a term in locked state EC$/ do
   @rollover.perform_rollover
 end
 
-When /^I initiate a rollover to create a term in closed state EC$/ do
-  @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::CLOSED_SOC_TERM
-  @rollover.perform_rollover
-end
+#When /^I initiate a rollover to create a term in closed state EC$/ do
+#  @rollover = make Rollover, :source_term => Rollover::SOC_STATES_SOURCE_TERM, :target_term => Rollover::CLOSED_SOC_TERM
+#  @rollover.perform_rollover
+#end
 
 When /^I initiate a rollover to create a term in draft state WC/ do
   @rollover = make Rollover, :source_term => "201205", :target_term => "201805"
@@ -127,46 +127,6 @@ When /^I am working on a term in "Closed" SOC state$/ do
   @term_for_test = Rollover::CLOSED_SOC_TERM
 end
 
-And /^I setup a target term with those subterms setup$/ do
-  @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1 #, :name => "TWj64w1q3e"
-  @term_target = make AcademicTerm, :term_year => @calendar_target.year
-  @calendar_target.add_term(@term_target)
-
-  @subterm_list_target = Array.new(2)
-  @subterm_list_target[0] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
-  @calendar_target.add_term(@subterm_list_target[0])
-
-  @subterm_list_target[1] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
-  @calendar_target.add_term(@subterm_list_target[1])
-
-  @subterm_list_target.each do |subterm|
-    subterm.make_official
-  end
-
-  @manage_soc = make ManageSoc, :term_code => @term_target.term_code
-  @manage_soc.set_up_soc
-end
-
-And /^I create the target Academic Term with subterms$/ do
-  @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1 #, :name => "TWj64w1q3e"
-  @term_target = make AcademicTerm, :term_year => @calendar_target.year
-  @calendar_target.add_term(@term_target)
-
-  @subterm_list_target = Array.new(2)
-  @subterm_list_target[0] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 1", :parent_term=> "Fall Term", :subterm => true
-  @calendar_target.add_term(@subterm_list_target[0])
-
-  @subterm_list_target[1] = make AcademicTerm, :term_year => @calendar_target.year, :term_type=> "Half Fall 2", :parent_term=> "Fall Term", :subterm => true
-  @calendar_target.add_term(@subterm_list_target[1])
-
-  @subterm_list_target.each do |subterm|
-    subterm.make_official
-  end
-
-  @manage_soc = make ManageSoc, :term_code => @term_target.term_code
-  @manage_soc.set_up_soc
-end
-
 And /^I setup a second target term with those subterms setup$/ do
   @calendar_target2 = create AcademicCalendar, :year => @calendar.year.to_i + 2 #, :name => "TWj64w1q3e"
   @term_target2 = make AcademicTerm, :term_year => @calendar_target2.year
@@ -243,12 +203,6 @@ And /^I rollover the term to a new academic term$/ do
                    :exp_success => false
   @rollover.perform_rollover
   @rollover.wait_for_rollover_to_complete
-end
-
-Then /^there is a target term error message on the rollover page stating: (.*)$/ do |expected_msg|
-  on PerformRollover do |page|
-    page.target_term_first_validation_msg.should match /.*#{Regexp.escape(expected_msg)}.*/
-  end
 end
 
 Then /^there is an exception for the course on rollover page stating: (.*)$/ do |expected_msg|
