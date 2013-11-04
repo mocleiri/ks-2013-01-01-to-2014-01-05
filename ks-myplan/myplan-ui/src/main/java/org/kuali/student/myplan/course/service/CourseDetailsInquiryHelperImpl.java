@@ -284,7 +284,12 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
         try {
             QueryByCriteria predicates = QueryByCriteria.Builder.fromPredicates(equalIgnoreCase("query", PlanConstants.PUBLISHED));
-            List<TermInfo> termInfos = getAcademicCalendarService().searchForTerms(predicates, CourseSearchConstants.CONTEXT_INFO);
+            //List<TermInfo> termInfos = getAcademicCalendarService().searchForTerms(predicates, CourseSearchConstants.CONTEXT_INFO);
+            TermInfo termInfo = new TermInfo();
+            termInfo.setName("autumn 2013");
+            termInfo.setId("20134");
+            List<TermInfo> termInfos = new ArrayList<TermInfo>();
+            termInfos.add(termInfo);
             for (TermInfo term : termInfos) {
                 /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/
                 String id = getCourseHelper().getKeyForCourseOffering(courseDetails.getCourseId(), courseDetails.getSubjectArea().trim(), courseDetails.getCourseNumber().trim());
@@ -776,6 +781,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
         ActivityOfferingItem activity = new ActivityOfferingItem();
         /*Data from ActivityOfferingDisplayInfo*/
         activity.setCourseId(courseOfferingInfo.getCourseId());
+        activity.setActivityId(displayInfo.getId());
         activity.setCode(displayInfo.getActivityOfferingCode());
         activity.setStateKey(displayInfo.getStateKey());
         activity.setActivityOfferingType(displayInfo.getTypeName());
@@ -871,6 +877,10 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
             if (CourseSearchConstants.PRIMARY_ACTIVITY_OFFERING_ID.equalsIgnoreCase(key)) {
                 activity.setPrimaryActivityOfferingId(value);
                 continue;
+            }
+
+            if (CourseSearchConstants.SYLLABUS_DESCRIPTION.equalsIgnoreCase(key) && StringUtils.hasText(value)) {
+                activity.setHasSyllabus(true);
             }
 
             /*PrimarySectionCode is for the add button hover text in secondary sections

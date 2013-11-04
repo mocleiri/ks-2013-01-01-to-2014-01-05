@@ -17,6 +17,7 @@ import org.kuali.student.myplan.course.util.CourseHelper;
 import org.kuali.student.myplan.plan.PlanConstants;
 import org.kuali.student.myplan.plan.util.AtpHelper;
 import org.kuali.student.myplan.plan.util.AtpHelper.YearTerm;
+import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
@@ -25,6 +26,7 @@ import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.lum.course.service.CourseService;
 import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.jws.WebParam;
@@ -53,6 +55,7 @@ public class UwSolrCourseOfferingServiceImpl implements CourseOfferingService {
     public void setNextDecorator(CourseOfferingService nextDecorator) {
         this.nextDecorator = nextDecorator;
     }
+
     private final static Logger logger = Logger.getLogger(UwSolrCourseOfferingServiceImpl.class);
 
     private transient CourseService courseService;
@@ -368,6 +371,16 @@ public class UwSolrCourseOfferingServiceImpl implements CourseOfferingService {
         }
         if (!failOver) {
             ActivityOfferingDisplayInfo info = offeringServiceUtils.buildActivityOfferingDisplayInfo(doc);
+            if (info != null) {
+                try {
+                    if (CollectionUtils.isEmpty(info.getAttributes())) {
+                        info.setAttributes(new ArrayList<AttributeInfo>());
+                    }
+                    info.getAttributes().add(new AttributeInfo("syllabusDescription", solrSeviceClient.getSyllabusById(info.getId())));
+                } catch (Exception e) {
+                    logger.error("Exception loading the activity offering syllabus" + e.getMessage());
+                }
+            }
             return info;
         } else {
             return getNextDecorator().getActivityOfferingDisplay(activityOfferingId, contextInfo);
@@ -809,6 +822,14 @@ public class UwSolrCourseOfferingServiceImpl implements CourseOfferingService {
                     }
                     ActivityOfferingDisplayInfo info = offeringServiceUtils.buildActivityOfferingDisplayInfo(doc);
                     if (info != null) {
+                        try {
+                            if (CollectionUtils.isEmpty(info.getAttributes())) {
+                                info.setAttributes(new ArrayList<AttributeInfo>());
+                            }
+                            info.getAttributes().add(new AttributeInfo("syllabusDescription", solrSeviceClient.getSyllabusById(info.getId())));
+                        } catch (Exception e) {
+                            logger.error("Exception loading the activity offering syllabus" + e.getMessage());
+                        }
                         result.add(info);
                     }
                 }

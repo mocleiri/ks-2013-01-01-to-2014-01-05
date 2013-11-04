@@ -5,7 +5,10 @@
         & .collapsible {
             display: none;
         }
+        & .courseActivities--primary td, .courseActivities--secondary td {
+            border-top: @baseBorderStyle;
     }
+}
 }
 
 .planTerm__header {
@@ -15,7 +18,6 @@
     .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
     border-width: 1px;
     border-style: solid;
-    border-bottom: none;
 
     &.planTerm__header--past {
         #gradient > .vertical(#dedede, #ccc);
@@ -62,12 +64,115 @@
         position: relative;
         top: -1px;
     }
+
+    &.planTerm--unlocked {
+        background-image: url('../images/icon_unlocked.png');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
 }
 
-.planContainer--empty {
-    padding: @paddingLarge;
+    &.planTerm--locked {
+        background-image: url('../images/icon_locked.png');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+    }
+}
+
+.planContainer--recommended {
+    & .planContainer__header {
+        #gradient > .vertical(#d5edd5, #c7e1c7);
+        border-top: solid 1px #cce6cc;
+        border-bottom: solid 1px #c6dec7;
+        & .planContainer__headerText {
+            color: #547a58;
+        }
+    }
+
+    & .termPlanItem__note {
+        width: 16px;
+        & img {
+            width: 16px;
+            height: 16px;
+            background-position: -37px -181px;
+        }
+    }
+}
+
+.planTerm__item {
+    border-top: @baseBorderStyle;
+    border-top-width: 3px;
+    &:first-child {
+        border-top: none;
+    }
+    & .uif-subCollection.uif-boxLayoutVerticalItem {
+        margin: 0;
+    }
+
+    &.planTerm__item--placeholder {
+        & .termPlanItem__title, & .termPlanItem__credit {
     font-style: italic;
-    color: @textColorMin;
+            font-family: @altSerifFontFamily;
+            color: @gray;
+}
+    }
+
+    &.planTerm__item--recommendedProposed {
+        & .termPlanItem__code, &.planTerm__item--placeholder .termPlanItem__title {
+            .bold();
+        }
+    }
+
+    &.planTerm__item--recommendedAccepted {
+        & .termPlanItem__code, &.planTerm__item--placeholder .termPlanItem__title {
+            color: @green;
+        }
+    }
+}
+
+.termPlanItem {
+    padding: @paddingSmall;
+}
+
+.termPlanItem__alert {
+    .planItem__alert;
+    left: auto;
+    top: auto;
+    position: relative;
+    & img {
+        position: relative;
+        top: -2px
+    }
+}
+
+.termPlanItem__note {
+    .planItem__note;
+    right: auto;
+    top: auto;
+    position: relative;
+    & img {
+        position: relative;
+        top: -2px
+    }
+    &.uif-boxLayoutHorizontalItem {
+        margin: 0 0 0 @marginDefault;
+    }
+}
+
+.termPlanItem__actions {
+    margin: 0 0 0 @marginLarge !important;
+    font-size: @fontSizeMini;
+    float: right !important;
+    & .uif-boxLayoutHorizontalItem {
+        float: none;
+        margin: 0;
+    }
+}
+
+.planTerm__activitiesInstitution {
+    padding: @paddingSmall;
+    .bold();
+    color: @textColorLight;
+    border-top: @baseBorderStyle;
 }
 
 .planTerm__creditTotal {
@@ -104,39 +209,8 @@
     }
 }
 
-.planTerm--unlocked {
-    background-image: url('../images/icon_unlocked.png');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-}
-
-.planTerm--locked {
-    background-image: url('../images/icon_locked.png');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-}
-
-.planTerm__item {
-    border-top: @baseBorderStyle;
-    border-top-width: 3px;
-    &:first-child {
-        border-top: none;
-    }
-    & .uif-subCollection.uif-boxLayoutVerticalItem {
-        margin: 0;
-    }
-}
-
-.termPlanItem {
-    padding: @paddingSmall;
-}
-
-.termPlanItem__actions {
-    margin: 0 0 0 @marginLarge !important;
-    font-size: @fontSizeMini;
-    float: right !important;
-    & .uif-boxLayoutHorizontalItem {
-        float: none;
-        margin: 0;
-    }
+.planContainer--empty {
+    padding: @paddingLarge;
+    font-style: italic;
+    color: @textColorMin;
 }

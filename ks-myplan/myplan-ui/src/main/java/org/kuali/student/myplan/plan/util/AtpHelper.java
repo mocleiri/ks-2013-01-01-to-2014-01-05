@@ -353,6 +353,7 @@ public class AtpHelper {
             for (TermInfo term : termInfos) {
                 publishedTerms.add(term.getId());
             }
+            publishedTerms.add("20134");
         } catch (Exception e) {
             logger.error("Web service call failed.", e);
             publishedTerms.add(getCurrentAtpIdFromCalender());

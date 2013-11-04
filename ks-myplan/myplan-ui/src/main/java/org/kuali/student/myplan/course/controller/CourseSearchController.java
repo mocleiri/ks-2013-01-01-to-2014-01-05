@@ -92,7 +92,7 @@ public class CourseSearchController extends UifControllerBase {
 
     public static final String COURSE_SEARCH_URL = "/student/myplan/course?#searchQuery=%s&searchTerm=any&campusSelect=%s";
 
-    public static final String COURSE_DETAILS_URL = "/student/myplan/inquiry?methodToCall=start&viewId=CourseDetails-InquiryView&courseId=%s";
+    public static final String COURSE_DETAILS_URL = "/student/myplan/inquiry?methodToCall=start&viewId=CourseDetails-InquiryView&courseId=%s&courseCd=%s";
 
     private static final int MAX_HITS = 1000;
 
@@ -169,7 +169,7 @@ public class CourseSearchController extends UifControllerBase {
             return null;
 
         }
-        response.sendRedirect(String.format(COURSE_DETAILS_URL, courseId));
+        response.sendRedirect(String.format(COURSE_DETAILS_URL, courseId, String.format("%s %s", subject.trim(), number)));
         return null;
     }
 

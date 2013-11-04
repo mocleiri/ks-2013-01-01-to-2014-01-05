@@ -15,6 +15,8 @@ public interface SolrSeviceClient {
 
     public String getSectionById(String id) throws ServiceException;
 
+    public String getSyllabusById(String id) throws ServiceException;
+
     public List<String> getPrimarySections(String year, String term, String curriculumAbbreviation, String courseNumber) throws ServiceException;
 
     public List<String> getSecondarySections(String primarySectionId) throws ServiceException;

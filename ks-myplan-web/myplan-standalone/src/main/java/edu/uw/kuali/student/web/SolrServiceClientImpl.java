@@ -9,6 +9,7 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.restlet.ext.net.HttpClientHelper;
 import org.restlet.data.Protocol;
 import org.restlet.Client;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,28 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
         List<SolrDocument> documents = sendQuery(params);
         if (documents != null && !documents.isEmpty()) {
             return documents.get(0).getFieldValue("section.data").toString();
+        }
+        return null;
+    }
+
+    /**
+     * Syllabus fetched for given Id
+     * url: http://localhost:9090/solr/section/select?q=section.id:%222013:4:ENGL:108:C%22%20AND%20section.syllabus:[1+TO+*]&fl=section.syllabus&wt=xml&indent=true
+     *
+     * @param id
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public String getSyllabusById(String id) throws ServiceException {
+        ModifiableSolrParams params = new ModifiableSolrParams();
+        params.set("q", "section.id:\"" + id + "\"" + "AND section.syllabus:[1 TO *]");
+        params.set("fl", "section.syllabus");
+        params.set("sort", "section.id asc");
+        params.set("rows", "9999");
+        List<SolrDocument> documents = sendQuery(params);
+        if (!CollectionUtils.isEmpty(documents)) {
+            return documents.get(0).getFieldValue("section.syllabus").toString();
         }
         return null;
     }

@@ -609,7 +609,7 @@
                 </property>
                 <property name="lineGroupPrototype">
                     <!-- TODO: parentLine expression not available within the lineGroupPrototype, KRAD bug https://jira.kuali.org/browse/KULRICE-9003 -->
-                    <bean p:id="@{#line.instituteCode}_tab-@{#line.yearTerm.toATP().replace('.','-')}"
+                    <bean p:id="@{#line.instituteCode}_tab-@{#line.yearTerm.toATP()}"
                           parent="Uif-CollectionVerticalBoxItem">
                         <property name="footer.render" value="false"/>
                         <property name="validationMessages">
@@ -633,7 +633,7 @@
         <property name="collectionObjectClass" value="org.kuali.student.myplan.course.dataobject.ActivityOfferingItem"/>
         <property name="propertyName" value="activityOfferingItemList"/>
         <property name="onDocumentReadyScript" value="
-            var table = jQuery('table#@{dataObject.courseSummaryDetails.courseId}_@{#line.instituteCode}_@{#line.yearTerm.toATP().replace('.','-')}');
+            var table = jQuery('table#@{dataObject.courseSummaryDetails.courseId}_@{#line.instituteCode}_@{#line.yearTerm.toATP()}');
             var tableHead = table.find('thead');
             tableHead.find('tr:gt(0)').remove();
             tableHead.before('
@@ -706,7 +706,7 @@
             <bean parent="Uif-TableCollectionLayout"
                   class="org.kuali.rice.krad.uif.layout.extension.CourseSectionDetailsLayoutManager">
                 <property name="id"
-                          value="@{dataObject.courseSummaryDetails.courseId}_@{#line.instituteCode}_@{#line.yearTerm.toATP().replace('.','-')}"/>
+                          value="@{dataObject.courseSummaryDetails.courseId}_@{#line.instituteCode}_@{#line.yearTerm.toATP()}"/>
                 <property name="numberOfColumns" value="7"/>
                 <property name="suppressLineWrapping" value="false"/>
                 <property name="renderSequenceField" value="false"/>
@@ -833,7 +833,7 @@
         <property name="cssClasses" value="courseActivities__code"/>
         <property name="items">
             <list>
-                <bean p:id="@{#line.atpId.replace('.','-')}-@{#line.registrationCode}"
+                <bean p:id="@{#line.atpId}-@{#line.registrationCode}"
                       parent="KSAP-SimpleDataField" p:propertyName="code" p:label="Section">
                     <property name="cssClasses">
                         <list merge="false">
@@ -925,7 +925,7 @@
     </bean>
 
     <bean id="activityEnrlStatus" parent="KSAP-VerticalFieldGroup" p:rowSpan="1" p:colSpan="1"
-          p:id="enrl_@{#line.atpId.replace('.','-')}_@{#line.registrationCode}"
+          p:id="enrl_@{#line.atpId}_@{#line.registrationCode}"
           p:title="Section @{#line.code} is @{#line.stateKey}">
         <property name="label" value="ENRL STATUS"/>
         <property name="fieldLabel.render" value="true"/>
@@ -955,7 +955,7 @@
     </bean>
 
     <bean id="activityEnrlData" parent="KSAP-HorizontalFieldGroup" p:rowSpan="1" p:colSpan="1"
-          p:id="enrl_@{#line.atpId.replace('.','-')}_@{#line.registrationCode}">
+          p:id="enrl_@{#line.atpId}_@{#line.registrationCode}">
         <property name="label" value="ENRL STATUS"/>
         <property name="fieldLabel.render" value="true"/>
         <property name="cssClasses" value="courseActivities__enrlData"/>
@@ -965,13 +965,29 @@
     </bean>
 
     <bean id="activityInstructor" parent="KSAP-VerticalFieldGroup" p:rowSpan="1" p:colSpan="2" p:valign="TOP">
-        <property name="id" value="instructor_@{#line.atpId.replace('.','-')}_@{#line.registrationCode}"/>
+        <property name="id" value="instructor_@{#line.atpId}_@{#line.registrationCode}"/>
         <property name="cssClasses" value="courseActivities__instructor"/>
         <property name="items">
             <list>
                 <bean parent="Uif-Label" p:labelText="Instructor" p:renderColon="false"/>
                 <bean parent="KSAP-MessageField" p:messageText="@{#line.instructor}">
                     <property name="cssClasses" value="removeMargin"/>
+                </bean>
+                <bean id="syllabus_link" parent="Uif-LinkField" p:cssClasses="removeMargin" p:render="@{#line.hasSyllabus}">
+                    <property name="linkText" value="View Syllabus"/>
+                    <property name="title" value="View Syllabus"/>
+                    <property name="href"
+                              value="/student/myplan/inquiry?methodToCall=start&amp;viewId=CourseSyllabus-InquiryView&amp;activityId=@{#line.activityId}"/>
+                    <property name="lightBox">
+                        <bean parent="Uif-LightBox">
+                            <property name="templateOptions">
+                                <map merge="true">
+                                    <entry key="width" value="800"/>
+                                    <entry key="fitToView" value="true"/>
+                                </map>
+                            </property>
+                        </bean>
+                    </property>
                 </bean>
             </list>
         </property>
@@ -1013,13 +1029,13 @@
                                  !#line.newThisYear AND
                                  !#line.ineligibleForFinancialAid AND
                                  #line.feeAmount eq null  AND
-                                 !#line.independentStudy}"/>
+                                 !#line.independentStudy}"/>                
             </list>
         </property>
     </bean>
 
     <bean id="activityAdditionalDetails" parent="KSAP-VerticalFieldGroup" p:valign="TOP" p:rowSpan="1" p:colSpan="5">
-        <property name="id" value="details_@{#line.atpId.replace('.','-')}_@{#line.registrationCode}"/>
+        <property name="id" value="details_@{#line.atpId}_@{#line.registrationCode}"/>
         <property name="cssClasses" value="courseActivities__additionalDetails"/>
         <property name="items">
             <list>
@@ -1077,7 +1093,7 @@
     </bean>
 
     <bean id="section_button" parent="Uif-ActionImage">
-        <property name="id" value="button_@{#line.atpId.replace('.','-')}_@{#line.registrationCode}"/>
+        <property name="id" value="button_@{#line.atpId}_@{#line.registrationCode}"/>
         <property name="actionImage">
             <bean parent="Uif-Image" p:source="@{#ConfigProperties['ks.myplan.externalizable.images.url']}/pixel.gif"/>
         </property>

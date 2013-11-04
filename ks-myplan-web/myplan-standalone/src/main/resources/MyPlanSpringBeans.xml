@@ -51,6 +51,7 @@
 
                 <value>classpath:CommentUI.xml</value>
                 <value>classpath:CourseDetailsUI.xml</value>
+                <value>classpath:CourseSyllabusUI.xml</value>
                 <value>classpath:CourseSearchUI.xml</value>
                 <value>classpath:CourseSectionsUI.xml</value>
                 <value>classpath:DegreeAuditUI.xml</value>

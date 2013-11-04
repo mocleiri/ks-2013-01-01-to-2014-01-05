@@ -9,6 +9,7 @@ public class PlanConstants extends AcademicPlanServiceConstants {
     public static final String PARAM_COURSE_ID = "courseId";
     public static final String PARAM_COURSE_CD = "courseCd";
     public static final String PARAM_OFFERINGS_FLAG = "loadActivityOffering";
+    public static final String PARAM_ACTIVITY_ID = "activityId";
 
     public static final int PLANNED_PLAN_ITEM_CAPACITY = 8;
     public static final int BACKUP_PLAN_ITEM_CAPACITY = 8;
