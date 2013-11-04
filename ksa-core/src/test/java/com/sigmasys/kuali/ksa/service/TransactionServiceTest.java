@@ -268,12 +268,24 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Date endDate = null;
         String userId = "user1";
 
-        List<Transaction> all = transactionService.getTransactions(userId, startDate, endDate);
-        Assert.notNull(all);
+        List<Transaction> transactions = transactionService.getTransactions(userId, startDate, endDate);
 
-        for (Transaction t : all) {
+        notNull(transactions);
 
-            Date effective = t.getEffectiveDate();
+        Set<Long> transactionIds = new HashSet<Long>();
+
+        for (Transaction transaction : transactions) {
+
+            notNull(transaction);
+            notNull(transaction.getId());
+
+            isTrue(!transactionIds.contains(transaction.getId()));
+
+            transactionIds.add(transaction.getId());
+
+            logger.info("Transaction = " + transaction);
+
+            Date effective = transaction.getEffectiveDate();
 
             logger.info("Effective date = " + effective);
 
@@ -293,6 +305,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
                 endDate = effective;
             }
 
+
         }
 
         logger.info("Start date = " + startDate);
@@ -301,7 +314,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         List<Transaction> filtered = transactionService.getTransactions(userId, startDate, endDate);
 
         Assert.notNull(filtered);
-        Assert.isTrue(all.size() == filtered.size(), "All transactions size: " + all.size() + " does not match filtered size: " + filtered.size());
+        Assert.isTrue(transactions.size() == filtered.size(), "All transactions size: " + transactions.size() + " does not match filtered size: " + filtered.size());
 
     }
 
@@ -2439,25 +2452,34 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         Set<String> userIds = new HashSet<String>(1);
         userIds.add(TEST_USER_ID);
+        userIds.add("user1");
 
         Set<Long> tagIds = new HashSet<Long>(2);
         tagIds.add(tag1.getId());
         tagIds.add(tag2.getId());
 
-        List<Payment> payments = transactionService.getPotentialRefunds(userIds, new Date(), new Date(), tagIds);
+        List<Payment> payments = transactionService.getPotentialRefunds(userIds, new Date(0), new Date(), tagIds);
 
         notNull(payments);
         notEmpty(payments);
+
+        logger.debug("Number of payments = " + payments.size());
 
         isTrue(payments.size() >= 2);
 
         boolean payment1Exists = false;
         boolean payment2Exists = false;
 
+        Set<Long> paymentIds = new HashSet<Long>();
+
         for (Payment payment : payments) {
 
             notNull(payment);
             notNull(payment.getId());
+
+            Assert.isTrue(!paymentIds.contains(payment.getId()));
+
+            paymentIds.add(payment.getId());
 
             isTrue(payment.isRefundable());
 

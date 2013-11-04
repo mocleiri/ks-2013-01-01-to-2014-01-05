@@ -127,7 +127,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false, noRollbackFor = GlTransactionFailedException.class)
-    public GlTransaction createGlTransaction(Long transactionId,
+    public synchronized GlTransaction createGlTransaction(Long transactionId,
                                              String glAccountId,
                                              BigDecimal amount,
                                              GlOperationType operationType,
@@ -176,7 +176,9 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
 
         glTransaction.setRecognitionPeriod(recognitionPeriod);
 
-        persistEntity(glTransaction);
+        em.persist(glTransaction);
+
+        em.flush();
 
         return glTransaction;
     }

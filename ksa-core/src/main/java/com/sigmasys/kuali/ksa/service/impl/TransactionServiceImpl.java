@@ -55,8 +55,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                     " left outer join fetch t.account a " +
                     " left outer join fetch t.currency c " +
                     " left outer join fetch t.rollup r " +
-                    " left outer join fetch t.document d " +
-                    " left outer join fetch t.tags tags ";
+                    " left outer join fetch t.document d ";
 
     @Autowired
     private AccountService accountService;
@@ -4060,6 +4059,12 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         queryBuilder.append(GET_TRANSACTION_JOIN);
 
+        boolean tagIdsExist = CollectionUtils.isNotEmpty(tagIds);
+
+        if (tagIdsExist) {
+            queryBuilder.append(" inner join fetch t.tags tags ");
+        }
+
         queryBuilder.append(" where t.refundable = true and a.id in (:accountIds) and t.clearDate < CURRENT_DATE ");
         queryBuilder.append(" and t.statusCode = :statusCode ");
 
@@ -4070,8 +4075,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         if (endDate != null) {
             queryBuilder.append(" and t.effectiveDate <= :endDate ");
         }
-
-        boolean tagIdsExist = CollectionUtils.isNotEmpty(tagIds);
 
         if (tagIdsExist) {
             queryBuilder.append(" and tags in (select tag from Tag tag where tag.id in (:tagIds))");
