@@ -76,7 +76,6 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     Then I am able to send the activity offering to the scheduler
     And the actual delivery logistics are displayed for the updated activity offering
 
-  @smoke_test
   Scenario: CO 22.1B2 CSR Verify that RDLs for a suspended Activity Offering can be sent to the scheduler in SOC state published
     Given I am working on a term in "Published" SOC state
     And I create a course offering from catalog with a suspended activity offering
