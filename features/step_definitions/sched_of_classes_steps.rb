@@ -178,8 +178,8 @@ end
 
 Then /^the added course offering requisite should not be displayed on Reg Group level$/ do
   on DisplayScheduleOfClasses do |page|
-    page.details_table.rows[1].text.should_not match /Antirequisite.*Added Antirequisite on CO level/m
-    page.details_table.rows[2].text.should_not match /Antirequisite.*Added Antirequisite on CO level/m
+    page.details_table.row(text: /\bA\b/).text.should_not match /Antirequisite.*Added Antirequisite on CO level/m
+    page.details_table.row(text: /\bB\b/).text.should_not match /Antirequisite.*Added Antirequisite on CO level/m
   end
 end
 
@@ -216,8 +216,12 @@ end
 
 Then /^the suppressed rule should be visible for any unchanged activity that shares a Reg Group with the changed activity$/ do
   on DisplayScheduleOfClasses do |page|
-    page.details_table.rows[2].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
-    page.details_table.rows[3].text.should_not match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+    ao_code_row = page.details_table.row(text: /\bA\b/)
+    index = ao_code_row.span(text: /\bA\b/).id[/\d+(?=_span)/].to_i + 1
+    page.details_table.rows[(index+1)].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+    ao_code_row = page.details_table.row(text: /\bB\b/)
+    index = ao_code_row.span(text: /\bB\b/).id[/\d+(?=_span)/].to_i + 2
+    page.details_table.rows[index].text.should_not match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
   end
 end
 
@@ -294,7 +298,9 @@ Then /^the edited course offering rule should be displayed at the activity level
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      page.details_table.rows[4].text.should match /Changed the Corequisite on AO B only/m
+      ao_code_row = page.details_table.row(text: /\bB\b/)
+      index = ao_code_row.span(text: /\bB\b/).id[/\d+(?=_span)/].to_i + 2
+      page.details_table.rows[(index+1)].text.should match /Changed the Corequisite on AO B only/m
     end
   end
 end
@@ -304,7 +310,9 @@ Then /^the unedited course offering rule should be displayed at the Reg Group le
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      page.details_table.rows[2].text.should_not match /Changed the Corequisite on AO B only/m
+      ao_code_row = page.details_table.row(text: /\bA\b/)
+      index = ao_code_row.span(text: /\bA\b/).id[/\d+(?=_span)/].to_i + 1
+      page.details_table.rows[(index+1)].text.should_not match /Changed the Corequisite on AO B only/m
     end
   end
 end

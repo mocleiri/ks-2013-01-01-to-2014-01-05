@@ -6,7 +6,7 @@ Feature: SA.ELIG8-23 Ensure that changes made to AO or CO Requisites displays di
   Background:
     Given I am logged in as admin
 
-#ELIG8.23.EB1 (KSENROLL-10128)
+  #ELIG8.23.EB1 (KSENROLL-10128)
   @pending
   Scenario: Verify that suppressing the Course Offering rule for an Activity displays correctly on the Schedule of Classes for the Reg Group
     Given I suppress a course offering rule for an activity in a course
@@ -16,8 +16,8 @@ Feature: SA.ELIG8-23 Ensure that changes made to AO or CO Requisites displays di
     Then the suppressed rule should be visible for any unchanged activity that shares a Reg Group with the changed activity
     And any un-suppressed course offering rules should be visible with the course data
 
-#ELIG8.23.EB2 (KSENROLL-10128)
-  @bug @KSENROLL-10510
+  #ELIG8.23.EB2 (KSENROLL-10128)
+  @pending
   Scenario: Verify that a CO level rule edited at the AO level displays correctly on the Schedule of Classes for the Reg Group
     Given I edit a course offering rule at the AO level by adding a new text statement
     And I am using the schedule of classes page
