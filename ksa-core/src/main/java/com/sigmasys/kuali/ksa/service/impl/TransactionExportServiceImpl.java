@@ -188,7 +188,8 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
         final TrailerType trailerType = objectFactory.createTrailerType();
 
         final String balanceTypeCode = configService.getParameter(KFS_BALANCE_TYPE_CODE_PARAM_NAME);
-        final String objectTypeCode = configService.getParameter(KFS_OBJECT_TYPE_CODE_PARAM_NAME);
+        // TODO: figure out what 'kfs.object.type.code' value should be
+        //final String objectTypeCode = configService.getParameter(KFS_OBJECT_TYPE_CODE_PARAM_NAME);
         final String documentTypeCode = configService.getParameter(KFS_DOCUMENT_TYPE_CODE_PARAM_NAME);
         final String documentNumberPrefix = configService.getParameter(KFS_DOCUMENT_NUMBER_PREFIX_PARAM_NAME);
         final String originationCode = configService.getParameter(KFS_ORIGINATION_CODE_PARAM_NAME);
@@ -226,7 +227,8 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
             // TODO Mapping to what ?????
             //glEntryType.setDocumentReversalDate();
             glEntryType.setDocumentTypeCode(documentTypeCode);
-            glEntryType.setObjectTypeCode(objectTypeCode);
+            // TODO: figure out what 'kfs.object.type.code' value should be
+            //glEntryType.setObjectTypeCode(objectTypeCode);
             // TODO Mapping to what ?????
             //glEntryType.setEncumbranceUpdateCode();
             // TODO Mapping to what ?????
@@ -274,7 +276,8 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
                 detailType.setCreateDate(currentXmlDate);
                 // TODO Mapping to what ?????
                 //detailType.setDetailText();
-                detailType.setObjectTypeCode(objectTypeCode);
+                // TODO: figure out what 'kfs.object.type.code' value should be
+                //detailType.setObjectTypeCode(objectTypeCode);
                 detailType.setDocumentTypeCode(documentTypeCode);
                 detailType.setDocumentNumber(documentNumber);
                 // TODO Mapping to what ?????
