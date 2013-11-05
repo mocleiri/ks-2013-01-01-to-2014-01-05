@@ -2,6 +2,8 @@ class ErrorPage < BasePage
   wrapper_elements
   frame_element
 
+  expected_element :message_element
+
   value(:error_message){|b| b.message_element.text}
   element(:message_element) { |b| b.frm.div(id: "Uif-Application")}
 
