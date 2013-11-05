@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.util.*;
 
 
@@ -188,11 +189,29 @@ public class TransactionTypeController extends GenericSearchController {
          */
         boolean errors = validateBreakdowns(breakdowns, form, defaultGlType);
 
+        boolean typeExists = transactionService.transactionTypeExists(code);
+
+        if(typeExists) {
+            TransactionType previousTransactionType = transactionService.getTransactionType(code, new Date());
+
+            // make sure that this transaction type doesn't start on the same day (or before) the currently existing tt.
+            // When this happens all kinds of bad things happen in the system.
+            if(previousTransactionType != null && (previousTransactionType.getStartDate().compareTo(startDate) >= 0)) {
+
+
+                DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+                String errMsg = "New transaction type cannot start before previous current transaction type start date of '" + df.format(previousTransactionType.getStartDate()) + "'";
+
+                GlobalVariables.getMessageMap().putError("TransactionTypeView", RiceKeyConstants.ERROR_CUSTOM, errMsg);
+                errors = true;
+            }
+
+        }
+
         if (errors) {
             return getUIFModelAndView(form);
         }
 
-        boolean typeExists = transactionService.transactionTypeExists(code);
 
         TransactionType transactionType;
 
