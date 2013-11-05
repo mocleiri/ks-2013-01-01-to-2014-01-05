@@ -397,6 +397,48 @@ class CourseOffering
     end
   end
 
+  def save_progress
+    on CourseOfferingEdit do |page|
+      page.save_progress
+    end
+  end
+
+  def cancel
+    on CourseOfferingEdit do |page|
+      page.cancel
+    end
+  end
+
+  def cancel_and_continue
+    on CourseOfferingEdit do |page|
+      page.navigation_cancel_and_continue
+    end
+  end
+
+  def save_and_continue
+    on CourseOfferingEdit do |page|
+      page.navigation_save_and_continue
+    end
+  end
+
+  def edit_previous_co
+    on CourseOfferingEdit do |page|
+      page.edit_previous_co
+    end
+  end
+  
+  def edit_next_co
+    on CourseOfferingEdit do |page|
+      page.edit_next_co
+    end
+  end
+  
+  def edit_arbitrary_co
+    on CourseOfferingEdit do |page|
+      page.edit_relatedCos_dropdown_list.options[10].select
+    end
+  end
+  
   def set_reg_options (options)
     if options[:pass_fail_flag] and options[:audit_flag]
       @reg_options = "Allow students to audit; Pass/Fail Grading"

@@ -11,15 +11,12 @@ Then /^I view the course offering details$/ do
 end
 
 When /^I can edit the course offering$/ do
-  on ManageCourseOfferingList do |page|
-    page.edit @course_offering.course
-  end
+  @course_offering.manage
+  @course_offering.edit_offering
 end
 
 When /^I can return to search using the cancel button$/ do
-   on CourseOfferingEdit do |page|
-     page.cancel
-   end
+  @course_offering.cancel
 end
 
 When /^I edit a course offering with multiple format types$/ do
@@ -71,10 +68,7 @@ And /^I change the multiple credit values$/ do
 end
 
 Then /^I can submit and the credit options are changed$/ do
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
-
+  @course_offering.save
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
   on CourseOfferingInquiry do  |page|
@@ -130,9 +124,7 @@ Then /^I delete the added delivery format option$/ do
   @course_offering.delete_delivery_format("Lecture Only")
 end
 Then /^I can submit and the course offering is updated$/ do
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+  @course_offering.save
 
   #validate the success-growl is being shown
   on ManageCourseOfferings do |page|
@@ -152,9 +144,7 @@ Then /^I can submit and the course offering is updated$/ do
 end
 
 Then /^I can submit and the registration options are changed$/ do
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+  @course_offering.save
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
   on CourseOfferingInquiry do  |page|
@@ -163,10 +153,7 @@ Then /^I can submit and the registration options are changed$/ do
 end
 
 Then /^I can submit and the delivery formats are updated$/ do
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
-
+  @course_offering.save
   @course_offering.search_by_subjectcode
        @course_offering.view_course_details
        on CourseOfferingInquiry do  |page|
@@ -177,10 +164,7 @@ Then /^I can submit and the delivery formats are updated$/ do
 end
 
 Then /^I can submit and the modified delivery formats are updated$/ do
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
-
+  @course_offering.save
   @course_offering.search_by_subjectcode
        @course_offering.view_course_details
        on CourseOfferingInquiry do  |page|
@@ -191,10 +175,7 @@ Then /^I can submit and the modified delivery formats are updated$/ do
 end
 
 Then /^I can submit and the added delivery format is not present$/ do
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
-
+  @course_offering.save
   @course_offering.search_by_subjectcode
   @course_offering.view_course_details
   on CourseOfferingInquiry do  |page|
@@ -204,9 +185,7 @@ Then /^I can submit and the added delivery format is not present$/ do
 end
 
 Then /^I can submit the edited course offering$/ do
-  on CourseOfferingEdit do |page|
-    page.submit
-  end
+  @course_offering.save
 end
 
 When /^a final exam driver of "([^"]*)"$/ do |final_driver|
@@ -215,9 +194,7 @@ end
 
 Then /^I edit the same course offering$/ do
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
+  @course_offering.edit_offering
 end
 
 When /^I edit a course offering$/ do
@@ -235,10 +212,7 @@ end
 
 Then /^the changes of the affiliated person are persisted$/ do
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-
+  @course_offering.edit_offering
   on CourseOfferingEdit do |page|
     page.personnel_id.value.should == "admin"
     page.personnel_name.value.should == "admin, admin"
@@ -246,7 +220,7 @@ Then /^the changes of the affiliated person are persisted$/ do
   end
 end
 
-When /^I "(activate|deactivate)" the wait list$/ do |activate|
+When /^I (activate|deactivate) the wait list$/ do |activate|
     @course_offering.edit_offering :waitlist => true, :edit_in_progress => true
 end
 
@@ -276,7 +250,7 @@ Then /^I verify that I "(can|cannot)" manage course offerings$/ do |can_manage|
   end
 end
 
-When /^I "(set|unset)" the Honors Course selection$/ do |shouldSetHonorsCourse|
+When /^I (set|clear) the Honors Course selection$/ do |shouldSetHonorsCourse|
   honors_flag = "NO"
   if shouldSetHonorsCourse == "set"
     honors_flag = "YES"
@@ -285,36 +259,29 @@ When /^I "(set|unset)" the Honors Course selection$/ do |shouldSetHonorsCourse|
 end
 
 And /^I save the changes and remain on the Edit CO page$/ do
-  on CourseOfferingEdit do |page|
-    page.save_progress
-  end
+  @course_offering.save_progress
 end
 
-And /^I jump to "(the previous|the next|an arbitrary)" CO while "(saving|not saving)" changes$/ do |coDirection, shouldSaveChanges|
+And /^I jump to (the previous|the next|an arbitrary) CO while (saving|not saving) changes$/ do |coDirection, shouldSaveChanges|
+  case coDirection
+    when "the previous"
+      @course_offering.edit_previous_co
+    when "the next"
+      @course_offering.edit_next_co
+    else # nav to an arbitrary CO via the drop-down selector
+      @course_offering.edit_arbitrary_co
+  end
 
-  on CourseOfferingEdit do |page|
-
-    # which CO to navigate to
-    case coDirection
-      when "the previous"
-        page.edit_previous_co
-      when "the next"
-        page.edit_next_co
-      else    # nav to an arbitrary CO via the drop-down selector
-        page.edit_relatedCos_dropdown_list.options[10].select
-    end
-
-    # whether changes should be saved
-    if shouldSaveChanges == "saving"
-      page.navigation_save_and_continue
-    else
-      page.navigation_cancel_and_continue
-    end
+  # whether changes should be saved
+  if shouldSaveChanges == "saving"
+    @course_offering.save_and_continue
+  else
+    @course_offering.cancel_and_continue
   end
 
 end
 
-Then /^I can verify that the Honors Course setting is "(set|not set)"$/ do |shouldHonorsCourseBeSet|
+Then /^I can verify that the Honors Course setting is (set|not set)$/ do |shouldHonorsCourseBeSet|
   honors_flag = "NO"
   if shouldHonorsCourseBeSet == "set"
     honors_flag = "YES"
