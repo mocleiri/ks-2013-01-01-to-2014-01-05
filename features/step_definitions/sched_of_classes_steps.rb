@@ -134,11 +134,12 @@ end
 When /^I search for course offerings by course to view the course offering requisites$/ do
   @schedule_of_classes = make ScheduleOfClasses, :course_search_parm => "ENGL304", :exp_course_list => ["ENGL304"],
                               :term => "Fall 2012"
+  @schedule_of_classes.display
 end
 
 Then /^the course offering requisites should be displayed alongside the course description$/ do
   on DisplayScheduleOfClasses do |page|
-    page.get_requisites_message_text.should match /Antirequisite.*any courses from ENGL403 or ENGL404.*Student Eligibility & Prerequisite.*Two lower-level English courses.*permission of ARHU-English/m
+    page.get_requisites_message_text.should match /Student Eligibility & Prerequisite.*Two lower-level English courses.*permission of ARHU-English.*Antirequisite.*any courses from ENGL403 or ENGL404/m
   end
 end
 
