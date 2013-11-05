@@ -191,7 +191,7 @@ public class TransactionTypeController extends GenericSearchController {
 
         boolean typeExists = transactionService.transactionTypeExists(code);
 
-        if(typeExists) {
+        if(typeExists && (subCode == null || subCode == -1)) {
             TransactionType previousTransactionType = transactionService.getTransactionType(code, new Date());
 
             // make sure that this transaction type doesn't start on the same day (or before) the currently existing tt.
@@ -324,7 +324,12 @@ public class TransactionTypeController extends GenericSearchController {
             List<CreditPermission> creditPermissions = form.getCreditPermissions();
             if (creditPermissions != null && creditPermissions.size() > 0) {
                 for (CreditPermission creditPermission : creditPermissions) {
-                    transactionService.createCreditPermission(transactionType.getId(), creditPermission.getAllowableDebitType(), creditPermission.getPriority());
+                    Long id = creditPermission.getId();
+                    if(id == null) {
+                        transactionService.createCreditPermission(transactionType.getId(), creditPermission.getAllowableDebitType(), creditPermission.getPriority());
+                    } else {
+                        transactionService.persistCreditPermission(creditPermission);
+                    }
                 }
             }
         }
