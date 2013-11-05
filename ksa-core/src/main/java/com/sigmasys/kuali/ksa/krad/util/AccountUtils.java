@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.model.Information;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.hold.HoldService;
+import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
 import org.apache.commons.logging.Log;
@@ -29,6 +30,8 @@ public class AccountUtils {
 
     private static InformationService informationService;
 
+    private static PaymentBillingService paymentBillingService;
+
     private static ThirdPartyTransferService thirdPartyTransferService;
 
     public static void populateTransactionHeading(AbstractViewModel form, String userId) {
@@ -38,6 +41,10 @@ public class AccountUtils {
 
         if (informationService == null) {
             informationService = ContextUtils.getBean(InformationService.class);
+        }
+
+        if(paymentBillingService == null) {
+            paymentBillingService = ContextUtils.getBean(PaymentBillingService.class);
         }
 
         if(thirdPartyTransferService == null) {
@@ -50,6 +57,7 @@ public class AccountUtils {
         //form.setMemos(informationService.getMemos(userId));
         form.setHolds(AccountUtils.getHolds(userId));
 
+        form.setPaymentBillingPlansForTooltip(paymentBillingService.getPaymentBillingPlansByAccountId(userId));
         form.setThirdPartyPlansForTooltip(thirdPartyTransferService.getThirdPartyPlansByMember(userId));
 
     }

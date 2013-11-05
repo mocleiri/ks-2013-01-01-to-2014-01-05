@@ -46,6 +46,7 @@
                                     <ref bean="Ksa-TransactionAlerts"/>
                                     <ref bean="Ksa-TransactionFlags"/>
                                     <ref bean="Ksa-TransactionHolds"/>
+                                    <ref bean="Ksa-PaymentPlans"/>
                                     <ref bean="Ksa-ThirdPartyPlans"/>
 
                                 </list>

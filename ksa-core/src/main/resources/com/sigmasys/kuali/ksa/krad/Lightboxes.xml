@@ -199,6 +199,22 @@
         </property>
     </bean>
 
+    <bean id="Ksa-PaymentPlans" parent="Uif-HorizontalBoxGroup">
+        <property name="items">
+            <list>
+                <bean parent="Uif-ImageField" p:source="../images/payment_plan_icon.png" p:style="cursor:pointer;" p:altText="" p:title=""
+                      p:onClickScript="window.location='userPaymentPlanView?methodToCall=get&amp;viewId=UserPaymentPlanView&amp;pageId=PaymentPlans&amp;userId=@{account.id}';">
+                    <property name="toolTip">
+                        <bean parent="Uif-Tooltip" p:tooltipContent="@{paymentBillingPlansTooltip}"/>
+                    </property>
+                </bean>
+                <bean parent="Uif-Message">
+                    <property name="messageText" value="(@{paymentBillingPlansForTooltip.size()})"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
     <bean id="Ksa-ThirdPartyPlans" parent="Uif-HorizontalBoxGroup">
         <property name="items">
             <list>

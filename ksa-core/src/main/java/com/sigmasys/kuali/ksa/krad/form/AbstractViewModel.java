@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.krad.form;
 import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.service.UserPreferenceService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
@@ -50,6 +51,7 @@ public abstract class AbstractViewModel extends UifFormBase {
     private List<InformationModel> flags;
     private List<InformationModel> holds;
     //private List<Memo> memos;
+    private List<PaymentBillingPlan> paymentBillingPlans;
     private List<ThirdPartyPlan> thirdPartyPlans;
 
 
@@ -355,6 +357,44 @@ public abstract class AbstractViewModel extends UifFormBase {
 
         if(size == 0) {
             html.append("0/0)</b><br/><p>No third party plans</p>");
+            return html.toString();
+        }
+        if(size > itemsPerPage) {
+            html.append(itemsPerPage).append("/").append(size);
+        } else {
+            html.append(size).append("/").append(size);
+        }
+        html.append(")</b><br/><p>");
+
+        for(int i = 0; i < size && i < itemsPerPage; i++) {
+            html.append(plans.get(i).getName()).append("<br/>");
+        }
+        html.append("</p>");
+
+        return html.toString();
+    }
+
+    public List<PaymentBillingPlan> getPaymentBillingPlansForTooltip() {
+        if(paymentBillingPlans == null) {
+            paymentBillingPlans = new ArrayList<PaymentBillingPlan>();
+        }
+        return paymentBillingPlans;
+    }
+
+    public void setPaymentBillingPlansForTooltip(List<PaymentBillingPlan> thirdPartyPlans) {
+        this.paymentBillingPlans = paymentBillingPlans;
+    }
+
+    public String getPaymentBillingPlansTooltip() {
+        StringBuilder html = new StringBuilder();
+
+        html.append("<b>Current Active Payment Billing Plans (");
+        List<PaymentBillingPlan> plans = getPaymentBillingPlansForTooltip();
+        int size = plans.size();
+        int itemsPerPage = getItemsPerPage();
+
+        if(size == 0) {
+            html.append("0/0)</b><br/><p>No payment billing plans</p>");
             return html.toString();
         }
         if(size > itemsPerPage) {
