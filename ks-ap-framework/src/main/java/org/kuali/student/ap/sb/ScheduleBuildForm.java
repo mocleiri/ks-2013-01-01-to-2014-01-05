@@ -115,4 +115,29 @@ public interface ScheduleBuildForm {
 	 */
 	void removeSchedule();
 
+	/**
+	 * Get the position in the possible schedule list to start sending from.
+	 * 
+	 * @return The position in the possible schedule list to start sending from.
+	 */
+	int getPossibleSchedulesFrom();
+
+	/**
+	 * Get the position in the possible schedule list to stop sending,
+	 * exclusive.
+	 * 
+	 * @return The position in the possible schedule list to stop sending,
+	 *         exclusive.
+	 */
+	int getPossibleSchedulesTo();
+
+	/**
+	 * Get a count of the possible schedules options that can still be retrieved
+	 * using the more link.
+	 * 
+	 * @return The number of possible schedule options that can still be
+	 *         retrieved using the more link.
+	 */
+	int getMoreCount();
+
 }

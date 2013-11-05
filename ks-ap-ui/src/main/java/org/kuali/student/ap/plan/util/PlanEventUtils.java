@@ -317,6 +317,20 @@ public class PlanEventUtils {
 		jwriter.close();
 	}
 
+	public static void sendRefresh(String componentId, HttpServletResponse response) throws IOException, ServletException {
+		JsonObjectBuilder json = Json.createObjectBuilder();
+		json.add("component", componentId);
+		json.add("refresh", true);
+
+		response.setContentType("application/json; charset=UTF-8");
+		response.setHeader("Cache-Control", "No-cache");
+		response.setHeader("Cache-Control", "No-store");
+		response.setHeader("Cache-Control", "max-age=0");
+		JsonWriter jwriter = Json.createWriter(response.getWriter());
+		jwriter.writeObject(json.build());
+		jwriter.close();
+	}
+
 	private PlanEventUtils() {
 	}
 

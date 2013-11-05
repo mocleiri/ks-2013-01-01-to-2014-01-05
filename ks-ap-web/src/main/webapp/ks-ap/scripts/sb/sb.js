@@ -7,7 +7,6 @@ function uuid() {
 }
 
 var KsapScheduleBuild = {
-	triggerEnabled : true,
 	pendingBuild : 0,
 	possibleSchedules : null,
 
@@ -17,8 +16,6 @@ var KsapScheduleBuild = {
 	},
 
 	trigger : function() {
-		if (!this.triggerEnabled)
-			return;
 		if (this.pendingBuild != 0)
 			clearTimeout(this.pendingBuild);
 		this.pendingBuild = setTimeout("KsapScheduleBuild.build(false)", 1250);
@@ -26,8 +23,45 @@ var KsapScheduleBuild = {
 
 	build : function(more, removeReserved) {
 		var sb = this;
-		sb.triggerEnabled = false;
-		showLoading("Building...");
+		var activeBuild = sb.pendingBuild;
+		
+		var possibleArea = jQuery("#sb_possible_schedules");
+		var blockArea = jQuery("#sb_possible_options > .uif-boxLayout");
+		var moreLink = jQuery(".ksap-sb-morelink");
+
+		if (more) {
+			moreLink.block({
+				message : '<img src="../ks-myplan/images/btnLoader.gif"/>',
+				css : {
+					width : '100%',
+					border : 'none',
+					backgroundColor : 'transparent'
+				},
+				overlayCSS : {
+					backgroundColor : '#fff',
+					opacity : 0.6,
+					padding : '0px 1px',
+					margin : '0px -1px'
+				}
+			});
+		} else {
+			blockArea.find("input[type=checkbox]").prop("disabled", true);
+			blockArea.block({
+				message : '<img src="../ks-myplan/images/btnLoader.gif"/>',
+				css : {
+					width : '100%',
+					border : 'none',
+					backgroundColor : 'transparent'
+				},
+				overlayCSS : {
+					backgroundColor : '#fff',
+					opacity : 0.6,
+					padding : '0px 1px',
+					margin : '0px -1px'
+				}
+			});
+		}
+		
 		jQuery("#kualiForm").ajaxSubmit({
 			data : {
 				"methodToCall" : "build",
@@ -36,38 +70,55 @@ var KsapScheduleBuild = {
 			},
 			dataType : 'json',
 			success : function(newPossibleSchedules, textStatus, jqXHR) {
+				if (activeBuild != sb.pendingBuild) return;
 				if (newPossibleSchedules.todo != null)
 					showGrowl(newPossibleSchedules.todo);
-				sb.possibleSchedules = newPossibleSchedules;
-				KsapSbCalendar.clear();
-
-				jQuery("#sb_possible_options > .uif-boxLayout").empty();
-				for (var i in sb.possibleSchedules.possible)
-					sb.appendPossibleOption(sb.possibleSchedules.possible[i]);
-				if (sb.possibleSchedules.possible.length == 0)
-					jQuery(".ksap-sb-noschedules").show();
-				else
-					jQuery(".ksap-sb-noschedules").hide();
-
-				if (sb.possibleSchedules.more)
-					jQuery(".ksap-sb-morelink").show();
-				else
-					jQuery(".ksap-sb-morelink").hide();
-
-				jQuery("#sb_saved_schedules > .uif-boxLayout").empty();
-				for (var i in sb.possibleSchedules.saved)
-					sb.appendSavedOption(sb.possibleSchedules.saved[i]);
-
-				jQuery("#sb_reserved_times_possible > .uif-boxLayout").empty();
-				jQuery("#sb_reserved_times_saved > .uif-boxLayout").empty();
-				for (var i=0; i<sb.possibleSchedules.reserved.length; i++) {
-					sb.appendReservedTime(i, "sb_reserved_times_possible");
-					sb.appendReservedTime(i, "sb_reserved_times_saved");
+				
+				if (newPossibleSchedules.more) {
+					moreLink.text(newPossibleSchedules.moreCount + " more...");
+					moreLink.show();
+				} else {
+					moreLink.hide();
 				}
-
-				var weekgroups = jQuery("#sb_week_group_area > .uif-boxLayout");
-				weekgroups.empty();
-				for (var i=0; i<sb.possibleSchedules.weeks.length; i++) sb.appendWeekGroup(i);
+				
+				if (more) {
+					var oi = sb.possibleSchedules.possible.length;
+					sb.possibleSchedules.possible = 
+						sb.possibleSchedules.possible.concat(newPossibleSchedules.possible);
+					for (var i in newPossibleSchedules.possible)
+						sb.appendPossibleOption(sb.possibleSchedules.possible[parseInt(oi)+parseInt(i)]);
+					
+				} else {
+					sb.possibleSchedules = newPossibleSchedules;
+					KsapSbCalendar.clear();
+					jQuery("#sb_possible_options > .uif-boxLayout").empty();
+					for (var i in sb.possibleSchedules.possible)
+						sb.appendPossibleOption(sb.possibleSchedules.possible[i]);
+					if (sb.possibleSchedules.possible.length == 0)
+						jQuery(".ksap-sb-noschedules").show();
+					else
+						jQuery(".ksap-sb-noschedules").hide();
+	
+					jQuery("#sb_saved_schedules > .uif-boxLayout").empty();
+					for (var i in sb.possibleSchedules.saved)
+						sb.appendSavedOption(sb.possibleSchedules.saved[i]);
+	
+					jQuery("#sb_reserved_times_possible > .uif-boxLayout").empty();
+					jQuery("#sb_reserved_times_saved > .uif-boxLayout").empty();
+					for (var i=0; i<sb.possibleSchedules.reserved.length; i++) {
+						sb.appendReservedTime(i, "sb_reserved_times_possible");
+						sb.appendReservedTime(i, "sb_reserved_times_saved");
+					}
+	
+					var weekgroups = jQuery("#sb_week_group_area > .uif-boxLayout");
+					weekgroups.empty();
+					for (var i=0; i<sb.possibleSchedules.weeks.length; i++) sb.appendWeekGroup(i);
+				}
+				
+				if (sb.possibleSchedules.possible.length > 10)
+					possibleArea.addClass("scroll");
+				else
+					possibleArea.removeClass("scroll");
 
 			},
 			error : function(jqXHR, textStatus, errorThrown) {
@@ -76,8 +127,10 @@ var KsapScheduleBuild = {
 				showGrowl(errorThrown, jqXHR.status + " " + textStatus);
 			},
 			complete : function() {
-				hideLoading();
-				sb.triggerEnabled = true;
+				if (more)
+					moreLink.unblock();
+				else
+					blockArea.unblock();
 			}
 		});
 	},
@@ -178,7 +231,7 @@ var KsapScheduleBuild = {
 		
 		row.data("realuid", reserved.uniqueId);
 		row.data("altuid", uid);
-		toggleReservedTimeSelect(uid);
+		toggleReservedTimeSelect(uid, true);
 		row.show();
 	},
 
@@ -583,7 +636,7 @@ function toggleReservedTime(uniqueId) {
 	toggleReservedTimeSelect(uniqueId);
 }
 
-function toggleReservedTimeSelect(uniqueId) {
+function toggleReservedTimeSelect(uniqueId, notrigger) {
 	var row = jQuery("#sb-reserved-time-row-" + uniqueId);
 	var cb = jQuery("#sb-reserved-time-select-" + uniqueId + "_control");
 
@@ -630,7 +683,8 @@ function toggleReservedTimeSelect(uniqueId) {
 			}
 		}
 	}
-	KsapScheduleBuild.trigger();
+	if (!notrigger)
+		KsapScheduleBuild.trigger();
 }
 
 ////////////////////////////////////////////////////////
@@ -783,11 +837,11 @@ function toggleActivitySelect(primary, uniqueId, parentUniqueId) {
 	KsapScheduleBuild.trigger();
 }
 
-function showHideSecondaryOptions(uniqueId) {
+function showHideSecondaryOptions(uniqueId, activityUniqueId) {
 	var ao = jQuery("#sb_activity_options_" + uniqueId);
 	var dicon = jQuery("#ksap-sb-secondary-disclosure-icon-" + uniqueId);
 	if (ao.hasClass("ksap-sb-disclosure-closed")
-			&& getPrimaryActivityCount(uniqueId) > 0) {
+			&& getPrimaryActivityCount(activityUniqueId) > 0) {
 		ao.removeClass("ksap-sb-disclosure-closed");
 		dicon.addClass("ksap-sb-secondary-disclosure-icon-open");
 		dicon.removeClass("ksap-sb-secondary-disclosure-icon-closed");
@@ -798,3 +852,24 @@ function showHideSecondaryOptions(uniqueId) {
 	}
 }
 
+function showCourseSummary(courseId, termId, registrationCode, e) {
+	var retrieveData = {
+		action : "planner",
+		methodToCall : "startDialog",
+		termId : termId,
+		courseId : courseId,
+		pageId : "planner_course_summary_page"
+	};
+	var popupOptions = {
+		tail : {
+			hidden : true
+		},
+		align : 'top',
+		close : true
+	};
+	jQuery("#popupForm").remove();
+	fnClosePopup();
+	openPopup("planner_course_summary_inner", retrieveData, "planner", {}, popupOptions, e);
+	var form = jQuery("#popupForm");
+	form.attr("accept-charset", "UTF-8");
+}

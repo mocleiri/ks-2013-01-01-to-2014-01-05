@@ -2,13 +2,11 @@ package org.kuali.student.ap.sb.support;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
 
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
@@ -17,6 +15,8 @@ import org.kuali.student.ap.sb.ScheduleBuildForm;
 import org.kuali.student.ap.sb.ScheduleBuildStrategy;
 import org.kuali.student.ap.sb.dto.PossibleScheduleOptionInfo;
 import org.kuali.student.ap.sb.dto.ReservedTimeInfo;
+import org.kuali.student.ap.sb.infc.ActivityOption;
+import org.kuali.student.ap.sb.infc.ClassMeetingTime;
 import org.kuali.student.ap.sb.infc.CourseOption;
 import org.kuali.student.ap.sb.infc.PossibleScheduleOption;
 import org.kuali.student.ap.sb.infc.ReservedTime;
@@ -34,7 +34,11 @@ public class DefaultScheduleBuildForm extends UifFormBase implements
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DefaultScheduleBuildForm.class);
 
-	private int possibleScheduleSize = 10;
+	private static final int POSSIBLE_LIMIT = 50000;
+	private static final int POSSIBLE_PAGE = 20;
+	
+	private int possibleSchedulesFrom;
+	private int possibleSchedulesTo;
 	private boolean overload;
 
 	private String termId;
@@ -140,16 +144,38 @@ public class DefaultScheduleBuildForm extends UifFormBase implements
 
 		if (newSavedSchedules != null && savedSchedules != null) {
 			Iterator<PossibleScheduleOption> nsi = newSavedSchedules.iterator();
-			int i=0;
+			int i = 0;
 			while (nsi.hasNext()) {
 				PossibleScheduleOptionInfo nss = (PossibleScheduleOptionInfo) nsi.next();
-				if (!getTermId().equals(nss.getTermId())) {
-					nsi.remove();
+				boolean removed = false;
+				if (nss.getTermId() == null) {
+					// remediate term ID
+					Term term = getTerm();
+					Date sd = term.getStartDate();
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(term.getEndDate());
+					cal.add(Calendar.DATE, 1);
+					Date ed = cal.getTime();
+					aoloop: for (ActivityOption ao : nss.getActivityOptions())
+						for (ClassMeetingTime mtg : ao.getClassMeetingTimes())
+							if (mtg.getStartDate().before(sd) || mtg.getUntilDate().after(ed)) {
+								nsi.remove();
+								removed = true;
+								break aoloop;
+							}
+					if (!removed) {
+						nss.setTermId(termId);
+					}
 				}
 				
+				if (!removed && !getTermId().equals(nss.getTermId())) {
+					nsi.remove();
+				}
+
 				if (i < savedSchedules.size()) {
 					nss.setSelected(savedSchedules.get(i).isSelected());
 				}
+				
 				i++;
 			}
 		}
@@ -158,9 +184,6 @@ public class DefaultScheduleBuildForm extends UifFormBase implements
 
 	@Override
 	public void buildSchedules() {
-		updateReservedTimesOnBuild();
-		updateSavedSchedulesOnBuild();
-
 		if (more) {
 
 			if (scheduleBuilder == null)
@@ -170,46 +193,20 @@ public class DefaultScheduleBuildForm extends UifFormBase implements
 			if (possibleScheduleOptions == null)
 				throw new IllegalStateException(
 						"Possible schedule options not initialized");
-
-			// preserve order specified by front-end "shuffle"
-			Collections.sort(possibleScheduleOptions,
-					new Comparator<PossibleScheduleOption>() {
-						@Override
-						public int compare(PossibleScheduleOption o1,
-								PossibleScheduleOption o2) {
-							int s1 = o1.getShuffle();
-							int s2 = o2.getShuffle();
-							return s1 < s2 ? -1 : s1 == s2 ? 0 : 1;
-						}
-					});
-
-			Set<PossibleScheduleOption> current = new HashSet<PossibleScheduleOption>();
-			int nextn = possibleScheduleOptions.size();
-			for (PossibleScheduleOption pso : possibleScheduleOptions) {
-				if (pso.isSelected() || pso.isDiscarded())
-					current.add(pso);
-				if (pso.isSelected())
-					nextn--;
-			}
-
-			if (nextn > 0) {
-				List<PossibleScheduleOption> newOptions = scheduleBuilder
-						.getNext(nextn, current);
-				int n = 0;
-				ListIterator<PossibleScheduleOption> psi = possibleScheduleOptions
-						.listIterator();
-				while (psi.hasNext() && n < newOptions.size()) {
-					PossibleScheduleOption psn = psi.next();
-					if (!psn.isSelected() && !psn.isDiscarded())
-						psi.set(newOptions.get(n++));
-				}
-			}
+			
+			possibleSchedulesFrom = possibleSchedulesTo;
+			possibleSchedulesTo = Math.min(
+					possibleSchedulesTo + POSSIBLE_PAGE, possibleScheduleOptions.size());
 
 		} else {
+			updateReservedTimesOnBuild();
+			updateSavedSchedulesOnBuild();
+
 			scheduleBuilder = new ScheduleBuilder(getTerm(), courseOptions, reservedTimes);
 			possibleScheduleOptions = getScheduleBuilder().getNext(
-					possibleScheduleSize,
-					Collections.<PossibleScheduleOption> emptySet());
+					POSSIBLE_LIMIT, Collections.<PossibleScheduleOption> emptySet());
+			possibleSchedulesFrom = 0;
+			possibleSchedulesTo = Math.min(POSSIBLE_PAGE, possibleScheduleOptions.size());
 		}
 	}
 
@@ -301,16 +298,32 @@ public class DefaultScheduleBuildForm extends UifFormBase implements
 
 	@Override
 	public boolean hasMore() {
-		return scheduleBuilder != null && scheduleBuilder.hasMore();
+		return possibleScheduleOptions != null &&
+				possibleSchedulesTo < possibleScheduleOptions.size();
 	}
 
-	public int getPossibleScheduleSize() {
-		return possibleScheduleSize;
+	@Override
+	public int getMoreCount() {
+		return possibleScheduleOptions == null ? 0 :
+				Math.max(0, possibleScheduleOptions.size() - possibleSchedulesTo);
 	}
 
-	public void setPossibleScheduleSize(int possibleScheduleSize) {
-		this.possibleScheduleSize = possibleScheduleSize == 0 ? 10
-				: possibleScheduleSize;
+	@Override
+	public int getPossibleSchedulesFrom() {
+		return possibleSchedulesFrom;
+	}
+
+	public void setPossibleSchedulesFrom(int possibleSchedulesFrom) {
+		this.possibleSchedulesFrom = possibleSchedulesFrom;
+	}
+
+	@Override
+	public int getPossibleSchedulesTo() {
+		return possibleSchedulesTo;
+	}
+
+	public void setPossibleSchedulesTo(int possibleSchedulesTo) {
+		this.possibleSchedulesTo = possibleSchedulesTo;
 	}
 
 	public boolean isOverload() {

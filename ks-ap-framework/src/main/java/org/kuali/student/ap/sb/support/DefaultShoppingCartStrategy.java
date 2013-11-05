@@ -232,7 +232,11 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 
 			for (String acode : acodes) {
 				String primaryCode = primaryRegCode.get(acode);
-				assert primaryCode != null : acode;
+				
+				if (primaryCode == null) {
+					LOG.warn("Registration code not found on in published course offerings " + acode);
+					primaryCode = acode;
+				}
 
 				if (msg != null)
 					msg.append("\n  Activity ").append(acode).append(" primary ")

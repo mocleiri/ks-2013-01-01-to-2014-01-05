@@ -20,6 +20,21 @@ import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 public interface ScheduleBuildStrategy {
 
 	/**
+	 * Determine if schedule build is available for the student on the given
+	 * term.
+	 * 
+	 * @param termId
+	 *            The term ID.
+	 * @param campusCode
+	 *            The campus code value, from the "campusCode" dynamic attribute
+	 *            on the course. When null, this method will check for access to
+	 *            the shopping cart for the given term on all campuses.
+	 * @return True if the student has access to schedule build for the given
+	 *         term, false if not.
+	 */
+	boolean isBuildAvailable(String termId, String campusCode);
+
+	/**
 	 * Get the initial schedule build form.
 	 * 
 	 * @return The initial schedule build form.

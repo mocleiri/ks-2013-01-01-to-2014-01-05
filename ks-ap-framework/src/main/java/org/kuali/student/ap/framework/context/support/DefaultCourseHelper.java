@@ -3,14 +3,16 @@ package org.kuali.student.ap.framework.context.support;
 import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -54,16 +56,14 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 	private static final Logger LOG = Logger.getLogger(DefaultCourseHelper.class);
 
 	private static Map<String, Reference<CourseInfo>> COURSE_CACHE =
-			Collections.synchronizedMap(
-					new HashMap<String, Reference<CourseInfo>>());
+			new HashMap<String, Reference<CourseInfo>>();
 
 	private static Map<CourseTermKey, Reference<List<ActivityOfferingDisplayInfo>>> AOD_CACHE =
-			Collections.synchronizedMap(
-					new HashMap<CourseTermKey, Reference<List<ActivityOfferingDisplayInfo>>>());
+			new HashMap<CourseTermKey, Reference<List<ActivityOfferingDisplayInfo>>>();
 
 	private static ReferenceQueue<?> CACHE_Q = new ReferenceQueue<Object>();
 
-	private static class CacheReference<T> extends WeakReference<T> {
+	private static class CacheReference<T> extends SoftReference<T> {
 
 		private final Map<?, ?> map;
 		private final Object key;
@@ -80,7 +80,9 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 	private static void pruneCache() {
 		CacheReference<?> cacheRef;
 		while ((cacheRef = (CacheReference<?>) CACHE_Q.poll()) != null)
-			cacheRef.map.remove(cacheRef.key);
+			synchronized (cacheRef.map) {
+				cacheRef.map.remove(cacheRef.key);
+			}
 	}
 
 	private static final CourseMarkerKey COURSE_MARKER_KEY = new CourseMarkerKey();
@@ -156,8 +158,10 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 
 				@SuppressWarnings("unchecked")
 				ReferenceQueue<? super CourseInfo> q = (ReferenceQueue<? super CourseInfo>) CACHE_Q;
-				COURSE_CACHE.put(courseId,
-						new CacheReference<CourseInfo>(courseInfo, COURSE_CACHE, courseId, q));
+				synchronized (COURSE_CACHE) {
+					COURSE_CACHE.put(courseId,
+							new CacheReference<CourseInfo>(courseInfo, COURSE_CACHE, courseId, q));
+				}
 			}
 		}
 
@@ -186,9 +190,11 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 				@SuppressWarnings("unchecked")
 				ReferenceQueue<? super List<ActivityOfferingDisplayInfo>> q =
 						(ReferenceQueue<? super List<ActivityOfferingDisplayInfo>>) CACHE_Q;
-				AOD_CACHE.put(key,
-						new CacheReference<List<ActivityOfferingDisplayInfo>>(aod, AOD_CACHE, key,
-								q));
+				synchronized (AOD_CACHE) {
+					AOD_CACHE.put(key,
+							new CacheReference<List<ActivityOfferingDisplayInfo>>(
+									aod, AOD_CACHE, key, q));
+				}
 			}
 		}
 
@@ -269,7 +275,7 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 		private void frontLoadActivityOfferings(List<String> courseIds, String[] termIds) {
 			StringBuilder sb = null;
 			if (LOG.isDebugEnabled())
-				sb = new StringBuilder("Front activity offerings " + courseIds);
+				sb = new StringBuilder("Front load activity offerings " + courseIds);
 
 			List<String> pullCourseIds = new ArrayList<String>(courseIds);
 			Iterator<String> pullIdIter = pullCourseIds.iterator();
@@ -314,24 +320,39 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 				if (sb != null)
 					sb.append("\nCourse Offerings:");
 
-				Map<String, CourseTermKey> coid2key = new java.util.HashMap<String, CourseTermKey>();
-				List<String> additionalCourseIds = new java.util.LinkedList<String>();
+				Map<String, List<CourseTermKey>> coid2key =
+						new java.util.HashMap<String, List<CourseTermKey>>();
+				List<String> additionalCourseIds = new LinkedList<String>();
+				Queue<String> coCluIds = new LinkedList<String>();
 				for (CourseOfferingInfo co : cos) {
-					Course c = getCourse(co.getCourseId());
-					if (c == null)
-						additionalCourseIds.add(co.getCourseId());
-					if (sb != null) {
-						sb.append("\n    ");
-						sb.append(co.getId());
+					coCluIds.offer(co.getCourseId());
+					String altCourseIds = co.getAttributeValue("alternateCourseIds");
+					if (altCourseIds != null)
+						for (String altCourseId : altCourseIds.split(","))
+							coCluIds.offer(altCourseId);
+					while (!coCluIds.isEmpty()) {
+						String courseId = coCluIds.poll();
+						Course c = getCourse(courseId);
 						if (c == null)
-							sb.append(" course queued");
-						else {
-							sb.append(" -> ");
-							sb.append(c.getCode());
+							additionalCourseIds.add(courseId);
+						if (sb != null) {
+							sb.append("\n    ");
+							sb.append(co.getId());
+							if (c == null)
+								sb.append(" course queued");
+							else {
+								sb.append(" -> ");
+								sb.append(c.getCode());
+							}
+							sb.append(" ");
+							sb.append(courseId);
 						}
+						CourseTermKey k = new CourseTermKey(courseId, co.getTermId());
+						List<CourseTermKey> kl = coid2key.get(co.getId());
+						if (kl == null)
+							coid2key.put(co.getId(), kl = new ArrayList<CourseTermKey>());
+						kl.add(k);
 					}
-					CourseTermKey k = new CourseTermKey(co.getCourseId(), co.getTermId());
-					coid2key.put(co.getId(), k);
 				}
 
 				if (!additionalCourseIds.isEmpty())
@@ -343,16 +364,19 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 				if (sb != null)
 					sb.append("\nFormat Offerings:");
 				for (FormatOfferingInfo fo : fos) {
-					CourseTermKey k = coid2key.get(fo.getCourseOfferingId());
-					if (sb != null) {
-						sb.append("\n    ");
-						sb.append(fo.getId());
-						sb.append(" -> ");
-						sb.append(fo.getCourseOfferingId());
-						sb.append(" -> ");
-						sb.append(k.courseId);
+					List<CourseTermKey> kl = coid2key.get(fo.getCourseOfferingId());
+					assert kl != null && !kl.isEmpty();
+					for (CourseTermKey k : kl) {
+						if (sb != null) {
+							sb.append("\n    ");
+							sb.append(fo.getId());
+							sb.append(" -> ");
+							sb.append(fo.getCourseOfferingId());
+							sb.append(" -> ");
+							sb.append(k.courseId);
+						}
+						foid2coid.put(fo.getId(), fo.getCourseOfferingId());
 					}
-					foid2coid.put(fo.getId(), fo.getCourseOfferingId());
 				}
 
 				List<String> aoids =
@@ -366,28 +390,37 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 				for (ActivityOfferingDisplayInfo aodi : aods) {
 					String coid = foid2coid.get(aodi.getFormatOfferingId());
 					assert coid != null : aodi.getId() + " " + aodi.getFormatOfferingId();
-					CourseTermKey k = coid2key.get(coid);
-					assert k != null : aodi.getId() + " " + aodi.getFormatOfferingId() + " " + coid;
-					List<ActivityOfferingDisplayInfo> aodByCo = aodmap
-							.get(k);
-					if (aodByCo == null)
-						aodmap.put(k,
-								aodByCo = new java.util.LinkedList<ActivityOfferingDisplayInfo>());
-					aodByCo.add(aodi);
-					if (sb != null) {
-						sb.append("\n    ");
-						sb.append(aodi.getId());
-						sb.append(" -> ");
-						sb.append(aodi.getFormatOfferingId());
-						sb.append(" -> ");
-						sb.append(coid);
-						sb.append(" -> ");
-						sb.append(k.courseId);
+					List<CourseTermKey> kl = coid2key.get(coid);
+					assert kl != null && !kl.isEmpty();
+					for (CourseTermKey k : kl) {
+						assert k != null : aodi.getId() + " " + aodi.getFormatOfferingId() + " "
+								+ coid;
+						List<ActivityOfferingDisplayInfo> aodByCo = aodmap
+								.get(k);
+						if (aodByCo == null)
+							aodmap.put(
+									k,
+									aodByCo = new java.util.LinkedList<ActivityOfferingDisplayInfo>());
+						aodByCo.add(aodi);
+						if (sb != null) {
+							sb.append("\n    ");
+							sb.append(aodi.getId());
+							sb.append(" -> ");
+							sb.append(aodi.getFormatOfferingId());
+							sb.append(" -> ");
+							sb.append(coid);
+							sb.append(" -> ");
+							sb.append(k.courseId);
+						}
 					}
 				}
-				
-				for (Entry<CourseTermKey, List<ActivityOfferingDisplayInfo>> aode : aodmap.entrySet())
+
+				for (Entry<CourseTermKey, List<ActivityOfferingDisplayInfo>> aode : aodmap
+						.entrySet())
 					cache(aode.getKey(), aode.getValue());
+
+				if (sb != null)
+					LOG.debug(sb);
 
 			} catch (DoesNotExistException e) {
 				throw new IllegalArgumentException("CO lookup error", e);

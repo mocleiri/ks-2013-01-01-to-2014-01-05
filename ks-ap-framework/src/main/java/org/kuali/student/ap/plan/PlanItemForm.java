@@ -3,6 +3,7 @@ package org.kuali.student.ap.plan;
 import java.util.List;
 
 import org.kuali.student.ap.common.infc.HasUniqueId;
+import org.kuali.student.ap.sb.infc.ActivityOption;
 import org.kuali.student.enrollment.acal.infc.Term;
 import org.kuali.student.myplan.academicplan.infc.LearningPlan;
 import org.kuali.student.myplan.academicplan.infc.PlanItem;
@@ -109,5 +110,19 @@ public interface PlanItemForm extends HasUniqueId {
 	 *         for the learning course.
 	 */
 	List<PlanItem> getExistingPlanItems();
+
+	/**
+	 * The registration code related to the current request, if applicable.
+	 * 
+	 * @return The registration code.
+	 */
+	String getRegistrationCode();
+	
+	/**
+	 * Get the activity option related to the course.
+	 * 
+	 * @return Activity options
+	 */
+	List<ActivityOption> getActivityOptions();
 
 }

@@ -82,6 +82,33 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 	private static final Logger LOG = Logger
 			.getLogger(DefaultScheduleBuildStrategy.class);
 
+	private static final ThreadLocal<TransformHelper> TL_TRANSFORM = new ThreadLocal<TransformHelper>() {
+		@Override
+		protected TransformHelper initialValue() {
+			return new TransformHelper();
+		}
+	};
+
+	private static class TransformHelper {
+		private StringBuilder traceBuffer;
+		private DateFormat timeFormat = new SimpleDateFormat("h:mm a");
+		private DateFormat longDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		private DateFormat shortDateFormat = new SimpleDateFormat("M/d");
+		private Calendar startDateCalendar = Calendar.getInstance();
+		private Calendar endDateCalendar = Calendar.getInstance();
+		private Calendar timeCalendar = Calendar.getInstance();
+
+		private void startTrace() {
+			traceBuffer = LOG.isDebugEnabled() ? new StringBuilder() : null;
+		}
+
+		private void endTrace() {
+			if (traceBuffer != null)
+				LOG.debug(traceBuffer);
+			traceBuffer = null;
+		}
+	}
+
 	/**
 	 * Simple XML wrapper for storing a list of reserved times as a dynamic
 	 * attribute on a learning plan.
@@ -212,225 +239,14 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 	}
 
 	@Override
+	public boolean isBuildAvailable(String termId, String campusCode) {
+		return KsapFrameworkServiceLocator.getShoppingCartStrategy().isCartAvailable(termId,
+				campusCode);
+	}
+
+	@Override
 	public ScheduleBuildForm getInitialForm() {
 		return new DefaultScheduleBuildForm();
-	}
-
-	private ClassMeetingTime adaptClassMeeting(TimeSlot timeSlot,
-			ScheduleComponentDisplay scdi, Calendar tcal, Calendar sdcal,
-			Calendar edcal, DateFormat tdf, DateFormat ddf, String instructor,
-			Date sessionStartDate, Date sessionEndDate) {
-		ClassMeetingTimeInfo meeting = new ClassMeetingTimeInfo();
-		sdcal.setTime(sessionStartDate);
-		edcal.setTime(sessionEndDate);
-		meeting.setAllDay(true);
-
-		String location = null;
-		Room roomInfo = scdi.getRoom();
-		if (roomInfo != null) {
-			location = roomInfo.getDescr().getPlain();
-		}
-
-		StringBuilder daysAndTimes = new StringBuilder();
-		Set<Integer> weekdays = new java.util.TreeSet<Integer>();
-		if (timeSlot.getWeekdays() != null)
-			weekdays.addAll(timeSlot.getWeekdays());
-
-		for (int weekday : weekdays)
-			switch (weekday) {
-			case Calendar.MONDAY:
-				daysAndTimes
-						.append(SchedulingServiceConstants.MONDAY_TIMESLOT_DISPLAY_DAY_CODE);
-				meeting.setMonday(true);
-				break;
-			case Calendar.TUESDAY:
-				daysAndTimes
-						.append(SchedulingServiceConstants.TUESDAY_TIMESLOT_DISPLAY_DAY_CODE);
-				meeting.setTuesday(true);
-				break;
-			case Calendar.WEDNESDAY:
-				daysAndTimes
-						.append(SchedulingServiceConstants.WEDNESDAY_TIMESLOT_DISPLAY_DAY_CODE);
-				meeting.setWednesday(true);
-				break;
-			case Calendar.THURSDAY:
-				daysAndTimes
-						.append(SchedulingServiceConstants.THURSDAY_TIMESLOT_DISPLAY_DAY_CODE);
-				meeting.setThursday(true);
-				break;
-			case Calendar.FRIDAY:
-				daysAndTimes
-						.append(SchedulingServiceConstants.FRIDAY_TIMESLOT_DISPLAY_DAY_CODE);
-				meeting.setFriday(true);
-				break;
-			case Calendar.SATURDAY:
-				daysAndTimes
-						.append(SchedulingServiceConstants.SATURDAY_TIMESLOT_DISPLAY_DAY_CODE);
-				meeting.setSaturday(true);
-				break;
-			case Calendar.SUNDAY:
-				daysAndTimes
-						.append(SchedulingServiceConstants.SUNDAY_TIMESLOT_DISPLAY_DAY_CODE);
-				meeting.setSunday(true);
-				break;
-			default:
-				throw new IllegalArgumentException("Unexpected day code "
-						+ weekday);
-			}
-
-		TimeOfDayInfo startInfo = timeSlot.getStartTime();
-		TimeOfDayInfo endInfo = timeSlot.getEndTime();
-
-		if (startInfo != null && endInfo != null) {
-			meeting.setAllDay(false);
-			if (daysAndTimes.length() > 0)
-				daysAndTimes.append(" ");
-			Date startTime = new Date(startInfo.getMilliSeconds());
-			Date endTime = new Date(endInfo.getMilliSeconds());
-			daysAndTimes.append(tdf.format(startTime));
-			daysAndTimes.append(" - ");
-			daysAndTimes.append(tdf.format(endTime));
-			tcal.setTime(startTime);
-			sdcal.set(Calendar.HOUR_OF_DAY, tcal.get(Calendar.HOUR_OF_DAY));
-			sdcal.set(Calendar.MINUTE, tcal.get(Calendar.MINUTE));
-			sdcal.set(Calendar.SECOND, tcal.get(Calendar.SECOND));
-			sdcal.set(Calendar.MILLISECOND, tcal.get(Calendar.MILLISECOND));
-			meeting.setStartDate(sdcal.getTime());
-			tcal.setTime(endTime);
-			edcal.set(Calendar.HOUR_OF_DAY, tcal.get(Calendar.HOUR_OF_DAY));
-			edcal.set(Calendar.MINUTE, tcal.get(Calendar.MINUTE));
-			edcal.set(Calendar.SECOND, tcal.get(Calendar.SECOND));
-			edcal.set(Calendar.MILLISECOND, tcal.get(Calendar.MILLISECOND));
-			meeting.setUntilDate(edcal.getTime());
-		} else {
-			edcal.set(Calendar.HOUR_OF_DAY, 0);
-			edcal.set(Calendar.MINUTE, 0);
-			edcal.set(Calendar.SECOND, 0);
-			edcal.set(Calendar.MILLISECOND, 0);
-		}
-		meeting.setLocation(location);
-		meeting.setArranged(location != null);
-		meeting.setDaysAndTimes(daysAndTimes.toString());
-		meeting.setInstructorName(instructor);
-		meeting.setStartDate(sdcal.getTime());
-		meeting.setUntilDate(edcal.getTime());
-		meeting.setDescription(ddf.format(meeting.getStartDate()) + " - "
-				+ ddf.format(meeting.getUntilDate()));
-		return meeting;
-	}
-
-	private ActivityOptionInfo getActivityOption(Term term, ActivityOfferingDisplayInfo aodi,
-			int courseIndex, String courseId, String campusCode, StringBuilder msg,
-			DateFormat tdf, DateFormat udf, DateFormat ddf, Calendar sdcal, Calendar edcal,
-			Calendar tcal) {
-
-		ActivityOptionInfo activityOption = new ActivityOptionInfo();
-		activityOption.setCourseIndex(courseIndex);
-		activityOption.setUniqueId(UUID.randomUUID().toString());
-		activityOption.setCourseId(courseId);
-		activityOption.setActivityOfferingId(aodi.getId());
-		activityOption.setActivityTypeDescription(aodi.getTypeName());
-		activityOption.setCourseOfferingCode((campusCode == null ? ""
-				: campusCode + " ") + aodi.getCourseOfferingCode());
-		activityOption.setActivityName(aodi.getName());
-		activityOption.setRegistrationCode(aodi
-				.getActivityOfferingCode());
-		activityOption
-				.setClosed(!LuiServiceConstants.LUI_AO_STATE_OFFERED_KEY
-						.equals(aodi.getStateKey()));
-		activityOption.setTotalSeats(aodi.getMaximumEnrollment());
-		if (msg != null)
-			msg.append("\nActivity ")
-					.append(activityOption.getUniqueId()).append(": ")
-					.append(activityOption.getCourseOfferingCode())
-					.append(" ")
-					.append(activityOption.getRegistrationCode());
-
-		boolean enrollmentGroup = false;
-		String instructor = aodi.getInstructorName();
-		String primaryOfferingId = null;
-
-		String sessionDescr = term.getName();
-		Date sessionStartDate = term.getStartDate();
-		Date sessionEndDate = term.getEndDate();
-		BigDecimal minCredits = BigDecimal.ZERO;
-		BigDecimal maxCredits = BigDecimal.ZERO;
-		for (AttributeInfo attrib : aodi.getAttributes()) {
-			String key = attrib.getKey();
-			String value = attrib.getValue();
-			if ("PrimaryActivityOfferingId".equalsIgnoreCase(key)) {
-				primaryOfferingId = value;
-				activityOption.setPrimary(aodi.getId().equals(
-						primaryOfferingId));
-			}
-			if ("PermissionRequired".equalsIgnoreCase(key)) {
-				activityOption.setRequiresPermission("true"
-						.equals(value));
-			}
-			if ("BlockEnrollment".equalsIgnoreCase(key)) {
-				enrollmentGroup = "true".equals(value);
-			}
-			if ("Closed".equalsIgnoreCase(key)) {
-				activityOption.setClosed("true".equals(value));
-			}
-			if ("enrollOpen".equalsIgnoreCase(key)) {
-				activityOption.setOpenSeats(Integer.parseInt(value));
-			}
-			if ("SessionDescr".equalsIgnoreCase(key)) {
-				sessionDescr = value;
-			}
-			if ("SessionStartDate".equalsIgnoreCase(key)) {
-				try {
-					sessionStartDate = udf.parse(value);
-				} catch (ParseException e) {
-					throw new IllegalArgumentException(
-							"Invalid session start date "
-									+ sessionStartDate);
-				}
-			}
-			if ("SessionEndDate".equalsIgnoreCase(key)) {
-				try {
-					sessionEndDate = udf.parse(value);
-				} catch (ParseException e) {
-					throw new IllegalArgumentException(
-							"Invalid session start date "
-									+ sessionEndDate);
-				}
-			}
-
-			if ("CourseCode".equalsIgnoreCase(key)) {
-				activityOption.setCourseOfferingCode((campusCode == null ? ""
-						: campusCode + " ") + value);
-			}
-
-			// TODO: Add getResultValuesGroup() to
-			// ActivityOfferingDisplayInfo and use it instead.
-			if ("minUnits".equalsIgnoreCase(key)) {
-				minCredits = new BigDecimal(value);
-			}
-			if ("maxUnits".equalsIgnoreCase(key)) {
-				maxCredits = new BigDecimal(value);
-			}
-
-		}
-		sessionDescr += " " + ddf.format(sessionStartDate) + " - "
-				+ ddf.format(sessionEndDate);
-		activityOption.setAcademicSessionDescr(sessionDescr);
-		activityOption.setMinCredits(minCredits);
-		activityOption.setMaxCredits(maxCredits);
-
-		List<ClassMeetingTime> meetingTimes = new java.util.LinkedList<ClassMeetingTime>();
-		ScheduleDisplayInfo sdi = aodi.getScheduleDisplay();
-		for (ScheduleComponentDisplay scdi : sdi
-				.getScheduleComponentDisplays())
-			for (TimeSlot timeSlot : scdi.getTimeSlots())
-				meetingTimes.add(adaptClassMeeting(timeSlot, scdi,
-						tcal, sdcal, edcal, tdf, ddf, instructor,
-						sessionStartDate, sessionEndDate));
-		activityOption.setClassMeetingTimes(meetingTimes);
-		activityOption.setEnrollmentGroup(enrollmentGroup);
-
-		return activityOption;
 	}
 
 	@Override
@@ -456,16 +272,9 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 				.getActivityOfferingDisplaysByCourseAndTerm(courseId,
 						termId))
 			if (regCode.equals(aodi.getActivityOfferingCode())) {
-				DateFormat tdf = new SimpleDateFormat("h:mm a");
-				DateFormat udf = new SimpleDateFormat("MM/dd/yyyy");
-				DateFormat ddf = new SimpleDateFormat("M/d");
-				Calendar sdcal = Calendar.getInstance();
-				Calendar edcal = Calendar.getInstance();
-				Calendar tcal = Calendar.getInstance();
-				return getActivityOption(term, aodi, 0, courseId, campusCode, null, tdf, udf, ddf,
-						sdcal, edcal, tcal);
+				return getActivityOption(term, aodi, 0, courseId, campusCode);
 			}
-		
+
 		return null;
 	}
 
@@ -476,12 +285,7 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 		CourseHelper courseHelper = KsapFrameworkServiceLocator
 				.getCourseHelper();
 		ShoppingCartStrategy cartStrategy = KsapFrameworkServiceLocator.getShoppingCartStrategy();
-		DateFormat tdf = new SimpleDateFormat("h:mm a");
-		DateFormat udf = new SimpleDateFormat("MM/dd/yyyy");
-		DateFormat ddf = new SimpleDateFormat("M/d");
-		Calendar sdcal = Calendar.getInstance();
-		Calendar edcal = Calendar.getInstance();
-		Calendar tcal = Calendar.getInstance();
+		TransformHelper transform = TL_TRANSFORM.get();
 		List<CourseOption> rv = new java.util.LinkedList<CourseOption>();
 		courseHelper.frontLoad(courseIds, termId);
 		int courseIndex = -1;
@@ -509,66 +313,66 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 			List<ActivityOption> primaryActivities = new java.util.LinkedList<ActivityOption>();
 			Map<String, Map<String, List<ActivityOptionInfo>>> secondaryActivities = new java.util.LinkedHashMap<String, Map<String, List<ActivityOptionInfo>>>();
 
-			StringBuilder msg = null;
-			if (LOG.isDebugEnabled())
-				msg = new StringBuilder();
-			for (ActivityOfferingDisplayInfo aodi : courseHelper
-					.getActivityOfferingDisplaysByCourseAndTerm(courseId,
-							termId)) {
-				ActivityOptionInfo activityOption = getActivityOption(term, aodi, courseIndex,
-						courseId, campusCode, msg, tdf, udf, ddf, sdcal, edcal, tcal);
+			transform.startTrace();
+			try {
+				for (ActivityOfferingDisplayInfo aodi : courseHelper
+						.getActivityOfferingDisplaysByCourseAndTerm(courseId,
+								termId)) {
+					ActivityOptionInfo activityOption =
+							getActivityOption(term, aodi, courseIndex, courseId, campusCode);
 
-				boolean enrollmentGroup = false;
-				String primaryOfferingId = null;
-				for (AttributeInfo attrib : aodi.getAttributes()) {
-					String key = attrib.getKey();
-					String value = attrib.getValue();
+					boolean enrollmentGroup = false;
+					String primaryOfferingId = null;
+					for (AttributeInfo attrib : aodi.getAttributes()) {
+						String key = attrib.getKey();
+						String value = attrib.getValue();
 
-					if ("PrimaryActivityOfferingId".equalsIgnoreCase(key))
-						primaryOfferingId = value;
+						if ("PrimaryActivityOfferingId".equalsIgnoreCase(key))
+							primaryOfferingId = value;
 
-					if ("BlockEnrollment".equalsIgnoreCase(key))
-						enrollmentGroup = "true".equals(value);
+						if ("BlockEnrollment".equalsIgnoreCase(key))
+							enrollmentGroup = "true".equals(value);
+					}
+
+					if (activityOption.isPrimary()) {
+						activityOption
+								.setParentUniqueId(courseOption.getUniqueId());
+						if (transform.traceBuffer != null)
+							transform.traceBuffer.append("\nPrimary ")
+									.append(activityOption.getUniqueId())
+									.append(": ")
+									.append(activityOption.getCourseOfferingCode())
+									.append(" ")
+									.append(activityOption.getRegistrationCode());
+						primaryActivities.add(activityOption);
+					} else {
+						Map<String, List<ActivityOptionInfo>> secondaryGroup = secondaryActivities
+								.get(primaryOfferingId);
+						if (transform.traceBuffer != null)
+							transform.traceBuffer.append("\nSecondary ")
+									.append(activityOption.getUniqueId())
+									.append(": ")
+									.append(activityOption.getCourseOfferingCode())
+									.append(" ")
+									.append(activityOption.getRegistrationCode())
+									.append(" -> ").append(primaryOfferingId);
+						if (secondaryGroup == null)
+							secondaryActivities
+									.put(primaryOfferingId,
+											secondaryGroup = new java.util.LinkedHashMap<String, List<ActivityOptionInfo>>());
+						String groupKey = enrollmentGroup ? "kuali.ap.enrollmentGroup"
+								: activityOption.getActivityTypeDescription();
+						List<ActivityOptionInfo> aol = secondaryGroup.get(groupKey);
+						if (aol == null)
+							secondaryGroup
+									.put(groupKey,
+											aol = new java.util.LinkedList<ActivityOptionInfo>());
+						aol.add(activityOption);
+					}
 				}
-
-				if (activityOption.isPrimary()) {
-					activityOption
-							.setParentUniqueId(courseOption.getUniqueId());
-					if (msg != null)
-						msg.append("\nPrimary ")
-								.append(activityOption.getUniqueId())
-								.append(": ")
-								.append(activityOption.getCourseOfferingCode())
-								.append(" ")
-								.append(activityOption.getRegistrationCode());
-					primaryActivities.add(activityOption);
-				} else {
-					Map<String, List<ActivityOptionInfo>> secondaryGroup = secondaryActivities
-							.get(primaryOfferingId);
-					if (msg != null)
-						msg.append("\nSecondary ")
-								.append(activityOption.getUniqueId())
-								.append(": ")
-								.append(activityOption.getCourseOfferingCode())
-								.append(" ")
-								.append(activityOption.getRegistrationCode())
-								.append(" -> ").append(primaryOfferingId);
-					if (secondaryGroup == null)
-						secondaryActivities
-								.put(primaryOfferingId,
-										secondaryGroup = new java.util.LinkedHashMap<String, List<ActivityOptionInfo>>());
-					String groupKey = enrollmentGroup ? "kuali.ap.enrollmentGroup"
-							: activityOption.getActivityTypeDescription();
-					List<ActivityOptionInfo> aol = secondaryGroup.get(groupKey);
-					if (aol == null)
-						secondaryGroup
-								.put(groupKey,
-										aol = new java.util.LinkedList<ActivityOptionInfo>());
-					aol.add(activityOption);
-				}
+			} finally {
+				transform.endTrace();
 			}
-			if (msg != null)
-				LOG.debug(msg.toString());
 
 			for (ActivityOption primary : primaryActivities) {
 				String parentUniqueId = primary.getUniqueId();
@@ -580,7 +384,8 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 					for (Entry<String, List<ActivityOptionInfo>> e : secondaryGroup
 							.entrySet()) {
 						SecondaryActivityOptionsInfo secondaryOptions = new SecondaryActivityOptionsInfo();
-						secondaryOptions.setUniqueId(parentUniqueId);
+						secondaryOptions.setUniqueId(UUID.randomUUID().toString());
+						secondaryOptions.setActivityUniqueId(parentUniqueId);
 						secondaryOptions.setIndex(i);
 						secondaryOptions.setActivityTypeDescription(e.getKey());
 						secondaryOptions
@@ -617,112 +422,115 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 	private void buildCourseOptions(String termId, boolean courseLockIn, boolean lockIn,
 			Map<String, List<String>> courseIdsActivityCodes, List<CourseOption> rv) {
 		if (!courseIdsActivityCodes.isEmpty()) {
-			StringBuilder msg = null;
-			if (LOG.isDebugEnabled()) {
-				msg = new StringBuilder("Course options for ");
-				msg.append(termId);
-				msg.append("\nCourse lock-in ? ");
-				msg.append(courseLockIn);
-				msg.append("\nActivity lock-in ? ");
-				msg.append(lockIn);
-				msg.append("\nSelections :");
-				msg.append(courseIdsActivityCodes);
-			}
-			
-			for (CourseOption co : rv) {
-				if (courseIdsActivityCodes.containsKey(co.getCourseId())) {
-					if (msg != null)
-						msg.append("\n  Skipping pre-built course options ").append(co.getCourseCode());
-					courseIdsActivityCodes.remove(co.getCourseId());
+			TransformHelper transform = TL_TRANSFORM.get();
+			transform.startTrace();
+			try {
+				if (transform.traceBuffer != null) {
+					transform.traceBuffer.append("Course options for ");
+					transform.traceBuffer.append(termId);
+					transform.traceBuffer.append("\nCourse lock-in ? ");
+					transform.traceBuffer.append(courseLockIn);
+					transform.traceBuffer.append("\nActivity lock-in ? ");
+					transform.traceBuffer.append(lockIn);
+					transform.traceBuffer.append("\nSelections :");
+					transform.traceBuffer.append(courseIdsActivityCodes);
 				}
-			}
-			
-			Queue<ActivityOptionInfo> toCourseLockIn = courseLockIn
-					? new LinkedList<ActivityOptionInfo>() : null;
-			for (CourseOption co : getCourseOptions(new ArrayList<String>(
-					courseIdsActivityCodes.keySet()), termId)) {
-				List<String> acodes = courseIdsActivityCodes.get(co
-						.getCourseId());
-				if (msg != null) {
-					msg.append("\n  Course ").append(co.getCourseCode());
-					msg.append(" ").append(co.getCourseId());
-					msg.append(" ").append(acodes);
-				}
-				boolean found = false;
-				for (ActivityOption ao : co.getActivityOptions()) {
-					ActivityOptionInfo aoi = (ActivityOptionInfo) ao;
 
-					if (courseLockIn)
-						if (found)
-							aoi.setCourseLockedIn(true);
-						else
-							toCourseLockIn.add(aoi);
-
-					boolean foundHere = false;
-					if (acodes.isEmpty()
-							|| acodes.contains(ao.getRegistrationCode())) {
-						aoi.setSelected(true);
-						if (lockIn)
-							aoi.setLockedIn(true);
-						foundHere = found = true;
+				for (CourseOption co : rv) {
+					if (courseIdsActivityCodes.containsKey(co.getCourseId())) {
+						if (transform.traceBuffer != null)
+							transform.traceBuffer.append("\n  Skipping pre-built course options ")
+									.append(
+											co.getCourseCode());
+						courseIdsActivityCodes.remove(co.getCourseId());
 					}
-					if (msg != null) {
-						msg.append("\n    Activity ")
-								.append(ao.getRegistrationCode()).append(" ")
-								.append(ao.getActivityOfferingId());
-						if (found)
-							msg.append(" found");
-						if (foundHere)
-							msg.append(" here");
+				}
+
+				Queue<ActivityOptionInfo> toCourseLockIn = courseLockIn
+						? new LinkedList<ActivityOptionInfo>() : null;
+				for (CourseOption co : getCourseOptions(new ArrayList<String>(
+						courseIdsActivityCodes.keySet()), termId)) {
+					List<String> acodes = courseIdsActivityCodes.get(co
+							.getCourseId());
+					if (transform.traceBuffer != null) {
+						transform.traceBuffer.append("\n  Course ").append(co.getCourseCode());
+						transform.traceBuffer.append(" ").append(co.getCourseId());
+						transform.traceBuffer.append(" ").append(acodes);
+					}
+					boolean found = false;
+					for (ActivityOption ao : co.getActivityOptions()) {
+						ActivityOptionInfo aoi = (ActivityOptionInfo) ao;
+
+						if (courseLockIn)
+							if (found)
+								aoi.setCourseLockedIn(true);
+							else
+								toCourseLockIn.add(aoi);
+
+						boolean foundHere = false;
+						if (acodes.isEmpty()
+								|| acodes.contains(ao.getRegistrationCode())) {
+							aoi.setSelected(true);
+							if (lockIn)
+								aoi.setLockedIn(true);
+							foundHere = found = true;
+						}
+						if (transform.traceBuffer != null) {
+							transform.traceBuffer.append("\n    Activity ")
+									.append(ao.getRegistrationCode()).append(" ")
+									.append(ao.getActivityOfferingId());
+							if (found)
+								transform.traceBuffer.append(" found");
+							if (foundHere)
+								transform.traceBuffer.append(" here");
+						}
+
+						for (SecondaryActivityOptions so : ao.getSecondaryOptions())
+							if (!so.isEnrollmentGroup())
+								for (ActivityOption sao : so.getActivityOptions()) {
+									ActivityOptionInfo saoi = (ActivityOptionInfo) sao;
+									if (courseLockIn)
+										if (found)
+											saoi.setCourseLockedIn(true);
+										else
+											toCourseLockIn.add(saoi);
+
+									boolean select = foundHere
+											&& (acodes.isEmpty() || acodes
+													.contains(sao
+															.getRegistrationCode()));
+									if (select) {
+										saoi.setSelected(true);
+										if (lockIn)
+											saoi.setLockedIn(true);
+									}
+									if (transform.traceBuffer != null) {
+										transform.traceBuffer.append("\n      ")
+												.append(so
+														.getActivityTypeDescription())
+												.append(" ")
+												.append(sao.getRegistrationCode())
+												.append(" ")
+												.append(sao.getActivityOfferingId());
+										if (select)
+											transform.traceBuffer.append(" selected");
+									}
+
+								}
 					}
 
-					for (SecondaryActivityOptions so : ao.getSecondaryOptions())
-						if (!so.isEnrollmentGroup())
-							for (ActivityOption sao : so.getActivityOptions()) {
-								ActivityOptionInfo saoi = (ActivityOptionInfo) sao;
-								if (courseLockIn)
-									if (found)
-										saoi.setCourseLockedIn(true);
-									else
-										toCourseLockIn.add(saoi);
+					CourseOptionInfo coi = (CourseOptionInfo) co;
+					coi.setSelected(found);
+					if (found && courseLockIn) {
+						coi.setLockedIn(found);
+						while (!toCourseLockIn.isEmpty())
+							toCourseLockIn.poll().setCourseLockedIn(true);
+					}
 
-								boolean select = foundHere
-										&& (acodes.isEmpty() || acodes
-												.contains(sao
-														.getRegistrationCode()));
-								if (select) {
-									saoi.setSelected(true);
-									if (lockIn)
-										saoi.setLockedIn(true);
-								}
-								if (msg != null) {
-									msg.append("\n      ")
-											.append(so
-													.getActivityTypeDescription())
-											.append(" ")
-											.append(sao.getRegistrationCode())
-											.append(" ")
-											.append(sao.getActivityOfferingId());
-									if (select)
-										msg.append(" selected");
-								}
-
-							}
+					rv.add(co);
 				}
-
-				CourseOptionInfo coi = (CourseOptionInfo) co;
-				coi.setSelected(found);
-				if (found && courseLockIn) {
-					coi.setLockedIn(found);
-					while (!toCourseLockIn.isEmpty())
-						toCourseLockIn.poll().setCourseLockedIn(true);
-				}
-
-				rv.add(co);
-			}
-
-			if (msg != null) {
-				LOG.debug(msg);
+			} finally {
+				transform.endTrace();
 			}
 		}
 
@@ -1063,6 +871,254 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 	@Override
 	public ShoppingCartForm getInitialCartForm() {
 		return new DefaultShoppingCartForm();
+	}
+
+	private static ClassMeetingTime adaptClassMeeting(TimeSlot timeSlot,
+			ScheduleComponentDisplay scdi, String instructor,
+			Date sessionStartDate, Date sessionEndDate) {
+		TransformHelper transform = TL_TRANSFORM.get();
+
+		ClassMeetingTimeInfo meeting = new ClassMeetingTimeInfo();
+		meeting.setTba(true);
+		transform.startDateCalendar.setTime(sessionStartDate);
+		transform.endDateCalendar.setTime(sessionEndDate);
+
+		String location = null;
+		Room roomInfo = scdi.getRoom();
+		if (roomInfo != null) {
+			location = roomInfo.getDescr().getPlain();
+		}
+
+		StringBuilder daysAndTimes = new StringBuilder();
+		Set<Integer> weekdays = new java.util.TreeSet<Integer>();
+		if (timeSlot.getWeekdays() != null)
+			weekdays.addAll(timeSlot.getWeekdays());
+
+		for (int weekday : weekdays)
+			switch (weekday) {
+			case Calendar.MONDAY:
+				daysAndTimes
+						.append(SchedulingServiceConstants.MONDAY_TIMESLOT_DISPLAY_DAY_CODE);
+				meeting.setMonday(true);
+				break;
+			case Calendar.TUESDAY:
+				daysAndTimes
+						.append(SchedulingServiceConstants.TUESDAY_TIMESLOT_DISPLAY_DAY_CODE);
+				meeting.setTuesday(true);
+				break;
+			case Calendar.WEDNESDAY:
+				daysAndTimes
+						.append(SchedulingServiceConstants.WEDNESDAY_TIMESLOT_DISPLAY_DAY_CODE);
+				meeting.setWednesday(true);
+				break;
+			case Calendar.THURSDAY:
+				daysAndTimes
+						.append(SchedulingServiceConstants.THURSDAY_TIMESLOT_DISPLAY_DAY_CODE);
+				meeting.setThursday(true);
+				break;
+			case Calendar.FRIDAY:
+				daysAndTimes
+						.append(SchedulingServiceConstants.FRIDAY_TIMESLOT_DISPLAY_DAY_CODE);
+				meeting.setFriday(true);
+				break;
+			case Calendar.SATURDAY:
+				daysAndTimes
+						.append(SchedulingServiceConstants.SATURDAY_TIMESLOT_DISPLAY_DAY_CODE);
+				meeting.setSaturday(true);
+				break;
+			case Calendar.SUNDAY:
+				daysAndTimes
+						.append(SchedulingServiceConstants.SUNDAY_TIMESLOT_DISPLAY_DAY_CODE);
+				meeting.setSunday(true);
+				break;
+			default:
+				throw new IllegalArgumentException("Unexpected day code "
+						+ weekday);
+			}
+
+		TimeOfDayInfo startInfo = timeSlot.getStartTime();
+		TimeOfDayInfo endInfo = timeSlot.getEndTime();
+
+		if (startInfo != null && endInfo != null) {
+			meeting.setTba(false);
+			if (daysAndTimes.length() > 0)
+				daysAndTimes.append(" ");
+			Date startTime = new Date(startInfo.getMilliSeconds());
+			Date endTime = new Date(endInfo.getMilliSeconds());
+			daysAndTimes.append(transform.timeFormat.format(startTime));
+			daysAndTimes.append(" - ");
+			daysAndTimes.append(transform.timeFormat.format(endTime));
+			transform.timeCalendar.setTime(startTime);
+			transform.startDateCalendar.set(Calendar.HOUR_OF_DAY,
+					transform.timeCalendar.get(Calendar.HOUR_OF_DAY));
+			transform.startDateCalendar.set(Calendar.MINUTE,
+					transform.timeCalendar.get(Calendar.MINUTE));
+			transform.startDateCalendar.set(Calendar.SECOND,
+					transform.timeCalendar.get(Calendar.SECOND));
+			transform.startDateCalendar.set(Calendar.MILLISECOND,
+					transform.timeCalendar.get(Calendar.MILLISECOND));
+			meeting.setStartDate(transform.startDateCalendar.getTime());
+			transform.timeCalendar.setTime(endTime);
+			transform.endDateCalendar.set(Calendar.HOUR_OF_DAY,
+					transform.timeCalendar.get(Calendar.HOUR_OF_DAY));
+			transform.endDateCalendar.set(Calendar.MINUTE,
+					transform.timeCalendar.get(Calendar.MINUTE));
+			transform.endDateCalendar.set(Calendar.SECOND,
+					transform.timeCalendar.get(Calendar.SECOND));
+			transform.endDateCalendar.set(Calendar.MILLISECOND,
+					transform.timeCalendar.get(Calendar.MILLISECOND));
+			meeting.setUntilDate(transform.endDateCalendar.getTime());
+		} else {
+			transform.endDateCalendar.set(Calendar.HOUR_OF_DAY, 0);
+			transform.endDateCalendar.set(Calendar.MINUTE, 0);
+			transform.endDateCalendar.set(Calendar.SECOND, 0);
+			transform.endDateCalendar.set(Calendar.MILLISECOND, 0);
+		}
+		meeting.setLocation(location);
+		meeting.setArranged(location != null);
+		meeting.setDaysAndTimes(daysAndTimes.toString());
+		meeting.setInstructorName(instructor);
+		meeting.setStartDate(transform.startDateCalendar.getTime());
+		meeting.setUntilDate(transform.endDateCalendar.getTime());
+		meeting.setDescription(transform.shortDateFormat.format(meeting.getStartDate()) + " - "
+				+ transform.shortDateFormat.format(meeting.getUntilDate()));
+		return meeting;
+	}
+
+	/**
+	 * Mix-in adaptor for building activity options from a fully-formed term and
+	 * activity offering display.
+	 * 
+	 * @param term
+	 *            The term.
+	 * @param aodi
+	 *            The activity offering display.
+	 * @param courseIndex
+	 *            The index of the activity in a course option's primary
+	 *            activity list.
+	 * @param courseId
+	 *            The course ID.
+	 * @param campusCode
+	 *            The campus code.
+	 * @return activity option
+	 */
+	public static ActivityOptionInfo getActivityOption(Term term,
+			ActivityOfferingDisplayInfo aodi, int courseIndex, String courseId, String campusCode) {
+		TransformHelper transform = TL_TRANSFORM.get();
+
+		ActivityOptionInfo activityOption = new ActivityOptionInfo();
+		activityOption.setCourseIndex(courseIndex);
+		activityOption.setUniqueId(UUID.randomUUID().toString());
+		activityOption.setCourseId(courseId);
+		activityOption.setActivityOfferingId(aodi.getId());
+		activityOption.setActivityTypeDescription(aodi.getTypeName());
+		activityOption.setCourseOfferingCode((campusCode == null ? ""
+				: campusCode + " ") + aodi.getCourseOfferingCode());
+		activityOption.setActivityName(aodi.getName());
+		activityOption.setRegistrationCode(aodi
+				.getActivityOfferingCode());
+		activityOption
+				.setClosed(!LuiServiceConstants.LUI_AO_STATE_OFFERED_KEY
+						.equals(aodi.getStateKey()));
+		activityOption.setTotalSeats(aodi.getMaximumEnrollment());
+		if (transform.traceBuffer != null)
+			transform.traceBuffer.append("\nActivity ")
+					.append(activityOption.getUniqueId()).append(": ")
+					.append(activityOption.getCourseOfferingCode())
+					.append(" ")
+					.append(activityOption.getRegistrationCode());
+
+		boolean enrollmentGroup = false;
+		String instructor = aodi.getInstructorName();
+		String primaryOfferingId = null;
+
+		String sessionDescr = term.getName();
+		Date sessionStartDate = term.getStartDate();
+		Date sessionEndDate = term.getEndDate();
+		BigDecimal minCredits = BigDecimal.ZERO;
+		BigDecimal maxCredits = BigDecimal.ZERO;
+		List<String> notes = new ArrayList<String>();
+		for (AttributeInfo attrib : aodi.getAttributes()) {
+			String key = attrib.getKey();
+			String value = attrib.getValue();
+			if ("PrimaryActivityOfferingId".equalsIgnoreCase(key)) {
+				primaryOfferingId = value;
+				activityOption.setPrimary(aodi.getId().equals(
+						primaryOfferingId));
+			}
+			if ("PermissionRequired".equalsIgnoreCase(key)) {
+				activityOption.setRequiresPermission("true"
+						.equals(value));
+			}
+			if ("BlockEnrollment".equalsIgnoreCase(key)) {
+				enrollmentGroup = "true".equals(value);
+			}
+			if ("Closed".equalsIgnoreCase(key)) {
+				activityOption.setClosed("true".equals(value));
+			}
+			if ("enrollOpen".equalsIgnoreCase(key)) {
+				activityOption.setOpenSeats(Integer.parseInt(value));
+			}
+			if ("SessionDescr".equalsIgnoreCase(key)) {
+				sessionDescr = value;
+			}
+			if ("SessionBeginDate".equalsIgnoreCase(key)) {
+				try {
+					sessionStartDate = transform.longDateFormat.parse(value);
+				} catch (ParseException e) {
+					throw new IllegalArgumentException(
+							"Invalid session start date "
+									+ sessionStartDate);
+				}
+			}
+			if ("SessionEndDate".equalsIgnoreCase(key)) {
+				try {
+					sessionEndDate = transform.longDateFormat.parse(value);
+				} catch (ParseException e) {
+					throw new IllegalArgumentException(
+							"Invalid session start date "
+									+ sessionEndDate);
+				}
+			}
+
+			if ("CourseCode".equalsIgnoreCase(key)) {
+				activityOption.setCourseOfferingCode((campusCode == null ? ""
+						: campusCode + " ") + value);
+			}
+
+			// TODO: Add getResultValuesGroup() to
+			// ActivityOfferingDisplayInfo and use it instead.
+			if ("minUnits".equalsIgnoreCase(key)) {
+				minCredits = new BigDecimal(value);
+			}
+			if ("maxUnits".equalsIgnoreCase(key)) {
+				maxCredits = new BigDecimal(value);
+			}
+			
+			if ("ClassNotes".equalsIgnoreCase(key)) {
+				notes.add(value);
+			}
+
+		}
+		
+		sessionDescr += " " + transform.shortDateFormat.format(sessionStartDate) + " - "
+				+ transform.shortDateFormat.format(sessionEndDate);
+		activityOption.setAcademicSessionDescr(sessionDescr);
+		activityOption.setMinCredits(minCredits);
+		activityOption.setMaxCredits(maxCredits);
+		activityOption.setNotes(notes);
+
+		List<ClassMeetingTime> meetingTimes = new java.util.LinkedList<ClassMeetingTime>();
+		ScheduleDisplayInfo sdi = aodi.getScheduleDisplay();
+		for (ScheduleComponentDisplay scdi : sdi
+				.getScheduleComponentDisplays())
+			for (TimeSlot timeSlot : scdi.getTimeSlots())
+				meetingTimes.add(adaptClassMeeting(timeSlot, scdi,
+						instructor, sessionStartDate, sessionEndDate));
+		activityOption.setClassMeetingTimes(meetingTimes);
+		activityOption.setEnrollmentGroup(enrollmentGroup);
+
+		return activityOption;
 	}
 
 }

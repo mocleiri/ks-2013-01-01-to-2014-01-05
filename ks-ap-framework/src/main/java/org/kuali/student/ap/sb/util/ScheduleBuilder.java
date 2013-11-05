@@ -46,16 +46,19 @@ public class ScheduleBuilder implements Serializable {
 		return BLOCK_CACHE[fromSlot][toSlot] = rv;
 	}
 
-	private static boolean intersects(long[] day, int fromSlot, int toSlot) {
+	private static boolean intersects(long[] day, long[] block) {
 		boolean rv = false;
-		long[] block = block(fromSlot, toSlot);
 		for (int i = 0; !rv && i < 5; i++)
 			rv |= 0L != (day[i] & block[i]);
 		return rv;
 	}
 
-	private static void union(long[] day, int fromSlot, int toSlot) {
-		long[] block = block(fromSlot, toSlot);
+	private static void filter(long[] day, long[] block) {
+		for (int i = 0; i < 5; i++)
+			day[i] ^= block[i] & day[i];
+	}
+
+	private static void union(long[] day, long[] block) {
 		for (int i = 0; i < 5; i++)
 			day[i] |= block[i];
 	}
@@ -67,78 +70,100 @@ public class ScheduleBuilder implements Serializable {
 	}
 
 	private static boolean checkForConflicts(ScheduleBuildEvent event,
-			Date[] sundays, long[][][] days, Calendar c) {
-		if (event.isAllDay())
-			return true;
+			Date[] sundays, long[][][] days, long[] sameActivityBlock, Calendar c) {
+		Date start = event.getStartDate();
+		Date until = event.getUntilDate();
+
+		c.setTime(start);
+		int fromSlot;
+		if (event.isAllDay()) {
+			fromSlot = 0;
+		} else {
+			fromSlot = c.get(Calendar.HOUR_OF_DAY) * 12
+					+ (c.get(Calendar.MINUTE) / 5);
+		}
+		boolean startEpoch = isEpoch(c);
+		c.add(Calendar.DATE, -7);
+		Date weekBeforeStart = c.getTime();
+
+		c.setTime(until);
+		int toSlot;
+		if (event.isAllDay()) {
+			toSlot = 287;
+		} else {
+			toSlot = c.get(Calendar.HOUR_OF_DAY) * 12
+					+ (c.get(Calendar.MINUTE) / 5);
+		}
+		boolean untilEpoch = isEpoch(c);
 
 		for (int i = 0; i < sundays.length; i++) {
-
-			c.setTime(event.getStartDate());
-			int fromSlot = c.get(Calendar.HOUR_OF_DAY) * 12
-					+ (c.get(Calendar.MINUTE) / 5);
-			if (!isEpoch(c)) {
-				c.add(Calendar.DATE, -7);
-				if (!c.getTime().before(sundays[i]))
-					continue;
-			}
-
-			c.setTime(event.getUntilDate());
-			int toSlot = c.get(Calendar.HOUR_OF_DAY) * 12
-					+ (c.get(Calendar.MINUTE) / 5);
-			if (!isEpoch(c) && !c.getTime().after(sundays[i]))
+			if (!startEpoch && !weekBeforeStart.before(sundays[i]))
 				continue;
+			if (!untilEpoch && !until.after(sundays[i]))
+				continue;
+			
+			long[] block = block(fromSlot, toSlot);
+			if (sameActivityBlock != null) {
+				long[] toblock = Arrays.copyOf(block, 5);
+				filter(toblock, sameActivityBlock);
+				union(sameActivityBlock, block);
+				block = toblock;
+			}
 
 			if (event.isSunday()) {
-				if (intersects(days[i][0], fromSlot, toSlot))
+				if (intersects(days[i][0], block))
 					return false;
 				else
-					union(days[i][0], fromSlot, toSlot);
+					union(days[i][0], block);
 			}
 			if (event.isMonday()) {
-				if (intersects(days[i][1], fromSlot, toSlot))
+				if (intersects(days[i][1], block))
 					return false;
 				else
-					union(days[i][1], fromSlot, toSlot);
+					union(days[i][1], block);
 			}
 			if (event.isTuesday()) {
-				if (intersects(days[i][2], fromSlot, toSlot))
+				if (intersects(days[i][2], block))
 					return false;
 				else
-					union(days[i][2], fromSlot, toSlot);
+					union(days[i][2], block);
 			}
 			if (event.isWednesday()) {
-				if (intersects(days[i][3], fromSlot, toSlot))
+				if (intersects(days[i][3], block))
 					return false;
 				else
-					union(days[i][3], fromSlot, toSlot);
+					union(days[i][3], block);
 			}
 			if (event.isThursday()) {
-				if (intersects(days[i][4], fromSlot, toSlot))
+				if (intersects(days[i][4], block))
 					return false;
 				else
-					union(days[i][4], fromSlot, toSlot);
+					union(days[i][4], block);
 			}
 			if (event.isFriday()) {
-				if (intersects(days[i][5], fromSlot, toSlot))
+				if (intersects(days[i][5], block))
 					return false;
 				else
-					union(days[i][5], fromSlot, toSlot);
+					union(days[i][5], block);
 			}
 			if (event.isSaturday()) {
-				if (intersects(days[i][6], fromSlot, toSlot))
+				if (intersects(days[i][6], block))
 					return false;
 				else
-					union(days[i][6], fromSlot, toSlot);
+					union(days[i][6], block);
 			}
 		}
 		return true;
 	}
 
 	private static boolean checkForConflicts(ActivityOption ao, Date[] sundays,
-			long[][][] days, Calendar c) {
-		for (ClassMeetingTime meetingTime : ao.getClassMeetingTimes())
-			if (!checkForConflicts(meetingTime, sundays, days, c))
+			long[][][] days, long[] sameActivity, Calendar c) {
+		for (ClassMeetingTime event: ao.getClassMeetingTimes()) {
+			if (event.isTba())
+				continue;
+			if (!checkForConflicts(event, sundays, days, sameActivity, c))
 				return false;
+		}
 		return true;
 	}
 
@@ -201,7 +226,7 @@ public class ScheduleBuilder implements Serializable {
 				if (c.isSelected()) {
 					List<ActivityOption> oaol = c.getActivityOptions();
 					List<ActivityOption> aol = new ArrayList<ActivityOption>();
-					for (ActivityOption ao : oaol)
+					primary: for (ActivityOption ao : oaol)
 						if (ao.isSelected() || ao.isLockedIn()) {
 							List<SecondaryActivityOptions> osol = ao
 									.getSecondaryOptions();
@@ -216,7 +241,7 @@ public class ScheduleBuilder implements Serializable {
 									if (sao.isSelected() || sao.isLockedIn())
 										saol.add(sao);
 								if (saol.isEmpty()) {
-									LOG.warn("Course option is selected, but has no selected activities for "
+									LOG.warn("Primary activity option is selected, but has no selected activities for "
 											+ ao.getRegistrationCode()
 											+ " "
 											+ so.getActivityTypeDescription()
@@ -224,8 +249,7 @@ public class ScheduleBuilder implements Serializable {
 											+ c.getCourseId()
 											+ " "
 											+ c.getCourseCode());
-									empty = true;
-									break course;
+									continue primary;
 								}
 								SecondaryActivityOptionsInfo soi = new SecondaryActivityOptionsInfo(
 										so);
@@ -413,8 +437,7 @@ public class ScheduleBuilder implements Serializable {
 			Set<PossibleScheduleOption> current) {
 		if (empty) {
 			if (LOG.isDebugEnabled())
-				LOG.debug("Schedule builder is marked as empty, at least one course "
-						+ "option has not associated activity options");
+				LOG.debug("Schedule builder is marked as empty, at least one course option has no associated activity options");
 			return Collections.emptyList();
 		}
 
@@ -423,6 +446,8 @@ public class ScheduleBuilder implements Serializable {
 		Calendar tempCalendar = Calendar.getInstance();
 		Date[] sundays = getSundays(term, tempCalendar);
 		long[][][] days = new long[sundays.length][7][5];
+		long[] primarySameActivity = new long[5];
+		long[] secondarySameActivity = new long[5];
 		int iterationCount = 0;
 		int iterationsSinceLast = 0;
 		if (generated == null) {
@@ -479,7 +504,7 @@ public class ScheduleBuilder implements Serializable {
 						days[i][j][k] = 0L;
 			for (ReservedTime reservedTime : reservedTimes)
 				if (reservedTime.isSelected())
-					checkForConflicts(reservedTime, sundays, days, tempCalendar);
+					checkForConflicts(reservedTime, sundays, days, null, tempCalendar);
 
 			boolean allCourses = true;
 			if (msg != null)
@@ -502,7 +527,9 @@ public class ScheduleBuilder implements Serializable {
 				if (msg != null)
 					msg.append(" pri ").append(primary.getRegistrationCode());
 
-				if (!checkForConflicts(primary, sundays, days, tempCalendar)
+				for (int ai = 0; ai < 5; ai++)
+					primarySameActivity[ai] = 0;
+				if (!checkForConflicts(primary, sundays, days, primarySameActivity, tempCalendar)
 						&& !courseOption.isLockedIn()) {
 					if (msg != null)
 						msg.append(" conflict");
@@ -515,6 +542,8 @@ public class ScheduleBuilder implements Serializable {
 				if (primary.isEnrollmentGroup()) {
 					if (msg != null)
 						msg.append(" block");
+					for (int ai = 0; ai < 5; ai++)
+						secondarySameActivity[ai] = primarySameActivity[ai];
 					for (int j = 0; j < secondaryActivityIndex.length; j++) {
 						List<ActivityOption> secondaryActivityOptions = primary
 								.getSecondaryOptions().get(j)
@@ -527,7 +556,7 @@ public class ScheduleBuilder implements Serializable {
 								msg.append(" ").append(
 										secondary.getRegistrationCode());
 							if (!checkForConflicts(secondary, sundays, days,
-									tempCalendar)) {
+									secondarySameActivity, tempCalendar)) {
 								if (msg != null)
 									msg.append(" conflict");
 								allCourses = false;
@@ -546,9 +575,11 @@ public class ScheduleBuilder implements Serializable {
 						if (msg != null)
 							msg.append(" sec ").append(
 									secondary.getRegistrationCode());
+						for (int ai = 0; ai < 5; ai++)
+							secondarySameActivity[ai] = primarySameActivity[ai];
 						if ((!secondary.isSelected() && !secondary.isLockedIn())
 								|| !checkForConflicts(secondary, sundays, days,
-										tempCalendar)) {
+										secondarySameActivity, tempCalendar)) {
 							primaryConflicts.add(shash);
 							if (msg != null)
 								msg.append(" conflict");
@@ -576,6 +607,7 @@ public class ScheduleBuilder implements Serializable {
 			if (allCourses) {
 				PossibleScheduleOptionInfo pso = new PossibleScheduleOptionInfo();
 				pso.setUniqueId(UUID.randomUUID().toString());
+				pso.setTermId(term.getId());
 				Collections.sort(possibleActivityOptions,
 						new Comparator<ActivityOption>() {
 							@Override

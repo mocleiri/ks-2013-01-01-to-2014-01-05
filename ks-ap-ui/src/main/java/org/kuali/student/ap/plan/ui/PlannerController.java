@@ -356,7 +356,7 @@ public class PlannerController extends UifControllerBase {
 
 	@RequestMapping(method = RequestMethod.POST, params = "view.currentPageId=" + ADD_COURSE_PAGE)
 	public ModelAndView addPlanItem(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
-			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		LearningPlan plan = PlanItemControllerHelper.getAuthorizedLearningPlan(form, request, response);
 		if (plan == null)
@@ -376,6 +376,12 @@ public class PlannerController extends UifControllerBase {
 			PlanEventUtils.sendJsonEvents(false, "Course code required", response);
 			return null;
 		}
+		
+		UifFormBase uifForm = (UifFormBase) form;
+		if ("refresh".equals(uifForm.getMethodToCall())) {
+			uifForm.setMethodToCall(null);
+			return super.refresh(uifForm, result, request, response);
+		}
 
 		Course course;
 		try {
@@ -383,6 +389,10 @@ public class PlannerController extends UifControllerBase {
 			if (courses == null || courses.isEmpty()) {
 				PlanEventUtils.sendJsonEvents(false, "Course " + courseCd + " not found", response);
 				return null;
+				// SCT-6322 TODO: Montse, add this code to enable dynamic dialog updates
+				//			} else if (courses.size() > 1) {
+				//				PlanEventUtils.sendRefresh(ADD_COURSE_PAGE, response);
+				//				return null;
 			}
 			course = courses.get(0);
 		} catch (IllegalArgumentException e) {

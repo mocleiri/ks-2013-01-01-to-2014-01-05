@@ -1,5 +1,6 @@
 package org.kuali.student.ap.plan.support;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,6 +9,8 @@ import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
 import org.kuali.student.ap.framework.context.PlanConstants;
 import org.kuali.student.ap.plan.PlanItemForm;
+import org.kuali.student.ap.sb.infc.ActivityOption;
+import org.kuali.student.ap.sb.infc.CourseOption;
 import org.kuali.student.enrollment.acal.infc.Term;
 import org.kuali.student.myplan.academicplan.infc.LearningPlan;
 import org.kuali.student.myplan.academicplan.infc.PlanItem;
@@ -30,6 +33,7 @@ public abstract class AbstractPlanItemForm extends UifFormBase implements PlanIt
 	private String termId;
 	private String planItemId;
 	private String courseId;
+	private String registrationCode;
 	private String expectedPlanItemType;
 
 	private transient LearningPlan learningPlan;
@@ -37,7 +41,8 @@ public abstract class AbstractPlanItemForm extends UifFormBase implements PlanIt
 	private transient PlanItem planItem;
 
 	private transient Course course;
-
+	
+	private transient List<ActivityOption> activityOptions;
 	private transient List<PlanItem> existingPlanItems;
 
 	@Override
@@ -87,6 +92,7 @@ public abstract class AbstractPlanItemForm extends UifFormBase implements PlanIt
 	public void setTermId(String termId) {
 		this.termId = StringUtils.hasText(termId) ? termId : null;
 		this.term = null;
+		this.activityOptions = null;
 	}
 
 	@Override
@@ -154,6 +160,7 @@ public abstract class AbstractPlanItemForm extends UifFormBase implements PlanIt
 		this.courseId = StringUtils.hasText(courseId) ? courseId : null;
 		this.course = null;
 		this.existingPlanItems = null;
+		this.activityOptions = null;
 	}
 
 	@Override
@@ -167,6 +174,36 @@ public abstract class AbstractPlanItemForm extends UifFormBase implements PlanIt
 			}
 		}
 		return course;
+	}
+
+	@Override
+	public String getRegistrationCode() {
+		return registrationCode;
+	}
+
+	public void setRegistrationCode(String registrationCode) {
+		this.registrationCode = registrationCode;
+		this.activityOptions = null;
+	}
+
+	@Override
+	public List<ActivityOption> getActivityOptions() {
+		if (activityOptions == null && termId != null && courseId != null) {
+			if (registrationCode == null) {
+				List<CourseOption> courseOptions = KsapFrameworkServiceLocator.getScheduleBuildStrategy()
+						.getCourseOptions(Collections.singletonList(courseId), termId);
+				List<ActivityOption> ao = new ArrayList<ActivityOption>();
+				for (CourseOption co : courseOptions)
+					ao.addAll(co.getActivityOptions());
+				activityOptions = ao;
+			} else {
+				ActivityOption ao = KsapFrameworkServiceLocator.getScheduleBuildStrategy()
+						.getActivityOption(courseId, termId, registrationCode);
+				if (ao != null)
+					activityOptions = Collections.singletonList(ao);
+			}
+		}
+		return activityOptions;
 	}
 
 	@Override

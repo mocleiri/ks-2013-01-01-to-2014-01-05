@@ -154,7 +154,13 @@ function ksapPlannerUpdateType(backup, target, e) {
 }
 
 function ksapPlannerUpdateEvent(response, textStatus, jqXHR) {
-	if (response.success) {
+	if (response.refresh) {
+	    var kradRequest = new KradRequest();
+	    kradRequest.additionalData = ksapAdditionalFormData({});
+	    kradRequest.formName = "popupForm";
+	    kradRequest.send();
+
+	} else if (response.success) {
 		for (var key in response) {
 			if (!response.hasOwnProperty(key))
 				continue;
@@ -276,6 +282,7 @@ function ksapPlannerCreateTooltips() {
 	            align: 'left',
 	            hidden: false
 	        },
+	        themePath:getConfigParam("kradUrl")+"/../ks-myplan/jquery-bubblepopup/jquerybubblepopup-theme/",
 	        themeMargins: {total:'22px', difference:'10px'},
 	        themeName: 'black',
 	        selectable: true,

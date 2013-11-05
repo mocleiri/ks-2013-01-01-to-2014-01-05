@@ -434,7 +434,7 @@
                   margin:0 @{20/T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTermHelper().getNumberOfTermsInAcademicYear()}px;" />
         <property name="layoutManager.lineGroupPrototype.header.rightGroup">
             <bean parent="Uif-HeaderRightGroup" p:cssClasses="ks-plan-Bucket ks-plan-Bucket--secondary"
-                p:render="@{#line.cartAvailable}">
+                p:render="@{#line.buildAvailable}">
                 <property name="items">
                     <list>
                         <bean parent="Uif-ActionLink" p:actionLabel="Build Schedule"

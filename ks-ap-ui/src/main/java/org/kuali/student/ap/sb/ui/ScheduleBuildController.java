@@ -21,8 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
@@ -192,21 +190,36 @@ public class ScheduleBuildController extends UifControllerBase {
 			do {
 				Date end = (done = !weekBreaks.hasNext()) ? lastUntilDate
 						: weekBreaks.next();
+				if (!end.before(lastUntilDate)) {
+					done = true;
+					end = lastUntilDate;
+				} else {
+					cal.setTime(end);
+					cal.add(Calendar.DATE, -1);
+					end = cal.getTime();
+				}
+
 				long sd = start.getTime();
 				long ed = end.getTime();
 				int weeks = (int) ((ed - sd) / 604800000);
+
 				JsonObjectBuilder jweek = Json.createObjectBuilder();
 				jweek.add("title", "Week" + (weeks > 1 ? "s " : " ")
 						+ weekNumber
-						+ (weeks > 1 ? "-" + (weekNumber + weeks - 1) : ""));
+						+ (weeks > 1 ? "-" + (weekNumber + weeks) : ""));
 				jweek.add("subtitle", df.format(start) + " - " + df.format(end));
 				cal.setTime(start);
 				jweek.add("gotoYear", cal.get(Calendar.YEAR));
 				jweek.add("gotoMonth", cal.get(Calendar.MONTH) + 1);
 				jweek.add("gotoDate", cal.get(Calendar.DATE));
 				jweeks.add(jweek);
-				weekNumber += weeks;
-				start = end;
+				if (done)
+					break;
+
+				weekNumber += weeks + 1;
+				cal.setTime(end);
+				cal.add(Calendar.DATE, 1);
+				start = cal.getTime();
 			} while (!done);
 		}
 	}
@@ -229,42 +242,43 @@ public class ScheduleBuildController extends UifControllerBase {
 		Date eventStart = aggregate.getTimePortion(meeting.getStartDate());
 		long durationSeconds;
 		if (meeting.isAllDay())
-			durationSeconds = 0L;
+			durationSeconds = 86400L;
 		else {
 			Date eventEnd = aggregate.getTimePortion(meeting.getUntilDate());
 			durationSeconds = (eventEnd.getTime() - eventStart.getTime()) / 1000;
 			aggregate.updateMinMaxTime(eventStart, eventEnd);
 		}
 
+		boolean tba = meeting instanceof ClassMeetingTime && ((ClassMeetingTime) meeting).isTba();
 		while (!startDate.after(untilDate)) {
-			if (meeting.isSunday())
+			if (meeting.isSunday() || tba)
 				jevents.add(createEvent(startDate, eventStart, aggregate.cal,
 						Calendar.SUNDAY, durationSeconds, cssClass, ao,
-						description, meeting));
-			if (meeting.isMonday())
+						description, meeting, term));
+			if (meeting.isMonday() || tba)
 				jevents.add(createEvent(startDate, eventStart, aggregate.cal,
 						Calendar.MONDAY, durationSeconds, cssClass, ao,
-						description, meeting));
-			if (meeting.isTuesday())
+						description, meeting, term));
+			if (meeting.isTuesday() || tba)
 				jevents.add(createEvent(startDate, eventStart, aggregate.cal,
 						Calendar.TUESDAY, durationSeconds, cssClass, ao,
-						description, meeting));
-			if (meeting.isWednesday())
+						description, meeting, term));
+			if (meeting.isWednesday() || tba)
 				jevents.add(createEvent(startDate, eventStart, aggregate.cal,
 						Calendar.WEDNESDAY, durationSeconds, cssClass, ao,
-						description, meeting));
-			if (meeting.isThursday())
+						description, meeting, term));
+			if (meeting.isThursday() || tba)
 				jevents.add(createEvent(startDate, eventStart, aggregate.cal,
 						Calendar.THURSDAY, durationSeconds, cssClass, ao,
-						description, meeting));
-			if (meeting.isFriday())
+						description, meeting, term));
+			if (meeting.isFriday() || tba)
 				jevents.add(createEvent(startDate, eventStart, aggregate.cal,
 						Calendar.FRIDAY, durationSeconds, cssClass, ao,
-						description, meeting));
-			if (meeting.isSaturday())
+						description, meeting, term));
+			if (meeting.isSaturday() || tba)
 				jevents.add(createEvent(startDate, eventStart, aggregate.cal,
 						Calendar.SATURDAY, durationSeconds, cssClass, ao,
-						description, meeting));
+						description, meeting, term));
 			startDate = aggregate.addOneWeek(startDate);
 		}
 	}
@@ -272,7 +286,7 @@ public class ScheduleBuildController extends UifControllerBase {
 	private static JsonObjectBuilder createEvent(Date startDate,
 			Date eventStart, Calendar cal, int dow, long durationSeconds,
 			String cssClass, ActivityOption ao, String description,
-			ScheduleBuildEvent sbEvent) {
+			ScheduleBuildEvent sbEvent, Term term) {
 
 		// Calculate the date for the event in seconds since the epoch
 		cal.setTime(startDate);
@@ -299,7 +313,7 @@ public class ScheduleBuildController extends UifControllerBase {
 		acss.add(EVENT_CSS_PREFIX);
 		acss.add(cssClass);
 		event.add("className", acss);
-		if (durationSeconds == 0) {
+		if (sbEvent instanceof ClassMeetingTime && ((ClassMeetingTime) sbEvent).isTba()) {
 			event.add("allDay", true);
 		} else {
 			event.add("allDay", false);
@@ -325,41 +339,11 @@ public class ScheduleBuildController extends UifControllerBase {
 			event.add("hoverText", description);
 		}
 
-		DateFormat edf = new SimpleDateFormat("E MMM d");
-		Element modal = DocumentHelper.createElement("div");
-		modal.addAttribute("class", "ksap-sb-event-dialog");
-		Element titleDiv = DocumentHelper.createElement("div");
-		titleDiv.addAttribute("class", "ksap-sb-event-dialog-title");
-		Element titleSpan = titleDiv.addElement("span");
-		if (ao != null) {
-			titleSpan.setText(ao.getCourseOfferingCode() + " "
-					+ ao.getActivityName());
-		} else {
-			titleSpan.setText(description);
+		if (ao != null && ao.getCourseId() != null) {
+			event.add("registrationCode", ao.getRegistrationCode());
+			event.add("courseId", ao.getCourseId());
+			event.add("termId", term.getId());
 		}
-		Element dl = modal.addElement("dl"), dt, dd;
-		if (ao != null) {
-			dt = dl.addElement("dt");
-			dt.setText("Class Number");
-			dd = dl.addElement("dd");
-			dd.setText(ao.getRegistrationCode());
-			dt = dl.addElement("dt");
-			dt.setText("Available Seats");
-			dd = dl.addElement("dd");
-			dd.setText(ao.getOpenSeats() + " / " + ao.getTotalSeats());
-			dt = dl.addElement("dt");
-			dt.setText("Permission Required");
-			dd = dl.addElement("dd");
-			dd.setText(ao.isRequiresPermission() ? "Yes" : "No");
-		}
-		dt = dl.addElement("dt");
-		dt.setText("Time");
-		dd = dl.addElement("dd");
-		dd.setText(sbEvent.getDaysAndTimes() + " from "
-				+ edf.format(sbEvent.getStartDate()) + " to "
-				+ edf.format(sbEvent.getUntilDate()));
-
-		event.add("dialogHtml", modal.asXML());
 		return event;
 	}
 
@@ -380,8 +364,15 @@ public class ScheduleBuildController extends UifControllerBase {
 		Map<String, PossibleScheduleOption> cartOptions =
 				new HashMap<String, PossibleScheduleOption>(psos.size() + sss.size());
 
+		for (PossibleScheduleOption pso : psos)
+			cartOptions.put(pso.getUniqueId(), pso);
+		for (PossibleScheduleOption sso : sss)
+			cartOptions.put(sso.getUniqueId(), sso);
+		UserSession sess = GlobalVariables.getUserSession();
+		sess.addObject(ShoppingCartForm.POSSIBLE_OPTIONS_KEY, cartOptions);
+
 		int discardCount = 0;
-		for (int i = 0; i < psos.size(); i++) {
+		for (int i = form.getPossibleSchedulesFrom(); i < form.getPossibleSchedulesTo(); i++) {
 			PossibleScheduleOption pso = psos.get(i);
 			if (pso.isDiscarded()) {
 				discardCount++;
@@ -423,97 +414,94 @@ public class ScheduleBuildController extends UifControllerBase {
 			jpso.add("maxTime", aggregate.maxTime);
 			jpso.add("events", jevents);
 			jpossible.add(jpso);
-
-			cartOptions.put(pso.getUniqueId(), pso);
 		}
 		json.add("possible", jpossible);
 
-		discardCount = 0;
-		JsonArrayBuilder jsaved = Json.createArrayBuilder();
-		for (int i = 0; i < sss.size(); i++) {
-			PossibleScheduleOption sso = sss.get(i);
-			if (sso.isDiscarded()) {
-				discardCount++;
-				continue;
+		if (!form.isMore()) {
+			discardCount = 0;
+			JsonArrayBuilder jsaved = Json.createArrayBuilder();
+			for (int i = 0; i < sss.size(); i++) {
+				PossibleScheduleOption sso = sss.get(i);
+				if (sso.isDiscarded()) {
+					discardCount++;
+					continue;
+				}
+
+				String cssClass = EVENT_CSS_PREFIX + "--"
+						+ ((i + psos.size() - discardCount) % 26);
+				JsonObjectBuilder jsso = Json.createObjectBuilder();
+				JsonArrayBuilder jevents = Json.createArrayBuilder();
+				jsso.add("path", "savedSchedules[" + i + "]");
+				jsso.add("id", sso.getId());
+				jsso.add("uniqueId", sso.getUniqueId());
+				jsso.add("selected", sso.isSelected());
+				jsso.add("saved", true);
+				jsso.add("htmlDescription", sso.getDescription().getFormatted());
+				JsonArrayBuilder acss = Json.createArrayBuilder();
+				acss.add(EVENT_CSS_PREFIX);
+				acss.add(cssClass);
+				jsso.add("eventClass", acss);
+				for (ActivityOption ao : sso.getActivityOptions())
+					if (!ao.isPrimary() || !ao.isEnrollmentGroup())
+						for (ClassMeetingTime meeting : ao.getClassMeetingTimes())
+							addEvents(
+									form.getTerm(),
+									meeting,
+									ao.getCourseOfferingCode()
+											+ (meeting.getLocation() == null ? ""
+													: " (" + meeting.getLocation()
+															+ ") - "
+															+ sso.getDescription().getPlain()),
+									ao, cssClass,
+									jevents, aggregate);
+
+				jsso.add("weekends", aggregate.weekends);
+				jsso.add("minTime", aggregate.minTime);
+				jsso.add("maxTime", aggregate.maxTime);
+				jsso.add("events", jevents);
+				jsaved.add(jsso);
 			}
+			json.add("saved", jsaved);
 
-			String cssClass = EVENT_CSS_PREFIX + "--"
-					+ ((i + psos.size() - discardCount) % 26);
-			JsonObjectBuilder jsso = Json.createObjectBuilder();
-			JsonArrayBuilder jevents = Json.createArrayBuilder();
-			jsso.add("path", "savedSchedules[" + i + "]");
-			jsso.add("id", sso.getId());
-			jsso.add("uniqueId", sso.getUniqueId());
-			jsso.add("selected", sso.isSelected());
-			jsso.add("saved", true);
-			jsso.add("htmlDescription", sso.getDescription().getFormatted());
-			JsonArrayBuilder acss = Json.createArrayBuilder();
-			acss.add(EVENT_CSS_PREFIX);
-			acss.add(cssClass);
-			jsso.add("eventClass", acss);
-			for (ActivityOption ao : sso.getActivityOptions())
-				if (!ao.isPrimary() || !ao.isEnrollmentGroup())
-					for (ClassMeetingTime meeting : ao.getClassMeetingTimes())
-						addEvents(
-								form.getTerm(),
-								meeting,
-								ao.getCourseOfferingCode()
-										+ (meeting.getLocation() == null ? ""
-												: " (" + meeting.getLocation()
-														+ ") - " + sso.getDescription().getPlain()),
-								ao, cssClass,
-								jevents, aggregate);
+			SimpleDateFormat ddf = new SimpleDateFormat("MM/dd/yyyy");
+			JsonArrayBuilder jreserved = Json.createArrayBuilder();
+			List<ReservedTime> rts = form.getReservedTimes();
+			for (int i = 0; i < rts.size(); i++) {
+				ReservedTime rt = rts.get(i);
 
-			jsso.add("weekends", aggregate.weekends);
-			jsso.add("minTime", aggregate.minTime);
-			jsso.add("maxTime", aggregate.maxTime);
-			jsso.add("events", jevents);
-			jsaved.add(jsso);
+				String cssClass = EVENT_CSS_PREFIX + "--"
+						+ ((i - discardCount + 13) % 26);
+				JsonObjectBuilder rto = Json.createObjectBuilder();
+				JsonArrayBuilder jevents = Json.createArrayBuilder();
+				rto.add("uniqueId", rt.getUniqueId());
+				rto.add("selected", rt.isSelected());
+				rto.add("descr", StringEscapeUtils.escapeHtml(rt.getDescription()));
+				rto.add("daysTimes", rt.getDaysAndTimes());
+				rto.add("startDate", ddf.format(rt.getStartDate()));
+				rto.add("untilDate", ddf.format(rt.getUntilDate()));
+				JsonArrayBuilder acss = Json.createArrayBuilder();
+				acss.add(EVENT_CSS_PREFIX);
+				acss.add(cssClass);
+				rto.add("eventClass", acss);
 
-			cartOptions.put(sso.getUniqueId(), sso);
+				addEvents(form.getTerm(), rt, rt.getDescription(), null, cssClass,
+						jevents, aggregate);
+
+				rto.add("weekends", aggregate.weekends);
+				rto.add("minTime", aggregate.minTime);
+				rto.add("maxTime", aggregate.maxTime);
+				rto.add("events", jevents);
+				jreserved.add(rto);
+			}
+			json.add("reserved", jreserved);
+
+			JsonArrayBuilder jweeks = Json.createArrayBuilder();
+			aggregate.addWeekBreaks(jweeks, form.getTerm());
+			json.add("weeks", jweeks);
 		}
-		json.add("saved", jsaved);
-
-		UserSession sess = GlobalVariables.getUserSession();
-		sess.addObject(ShoppingCartForm.POSSIBLE_OPTIONS_KEY, cartOptions);
-
-		SimpleDateFormat ddf = new SimpleDateFormat("MM/dd/yyyy");
-		JsonArrayBuilder jreserved = Json.createArrayBuilder();
-		List<ReservedTime> rts = form.getReservedTimes();
-		for (int i = 0; i < rts.size(); i++) {
-			ReservedTime rt = rts.get(i);
-
-			String cssClass = EVENT_CSS_PREFIX + "--"
-					+ ((i - discardCount + 13) % 26);
-			JsonObjectBuilder rto = Json.createObjectBuilder();
-			JsonArrayBuilder jevents = Json.createArrayBuilder();
-			rto.add("uniqueId", rt.getUniqueId());
-			rto.add("selected", rt.isSelected());
-			rto.add("descr", StringEscapeUtils.escapeHtml(rt.getDescription()));
-			rto.add("daysTimes", rt.getDaysAndTimes());
-			rto.add("startDate", ddf.format(rt.getStartDate()));
-			rto.add("untilDate", ddf.format(rt.getUntilDate()));
-			JsonArrayBuilder acss = Json.createArrayBuilder();
-			acss.add(EVENT_CSS_PREFIX);
-			acss.add(cssClass);
-			rto.add("eventClass", acss);
-
-			addEvents(form.getTerm(), rt, rt.getDescription(), null, cssClass,
-					jevents, aggregate);
-
-			rto.add("weekends", aggregate.weekends);
-			rto.add("minTime", aggregate.minTime);
-			rto.add("maxTime", aggregate.maxTime);
-			rto.add("events", jevents);
-			jreserved.add(rto);
-		}
-		json.add("reserved", jreserved);
-
-		JsonArrayBuilder jweeks = Json.createArrayBuilder();
-		aggregate.addWeekBreaks(jweeks, form.getTerm());
-		json.add("weeks", jweeks);
 
 		json.add("more", form.hasMore());
+		json.add("moreCount", form.getMoreCount());
 
 		response.setContentType("application/json");
 		response.setHeader("Cache-Control", "No-cache");

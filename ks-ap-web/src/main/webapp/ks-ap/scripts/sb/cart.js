@@ -86,7 +86,7 @@ function ksapCartUpdateEvent(response, textStatus, jqXHR) {
 			var res = jQuery("#sb_cart_request_"+req.uniqueId+"_span");
 			if (req.message != null) {
 				res.text(req.message);
-				res.addClass("ksap-sb-cart-result-"+(req.error?"error":"info"));
+				res.addClass("ksap-sb-cart-result-"+(req.error?"error":req.processed?"info":"warn"));
 				res.show();
 			}
 		}

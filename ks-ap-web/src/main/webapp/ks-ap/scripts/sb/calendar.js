@@ -15,7 +15,7 @@ var KsapSbCalendar = {
 			weekends : this.weekends,
 			contentHeight : 1068,
 			allDaySlot : true,
-			allDayText : 'to be arranged',
+			allDayText : 'time not specified',
 			defaultView : 'agendaWeek',
 			timeFormat : {
 				agenda : 'h(:mm)t{ - h(:mm)t}',
@@ -32,10 +32,10 @@ var KsapSbCalendar = {
 			selectable : false,
 			selectHelper : false,
 
-			// TODO: detailed dialog
-			//			eventClick : function(event) {
-			//				showGrowl("TODO: details " + event.id);
-			//			},
+			eventClick : function(event, e) {
+				if (event.courseId != null)
+					showCourseSummary(event.courseId, event.termId, event.registrationCode, e);
+			},
 	
 			eventAfterRender : function(event, element) {
 				element.attr("title", event.hoverText);
