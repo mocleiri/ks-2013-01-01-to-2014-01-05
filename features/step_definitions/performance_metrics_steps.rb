@@ -470,7 +470,7 @@ When /^then I submit the rule changes$/ do
   end
 end
 
-When /^I suppress a the new rule change$/ do
+When /^I suppress a new rule change$/ do
   on ManageCourseOfferings do |page|
     page.loading.wait_while_present(200)
     page.ao_requisites("A")
@@ -492,10 +492,10 @@ When /^I suppress a the new rule change$/ do
 end
 
 When /^I revert the new rule change$/ do
-  on ManageCourseOfferings do |page|
-    page.loading.wait_while_present(200)
-    page.ao_requisites("A")
-  end
+ # on ManageCourseOfferings do |page|
+ #   page.loading.wait_while_present(200)
+ #   page.ao_requisites("A")
+ # end
 
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present

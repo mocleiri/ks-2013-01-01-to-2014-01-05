@@ -49,13 +49,13 @@ Feature: Performance.Metrics
      And I save the population
      Then the transaction takes less than "3" seconds
 
-  Scenario: Registration Windows Search and Edit
-    When I search for a registration Window
-    Then the transaction takes less than "3" seconds
-    And I select all registration periods
-    Then the transaction takes less than "3" seconds
-    And I add a registration window and save
-    Then the transaction takes less than "3" seconds
+  #Scenario: Registration Windows Search and Edit
+  #  When I search for a registration Window
+  #  Then the transaction takes less than "3" seconds
+  #  And I select all registration periods
+  #  Then the transaction takes less than "3" seconds
+  #  And I add a registration window and save
+  #  Then the transaction takes less than "3" seconds
 
   Scenario: Search Course Offering by Subject 100+
     When I search for a course by the "ENGL" subject code
@@ -88,9 +88,9 @@ Feature: Performance.Metrics
     And I copy a course offering
     Then the transaction takes less than "3" seconds
 
-  Scenario: Create a Jointly Defined Course Offering
-    When I create a jointly defined course offering
-    Then the transaction takes less than "3" seconds
+  #Scenario: Create a Jointly Defined Course Offering
+  #  When I create a jointly defined course offering
+  #  Then the transaction takes less than "3" seconds
 
   Scenario: Edit Activity Offering
     When I edit an Activity Offering for performance
@@ -115,7 +115,7 @@ Feature: Performance.Metrics
     Then the transaction takes less than "3" seconds
     And then I submit the rule changes
     Then the transaction takes less than "3" seconds
-    And I suppress a the new rule change
+    And I suppress a new rule change
     Then the transaction takes less than "3" seconds
     And I revert the new rule change
     Then the transaction takes less than "3" seconds
