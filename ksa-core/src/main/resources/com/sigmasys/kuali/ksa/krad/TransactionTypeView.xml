@@ -453,9 +453,7 @@
                                                 <bean parent="Uif-TextAreaControl" p:rows="5" p:cols="40"/>
                                             </property>
                                         </bean>
-
-
-                                        <!--<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Close"  p:onClickScript="jQuery.fancybox.close();"/>-->
+                                        <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Close"  p:preSubmitCall="jQuery.fancybox.close();"/>
                                     </list>
                                 </property>
                             </bean>
