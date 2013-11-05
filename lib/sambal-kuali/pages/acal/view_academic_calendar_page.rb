@@ -3,6 +3,8 @@ class ViewAcademicCalendar < BasePage
   frame_element
   wrapper_elements
 
+  expected_element :acal_subsection_div
+
   action(:go_to_calendar_tab) { |b| b.frm.a(id: "ui-id-1").click; b.loading.wait_while_present}
   action(:go_to_terms_tab) { |b| b.frm.a(id: "ui-id-2").click; b.loading.wait_while_present}
 

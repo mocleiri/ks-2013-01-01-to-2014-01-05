@@ -3,6 +3,10 @@ class ViewAcademicTerms < BasePage
   frame_element
   wrapper_elements
 
+  expected_element :acal_header_right
+
+  element(:acal_header_right) { |b| b.frm.div(id: "KS-View-Acal-Header-RightGroup-PlaceHolder") }
+
   action(:go_to_calendar_tab) { |b| b.frm.a(id: "ui-id-1").click; b.loading.wait_while_present}
   action(:go_to_terms_tab) { |b| b.frm.a(id: "ui-id-2").click; b.loading.wait_while_present}
 
