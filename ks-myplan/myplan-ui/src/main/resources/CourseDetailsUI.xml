@@ -329,6 +329,7 @@
                                                           p:escapeHtmlInPropertyValue="false"
                                                           p:render="@{dataObject.courseSummaryDetails.termsOffered.size() gt 0}">
                                                         <property name="fieldLabel.render" value="true"/>
+                                                        <property name="fieldLabel.renderColon" value="true"/>
                                                         <property name="fieldLabel.cssClasses" value="normalLightText"/>
                                                         <property name="cssClasses" value="inlineElement"/>
                                                     </bean>
@@ -336,6 +337,7 @@
                                                           p:label="Projected Quarter Info"
                                                           p:render="@{dataObject.courseSummaryDetails.termsOffered.size() eq 0}">
                                                         <property name="fieldLabel.cssClasses" value="normalLightText"/>
+                                                        <property name="fieldLabel.renderColon" value="true"/>
                                                         <property name="cssClasses" value="inlineElement"/>
                                                         <property name="messageText"
                                                                   value="Check with the department or your adviser for more information about this course."/>
@@ -1162,8 +1164,8 @@
                                             });
                                         }
                                         });
-                                    getActivityEnrollment('/student/myplan/plan/enroll', {'courseId':'@{dataObject.courseSummaryDetails.courseId}', 'courseCd':'@{dataObject.courseSummaryDetails.code}'});
-                                "/>
+                            getActivityEnrollment('/student/myplan/plan/enroll', {'courseId':'@{dataObject.courseSummaryDetails.courseId}', 'courseCd':'@{dataObject.courseSummaryDetails.code}'});
+                            "/>
                             <property name="items">
                                 <list>
                                     <ref bean="course_details_institution_data_single"/>
