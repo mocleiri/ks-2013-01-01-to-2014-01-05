@@ -136,8 +136,6 @@ Feature: WC.Edit Course Offerings
     And I jump to an arbitrary CO while saving changes
     Then I can verify that the Honors Course setting is set
 
-# KSENROLL-8437
-  @pending
   Scenario: Edit an existing course offering's grading option
     When I edit a course offering with multiple grading options
     And I change the grading option
