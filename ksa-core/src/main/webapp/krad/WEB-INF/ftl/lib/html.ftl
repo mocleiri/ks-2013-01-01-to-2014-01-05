@@ -30,6 +30,9 @@
         </#if>
     </title>
 
+    <link rel="shortcut icon" href="${request.contextPath}/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="${request.contextPath}/favicon.ico" type="image/x-icon">
+
     <#list view.theme.cssFiles as cssFile>
         <#if cssFile?starts_with('http')>
             <link href="${cssFile}" rel="stylesheet" type="text/css"/>
