@@ -14,6 +14,7 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     Given I manage a course offering with an activity offering in canceled status
     Then I am unable to colocate the activity offering
 
+  @bug @KSENROLL-10663
   Scenario: CO 21.1D: CSR Verify that a user cannot submit a canceled activity offering to the scheduler
     Given I am working on a term in "Final Edits" SOC state
     And I manage a course offering with an activity offering in canceled status
