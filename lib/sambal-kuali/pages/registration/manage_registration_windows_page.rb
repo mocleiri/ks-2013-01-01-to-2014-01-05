@@ -1,17 +1,3 @@
-class ManageRegistrationWindows < BasePage
-
-  wrapper_elements
-  frame_element
-  validation_elements
-  #element(:frm) { |b| b.frame(id: /easyXDM/).frame(id: "iframeportlet") }
-
-  element(:term_type) { |b| b.frm.select(name: "termType") }
-  element(:year) { |b| b.frm.text_field(name: "termYear") }
-
-  action(:search) { |b| b.frm.button(text: "Search").click; b.loading.wait_while_present } # Persistent ID needed!
-
-end
-
 class RegistrationWindowsTermLookup < RegistrationWindowsBase
 
   page_url "#{$test_site}/kr-krad/registrationWindows?viewId=registrationWindowsManagementView&pageId=selectTermForRegWindows&methodToCall=start"
