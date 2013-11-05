@@ -66,10 +66,10 @@ Feature: WC.Edit Course Offerings
   #KSENROLL-9263
   Scenario: Edit an existing course offering's wait list options
     When I edit a course offering
-    And I "deactivate" the wait list
+    And I deactivate the wait list
     Then I can submit and the course offering is updated
     Then I edit the same course offering
-    And I "activate" the wait list
+    And I activate the wait list
     Then I can submit and the course offering is updated
 
   #KSENROLL-1505
@@ -96,49 +96,49 @@ Feature: WC.Edit Course Offerings
 
   Scenario: Change Honors Course setting without submitting
     When I edit a course offering
-    And I "set" the Honors Course selection
+    And I set the Honors Course selection
     And I save the changes and remain on the Edit CO page
-    Then I can verify that the Honors Course setting is "set"
+    Then I can verify that the Honors Course setting is set
 
   Scenario: Change Honors Course setting and then save and jump to previous CO
     When I edit a course offering
-    And I "set" the Honors Course selection
-    And I jump to "the previous" CO while "saving" changes
-    Then I can verify that the Honors Course setting is "set"
+    And I set the Honors Course selection
+    And I jump to the previous CO while saving changes
+    Then I can verify that the Honors Course setting is set
 
   Scenario: Change Honors Course setting and then save and jump to next CO
     When I edit a course offering
-    And I "set" the Honors Course selection
-    And I jump to "the next" CO while "saving" changes
-    Then I can verify that the Honors Course setting is "set"
+    And I set the Honors Course selection
+    And I jump to the next CO while saving changes
+    Then I can verify that the Honors Course setting is set
 
   Scenario: Change Honors Course setting and jump to previous CO without saving
     When I edit a course offering
-    And I "set" the Honors Course selection
-    And I jump to "the previous" CO while "not saving" changes
-    Then I can verify that the Honors Course setting is "not set"
+    And I set the Honors Course selection
+    And I jump to the previous CO while not saving changes
+    Then I can verify that the Honors Course setting is not set
 
   Scenario:  Change Honors Course setting and jump to next CO without saving
     When I edit a course offering
-    And I "set" the Honors Course selection
-    And I jump to "the next" CO while "not saving" changes
-    Then I can verify that the Honors Course setting is "not set"
+    And I set the Honors Course selection
+    And I jump to the next CO while not saving changes
+    Then I can verify that the Honors Course setting is not set
 
   Scenario: Change Honors Course setting and jump to an arbitrary CO without saving
     When I edit a course offering
-    And I "set" the Honors Course selection
-    And I jump to "an arbitrary" CO while "not saving" changes
-    Then I can verify that the Honors Course setting is "not set"
+    And I set the Honors Course selection
+    And I jump to an arbitrary CO while not saving changes
+    Then I can verify that the Honors Course setting is not set
 
   Scenario: Change Honors Course setting and jump to an arbitrary CO
     When I edit a course offering
-    And I "set" the Honors Course selection
-    And I jump to "an arbitrary" CO while "saving" changes
-    Then I can verify that the Honors Course setting is "set"
+    And I set the Honors Course selection
+    And I jump to an arbitrary CO while saving changes
+    Then I can verify that the Honors Course setting is set
 
 # KSENROLL-8437
   @pending
-  Scenario: Change grading options
+  Scenario: Edit an existing course offering's grading option
     When I edit a course offering with multiple grading options
     And I change the grading option
     Then I can verify that the grading option is changed
