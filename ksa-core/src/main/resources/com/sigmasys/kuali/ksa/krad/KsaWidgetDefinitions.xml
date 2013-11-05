@@ -141,12 +141,14 @@
         <property name="items">
             <list>
                 <bean parent="Uif-HeaderTwo" p:headerText="Batch Transactions"/>
-                <bean parent="Uif-Link" p:linkText="Upload a File"
+                <bean parent="Uif-Link" p:linkText="Upload Transactions"
                       p:href="batchTransactionsView?methodToCall=displayInitialPage&amp;viewId=BatchTransactionsView"/>
                 <bean parent="Uif-Link" p:linkText="Refunds"
                       p:href="batchRefundView?methodToCall=displayInitialPage&amp;viewId=BatchRefundView"/>
                 <bean parent="Uif-Link" p:linkText="Age All Accounts"
                       p:href="batchTransactionsView?methodToCall=displayInitialPage&amp;viewId=BatchTransactionsView&amp;pageId=AgeTransactionsView"/>
+				<bean parent="Uif-Link" p:linkText="Combined Cash Limit"
+					  p:href="batchCashLimitView?methodToCall=displayInitialPage&amp;viewId=BatchCashLimitView"/>
             </list>
         </property>
     </bean>

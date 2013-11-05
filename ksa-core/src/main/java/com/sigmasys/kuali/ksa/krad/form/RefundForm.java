@@ -3,7 +3,6 @@ package com.sigmasys.kuali.ksa.krad.form;
 import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RequestPotentialRefundSummaryModel;
-import com.sigmasys.kuali.ksa.model.RefundStatus;
 import com.sigmasys.kuali.ksa.model.Tag;
 
 import java.util.Date;
@@ -58,7 +57,7 @@ public class RefundForm extends AbstractViewModel {
 
     /**
      * Type of the Date range to find transactions.
-     * @see com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder
+     * @see com.sigmasys.kuali.ksa.krad.util.DateRangeFilterKeyValuesFinder
      */
     private String dateRangeType;
 

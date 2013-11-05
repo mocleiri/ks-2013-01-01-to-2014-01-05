@@ -144,7 +144,7 @@
 						<bean parent="Uif-DropdownControl" p:width="100%"	/>
 					</property>
 					<property name="optionsFinder">
-						<bean class="com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder"/>
+						<bean class="com.sigmasys.kuali.ksa.krad.util.DateRangeFilterKeyValuesFinder"/>
 					</property>
 				</bean>
 				

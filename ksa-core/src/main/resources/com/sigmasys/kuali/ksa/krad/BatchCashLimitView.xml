@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2005-2012 The Kuali Foundation
+
+    Licensed under the Educational Community License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.opensource.org/licenses/ecl2.php
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+
+    <bean id="BatchCashLimitView" parent="Uif-KsaFormView" p:footer.render="false">
+        <property name="title" value="Combined Cash Limit"/>
+        <property name="headerText" value="Combined Cash Limit"/>
+        <property name="entryPageId" value="BatchCashLimitPage"/>
+        <property name="navigation" ref="KsaBatchNavigation"/>
+        <property name="viewHelperService" ref="batchRefundHelper"/>
+        <property name="formClass" value="com.sigmasys.kuali.ksa.krad.form.CashLimitForm"/>
+        <property name="items">
+            <list merge="true">
+				<!-- Batch Cash Limit Main Page -->
+				<bean parent="Uif-Page" p:id="BatchCashLimitPage" p:title="Combined Cash Limit">
+					<property name="headerText" value="Combined Cash Limit"/>
+					<property name="items">
+                        <list>
+							<!-- Search Transactions section -->
+							<bean parent="Uif-Disclosure-VerticalBoxSection">
+								<property name="headerText" value="Filter Transactions"/>
+								<property name="items">
+									<list>
+										<ref bean="accountFilterGroup"/>
+										<ref bean="dateRangeFilterGroup"/>
+										<ref bean="transactionStatusFilterDropdown"/>
+										<ref bean="filterRefreshViewhButton"/>
+								   </list>
+								</property>
+							</bean>
+									
+							<!-- The Combined Cash Limit Accounts section -->
+							<ref bean="combinedCashLimitAccountsSection"/>
+						</list>
+					</property>
+				</bean>
+            </list>
+        </property>
+    </bean>
+	
+	
+	<!--
+	
+	******************************* Combined Cash Limit Accounts section *********************************
+	
+	-->
+	<bean id="combinedCashLimitAccountsSection" parent="Uif-VerticalBoxSection" p:headerText="Combined Cash Limit Accounts">
+		<property name="items">
+			<list>
+				<!-- Cash Limit Account Collection -->
+				<bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="7" p:displayCollectionSize="10">
+					<property name="title" value="Combined Cash Limit Accounts"/>
+					<property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.krad.model.CashLimitEventModel"/>
+					<property name="propertyName" value="cashLimitEvents" />
+					<property name="layoutManager.generateAutoSequence" value="false" />
+					<property name="layoutManager.richTable.render" value="true"/>
+					<property name="layoutManager.renderSequenceField" value="false"/>
+					<property name="renderAddBlankLineButton" value="false"/>
+					<property name="renderAddLine" value="false"/>
+					<property name="renderLineActions" value="false"/>
+					<property name="readOnly" value="true"/>
+					<property name="layoutManager.applyDefaultCellWidths" value="false"/>
+                    <property name="layoutManager.richTable.disableTableSort" value="true"/>
+					<property name="items">
+						<list>
+							<bean parent="Uif-InputField" p:propertyName="selected" p:label="Select" p:readOnly="false" p:render="@{#line.cashLimitEvent.status.id == 'Q'}">
+								<property name="control">
+									<bean parent="Uif-CheckboxControl"/>
+								</property>
+							</bean>
+							<bean parent="Uif-InputField" p:propertyName="statusString"/>
+							<bean parent="Uif-InputField" p:label="Account ID" p:propertyName="cashLimitEvent.account.id"/>
+                            <bean parent="Uif-InputField" p:label="Date of Event" p:propertyName="cashLimitEvent.eventDate"/>
+                            <bean parent="Uif-InputField" p:label="Total Cash Amount" p:propertyName="totalCashAmount"/>
+                            <bean parent="Uif-InputField" p:label="Notification Sent Date" p:propertyName="cashLimitEvent.notificationDate"/>
+							<bean parent="Uif-LinkField" p:linkText="Document" p:target="_self"
+								  p:align="center" p:width="10%"
+								  p:href="batchCashLimitView?methodToCall=downloadCashEventXml&amp;viewId=BatchCashLimitView&amp;cashLimitEventId=@{#line.cashLimitEvent.id}"/>
+						</list>
+					</property>
+				</bean>
+				
+				<!-- Generate Documents from Selected checkbox -->
+				<bean parent="Uif-InputField" p:propertyName="generateDocumentsFromSelected">
+					<property name="control">
+						<bean parent="Uif-CheckboxControl"  p:checkboxLabel="Generate Documents from Selected" p:componentSecurity.viewAuthz="true"/>
+					</property>
+				</bean>
+				
+				<!-- Download Archive of Generated Documents checkbox -->
+				<bean parent="Uif-InputField" p:propertyName="downloadGeneratedArchive">
+					<property name="control">
+						<bean parent="Uif-CheckboxControl"  p:checkboxLabel="Download Archive of Generated Documents" p:componentSecurity.viewAuthz="true"/>
+					</property>
+				</bean>
+				
+				<!-- Form submission action button -->
+				<bean parent="Uif-PrimaryActionButton" p:actionLabel="Submit" p:methodToCall="submitCashAccounts"
+						p:successCallback="batchCashLimitView?methodToCall=downloadGeneratedArchiveXml&amp;viewId=BatchCashLimitView"/>
+			</list>
+		</property>
+	</bean>
+	
+	</beans>

@@ -4,7 +4,7 @@ import com.sigmasys.kuali.ksa.krad.form.RefundForm;
 import com.sigmasys.kuali.ksa.krad.model.PotentialRefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RefundModel;
 import com.sigmasys.kuali.ksa.krad.model.RequestPotentialRefundSummaryModel;
-import com.sigmasys.kuali.ksa.krad.util.RefundDateRangeKeyValuesFinder;
+import com.sigmasys.kuali.ksa.krad.util.DateRangeFilterKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
@@ -54,7 +54,7 @@ public class BatchRefundController extends GenericSearchController {
         // Set the defaults:
         Calendar calendar = Calendar.getInstance();
 
-        form.setDateRangeType(RefundDateRangeKeyValuesFinder.ALL);
+        form.setDateRangeType(DateRangeFilterKeyValuesFinder.ALL);
         form.setFilterDateTo(calendar.getTime());
         calendar.add(Calendar.YEAR, -1);
         form.setFilterDateFrom(calendar.getTime());
@@ -343,7 +343,7 @@ public class BatchRefundController extends GenericSearchController {
         Date filterDateFrom = null;
         Date filterDateTo = null;
 
-        if (StringUtils.equals(form.getDateRangeType(), RefundDateRangeKeyValuesFinder.RANGE)) {
+        if (StringUtils.equals(form.getDateRangeType(), DateRangeFilterKeyValuesFinder.RANGE)) {
             filterDateFrom = form.getFilterDateFrom();
             filterDateTo = form.getFilterDateTo();
         }

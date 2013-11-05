@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents values for the "Date range" combo-box on the Refund page.
+ * This class represents values for the "Date range" combo-box on the Transaction filter section.
+ *
  * User: Sergey
  * Date: 5/21/13
  * Time: 10:27 PM
  * To change this template use File | Settings | File Templates.
  */
-public class RefundDateRangeKeyValuesFinder extends GenericKeyValuesFinder {
+public class DateRangeFilterKeyValuesFinder extends GenericKeyValuesFinder {
 
     /**
      * Key for All dates.
