@@ -3,6 +3,8 @@ class ViewHolidayCalendar < BasePage
   frame_element
   wrapper_elements
 
+  expected_element :hcal_overview_div
+
   element(:hcal_overview_div) { |b| b.frm.div(id: "KS-HolidayCalendar-MetaSection") }
   value(:hcal_name) { |b| b.hcal_overview_div.div(data_label: "Holiday Calendar Name").span(index: 1).text }
   value(:hcal_start_date) { |b| b.hcal_overview_div.div(data_label: "Start Date").span(index: 1).text }
