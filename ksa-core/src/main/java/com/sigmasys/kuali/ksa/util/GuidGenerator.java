@@ -84,9 +84,8 @@ public class GuidGenerator {
     private static final Random random = new Random();
 
 
-
-    public static Long generateLong() {
-        return longIdGenerator.incrementAndGet();
+    public static long generateLong() {
+        return Math.abs(longIdGenerator.incrementAndGet());
     }
 
     /**
