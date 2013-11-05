@@ -16,11 +16,20 @@
  */
 package org.kuali.student.enrollment.class2.courseoffering.service.transformer;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingDisplayInfo;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.OfferingInstructorInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.common.exceptions.*;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.common.exceptions.InvalidParameterException;
+import org.kuali.student.r2.common.exceptions.MissingParameterException;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
+import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.core.class1.state.dto.StateInfo;
 import org.kuali.student.r2.core.class1.state.service.StateService;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
@@ -30,9 +39,6 @@ import org.kuali.student.r2.core.room.dto.RoomInfo;
 import org.kuali.student.r2.core.scheduling.dto.ScheduleComponentDisplayInfo;
 import org.kuali.student.r2.core.scheduling.dto.ScheduleDisplayInfo;
 import org.kuali.student.r2.core.scheduling.service.SchedulingService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class //TODO ...
@@ -86,16 +92,30 @@ public class ActivityOfferingDisplayTransformer {
         displayInfo.setFormatOfferingName(aoInfo.getFormatOfferingName());
         // activityOfferingCode, instructorId, instructorName;
         displayInfo.setActivityOfferingCode(aoInfo.getActivityCode());
+        
+        // KSAP-TODO: Display all instructors
         List<OfferingInstructorInfo> instructorInfos = aoInfo.getInstructors();
         if (instructorInfos != null && !instructorInfos.isEmpty()) {
-            // Find instructor with largest percentage effort
-            displayInfo.setInstructorId(instructorInfos.get(0).getPersonId());
-            displayInfo.setInstructorName(instructorInfos.get(0).getPersonName());
+            Set<String> seenIds = new HashSet<String>();
+        	StringBuilder ids = new StringBuilder();
+        	StringBuilder names = new StringBuilder();
+        	for (OfferingInstructorInfo instructor : instructorInfos) {
+        		if (!seenIds.add(instructor.getPersonId()))
+        			continue;
+        		
+        		if (ids.length() > 0) ids.append(", ");
+        		if (names.length() > 0) names.append(", ");
+        		ids.append(instructor.getPersonId());
+        		names.append(instructor.getPersonName());
+        	}
+            displayInfo.setInstructorId(ids.toString());
+            displayInfo.setInstructorName(names.toString());
         }
         else  {
             displayInfo.setInstructorId(null);
             displayInfo.setInstructorName(null);
         }
+        
         // isHonorsOffering, maximumEnrollment
         displayInfo.setIsHonorsOffering(aoInfo.getIsHonorsOffering());
         displayInfo.setMaximumEnrollment(aoInfo.getMaximumEnrollment());
