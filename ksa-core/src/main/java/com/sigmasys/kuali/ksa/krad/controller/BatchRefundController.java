@@ -87,6 +87,7 @@ public class BatchRefundController extends GenericSearchController {
             filterAccounts.add(newFilterAccount);
         }
 
+        // Refresh the model:
         findAllRefunds(form);
 
         return getUIFModelAndView(form);
@@ -118,6 +119,7 @@ public class BatchRefundController extends GenericSearchController {
             }
         }
 
+        // Refresh the model:
         findAllRefunds(form);
 
         return getUIFModelAndView(form);
@@ -144,6 +146,7 @@ public class BatchRefundController extends GenericSearchController {
             filterTags.add(newFilterTag);
         }
 
+        // Refresh the model:
         findAllRefunds(form);
 
         return getUIFModelAndView(form);
@@ -175,6 +178,7 @@ public class BatchRefundController extends GenericSearchController {
             }
         }
 
+        // Refresh the model:
         findAllRefunds(form);
 
         return getUIFModelAndView(form);
@@ -235,6 +239,9 @@ public class BatchRefundController extends GenericSearchController {
         // Process Refund request for all selected Potential Refunds:
         processRequestPotentialRefund(form);
 
+        // Refresh the model:
+        findAllRefunds(form);
+
         return getUIFModelAndView(form);
     }
 
@@ -259,6 +266,9 @@ public class BatchRefundController extends GenericSearchController {
                 logger.error("Error validating a Refund with ID " + refundModel.getRefund().getId(), e);
             }
         }
+
+        // Refresh the model:
+        findAllRefunds(form);
 
         return getUIFModelAndView(form);
     }
@@ -285,6 +295,9 @@ public class BatchRefundController extends GenericSearchController {
             }
         }
 
+        // Refresh the model:
+        findAllRefunds(form);
+
         return getUIFModelAndView(form);
     }
 
@@ -305,6 +318,8 @@ public class BatchRefundController extends GenericSearchController {
             }
         }
 
+        // Refresh the model:
+        findAllRefunds(form);
 
         return getUIFModelAndView(form);
     }
