@@ -124,13 +124,14 @@ class ManageCourseOfferings < BasePage
   AO_STATUS = 2
   AO_TYPE = 3
   AO_MAX_ENR = 4
-  AO_DAYS = 5
-  AO_ST_TIME = 6
-  AO_END_TIME = 7
-  AO_BLDG = 8
-  AO_ROOM = 9
-  AO_INSTRUCTOR = 10
-  AO_ACTIONS = 11
+  AO_SCHEDULING = 5
+  AO_DAYS = 6
+  AO_ST_TIME = 7
+  AO_END_TIME = 8
+  AO_BLDG = 9
+  AO_ROOM = 10
+  AO_INSTRUCTOR = 11
+  AO_ACTIONS = 12
 
   action(:go) { |b| b.frm.button(text: "Go").click; b.loading.wait_while_present }
 
