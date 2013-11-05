@@ -1264,7 +1264,13 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     private Refund getRefund(Long refundId, boolean checkVerified) {
 
         // Get the Refund object by its identifier:
-        Refund refund = getEntity(refundId, Refund.class);
+        Query query = em.createQuery(GET_REFUNDS_SELECT + " where r.id = :refundId");
+
+        query.setParameter("refundId", refundId);
+
+        List<Refund> result = query.getResultList();
+
+        Refund refund = CollectionUtils.isNotEmpty(result) ? result.get(0) : null;
 
         if (refund == null) {
             throw new RefundNotFoundException(refundId, "Refund with ID [" + refundId + "] was found in the system");
