@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
@@ -126,24 +127,60 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     }
 
     /**
-     * Retrieves all CashLimitEvent objects for the given user ID and CashLimitEventStatus.
+     * Retrieves all CashLimitEvent objects for the given list of Account IDs and CashLimitEvent statuses.
      *
-     * @param userId Account ID
-     * @param status CashLimitEvent status
+     * @param userIds  Account IDs
+     * @param statuses CashLimitEvent statuses
      * @return a list of cash limit events
      */
     @Override
-    public List<CashLimitEvent> getCashLimitEvents(String userId, CashLimitEventStatus status) {
+    @WebMethod(exclude = false)
+    public List<CashLimitEvent> getCashLimitEvents(List<String> userIds, CashLimitEventStatus... statuses) {
 
         PermissionUtils.checkPermission(Permission.READ_IRS_8300);
 
-        Query query = em.createQuery("select cle from CashLimitEvent cle " +
-                " left outer join fetch cle.xmlDocument xml " +
-                " where cle.accountId = :userId and cle.statusCode = :status " +
-                " order by cle.eventDate desc");
-        query.setParameter("userId", userId);
-        query.setParameter("status", status.getId());
+        if (CollectionUtils.isEmpty(userIds)) {
+            String errMsg = "List of Account IDs cannot be empty";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        StringBuilder builder = new StringBuilder("select cle from CashLimitEvent cle ");
+        builder.append(" left outer join fetch cle.xmlDocument xml ");
+        builder.append(" where cle.accountId in (:userIds) ");
+
+        boolean statusesExist = (statuses != null && statuses.length > 0);
+
+        if (statusesExist) {
+            builder.append(" and cle.statusCode in (:statusCodes) ");
+        }
+
+        builder.append(" order by cle.eventDate desc");
+
+        Query query = em.createQuery(builder.toString());
+
+        query.setParameter("userIds", userIds);
+
+        if (statusesExist) {
+            List<String> statusCodes = new ArrayList<String>(statuses.length);
+            for (CashLimitEventStatus status : statuses) {
+                statusCodes.add(status.getId());
+            }
+            query.setParameter("statusCodes", statusCodes);
+        }
+
         return query.getResultList();
+    }
+
+    /**
+     * Retrieves all CashLimitEvent objects for the given list of Account IDs.
+     *
+     * @param userIds Account IDs
+     * @return a list of cash limit events
+     */
+    @Override
+    public List<CashLimitEvent> getCashLimitEvents(List<String> userIds) {
+        return getCashLimitEvents(userIds, (CashLimitEventStatus[]) null);
     }
 
     /**

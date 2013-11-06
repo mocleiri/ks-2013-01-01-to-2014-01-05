@@ -357,7 +357,7 @@ public class ReportServiceTest extends AbstractServiceTest {
 
         Assert.isTrue(cashLimitEventIsCreated);
 
-        List<CashLimitEvent> cashLimitEvents = cashLimitService.getCashLimitEvents(TEST_USER_ID, QUEUED);
+        List<CashLimitEvent> cashLimitEvents = cashLimitService.getCashLimitEvents(Arrays.asList(TEST_USER_ID), QUEUED);
 
         Assert.notNull(cashLimitEvents);
         Assert.notEmpty(cashLimitEvents);

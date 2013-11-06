@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.service;
 import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.model.*;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.math.BigDecimal;
 import java.util.List;
@@ -60,14 +61,22 @@ public interface CashLimitService {
     boolean checkCashLimit(String userId);
 
     /**
-     * Retrieves all CashLimitEvent objects for the given user ID and CashLimitEventStatus.
+     * Retrieves all CashLimitEvent objects for the given list of Account IDs and CashLimitEvent statuses.
      *
-     * @param userId Account ID
-     * @param status CashLimitEvent status
+     * @param userIds  Account IDs
+     * @param statuses CashLimitEvent statuses
      * @return a list of cash limit events
      */
-    List<CashLimitEvent> getCashLimitEvents(String userId, CashLimitEventStatus status);
+    @WebMethod(exclude = true)
+    List<CashLimitEvent> getCashLimitEvents(List<String> userIds, CashLimitEventStatus... statuses);
 
+    /**
+     * Retrieves all CashLimitEvent objects for the given list of Account IDs.
+     *
+     * @param userIds Account IDs
+     * @return a list of cash limit events
+     */
+    List<CashLimitEvent> getCashLimitEvents(List<String> userIds);
 
     /**
      * Returns CashLimitEvent object by ID.

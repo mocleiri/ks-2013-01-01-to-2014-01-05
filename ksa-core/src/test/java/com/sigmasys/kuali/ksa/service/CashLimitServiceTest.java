@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class CashLimitServiceTest extends AbstractServiceTest {
 
         Assert.isTrue(cashLimitEventIsCreated);
 
-        List<CashLimitEvent> cashLimitEvents = cashLimitService.getCashLimitEvents(TEST_USER_ID, QUEUED);
+        List<CashLimitEvent> cashLimitEvents = cashLimitService.getCashLimitEvents(Arrays.asList(TEST_USER_ID), QUEUED);
 
         Assert.notNull(cashLimitEvents);
         Assert.notEmpty(cashLimitEvents);
