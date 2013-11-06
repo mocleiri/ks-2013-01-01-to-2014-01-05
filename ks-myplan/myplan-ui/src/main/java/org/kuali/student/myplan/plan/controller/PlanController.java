@@ -549,7 +549,7 @@ public class PlanController extends UifControllerBase {
         form.setJavascriptEvents(events);
 
         //  Pass the ATP name in the params.
-        String[] params = {AtpHelper.atpIdToTermName(planItemAtpId)};
+        String[] params = {makeLinkToAtp(planItemAtpId,AtpHelper.atpIdToTermName(planItemAtpId))};
         return doPlanActionSuccess(form, PlanConstants.SUCCESS_KEY_PLANNED_ITEM_MARKED_BACKUP, params);
     }
 
@@ -653,7 +653,7 @@ public class PlanController extends UifControllerBase {
 
         form.setJavascriptEvents(events);
 
-        String[] params = {AtpHelper.atpIdToTermName(planItemAtpId)};
+        String[] params = {makeLinkToAtp(planItemAtpId,AtpHelper.atpIdToTermName(planItemAtpId))};
         return doPlanActionSuccess(form, PlanConstants.SUCCESS_KEY_PLANNED_ITEM_MARKED_PLANNED, params);
     }
 
@@ -816,8 +816,8 @@ public class PlanController extends UifControllerBase {
 
         form.setJavascriptEvents(events);
 
-        //String link = makeLinkToAtp(newAtpId, AtpHelper.atpIdToTermName(newAtpId));
-        String[] params = {AtpHelper.atpIdToTermName(newAtpId)};
+        String link = makeLinkToAtp(newAtpId, AtpHelper.atpIdToTermName(newAtpId));
+        String[] params = {link};
         return doPlanActionSuccess(form, PlanConstants.SUCCESS_KEY_PLANNED_ITEM_MOVED, params);
     }
 
@@ -966,8 +966,8 @@ public class PlanController extends UifControllerBase {
         //  Populate the form.
         form.setJavascriptEvents(events);
 
-        //String link = makeLinkToAtp(newAtpId, AtpHelper.atpIdToTermName(newAtpId));
-        String[] params = {AtpHelper.atpIdToTermName(newAtpId)};
+        String link = makeLinkToAtp(newAtpId, AtpHelper.atpIdToTermName(newAtpId));
+        String[] params = {link};
         return doPlanActionSuccess(form, PlanConstants.SUCCESS_KEY_PLANNED_ITEM_COPIED, params);
     }
 
@@ -1520,11 +1520,11 @@ public class PlanController extends UifControllerBase {
 
         String[] params = {};
         if (planItem != null) {
-            params = new String[]{AtpHelper.atpIdToTermName(planItem.getPlanPeriods().get(0))};
+            params = new String[]{makeLinkToAtp(planItem.getPlanPeriods().get(0),AtpHelper.atpIdToTermName(planItem.getPlanPeriods().get(0)))};
         } else if (primaryPlanItem != null) {
-            params = new String[]{AtpHelper.atpIdToTermName(primaryPlanItem.getPlanPeriods().get(0))};
+            params = new String[]{makeLinkToAtp(primaryPlanItem.getPlanPeriods().get(0),AtpHelper.atpIdToTermName(primaryPlanItem.getPlanPeriods().get(0)))};
         } else if (secondaryPlanItem != null) {
-            params = new String[]{AtpHelper.atpIdToTermName(secondaryPlanItem.getPlanPeriods().get(0))};
+            params = new String[]{makeLinkToAtp(secondaryPlanItem.getPlanPeriods().get(0),AtpHelper.atpIdToTermName(secondaryPlanItem.getPlanPeriods().get(0)))};
         }
 
         return doPlanActionSuccess(form, PlanConstants.SUCCESS_KEY_PLANNED_ITEM_ADDED, params);
@@ -1591,7 +1591,7 @@ public class PlanController extends UifControllerBase {
 
         if (!CollectionUtils.isEmpty(pro)) {
             String adviserName = getUserSessionHelper().getCapitalizedName(getUserSessionHelper().getCurrentUserId());
-            note = hasText(note) ? String.format("'%s'", WordUtils.wrap(note.trim().replace("\n","<br/>"), 80, "<br/>", true)) : "";
+            note = hasText(note) ? String.format("'%s'", WordUtils.wrap(note.trim().replace("\n", "<br/>"), 80, "<br/>", true)) : "";
             String dateAdded = DateFormatHelper.getDateFomatted(new java.sql.Date(System.currentTimeMillis()).toString());
             String planLink = makeLinkToAtp(AtpHelper.termToYearTerm(term).toATP(), "visit your plan page");
             String code = courseCd;
