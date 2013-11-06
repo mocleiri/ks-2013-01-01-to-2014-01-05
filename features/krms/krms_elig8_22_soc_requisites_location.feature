@@ -6,7 +6,6 @@ Feature: SA.ELIG8-22 Ensure that changes made to AO or CO Requisites displays di
     Given I am logged in as admin
 
   #ELIG8.22.EB1 (KSENROLL-10123)
-  @pending
   Scenario: Verify that suppressing the Course Offering rule for an AO is displayed on the Schedule of Classes
     Given I suppress a course offering rule for an activity in a course
     And I am using the schedule of classes page
@@ -17,7 +16,6 @@ Feature: SA.ELIG8-22 Ensure that changes made to AO or CO Requisites displays di
     But the suppressed rule should be visible for any unchanged activity
 
 #ELIG8.22.EB4 (KSENROLL-10123)
-  @pending
   Scenario: Verify that a CO level rule edited at the AO level is displayed on the Schedule of Classes
     Given I edit a course offering rule at the AO level by adding a new text statement
     And I am using the schedule of classes page
@@ -27,7 +25,6 @@ Feature: SA.ELIG8-22 Ensure that changes made to AO or CO Requisites displays di
     But the unedited course offering rule should be displayed with any un-affected activity offerings
 
 #ELIG8.22.EB5 (KSENROLL-10123)
-  @pending
   Scenario: Verify that adding CO Rules is displayed on the Schedule of Classes
     Given I add a new course offering rule to a course
     And I am using the schedule of classes page
