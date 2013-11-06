@@ -45,7 +45,8 @@ var KsapScheduleBuild = {
 				}
 			});
 		} else {
-			blockArea.find("input[type=checkbox]").prop("disabled", true);
+			blockArea.find("input[name^='possibleScheduleOptions']").prop("disabled", true);
+			blockArea.find("input[name^='_possibleScheduleOptions']").prop("disabled", true);
 			blockArea.block({
 				message : '<img src="../ks-myplan/images/btnLoader.gif"/>',
 				css : {
@@ -858,6 +859,7 @@ function showCourseSummary(courseId, termId, registrationCode, e) {
 		methodToCall : "startDialog",
 		termId : termId,
 		courseId : courseId,
+		registrationCode : registrationCode,
 		pageId : "planner_course_summary_page"
 	};
 	var popupOptions = {

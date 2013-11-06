@@ -468,7 +468,7 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 								toCourseLockIn.add(aoi);
 
 						boolean foundHere = false;
-						if (acodes.isEmpty()
+						if ((acodes.isEmpty() && !aoi.isClosed())
 								|| acodes.contains(ao.getRegistrationCode())) {
 							aoi.setSelected(true);
 							if (lockIn)
@@ -496,9 +496,8 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 											toCourseLockIn.add(saoi);
 
 									boolean select = foundHere
-											&& (acodes.isEmpty() || acodes
-													.contains(sao
-															.getRegistrationCode()));
+											&& ((acodes.isEmpty() && !saoi.isClosed())
+											|| acodes.contains(sao.getRegistrationCode()));
 									if (select) {
 										saoi.setSelected(true);
 										if (lockIn)

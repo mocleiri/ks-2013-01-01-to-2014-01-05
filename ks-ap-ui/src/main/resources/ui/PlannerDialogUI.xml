@@ -49,7 +49,9 @@
 		<property name="items">
 			<list merge="true">
 				<bean parent="planner_course_code_input" />
-<!-- 				<bean parent="planner_course_credit_input" /> -->
+<!-- 				<bean parent="planner_course_credit_input" />
+				<bean parent="Uif-Message" p:messageText="Montse's code goes here" p:render="@{courseCd ne null}" />
+-->
 				<bean parent="planner_course_note_input" />
 			</list>
 		</property>
@@ -115,7 +117,7 @@
   <bean id="planner_course_summary_page" parent="KSAP-PopoverPage">
 		<property name="id" value="planner_course_summary_page" />
 		<property name="innerViewWrapperId" value="planner_course_summary_inner" />
-		<property name="headerText" value="View course summary" />
+		<property name="headerText" value="Course Summary" />
 	    <property name="items">
     		<list merge="true">
 				<ref bean="planner_course_summary_link" />
@@ -136,7 +138,7 @@
 		</property>
 	</bean>
 
-	<bean id="planner_course_summary_link" parent="Uif-Link" p:target="">
+	<bean id="planner_course_summary_link" parent="Uif-Link" p:target="_blank">
 		<property name="cssClasses">
 			<list merge="true">
 				<value>fl-text-bold</value>
@@ -154,7 +156,7 @@
 		<property name="items">
 			<list>
 				<ref bean="planner_course_summary_details_data" />
-				<bean parent="planner_course_note_input">
+				<bean parent="planner_course_note_input" p:render="@{planItemId ne null}">
 					<property name="control.disabled" value="true" />
 					<property name="control.watermarkText" value="" />
 				</bean>
@@ -221,6 +223,92 @@
 							<value>myplan-data-list</value>
 							<value>myplan-multiline-ellipsis</value>
 							<value>ks-Popover-detail</value>
+						</list>
+					</property>
+				</bean>
+				<bean parent="Uif-Disclosure-StackedCollectionSection" p:render="@{activityOptions ne null and !activityOptions.empty}"
+						p:additionalCssClasses="ksap-planner-activity@{registrationCode ne null?'':'-options'}" p:renderAddLine="false"
+						p:renderSaveLineActions="false" p:renderLineActions="false" p:includeLineSelectionField="false">
+					<property name="propertyName" value="activityOptions" />
+					<property name="headerText" value="@{term.name} Classes" />
+					<property name="header.render" value="@{registrationCode eq null}" />
+					<property name="disclosure.defaultOpen" value="@{registrationCode ne null}" />
+					<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.ActivityOption" />
+				    <property name="layoutManager">
+						<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
+							<property name="lineGroupPrototype">
+								<bean parent="Uif-CollectionVerticalBoxItem" p:footer.render="false"  p:additionalCssClasses="ksap-planner-activity-row"/>
+							</property>
+						</bean>
+					</property>
+					<property name="items">
+						<list>
+							<bean parent="Uif-VerticalFieldGroup" p:additionalCssClasses="ksap-planner-activity-row">
+								<property name="items">
+									<list>
+										<bean parent="Uif-VerticalBoxSection" p:additionalCssClasses="ksap-planner-activity-info">
+											<property name="validationMessages.render" value="false" />
+											<property name="headerText" value="@{#line.registrationCode} @{#line.activityTypeDescription} - @{#line.closed?'Closed ':'Open '}@{#line.openSeats}/@{#line.totalSeats}" />
+											<property name="items">
+												<list>
+													<bean parent="Uif-HorizontalBoxGroup">
+														<property name="validationMessages.render" value="false" />
+														<property name="items">
+															<list>
+																<bean parent="Uif-Message" p:messageText="@{#line.academicSessionDescr}" p:render="@{!#line.enrollmentGroup || #line.secondaryOptions.empty}"
+																		p:additionalCssClasses="ksap-planner-activity-session" />
+															</list>
+														</property>
+													</bean>
+													<bean parent="Uif-Message" p:messageText="Permission Required" p:render="@{#line.requiresPermission}" />
+													<bean parent="Uif-StackedCollectionGroup" p:additionalCssClasses="ksap-planner-activity-classtimes"
+															p:renderAddLine="false" p:renderSaveLineActions="false" p:renderLineActions="false"
+															p:render="@{!#line.enrollmentGroup || #line.secondaryOptions.empty}">
+														<property name="propertyName" value="classMeetingTimes" />
+														<property name="collectionObjectClass" value="org.kuali.student.ap.sb.infc.ClassMeetingTime" />
+														<property name="layoutManager">
+															<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
+																<property name="lineGroupPrototype">
+																	<bean parent="Uif-CollectionVerticalBoxItem" />
+																</property>
+															</bean>
+														</property>
+														<property name="items">
+															<list>
+																<bean parent="Uif-HorizontalFieldGroup">
+																	<property name="items">
+																		<list>
+																			<bean parent="Uif-Message" p:messageText="@{!#line.allDay?#line.daysAndTimes:'Meeting time to be arranged'} &amp;bull; @{#line.instructorName}@{#line.instructorName ne null?' &amp;bull; ':''}@{#line.arranged?#line.location:'ARR'}" p:additionalCssClasses="ksap-sb-cart-meetingtime" />
+																		</list>
+																	</property>
+																</bean>
+															</list>
+														</property>
+													</bean>
+													<bean parent="Uif-StackedCollectionGroup" p:renderAddLine="false" p:renderSaveLineActions="false"
+															p:renderLineActions="false" p:render="@{#line.notes ne null and !#line.notes.empty}"
+															p:additionalCssClasses="ksap-planner-activity-classnotes">
+														<property name="propertyName" value="notes" />
+														<property name="collectionObjectClass" value="java.lang.String" />
+														<property name="layoutManager">
+															<bean parent="Uif-StackedCollectionLayout-WithBoxItems">
+																<property name="lineGroupPrototype">
+																	<bean parent="Uif-CollectionVerticalBoxItem" p:additionalCssClasses="ksap-sb-activity-classnotes-row" />
+																</property>
+															</bean>
+														</property>
+														<property name="items">
+															<list>
+																<bean parent="Uif-MessageField" p:messageText="@{#line}" />
+															</list>
+														</property>
+													</bean>
+												</list>
+											</property>
+										</bean>
+									</list>
+								</property>
+							</bean>
 						</list>
 					</property>
 				</bean>

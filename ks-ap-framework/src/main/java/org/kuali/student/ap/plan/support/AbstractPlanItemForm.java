@@ -11,6 +11,7 @@ import org.kuali.student.ap.framework.context.PlanConstants;
 import org.kuali.student.ap.plan.PlanItemForm;
 import org.kuali.student.ap.sb.infc.ActivityOption;
 import org.kuali.student.ap.sb.infc.CourseOption;
+import org.kuali.student.ap.sb.infc.SecondaryActivityOptions;
 import org.kuali.student.enrollment.acal.infc.Term;
 import org.kuali.student.myplan.academicplan.infc.LearningPlan;
 import org.kuali.student.myplan.academicplan.infc.PlanItem;
@@ -182,7 +183,7 @@ public abstract class AbstractPlanItemForm extends UifFormBase implements PlanIt
 	}
 
 	public void setRegistrationCode(String registrationCode) {
-		this.registrationCode = registrationCode;
+		this.registrationCode = StringUtils.isEmpty(registrationCode) ? null : registrationCode;
 		this.activityOptions = null;
 	}
 
@@ -194,11 +195,16 @@ public abstract class AbstractPlanItemForm extends UifFormBase implements PlanIt
 						.getCourseOptions(Collections.singletonList(courseId), termId);
 				List<ActivityOption> ao = new ArrayList<ActivityOption>();
 				for (CourseOption co : courseOptions)
-					ao.addAll(co.getActivityOptions());
+					for (ActivityOption pao : co.getActivityOptions()) {
+						ao.add(pao);
+						for (SecondaryActivityOptions so : pao.getSecondaryOptions())
+							for (ActivityOption sao : so.getActivityOptions())
+								ao.add(sao);
+					}
 				activityOptions = ao;
 			} else {
 				ActivityOption ao = KsapFrameworkServiceLocator.getScheduleBuildStrategy()
-						.getActivityOption(courseId, termId, registrationCode);
+						.getActivityOption(termId, courseId, registrationCode);
 				if (ao != null)
 					activityOptions = Collections.singletonList(ao);
 			}

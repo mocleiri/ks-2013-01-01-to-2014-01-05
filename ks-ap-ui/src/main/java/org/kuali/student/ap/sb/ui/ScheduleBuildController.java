@@ -323,6 +323,8 @@ public class ScheduleBuildController extends UifControllerBase {
 
 		if (ao != null) {
 			StringBuilder hover = new StringBuilder();
+			hover.append(ao.getRegistrationCode());
+			hover.append(" ");
 			hover.append(ao.getActivityName());
 			hover.append(" (");
 			hover.append(ao.getActivityTypeDescription());
@@ -335,14 +337,14 @@ public class ScheduleBuildController extends UifControllerBase {
 				hover.append(meetingTime.getDaysAndTimes());
 			}
 			event.add("hoverText", hover.toString());
+
+			if (ao.getCourseId() != null) {
+				event.add("registrationCode", ao.getRegistrationCode());
+				event.add("courseId", ao.getCourseId());
+				event.add("termId", term.getId());
+			}
 		} else {
 			event.add("hoverText", description);
-		}
-
-		if (ao != null && ao.getCourseId() != null) {
-			event.add("registrationCode", ao.getRegistrationCode());
-			event.add("courseId", ao.getCourseId());
-			event.add("termId", term.getId());
 		}
 		return event;
 	}
@@ -402,7 +404,7 @@ public class ScheduleBuildController extends UifControllerBase {
 						addEvents(
 								form.getTerm(),
 								meeting,
-								ao.getCourseOfferingCode()
+								ao.getCourseOfferingCode() + " " + ao.getRegistrationCode()
 										+ (meeting.getLocation() == null ? ""
 												: " (" + meeting.getLocation()
 														+ ") - " + pso.getDescription().getPlain()
@@ -447,7 +449,7 @@ public class ScheduleBuildController extends UifControllerBase {
 							addEvents(
 									form.getTerm(),
 									meeting,
-									ao.getCourseOfferingCode()
+									ao.getCourseOfferingCode() + " " + ao.getRegistrationCode()
 											+ (meeting.getLocation() == null ? ""
 													: " (" + meeting.getLocation()
 															+ ") - "
