@@ -1,11 +1,3 @@
-When /^the registration groups are not copied$/ do
-  @course_offering_copy.activity_offering_cluster_list.each do |cluster|
-    on ManageRegistrationGroups do |page|
-      page.get_cluster_status_msg(cluster.private_name).strip.should  match /.*No Registration Groups Generated.*/
-    end
-  end
-end
-
 Then /^the registration groups are automatically generated$/ do
   #TODO - implement using validation of reg group counts
   #@course_offering_copy.activity_offering_cluster_list.each do |cluster|

@@ -45,12 +45,7 @@ When /^I do not have direct url access to the edit activity offering page$/ do
     page.error_401.should == true
   end
 end
-When /^I do not have direct url access to the manage registration group page$/ do
-  @browser.goto @direct_navigation.manage_registration_group
-  on ErrorPage do |page|
-    page.error_401.should == true
-  end
-end
+
 When /^I do not have direct url access to the create course offerings page$/ do
   @browser.goto @direct_navigation.create_course_offering
   on ErrorPage do |page|

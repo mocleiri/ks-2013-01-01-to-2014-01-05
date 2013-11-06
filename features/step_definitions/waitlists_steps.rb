@@ -395,25 +395,6 @@ Then /activity offerings have the same waitlist configuration$/ do
   end
 end
 
-Then /^the waitlist configuration is copied to the colocated activity offerings in the target term$/ do
-  @ao_list.each do |source_ao|
-
-    course_offering_target = make CourseOffering, :course => source_ao.parent_course_offering.course,
-                                  :term => @term_target.term_code
-    @activity_offering_target = make ActivityOffering, :code => source_ao.code, :parent_course_offering => course_offering_target
-    @activity_offering_target.parent_course_offering.manage
-    on(ManageCourseOfferings).view_activity_offering(@activity_offering_target.code)
-
-    on ActivityOfferingInquiry do |page|
-      page.waitlists_active?.should be_true
-      page.waitlists_allow_holds?.should == @ao_list[0].waitlist_config.allow_hold_list
-      page.waitlists_processing.should == @ao_list[0].waitlist_config.type
-      page.waitlists_max_size.should == @ao_list[0].waitlist_config.waitlist_limit_str
-      page.close
-    end
-  end
-end
-
 Then /^the waitlist configuration is copied to the(?: new)? colocated activity offering/ do
   course_offering_target = make CourseOffering, :course => @ao_list[0].parent_course_offering.course,
                                 :term => @term.term_code
@@ -462,13 +443,6 @@ When /^I delete one of the colocated activity offerings$/ do
   @ao_list[0].parent_course_offering.delete_ao :ao_code =>'A'
 end
 
-Then /^the remaining two activity offerings are no longer colocated$/ do
-  @ao_list[1..2].each do |ao|
-    ao.parent_course_offering.manage
-    on(ManageCourseOfferings).has_colo_icon(ao.code).should be_false
-  end
-end
-
 Then /^the remaining two activity offerings still have the same waitlist configuration$/ do
   @ao_list[1..2].each do |ao|
     ao.parent_course_offering.manage
@@ -506,13 +480,6 @@ end
 Then /^the remaining activity offering is no longer colocated$/ do
   @ao_list[-1].parent_course_offering.manage
   on(ManageCourseOfferings).has_colo_icon(@ao_list[-1].code).should be_false
-end
-
-Then /^the activity offerings are no longer colocated$/ do
-  @ao_list.each do |ao|
-    ao.parent_course_offering.manage
-    on(ManageCourseOfferings).has_colo_icon(ao.code).should be_false
-  end
 end
 
 Then /^the remaining activity offering still has the same waitlist configuration$/ do

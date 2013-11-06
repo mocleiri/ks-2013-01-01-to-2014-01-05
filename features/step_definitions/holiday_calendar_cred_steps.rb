@@ -181,17 +181,6 @@ Then /^the holiday start date field is highlighted for the error$/ do
   end
 end
 
-Then /^the holiday calendar start date field is highlighted for the error$/ do
-  on CreateEditHolidayCalendar do |page|
-    page.start_date.attribute_value('class').should match /error/
-  end
-end
-
-When /^I edit the holiday calendar with a start date with an invalid format$/ do
-  @holiday_calendar.edit :start_date => "15/07/#{@holiday_calendar.year.to_i + 1}",
-                         :exp_success => false
-end
-
 When /^I create a holiday calendar with a start date after the end date$/ do
   @holiday_calendar = make HolidayCalendar, :year => "2014",
                              :start_date => "07/12/2014",

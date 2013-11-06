@@ -126,70 +126,8 @@ Then /^the academic calendar should reflect the updates$/ do
   end
 end
 
-Then /^I verify that the term added to the calendar$/ do
-  @calendar.search
-  on CalendarSearch do |page|
-    page.edit @calendar.name
-  end
-  on EditAcademicTerms do |page|
-    page.go_to_terms_tab
-    @term.verify
-  end
-end
-
-And /^Make Official button for the term is enabled$/ do
-  on EditAcademicTerms do |page|
-    page.term_make_official_enabled(0).should == true
-    page.term_make_official_button(0).should == 'Make Official'
-  end
-end
-
 And /^I make the term official$/ do
   @term.make_official
-end
-
-And /^I make the subterm official$/ do
-  @subterm_list[0].make_official
-end
-
-Then /^the term should be set to Official on edit$/ do
-  @term.search
-  on CalendarSearch do |page|
-    page.edit @term.term_name
-  end
-  on EditAcademicTerms do |page|
-    page.term_make_official_button(0).should == 'Update Official'
-  end
-end
-
-When /^I delete the Academic Term draft$/ do
-  @term.search
-  on CalendarSearch do |page|
-    page.edit @term.term_name
-  end
-  on EditAcademicTerms do |page|
-    page.go_to_terms_tab
-    page.delete_term(0)
-    page.go_to_cal_tab
-  end
-  on EditAcademicCalendar do |page|
-    page.save
-    raise "Page has errors" unless page.page_info_message
-    if(page.page_info_message)
-      (page.page_info_message_text =~ /has been saved successfully./).should_not == nil
-    end
-  end
-end
-
-And /^the term should not appear in search results$/ do
-  @term.search
-  on CalendarSearch do |page|
-    begin
-      page.results_list.should_not include @calendar.name
-    rescue Watir::Exception::UnknownObjectException
-      # Implication here is that there were no search results at all.
-    end
-  end
 end
 
 Then /^I should be able to view the calendars$/ do

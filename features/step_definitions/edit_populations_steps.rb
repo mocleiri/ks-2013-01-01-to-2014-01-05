@@ -15,22 +15,6 @@ When /^I update all the editable fields of the population$/ do
   @population.edit_population things
 end
 
-When /^I edit the (.*) of the population$/ do |attrib|
-  things = {
-  :name=>{:name=>random_alphanums.strip},
-  :description=>{:description=>random_multiline(20,5)},
-  :rule=>{:rule=>"random"},
-  :"reference population"=>{:reference_population=>"random"},
-  :"child populations"=>{:child_populations=>%w{random random}}
-  }
-  option = things[attrib.to_sym]
-  @population.edit_population option
-end
-
-When /^I set the status of the population to "(.*)"/ do |status|
-  @population.edit_population(:status=>status.downcase)
-end
-
 When /^I rename a population with an existing name$/ do
   @population = make Population
   @population.create

@@ -41,23 +41,6 @@ Then /^the search results should only include "(.*)" populations$/ do |statein|
   end
 end
 
-When /^I search populations with the Keyword "(.*)" and a State of "(.*)"$/ do |keywerd, state|
-  methd = state.downcase
-  go_to_manage_population
-  on ManagePopulations do |page|
-    page.keyword.set keywerd
-    page.send(methd)
-    page.search
-  end
-end
-
-Then /^the search results should include a population with Name "(.*)" and State "(.*)"$/ do |name, state|
-  on ManagePopulations do |page|
-    page.results_list.should include name
-    page.status(name).should == state
-  end
-end
-
 When /^I search populations with Keyword "(.*)"$/ do |keywerd|
   go_to_manage_population
   on ManagePopulations do |page|
@@ -79,16 +62,3 @@ And /^the view of the population "(.*)" field is "(.*)"$/ do |field, value|
   end
 end
 
-Given /^I set the population "(.*)" to state "(.*)"$/ do |pop, state|
-  methd = state.downcase
-  go_to_manage_population
-  on ManagePopulations do |page|
-    page.keyword.set pop
-    page.search
-    page.edit pop
-  end
-  on EditPopulation do |page|
-    page.send(methd).set
-    page.update
-  end
-end
