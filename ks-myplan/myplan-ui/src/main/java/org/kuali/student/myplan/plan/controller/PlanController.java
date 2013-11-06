@@ -1391,6 +1391,10 @@ public class PlanController extends UifControllerBase {
             }
             if (planItem == null && addCourse) {
                 try {
+                    // Don't allow duplicate recommended items.
+                    if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_RECOMMENDED.equals(newType) && getPlanHelper().getPlanItemByAtpAndType(plan.getId(), courseDetails.getVersionIndependentId(), newAtpId, newType, isCrossListedCourse ? code : null) != null) {
+                        return doDuplicateRecommendedItem(form, newAtpId, courseDetails.getCode());
+                    }
 
                     planItem = addPlanItem(plan, courseDetails.getVersionIndependentId(), PlanConstants.COURSE_TYPE, newAtpId, newType, form.getNote(), null, isCrossListedCourse ? code : null);
 
@@ -2398,6 +2402,15 @@ public class PlanController extends UifControllerBase {
     private ModelAndView doDuplicatePlanItem(PlanForm form, String atpId, String code) {
         String[] params = {code, AtpHelper.atpIdToTermName(atpId)};
         return doErrorPage(form, PlanConstants.ERROR_KEY_PLANNED_ITEM_ALREADY_EXISTS, params);
+    }
+
+
+    /**
+     * Blow-up response for all recommended item actions.
+     */
+    private ModelAndView doDuplicateRecommendedItem(PlanForm form, String atpId, String code) {
+        String[] params = {code, AtpHelper.atpIdToTermName(atpId)};
+        return doErrorPage(form, PlanConstants.ERROR_KEY_RECOMMENDED_ITEM_ALREADY_EXISTS, params);
     }
 
     /**
