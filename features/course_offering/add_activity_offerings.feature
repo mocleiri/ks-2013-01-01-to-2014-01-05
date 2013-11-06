@@ -8,6 +8,7 @@ Feature: WC.Add Activity Offerings to existing Course Offerings
     Given I am logged in as a Schedule Coordinator
 
  #KSENROLL-9442
+  @smoke_test
   Scenario: Add new Activity Offerings
     When I add an Activity Offering to an existing Course Offering
     Then the new Activity Offering is shown in the list of AOs
