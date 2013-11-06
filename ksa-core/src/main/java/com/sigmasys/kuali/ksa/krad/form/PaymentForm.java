@@ -50,7 +50,7 @@ public class PaymentForm extends AbstractViewModel {
     private Memo memoModel;
     private boolean ageAccount;
     private boolean allocatePayment;
-    private boolean runPaymentApplication;
+    private boolean runPaymentApplication = true;
     private boolean addAdditionalPayment;
 
 
