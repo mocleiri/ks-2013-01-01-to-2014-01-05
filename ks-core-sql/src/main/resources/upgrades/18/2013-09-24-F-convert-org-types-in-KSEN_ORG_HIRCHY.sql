@@ -14,12 +14,12 @@
 -- limitations under the License.
 --
 update KSEN_ORG_HIRCHY
-set ORG_HIRCHY_TYPE = 'kuali.org.person.relation.state.active'
-WHERE UPPER (ORG_PERS_RELTN_STATE) = 'ACTIVE'
+set ORG_HIRCHY_STATE = 'kuali.org.hierarchy.state.active'
+WHERE UPPER (ORG_HIRCHY_STATE) = 'ACTIVE'
 /
 
-update KSEN_ORG_PERS_RELTN
-set ORG_PERS_RELTN_STATE = 'kuali.org.person.relation.state.inactive'
-WHERE UPPER (ORG_PERS_RELTN_STATE) = 'INACTIVE'
+update KSEN_ORG_HIRCHY
+set ORG_HIRCHY_STATE = 'kuali.org.hierarchy.state.inactive'
+WHERE UPPER (ORG_HIRCHY_STATE) = 'INACTIVE'
 /
 
