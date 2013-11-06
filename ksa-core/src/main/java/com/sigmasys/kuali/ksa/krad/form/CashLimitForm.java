@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.krad.model.CashLimitEventModel;
 import com.sigmasys.kuali.ksa.model.CashLimitEvent;
 
 import java.util.List;
@@ -16,26 +17,31 @@ import java.util.List;
 public class CashLimitForm extends TransactionFilterForm {
 
     /**
-     * A List of CashLimitEvent object displayed in the screen.
+     * A List of CashLimitEventModel object displayed in the screen.
      */
-    private List<CashLimitEvent> cashLimitEvents;
+    private List<CashLimitEventModel> cashLimitEvents;
 
     /**
      * Whether to generate XML documents from selected CashLimitEvents.
      */
-    private boolean generateDocumentsFromSelected;
+    private boolean generateDocumentsFromSelected = true;
 
     /**
      * Whether to start download of the generated archive after submission.
      */
-    private boolean downloadGeneratedArchive;
+    private boolean downloadGeneratedArchive = true;
+
+    /**
+     * Error message.
+     */
+    private String xmlGenerationError;
 
 
-    public List<CashLimitEvent> getCashLimitEvents() {
+    public List<CashLimitEventModel> getCashLimitEvents() {
         return cashLimitEvents;
     }
 
-    public void setCashLimitEvents(List<CashLimitEvent> cashLimitEvents) {
+    public void setCashLimitEvents(List<CashLimitEventModel> cashLimitEvents) {
         this.cashLimitEvents = cashLimitEvents;
     }
 
@@ -53,5 +59,13 @@ public class CashLimitForm extends TransactionFilterForm {
 
     public void setDownloadGeneratedArchive(boolean downloadGeneratedArchive) {
         this.downloadGeneratedArchive = downloadGeneratedArchive;
+    }
+
+    public String getXmlGenerationError() {
+        return xmlGenerationError;
+    }
+
+    public void setXmlGenerationError(String xmlGenerationError) {
+        this.xmlGenerationError = xmlGenerationError;
     }
 }

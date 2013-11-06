@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class contains all common behavior of a Transaction filter.
@@ -197,7 +195,7 @@ public abstract class TransactionFilterController extends DownloadController{
      *
      * @param form  The form object.
      */
-    protected abstract void refreshModel(TransactionFilterForm form);
+    protected abstract <T extends TransactionFilterForm> void refreshModel(T form);
 
 
     /**
@@ -215,5 +213,28 @@ public abstract class TransactionFilterController extends DownloadController{
         calendar.add(Calendar.YEAR, -1);
         form.setFilterDateFrom(calendar.getTime());
         form.setAccounts(new ArrayList<Account>());
+    }
+
+
+    /**
+     * Returns a List of filter Account IDs of the given form object.
+     * @param form The form object.
+     * @return A List of filter Account IDs.
+     */
+    protected List<String> getFilterAccountIds(TransactionFilterForm form) {
+
+        List<Account> filterAccounts = form.getAccounts();
+        List<String> filterAccountIds = null;
+
+        if ((filterAccounts != null) && !filterAccounts.isEmpty()) {
+
+            filterAccountIds = new ArrayList<String>(filterAccounts.size());
+
+            for (Account account : filterAccounts) {
+                filterAccountIds.add(account.getId());
+            }
+        }
+
+        return filterAccountIds;
     }
 }

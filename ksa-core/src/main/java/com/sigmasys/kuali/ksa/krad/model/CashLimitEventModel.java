@@ -22,6 +22,11 @@ public class CashLimitEventModel implements Serializable {
     private CashLimitEvent cashLimitEvent;
 
     /**
+     * Event date formatted as a String
+     */
+    private String eventDateString;
+
+    /**
      * Whether this row is marked selected.
      */
     private boolean selected;
@@ -67,5 +72,13 @@ public class CashLimitEventModel implements Serializable {
 
     public void setTotalCashAmount(BigDecimal totalCashAmount) {
         this.totalCashAmount = totalCashAmount;
+    }
+
+    public String getEventDateString() {
+        return eventDateString;
+    }
+
+    public void setEventDateString(String eventDateString) {
+        this.eventDateString = eventDateString;
     }
 }

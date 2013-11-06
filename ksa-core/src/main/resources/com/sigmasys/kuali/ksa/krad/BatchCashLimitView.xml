@@ -91,13 +91,13 @@
 								</property>
 							</bean>
 							<bean parent="Uif-InputField" p:propertyName="statusString"/>
-							<bean parent="Uif-InputField" p:label="Account ID" p:propertyName="cashLimitEvent.account.id"/>
-                            <bean parent="Uif-InputField" p:label="Date of Event" p:propertyName="cashLimitEvent.eventDate"/>
+							<bean parent="Uif-InputField" p:label="Account ID" p:propertyName="cashLimitEvent.accountId"/>
+                            <bean parent="Uif-InputField" p:label="Date of Event" p:propertyName="eventDateString"/>
                             <bean parent="Uif-InputField" p:label="Total Cash Amount" p:propertyName="totalCashAmount"/>
                             <bean parent="Uif-InputField" p:label="Notification Sent Date" p:propertyName="cashLimitEvent.notificationDate"/>
-							<bean parent="Uif-LinkField" p:linkText="Document" p:target="_self"
+							<bean parent="Uif-LinkField" p:linkText="Download XML" p:target="_self"
 								  p:align="center" p:width="10%"
-								  p:href="batchCashLimitView?methodToCall=downloadCashEventXml&amp;viewId=BatchCashLimitView&amp;cashLimitEventId=@{#line.cashLimitEvent.id}"/>
+								  p:href="batchCashLimitView?methodToCall=downloadCashEventXml&amp;viewId=BatchCashLimitView&amp;cashLimitEventId=@{#line.cashLimitEvent.id}&amp;accountId=@{#line.cashLimitEvent.accountId}&amp;eventDateString=@{#line.eventDateString}"/>
 						</list>
 					</property>
 				</bean>
@@ -119,6 +119,9 @@
 				<!-- Form submission action button -->
 				<bean parent="Uif-PrimaryActionButton" p:actionLabel="Submit" p:methodToCall="submitCashAccounts"
 						p:successCallback="batchCashLimitView?methodToCall=downloadGeneratedArchiveXml&amp;viewId=BatchCashLimitView"/>
+						
+				<!-- XML Generation error message -->
+				<bean id="form8300XmlGenerationError" parent="Uif-Message" p:messageText="@{getXmlGenerationError()}" p:hidden="@{getXmlGenerationError() == null}" p:style="color: red"/>
 			</list>
 		</property>
 	</bean>
