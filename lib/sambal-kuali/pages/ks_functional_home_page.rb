@@ -5,7 +5,7 @@ class KSFunctionalHome < BasePage
   #no expected_element - could land on or login page first
 
   element(:enrollment_link) { |b| b.div(id: "KS-StudentHome-Enrollment") }
-  action(:enrollment_home) { |b| b.enrollment_home_link.click }
+  action(:enrollment_home) { |b| b.enrollment_home_link.wait_until_present;b.enrollment_home_link.click }
 
   #action(:kuali_student_home) { |b| b.link(text: "Kuali Student Home").click }
   action(:cm_home) { |b| b.div(id: "KS-StudentHome-CurriculumManagement").click }
