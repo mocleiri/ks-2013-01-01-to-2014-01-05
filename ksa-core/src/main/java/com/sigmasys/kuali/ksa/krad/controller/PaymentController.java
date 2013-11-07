@@ -274,7 +274,7 @@ public class PaymentController extends GenericSearchController {
                 BigDecimal amount = model.getNewAllocation();
                 if(amount != null && (amount.compareTo(BigDecimal.ZERO) > 0)) {
                     try{
-                        transactionService.createAllocation(payment.getId(), model.getParentTransaction().getId(), amount);
+                        transactionService.createLockedAllocation(payment.getId(), model.getParentTransaction().getId(), amount);
                     } catch(IllegalStateException e) {
                         GlobalVariables.getMessageMap().putError(PAYMENT_VIEW, RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
 
