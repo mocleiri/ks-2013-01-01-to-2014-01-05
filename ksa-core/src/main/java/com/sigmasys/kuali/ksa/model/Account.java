@@ -22,7 +22,7 @@ import static com.sigmasys.kuali.ksa.util.CommonUtils.nvl;
 @Table(name = "KSSA_ACNT")
 @DiscriminatorColumn(name = "TYPE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Account implements Identifiable {
+public abstract class Account implements Identifiable, KeyPairAware {
 
     /**
      * Account ID (User ID)

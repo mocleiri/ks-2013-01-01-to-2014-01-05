@@ -1,22 +1,24 @@
 package com.sigmasys.kuali.ksa.model.fm;
 
 import com.sigmasys.kuali.ksa.model.KeyPair;
+import com.sigmasys.kuali.ksa.model.KeyPairAware;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * The FeeManagementTermRecord will be the starting point for Fee Management. It will be from this
  * record that KSA can create a FeeManagementSession, from which KSA-FM can then start the processing.
  * This is the DTO required to start the fee management process.
- *
+ * <p/>
  * Note that we do not persist these objects. This construction is used purely to allow the transfer of
  * data from an external registration system.
- *
+ * <p/>
  * User: Sergey
  * Date: 10/8/13
  * Time: 12:23 AM
  */
-public class FeeManagementTermRecord {
+public class FeeManagementTermRecord implements KeyPairAware {
 
     /**
      * The identifier for the account to be charged.
@@ -25,6 +27,7 @@ public class FeeManagementTermRecord {
 
     /**
      * This is the status of the session. It can be SIMULATED or CURRENT.
+     *
      * @see FeeManagementSessionStatus#SIMULATED
      * @see FeeManagementSessionStatus#CURRENT
      */
@@ -39,7 +42,7 @@ public class FeeManagementTermRecord {
      * List of session keypairs. This is where registration information (or
      * what if information) can be passed to KSA.
      */
-    private List<KeyPair> keyPairs;
+    private Set<KeyPair> keyPairs;
 
     /**
      * List of major codes from the registration system.
@@ -81,11 +84,11 @@ public class FeeManagementTermRecord {
         this.atpId = atpId;
     }
 
-    public List<KeyPair> getKeyPairs() {
+    public Set<KeyPair> getKeyPairs() {
         return keyPairs;
     }
 
-    public void setKeyPairs(List<KeyPair> keyPairs) {
+    public void setKeyPairs(Set<KeyPair> keyPairs) {
         this.keyPairs = keyPairs;
     }
 

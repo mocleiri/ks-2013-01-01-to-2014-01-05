@@ -74,8 +74,8 @@ public interface KeyPairService {
      *
      * @param entity    KeyPairAware instance
      * @param keyPairId KeyPair ID
-     * @param key       KeyPair key
-     * @param value     KeyPair value
+     * @param key       New KeyPair key
+     * @param value     New KeyPair value
      * @return KeyPairAware object
      */
     KeyPairAware updateKeyPair(KeyPairAware entity, Long keyPairId, String key, String value);

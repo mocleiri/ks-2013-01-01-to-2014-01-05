@@ -16,7 +16,7 @@ import com.sigmasys.kuali.ksa.util.EnumUtils;
  */
 @Entity
 @Table(name = "KSSA_FM_MANIFEST")
-public class FeeManagementManifest implements Identifiable {
+public class FeeManagementManifest implements Identifiable, KeyPairAware {
 
     private Long id;
 

@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.model.fm;
 
 import com.sigmasys.kuali.ksa.model.Identifiable;
 import com.sigmasys.kuali.ksa.model.KeyPair;
+import com.sigmasys.kuali.ksa.model.KeyPairAware;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "KSSA_FM_SIGNUP")
-public class FeeManagementSignup implements Identifiable {
+public class FeeManagementSignup implements Identifiable, KeyPairAware {
 
     private Long id;
 

@@ -4,6 +4,8 @@ import com.sigmasys.kuali.ksa.model.KeyPair;
 import com.sigmasys.kuali.ksa.model.KeyPairAware;
 import com.sigmasys.kuali.ksa.service.KeyPairService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,8 @@ import java.util.*;
 @Service("keyPairService")
 @Transactional
 public class KeyPairServiceImpl extends GenericPersistenceService implements KeyPairService {
+
+    private static final Log logger = LogFactory.getLog(KeyPairServiceImpl.class);
 
 
     private Set<KeyPair> mergeNewAndPersistentKeyPairs(List<KeyPair> keyPairsToAdd, Set<KeyPair> persistentKeyPairs) {
@@ -56,6 +60,23 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
         if (CollectionUtils.isNotEmpty(keyPairs)) {
             for (KeyPair keyPair : new ArrayList<KeyPair>(keyPairs)) {
                 if (keyPairIds.contains(keyPair.getId())) {
+                    keyPairs.remove(keyPair);
+                    em.remove(keyPair);
+                }
+            }
+            em.flush();
+        }
+
+        return keyPairs;
+    }
+
+    private Set<KeyPair> removeKeyPairsByKeys(List<String> keyPairKeysToRemove, Set<KeyPair> keyPairs) {
+
+        Set<String> keyPairKeys = new HashSet<String>(keyPairKeysToRemove);
+
+        if (CollectionUtils.isNotEmpty(keyPairs)) {
+            for (KeyPair keyPair : new ArrayList<KeyPair>(keyPairs)) {
+                if (keyPairKeys.contains(keyPair.getKey())) {
                     keyPairs.remove(keyPair);
                     em.remove(keyPair);
                 }
@@ -128,7 +149,8 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
      */
     @Override
     public KeyPairAware removeKeyPairsByKeys(KeyPairAware entity, List<String> keys) {
-        // TODO
+        Set<KeyPair> updatedKeyPairs = removeKeyPairsByKeys(keys, entity.getKeyPairs());
+        entity.setKeyPairs(updatedKeyPairs);
         return entity;
     }
 
@@ -141,8 +163,7 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
      */
     @Override
     public KeyPairAware removeKeyPairsByKeys(KeyPairAware entity, String... keys) {
-        // TODO
-        return entity;
+        return removeKeyPairsByKeys(entity, Arrays.asList(keys));
     }
 
     /**
@@ -151,14 +172,37 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
      *
      * @param entity    KeyPairAware instance
      * @param keyPairId KeyPair ID
-     * @param key       KeyPair key
-     * @param value     KeyPair value
+     * @param key       New KeyPair key
+     * @param value     New KeyPair value
      * @return KeyPairAware object
      */
     @Override
     public KeyPairAware updateKeyPair(KeyPairAware entity, Long keyPairId, String key, String value) {
-        // TODO
-        return entity;
+
+        Set<KeyPair> keyPairs = entity.getKeyPairs();
+
+        boolean keyPairIsFound = false;
+
+        if (CollectionUtils.isNotEmpty(keyPairs)) {
+            for (KeyPair keyPair : new ArrayList<KeyPair>(keyPairs)) {
+                if (keyPairId.equals(keyPair.getId())) {
+                    keyPair.setKey(key);
+                    keyPair.setValue(value);
+                    em.merge(keyPair);
+                    em.flush();
+                    keyPairIsFound = true;
+                    break;
+                }
+            }
+        }
+
+        if (keyPairIsFound) {
+            return entity;
+        }
+
+        String errMsg = "Cannot find KeyPair on " + entity.getClass().getName() + " entity, KeyPair ID = " + keyPairId;
+        logger.error(errMsg);
+        throw new IllegalStateException(errMsg);
     }
 
 }

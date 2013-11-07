@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.model.fm;
 
 import com.sigmasys.kuali.ksa.model.AuditableEntity;
 import com.sigmasys.kuali.ksa.model.KeyPair;
+import com.sigmasys.kuali.ksa.model.KeyPairAware;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ import java.util.Set;
  */
 @MappedSuperclass
 @AttributeOverride(name = "code", column = @Column(name = "CODE", length = 30, nullable = false))
-public abstract class AbstractRateEntity extends AuditableEntity<Long> {
+public abstract class AbstractRateEntity extends AuditableEntity<Long> implements KeyPairAware {
 
     protected Boolean isLimitAmount;
 
