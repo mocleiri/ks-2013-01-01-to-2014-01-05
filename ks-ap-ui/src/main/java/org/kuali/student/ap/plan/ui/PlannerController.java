@@ -357,7 +357,7 @@ public class PlannerController extends UifControllerBase {
 	@RequestMapping(method = RequestMethod.POST, params = "view.currentPageId=" + ADD_COURSE_PAGE)
 	public ModelAndView addPlanItem(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+		
 		LearningPlan plan = PlanItemControllerHelper.getAuthorizedLearningPlan(form, request, response);
 		if (plan == null)
 			return null;
@@ -386,21 +386,35 @@ public class PlannerController extends UifControllerBase {
 		Course course;
 		try {
 			List<Course> courses = KsapFrameworkServiceLocator.getCourseHelper().getCoursesByCode(courseCd);
+			
 			if (courses == null || courses.isEmpty()) {
 				PlanEventUtils.sendJsonEvents(false, "Course " + courseCd + " not found", response);
 				return null;
 				// SCT-6322 TODO: Montse, add this code to enable dynamic dialog updates
-				//			} else if (courses.size() > 1) {
-				//				PlanEventUtils.sendRefresh(ADD_COURSE_PAGE, response);
-				//				return null;
+			} else if (courses.size() > 1 ){
+				if ( form.getCourseId() == null) {			
+					// ask user to pick one
+					LOG.debug("form getCourseId() is null");
+					PlanEventUtils.sendRefresh(ADD_COURSE_PAGE, response);
+					return null;
+				} else {
+					// they already picked
+					LOG.debug("form getCourseId() is not null:  " + form.getCourseId());
+					course = KsapFrameworkServiceLocator.getCourseHelper().getCourseInfo(form.getCourseId());
+				}
+			} else {
+				// there was only one.. just use that course
+				LOG.debug("there was only one course to choose from");
+				course = courses.get(0);
 			}
-			course = courses.get(0);
+			
 		} catch (IllegalArgumentException e) {
 			LOG.error("Invalid course code " + courseCd, e);
 			PlanEventUtils.sendJsonEvents(false, "Course " + courseCd + " not found", response);
 			return null;
 		}
 
+		LOG.debug("course is " + course);
 		finishAddCourse(plan, form, course, termId, response);
 		return null;
 	}
