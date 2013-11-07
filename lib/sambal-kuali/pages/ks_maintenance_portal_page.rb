@@ -1,8 +1,7 @@
 class KSMaintenancePortal < BasePage
 
   page_url "#{$test_site}/portal.do"
-  #expected_title /Kuali Portal Index/
-  #expected_element :enrollment_home_link
+  #no expected_element - could land on or login page first
 
   value(:copyright) { |b| b.div(id: "footer-copyright").text }
   action(:acknowledgements) { |b| b.link(href: "acknowledgments.jsp").click }
