@@ -484,7 +484,7 @@
                                 </property>
                             </bean>
                             <bean parent="Uif-InputField" p:propertyName="priority" p:label="Priority"/>
-                            <bean parent="Uif-InputField" p:propertyName="rollupId" p:labelPlacement="TOP" p:label="Roll-Up"
+                            <bean parent="Uif-InputField" p:propertyName="rollupId" p:labelPlacement="TOP" p:label="Transaction Type Roll-Up"
                                   p:fieldLabel.renderColon="false">
                                 <property name="control">
                                     <bean parent="Uif-DropdownControl" p:width="100%"/>
@@ -668,7 +668,7 @@
           p:progressiveRenderViaAJAX="true"
           p:width="50%">
         <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Tag"/>
-        <property name="propertyName" value="tagsList"/>
+        <property name="propertyName" value="tags"/>
         <property name="readOnly" value="false"/>
         <property name="layoutManager.sequencePropertyName" value="id"/>
         <property name="layoutManager.richTable.render" value="true"/>
