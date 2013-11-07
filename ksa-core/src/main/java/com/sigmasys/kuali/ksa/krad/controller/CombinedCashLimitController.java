@@ -3,7 +3,7 @@ package com.sigmasys.kuali.ksa.krad.controller;
 import com.sigmasys.kuali.ksa.krad.form.CashLimitForm;
 import com.sigmasys.kuali.ksa.krad.form.TransactionFilterForm;
 import com.sigmasys.kuali.ksa.krad.model.CashLimitEventModel;
-import com.sigmasys.kuali.ksa.model.CashLimitEvent;
+import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.CashLimitService;
 import com.sigmasys.kuali.ksa.service.ReportService;
 import org.apache.commons.collections.CollectionUtils;
@@ -20,10 +20,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This controller serves requests from the "Batch - Combined Cash Limit" page.
@@ -143,6 +145,9 @@ public class CombinedCashLimitController extends TransactionFilterController {
             // Set the error on the form and return the ModelAndView:
             form.setXmlGenerationError("Error generating IRS form 8300. See log file for details.");
 
+            // Refresh the model:
+            refreshModel(form);
+
             return getUIFModelAndView(form);
         }
 
@@ -230,14 +235,56 @@ public class CombinedCashLimitController extends TransactionFilterController {
 
         // Create a new model object:
         CashLimitEventModel model = new CashLimitEventModel();
+        Set<Payment> payments = cashLimitEvent.getPayments();
+        List<Payment> paymentList = CollectionUtils.isNotEmpty(payments) ? new ArrayList<Payment>(payments) : new ArrayList<Payment>();
         Date eventDate = cashLimitEvent.getEventDate();
         String eventDateString = (eventDate != null) ? DATE_FORMAT.format(eventDate) : null;
 
+        // Set up Account related information:
+        String accountId = cashLimitEvent.getAccountId();
+        Account account = accountService.getFullAccount(accountId);
+        String dateOfBirthString = null;
+        AccountProtectedInfo accountProtectedInfo = accountService.getAccountProtectedInfo(accountId);
+
+        // Format the date of birth as String:
+        if ((account instanceof DirectChargeAccount) && (((DirectChargeAccount)account).getDateOfBirth() != null)) {
+            dateOfBirthString = DATE_FORMAT.format(((DirectChargeAccount)account).getDateOfBirth());
+        }
+
+        // Create a default AccountProtectedInfo if one is missing:
+        if (accountProtectedInfo == null) {
+            accountProtectedInfo = new AccountProtectedInfo();
+        }
+
+        // Create a default IdentityType if one is missing:
+        if (accountProtectedInfo.getIdentityType() == null) {
+            accountProtectedInfo.setIdentityType(new IdentityType());
+        }
+
+        // Calculate "Total Payments" and "Total Allocations"
+        BigDecimal totalPayments = BigDecimal.ZERO;
+        BigDecimal totalAllocations = BigDecimal.ZERO;
+
+        if (CollectionUtils.isNotEmpty(cashLimitEvent.getPayments())) {
+            for (Payment payment : cashLimitEvent.getPayments()) {
+
+                // Add up the amounts:
+                totalPayments = totalPayments.add(payment.getAmount());
+                totalAllocations = totalAllocations.add(payment.getAllocatedAmount());
+            }
+        }
+
         // Set the values:
         model.setCashLimitEvent(cashLimitEvent);
+        model.setEventDateString(eventDateString);
         model.setSelected(true);
         model.setStatusString(cashLimitEvent.getStatus().toString());
-        model.setEventDateString(eventDateString);
+        model.setTotalPayments(totalPayments);
+        model.setTotalAllocations(totalAllocations);
+        model.setDateOfBirthString(dateOfBirthString);
+        model.setAccount(account);
+        model.setAccountProtectedInfo(accountProtectedInfo);
+        model.setPayments(paymentList);
 
         return model;
     }

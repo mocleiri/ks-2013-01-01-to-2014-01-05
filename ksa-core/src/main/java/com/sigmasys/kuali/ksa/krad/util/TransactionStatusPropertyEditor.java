@@ -28,9 +28,9 @@ public class TransactionStatusPropertyEditor extends PropertyEditorSupport {
         TransactionStatus transactionStatus = null;
 
         try {
-            transactionStatus = Enum.valueOf(TransactionStatus.class, text);
+            transactionStatus = TransactionStatus.valueOf(text);
         } catch (Exception e) {
-            logger.error(String.format("Cannot convert value %s into TransactionStatus", text), e);
+            logger.error(String.format("Cannot convert value %s into TransactionStatus", text));
         }
 
         setValue(transactionStatus);

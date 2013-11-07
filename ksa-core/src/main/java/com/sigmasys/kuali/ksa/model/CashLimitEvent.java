@@ -205,6 +205,11 @@ public class CashLimitEvent implements Identifiable {
         return isMultiple != null ? isMultiple : false;
     }
 
+    @Transient
+    public Boolean getMultiple() {
+        return isMultiple != null ? isMultiple : false;
+    }
+
     public void setMultiple(Boolean multiple) {
         isMultiple = multiple;
     }
