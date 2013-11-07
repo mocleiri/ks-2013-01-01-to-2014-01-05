@@ -29,7 +29,8 @@ class FinalExamMatrix
       :rdl_days => "Day 1",
       :courses_type => "Approved Courses",
       :add_more_statements => false,
-      :defer_save => false
+      :defer_save => false,
+      :defer_submit => false
     }
 
     options = defaults.merge(opts)
@@ -85,6 +86,11 @@ class FinalExamMatrix
       page.update_rule unless @defer_save == true
       page.loading.wait_while_present
     end
+
+    on FEMatrixView do |page|
+      page.submit unless @defer_submit == true
+      page.loading.wait_while_present
+    end
   end
 
   def edit opts = {}
@@ -116,6 +122,11 @@ class FinalExamMatrix
     end
 
     on(FEMatrixEdit).update_rule unless options[:defer_save] == true
+
+    on FEMatrixView do |page|
+      page.submit unless @defer_submit == true
+      page.loading.wait_while_present
+    end
 
     set_options(options)
   end
@@ -194,6 +205,18 @@ class FinalExamMatrix
     on ManageFEMatrix do |page|
       page.term_type_select.select @term_type
       page.show
+    end
+  end
+
+  def delete
+    manage
+    on FEMatrixView do |page|
+      page.delete @rule_requirements, @exam_type
+    end
+
+    on FEMatrixView do |page|
+      page.submit
+      page.loading.wait_while_present
     end
   end
 

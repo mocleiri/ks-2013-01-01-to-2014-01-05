@@ -15,5 +15,4 @@ Feature: SA.FE1-8 Add new rule to the Final Exam Matrix
   #FE1.8.EB2 (KSENROLL-9799)
   Scenario: Test whether a new Common Final Exam rule can be added to the FE Matrix and then persisited to the DB
     When I add a Common Final Exam course rule to the Final Exam Matrix
-    And I submit and return to see my changes
     Then I should be able to see the newly created course rule in the Common Final Exam table

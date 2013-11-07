@@ -23,46 +23,29 @@ When /^I add a Standard Final Exam text rule to the Final Exam Matrix$/ do
 end
 
 When /^I submit and return to see my changes$/ do
-  on FEMatrixView do |page|
-    page.submit
-    page.loading.wait_while_present
-  end
-  @matrix.manage
+
+
 end
 
 Given /^I have added two Standard Final Exam rules to the Final Exam Matrix$/ do
   @matrix_rule_list = []
   @matrix_rule_list << (create FinalExamMatrix, :term_type => "Winter Term", :days => "TH", :start_time => "06:00",
                    :end_time => "07:00", :time_ampm => "am", :rule_requirements => "TH at 06:00 AM - 07:00 AM")
-  on FEMatrixView do |page|
-    page.submit
-  end
 
   @matrix_rule_list << (create FinalExamMatrix, :term_type => "Winter Term", :rule => "Free Form Text",
                                :free_text => "To test the editing of the statement",
                                :rule_requirements => "To test the editing of the statement")
-  on FEMatrixView do |page|
-    page.submit
-  end
 end
 
 Given /^I have added a Standard Final Exam timeslot rule to the Final Exam Matrix$/ do
   @matrix = create FinalExamMatrix, :term_type => "Winter Term", :days => "TH", :start_time => "06:00",
                    :end_time => "07:00", :time_ampm => "am", :rule_requirements => "TH at 06:00 AM - 07:00 AM"
-
-  on FEMatrixView do |page|
-    page.submit
-  end
 end
 
 Given /^I have added a Standard Final Exam text rule to the Final Exam Matrix$/ do
   @matrix = create FinalExamMatrix, :term_type => "Winter Term", :rule => "Free Form Text",
                    :free_text => "To test the editing of the statement",
                    :rule_requirements => "To test the editing of the statement"
-
-  on FEMatrixView do |page|
-    page.submit
-  end
 end
 
 When /^I edit a Standard Final Exam rule$/ do
@@ -74,22 +57,13 @@ When /^I edit a Standard Final Exam text rule$/ do
                :rule_requirements => @matrix.rule_requirements
 end
 
-When /^I submit after editing the newly created Standard Final Exam rules$/ do
+When /^I edit the newly created Standard Final Exam rules$/ do
   @matrix_rule_list[0].edit :edit_statement => true, :days => "TWH",
                             :rule_requirements => @matrix_rule_list[0].rule_requirements
-  on FEMatrixView do |page|
-    page.loading.wait_while_present
-    page.submit
-  end
   @matrix_rule_list[0].manage
 
   @matrix_rule_list[1].edit :edit_statement => true, :free_text => "This statement has been edited",
                :rule_requirements => @matrix_rule_list[1].rule_requirements
-  on FEMatrixView do |page|
-    page.loading.wait_while_present
-    page.submit
-  end
-  @matrix_rule_list[1].manage
 end
 
 When /^I delete a statement in the Standard Final Exam text rule$/ do
@@ -101,12 +75,7 @@ When /^I delete an existing Standard Final Exam text rule to the Final Exam Matr
                    :free_text => "To test whether rule is deleted",
                    :rule_requirements => "To test whether rule is deleted"
 
-  on FEMatrixView do |page|
-    page.submit
-  end
-
-  @matrix.manage
-  on(FEMatrixView).delete( @matrix.rule_requirements, @matrix.exam_type)
+  @matrix.delete
 end
 
 When /^I add multiple statements to a Common Final Exam rule on the Final Exam Matrix$/ do
@@ -205,12 +174,14 @@ Then /^I have the option to add a new rule to the Final Exam Matrix$/ do
 end
 
 Then /^I should be able to see the newly created course rule in the Common Final Exam table$/ do
+  @matrix.manage
   on FEMatrixView do |page|
     page.get_common_fe_requirements( @matrix.courses).should match /#{@matrix.courses}/
   end
 end
 
 Then /^I should be able to see the newly created timeslot rule in the Standard Final Exam table$/ do
+  @matrix.manage
   on FEMatrixView do |page|
     requirements = page.get_standard_fe_requirements( @matrix.days)
     requirements.should match /#{@matrix.days} at #{@matrix.start_time} #{@matrix.time_ampm.upcase} - #{@matrix.end_time} #{@matrix.time_ampm.upcase}\./
@@ -220,14 +191,16 @@ Then /^I should be able to see the newly created timeslot rule in the Standard F
 end
 
 Then /^I should be able to see the newly created text rule in the Standard Final Exam table$/ do
+  @matrix.manage
   on FEMatrixView do |page|
-    page.get_standard_fe_requirements( @matrix.free_text).should match /#{@matrix.free_text}/
+    page.standard_fe_target_row( @matrix.free_text).should_not == nil
     page.get_standard_fe_day( @matrix.free_text).should match /#{@matrix.rdl_days}/
     page.get_standard_fe_time( @matrix.free_text).should match /#{@matrix.start_time} #{@matrix.time_ampm.upcase}-#{@matrix.end_time} #{@matrix.time_ampm.upcase}/
   end
 end
 
 Then /^I should be able to see the edited timeslot rule in the Standard Final Exam table$/ do
+  @matrix.manage
   on FEMatrixView do |page|
     requirements = page.get_standard_fe_requirements( @matrix.days)
     requirements.should match /#{@matrix.days} at #{@matrix.start_time} #{@matrix.time_ampm.upcase} - #{@matrix.end_time} #{@matrix.time_ampm.upcase}\./
@@ -237,8 +210,9 @@ Then /^I should be able to see the edited timeslot rule in the Standard Final Ex
 end
 
 Then /^I should be able to see the edited text rule in the Standard Final Exam table$/ do
+  @matrix.manage
   on FEMatrixView do |page|
-    page.get_standard_fe_requirements( @matrix.free_text).should match /#{@matrix.free_text}/
+    page.standard_fe_target_row( @matrix.free_text).should_not == nil
     page.get_standard_fe_day( @matrix.free_text).should match /#{@matrix.rdl_days}/
     page.get_standard_fe_time( @matrix.free_text).should match /#{@matrix.start_time} #{@matrix.time_ampm.upcase}-#{@matrix.end_time} #{@matrix.time_ampm.upcase}/
   end
@@ -252,6 +226,7 @@ Then /^there should be a validation message displayed stating "([^"]+)"$/ do |ex
 end
 
 Then /^I should be able to see the Common Final Exam rule with the multiple statements$/ do
+  @matrix.manage
   on FEMatrixView do |page|
     page.get_common_fe_day( @matrix.courses).should match /#{@matrix.rdl_days}/
     page.get_common_fe_time( @matrix.courses).should match /#{@matrix.start_time} #{@matrix.time_ampm.upcase}-#{@matrix.end_time} #{@matrix.time_ampm.upcase}/
@@ -259,6 +234,7 @@ Then /^I should be able to see the Common Final Exam rule with the multiple stat
 end
 
 Then /^I should be able to see all the changes I have made on the Final Exam Matrix$/ do
+  @matrix_rule_list[1].manage
   on FEMatrixView do |page|
     page.standard_final_exam_table.present?.should be_true
     requirements = page.get_standard_fe_requirements( @matrix_rule_list[0].days)
@@ -268,6 +244,7 @@ Then /^I should be able to see all the changes I have made on the Final Exam Mat
 end
 
 Then /^the deleted text rule should not exist on the Final Exam Matrix$/ do
+  @matrix.manage
   on FEMatrixView do |page|
     page.standard_fe_target_row( @matrix.free_text).should == nil
   end
