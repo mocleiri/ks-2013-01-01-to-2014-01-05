@@ -362,6 +362,42 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void getPaymentBillingQueues() throws Exception {
+
+        PaymentBillingPlan plan = _createPaymentBillingPlan();
+
+        PaymentBillingTransferDetail transfer =
+                billingService.generatePaymentBillingTransfer(plan.getId(), TEST_USER_ID, new BigDecimal(33.78), new Date());
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.INITIALIZED);
+
+        transfer = billingService.transferPaymentBillingTransactions(transfer.getId());
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.ACTIVE);
+
+        transfer = billingService.reversePaymentBillingTransfer(transfer.getId(), "Reversed Transfer", true);
+
+        Assert.notNull(transfer);
+        Assert.notNull(transfer.getId());
+
+        Assert.isTrue(transfer.getChargeStatus() == PaymentBillingChargeStatus.REVERSED);
+
+        _createPaymentBillingQueue(plan.getId());
+
+        List<PaymentBillingQueue> billingQueues = billingService.getPaymentBillingQueuesByPlanId(plan.getId());
+
+        Assert.notNull(billingQueues);
+        Assert.notEmpty(billingQueues);
+
+    }
+
+    @Test
     public void processPaymentBillingQueuesByCreator() throws Exception {
 
         PaymentBillingPlan plan = _createPaymentBillingPlan();

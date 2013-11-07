@@ -1304,6 +1304,19 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
     }
 
     /**
+     * Returns payment billing queues for the given plan specified by ID.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @return list of PaymentBillingQueue instances
+     */
+    @Override
+    public List<PaymentBillingQueue> getPaymentBillingQueuesByPlanId(Long paymentBillingPlanId) {
+        Query query = em.createQuery(QUEUE_SELECT + " where p.id = :planId order by q.creationDate desc");
+        query.setParameter("planId", paymentBillingPlanId);
+        return query.getResultList();
+    }
+
+    /**
      * Returns a list of PaymentBillingQueue objects by Account and PaymentBillingTransferDetail IDs
      *
      * @param accountId        Account Id

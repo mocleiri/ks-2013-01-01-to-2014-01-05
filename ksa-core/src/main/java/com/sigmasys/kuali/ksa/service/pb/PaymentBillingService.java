@@ -260,6 +260,14 @@ public interface PaymentBillingService {
     List<PaymentBillingDate> getPaymentBillingDates(Long paymentBillingPlanId);
 
     /**
+     * Returns payment billing queues for the given plan specified by ID.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @return list of PaymentBillingQueue instances
+     */
+    List<PaymentBillingQueue> getPaymentBillingQueuesByPlanId(Long paymentBillingPlanId);
+
+    /**
      * Returns a list of PaymentBillingQueue objects by Account and PaymentBillingTransferDetail IDs
      *
      * @param accountId        Account Id
