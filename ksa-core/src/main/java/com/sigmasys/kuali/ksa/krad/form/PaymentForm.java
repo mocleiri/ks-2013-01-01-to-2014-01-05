@@ -24,8 +24,6 @@ public class PaymentForm extends AbstractViewModel {
 
    private CreditType transactionType;
 
-   private boolean transactionTypeValid;
-
    private String printReceipt;
 
    private String emailReceipt;

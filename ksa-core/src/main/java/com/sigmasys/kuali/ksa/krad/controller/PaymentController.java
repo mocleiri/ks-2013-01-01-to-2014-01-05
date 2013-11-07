@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.krad.form.PaymentForm;
 import com.sigmasys.kuali.ksa.krad.model.TransactionModel;
 import com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.Currency;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
@@ -22,10 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * PaymentController
@@ -114,19 +112,9 @@ public class PaymentController extends GenericSearchController {
 
         // abbreviated payment initialization
         Account account = accountService.getFullAccount(userId);
-        String accountId = account.getId();
+        form.setAccount(account);
 
-        Payment payment = new Payment();
-        payment.setAccount(account);
-        payment.setAccountId(accountId);
-        payment.setEffectiveDate(new Date());
-        form.setPayment(new TransactionModel(payment));
-        form.setCurrencyOptionsFinder(this.getCurrencyOptionsFinder());
-        form.setRollupOptionsFinder(this.getRollupOptionsFinder());
-
-        BigDecimal startingBalance = accountService.getBalance(userId, new Date());
-        form.setEstimatedCurrentBalance(startingBalance);
-
+        initPayment(form);
         return getUIFModelAndView(form);
     }
 
@@ -216,9 +204,19 @@ public class PaymentController extends GenericSearchController {
             form.setAllocations(models);
 
         } else if(form.isAddAdditionalPayment()){
-            // clean out the form
-            initPayment(form);
+
             form.setPageId(ADD_PAYMENT_PAGE);
+
+            Properties props = new Properties();
+
+            props.put("pageId", ADD_PAYMENT_PAGE);
+            props.put("viewId", form.getViewId());
+            props.put("methodToCall", "create");
+            props.put("userId", userId);
+
+            return performRedirect(form, "paymentView", props);
+
+
         }
 
         return getUIFModelAndView(form);
@@ -474,14 +472,28 @@ public class PaymentController extends GenericSearchController {
 
     private void initPayment(PaymentForm form) {
 
+        form.setPaymentTransactionTypeId("");
+        form.setTransactionType(null);
+        form.setTransactionTypeMessage("");
+
+
         // abbreviated payment initialization
         Account account = form.getAccount();
         String accountId = account.getId();
 
+        form.setPayment(null);
         Payment payment = new Payment();
         payment.setAccount(account);
         payment.setAccountId(accountId);
         payment.setEffectiveDate(new Date());
         form.setPayment(new TransactionModel(payment));
+
+        form.setCurrencyOptionsFinder(this.getCurrencyOptionsFinder());
+        form.setRollupOptionsFinder(this.getRollupOptionsFinder());
+
+        BigDecimal startingBalance = accountService.getBalance(form.getAccount().getId(), new Date());
+        form.setEstimatedCurrentBalance(startingBalance);
+
+
     }
 }
