@@ -197,9 +197,7 @@ end
 Then /^the suppressed requisite should not be visible for the changed activity$/ do
   on DisplayScheduleOfClasses do |page|
     page.get_requisites_message_text.should_not match /Corequisite: ENGL101 and HIST106/m
-    ao_code_row = page.details_table.row(text: /\bA\b/)
-    index = ao_code_row.span(text: /\bA\b/).id[/\d+_control/].to_i + 1
-    page.details_table.rows[(index+1)].text.should_not match /Corequisite: ENGL101 and HIST106/m
+    page.details_table.rows[(page.get_rule_text_for_ao("A")+1)].text.should_not match /Corequisite: ENGL101 and HIST106/m
   end
 end
 
@@ -211,28 +209,20 @@ end
 
 Then /^the suppressed rule should not be visible for the changed activity$/ do
   on DisplayScheduleOfClasses do |page|
-    ao_code_row = page.details_table.row(text: /\bB\b/)
-    index = ao_code_row.span(text: /\bB\b/).id[/\d+_control/].to_i + 2
-    page.details_table.rows[(index+1)].text.should_not match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+    page.details_table.rows[(page.get_rule_text_for_ao("B")+1)].text.should_not match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
   end
 end
 
 Then /^the suppressed rule should be visible for any unchanged activity$/ do
   on DisplayScheduleOfClasses do |page|
-    ao_code_row = page.details_table.row(text: /\bA\b/)
-    index = ao_code_row.span(text: /\bA\b/).id[/\d+_control/].to_i + 1
-    page.details_table.rows[(index+1)].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+    page.details_table.rows[(page.get_rule_text_for_ao("A")+1)].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
   end
 end
 
 Then /^the suppressed rule should be visible for any unchanged activity that shares a Reg Group with the changed activity$/ do
   on DisplayScheduleOfClasses do |page|
-    ao_code_row = page.details_table.row(text: /\bA\b/)
-    index = ao_code_row.span(text: /\bA\b/).id[/\d+_control/].to_i + 1
-    page.details_table.rows[(index+1)].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
-    ao_code_row = page.details_table.row(text: /\bB\b/)
-    index = ao_code_row.span(text: /\bB\b/).id[/\d+_control/].to_i + 2
-    page.details_table.rows[index].text.should_not match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+    page.details_table.rows[(page.get_rule_text_for_ao("A")+1)].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+    page.details_table.rows[page.get_rule_text_for_ao("B")].text.should_not match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
   end
 end
 
@@ -247,11 +237,7 @@ Then /^the activity offering requisites should be displayed with the correct act
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      ao_code_row = page.details_table.row(text: /\bA\b/)
-      index = ao_code_row.span(text: /\bA\b/).id[/\d+_control/].to_i + 1
-      puts ao_code_row.span(text: /\bA\b/).id
-
-      page.details_table.rows[(index+1)].text.should match /Antirequisite: Add Antirequisite specific to AO A/m
+      page.details_table.rows[(page.get_rule_text_for_ao("A")+1)].text.should match /Antirequisite: Add Antirequisite specific to AO A/m
     end
   end
 end
@@ -261,9 +247,7 @@ Then /^the edited course offering requisite should be displayed with the affecte
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      ao_code_row = page.details_table.row(text: /\bB\b/)
-      index = ao_code_row.span(text: /\bB\b/).id[/\d+_control/].to_i + 2
-      page.details_table.rows[(index+1)].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399.*And Changed the SE & Prerequisite on AO B only/m
+      page.details_table.rows[(page.get_rule_text_for_ao("B")+1)].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399.*And Changed the SE & Prerequisite on AO B only/m
     end
   end
 end
@@ -273,10 +257,8 @@ Then /^the unedited course offering requisite should be displayed with any un-af
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      ao_code_row = page.details_table.row(text: /\bA\b/)
-      index = ao_code_row.span(text: /\bA\b/).id[/\d+_control/].to_i + 1
-      page.details_table.rows[(index+1)].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
-      page.details_table.rows[(index+1)].text.should_not match /And Changed the SE & Prerequisite on AO B only/m
+      page.details_table.rows[(page.get_rule_text_for_ao("A")+1)].text.should match /Prerequisite.*1 course from PHYS161 or PHYS171.*And BSCI399/m
+      page.details_table.rows[(page.get_rule_text_for_ao("A")+1)].text.should_not match /And Changed the SE & Prerequisite on AO B only/m
     end
   end
 end
@@ -286,9 +268,7 @@ Then /^the suppressed requisite should be visible for any unchanged activity$/ d
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      ao_code_row = page.details_table.row(text: /\bB\b/)
-      index = ao_code_row.span(text: /\bB\b/).id[/\d+_control/].to_i + 2
-      page.details_table.rows[index].text.should match /Corequisite: ENGL101 and HIST106/m
+      page.details_table.rows[page.get_rule_text_for_ao("B")].text.should match /Corequisite: ENGL101 and HIST106/m
     end
   end
 end
@@ -298,9 +278,7 @@ Then /^the edited course offering rule should be displayed with the affected act
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      ao_code_row = page.details_table.row(text: /\bB\b/)
-      index = ao_code_row.span(text: /\bB\b/).id[/\d+_control/].to_i + 2
-      page.details_table.rows[(index+1)].text.should match /Changed the Corequisite on AO B only/m
+      page.details_table.rows[(page.get_rule_text_for_ao("B")+1)].text.should match /Changed the Corequisite on AO B only/m
     end
   end
 end
@@ -312,8 +290,8 @@ Then /^the unedited course offering rule should be displayed with any un-affecte
     else
       ao_code_row = page.details_table.row(text: /\bA\b/)
       index = ao_code_row.span(text: /\bA\b/).id[/\d+_control/].to_i + 1
-      page.details_table.rows[(index+1)].text.should match /Corequisite: ENGL101 and HIST106/m
-      page.details_table.rows[(index+1)].text.should_not match /Changed the Corequisite on AO B only/m
+      page.details_table.rows[(page.get_rule_text_for_ao("A")+1)].text.should match /Corequisite: ENGL101 and HIST106/m
+      page.details_table.rows[(page.get_rule_text_for_ao("A")+1)].text.should_not match /Changed the Corequisite on AO B only/m
     end
   end
 end
@@ -323,9 +301,7 @@ Then /^the edited course offering rule should be displayed at the activity level
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      ao_code_row = page.details_table.row(text: /\bB\b/)
-      index = ao_code_row.span(text: /\bB\b/).id[/\d+_control/].to_i + 2
-      page.details_table.rows[(index+1)].text.should match /Changed the Corequisite on AO B only/m
+      page.details_table.rows[(page.get_rule_text_for_ao("B")+1)].text.should match /Changed the Corequisite on AO B only/m
     end
   end
 end
@@ -335,9 +311,7 @@ Then /^the unedited course offering rule should be displayed at the Reg Group le
     if !page.details_table.exists?
       raise "activities table not found"
     else
-      ao_code_row = page.details_table.row(text: /\bA\b/)
-      index = ao_code_row.span(text: /\bA\b/).id[/\d+_control/].to_i + 1
-      page.details_table.rows[(index+1)].text.should_not match /Changed the Corequisite on AO B only/m
+      page.details_table.rows[(page.get_rule_text_for_ao("A")+1)].text.should_not match /Changed the Corequisite on AO B only/m
     end
   end
 end

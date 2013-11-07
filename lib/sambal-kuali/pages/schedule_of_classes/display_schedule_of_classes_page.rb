@@ -111,7 +111,7 @@ class DisplayScheduleOfClasses < BasePage
   end
 
   def get_requisites_message_text
-    details_row.div(:class => /uif-horizontalBoxGroup uif-header-upperGroup/).text
+    details_row.div(:class => /uif-verticalBoxGroup uif-header-upperGroup/).text
   end
 
   REG_GROUP_COLUMN = 0
@@ -182,6 +182,21 @@ class DisplayScheduleOfClasses < BasePage
   ao_details_table_accessor_maker :get_ao_room, ROOM_COLUMN
   ao_details_table_accessor_maker :get_ao_instructor, INSTRUCTOR_COLUMN
   ao_details_table_accessor_maker :get_ao_max_enr, MAX_ENR_COLUMN
+
+  def get_rule_text_for_ao(ao_code)
+    ao_code_row = details_table.row(text: /\b#{ao_code}\b/)
+    i = 0
+    ("A".."Z").each do |letter|
+      i += 1
+      break if ao_code == letter
+    end
+    id = ao_code_row.span(text: /\b#{ao_code}\b/).id
+    if id =~ /^.+line(\d+)_span$/ or id =~ /^.+line(\d+)_control$/
+      ao_index = $1
+    end
+    index = ao_index.to_i + i
+    return index
+  end
 
   private
   def ao_info(course_code, activity_offering_code,column)
