@@ -4146,7 +4146,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             auditableEntityService.persistAuditableEntity(tag);
         }
 
-        if (persistentTags != null) {
+        if (CollectionUtils.isNotEmpty(persistentTags)) {
             for (Tag currentTag : new ArrayList<Tag>(persistentTags)) {
                 if (tagIds.contains(currentTag.getId())) {
                     PermissionUtils.checkPermissions(currentTag, Permission.EDIT_TAG, Permission.EDIT_ADMIN_TAG);
