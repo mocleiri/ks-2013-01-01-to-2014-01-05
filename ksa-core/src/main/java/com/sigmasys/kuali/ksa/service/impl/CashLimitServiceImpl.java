@@ -298,11 +298,11 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     @Transactional(readOnly = false)
     public boolean checkCashLimit(String userId) {
 
-        PermissionUtils.checkPermission(Permission.CHECK_CASH_LIMIT);
-
         if (!"ON".equalsIgnoreCase(configService.getParameter(Constants.CASH_TRACKING_SYSTEM))) {
             return false;
         }
+
+        PermissionUtils.checkPermission(Permission.CHECK_CASH_LIMIT);
 
         String trackingTag = configService.getParameter(Constants.CASH_TRACKING_TAG);
 
@@ -350,6 +350,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
                 ", tagCode = " + query.getParameterValue("tagCode"));
 
         List<Payment> payments = query.getResultList();
+
         if (CollectionUtils.isNotEmpty(payments)) {
 
             logger.debug("Number of payments to track = " + payments.size());

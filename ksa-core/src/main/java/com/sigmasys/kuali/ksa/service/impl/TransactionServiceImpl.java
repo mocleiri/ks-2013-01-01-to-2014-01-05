@@ -70,6 +70,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     private GeneralLedgerService glService;
 
     @Autowired
+    private CashLimitService cashLimitService;
+
+    @Autowired
     private HoldService holdService;
 
     @Autowired
@@ -724,9 +727,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         transaction.setStatus(TransactionStatus.ACTIVE);
 
         // Copying tags from the transaction type to the new transaction if they exist
-        List<Tag> tags = transactionType.getTags();
+        Set<Tag> tags = transactionType.getTags();
         if (CollectionUtils.isNotEmpty(tags)) {
-            transaction.setTags(new ArrayList<Tag>(tags));
+            transaction.setTags(new HashSet<Tag>(tags));
         }
 
         if (transaction instanceof Payment) {
@@ -1017,6 +1020,17 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Transactional(readOnly = false)
     @PermissionsAllowed(Permission.EDIT_TRANSACTION)
     public Long persistTransaction(Transaction transaction) {
+        Set<Tag> tags = transaction.getTags();
+        if (CollectionUtils.isNotEmpty(tags)) {
+            String cashTag = configService.getParameter(Constants.CASH_TRACKING_TAG);
+            if (StringUtils.isNotBlank(cashTag)) {
+                for (Tag tag : tags) {
+                    if (cashTag.equals(tag.getCode())) {
+                        cashLimitService.checkCashLimit(transaction.getAccount().getId());
+                    }
+                }
+            }
+        }
         return persistEntity(transaction);
     }
 
@@ -2292,9 +2306,9 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
         Transaction reverseTransaction = createTransaction(reversalTransactionTypeId, transaction.getAccountId(),
                 transaction.getEffectiveDate(), reversalAmount);
 
-        List<Tag> transactionTags = transaction.getTags();
+        Set<Tag> transactionTags = transaction.getTags();
         if (CollectionUtils.isNotEmpty(transactionTags)) {
-            reverseTransaction.setTags(new ArrayList<Tag>(transactionTags));
+            reverseTransaction.setTags(new HashSet<Tag>(transactionTags));
         }
 
         reverseTransaction.setGlOverridden(transaction.isGlOverridden());
@@ -3743,7 +3757,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new TransactionNotFoundException(errMsg);
         }
 
-        List<Tag> updatedTags = removeTags(tagIds, transaction.getTags());
+        Set<Tag> updatedTags = removeTags(tagIds, transaction.getTags());
 
         transaction.setTags(updatedTags);
 
@@ -3767,7 +3781,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new TransactionTypeNotFoundException(errMsg);
         }
 
-        List<Tag> updatedTags = removeTags(tagIds, transactionType.getTags());
+        Set<Tag> updatedTags = removeTags(tagIds, transactionType.getTags());
 
         transactionType.setTags(updatedTags);
 
@@ -4115,7 +4129,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
 
-    private List<Tag> removeTags(Long[] tagIdsToRemove, List<Tag> tags) {
+    private Set<Tag> removeTags(Long[] tagIdsToRemove, Set<Tag> tags) {
 
         Set<Long> tagIds = new HashSet<Long>(Arrays.asList(tagIdsToRemove));
 
@@ -4132,7 +4146,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     }
 
 
-    private List<Tag> mergeNewAndPersistentTags(List<Tag> tagsToAdd, List<Tag> persistentTags) {
+    private Set<Tag> mergeNewAndPersistentTags(List<Tag> tagsToAdd, Set<Tag> persistentTags) {
 
         List<Tag> newTags = new ArrayList<Tag>(tagsToAdd);
 
@@ -4154,7 +4168,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                 }
             }
         } else {
-            persistentTags = new ArrayList<Tag>(newTags.size());
+            persistentTags = new HashSet<Tag>(newTags.size());
         }
 
         persistentTags.addAll(newTags);

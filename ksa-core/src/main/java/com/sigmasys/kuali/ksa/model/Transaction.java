@@ -10,6 +10,7 @@ import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -181,9 +182,9 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
     protected String statusCode;
 
     /**
-     * List of tags associated with the current transaction
+     * Set of tags associated with the current transaction
      */
-    protected List<Tag> tags;
+    protected Set<Tag> tags;
 
 
     @PostLoad
@@ -455,11 +456,11 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
                     @UniqueConstraint(columnNames = {"TRANSACTION_ID_FK", "TAG_ID_FK"})
             }
     )
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 

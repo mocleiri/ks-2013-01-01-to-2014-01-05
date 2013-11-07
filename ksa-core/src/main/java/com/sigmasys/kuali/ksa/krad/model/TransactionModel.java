@@ -119,8 +119,9 @@ public class TransactionModel extends Transaction {
 
         transactionTypeValue = transaction.getTransactionTypeValue();
 
-        List<Tag> tags = transaction.getTags();
-        this.setTags(tags);
+        if (transaction.getTags() != null) {
+            setTags(transaction.getTags());
+        }
 
         // populate TransactionModel's properties from Transaction instance
         setId(transaction.getId());
@@ -479,7 +480,7 @@ public class TransactionModel extends Transaction {
         if (locked == null) {
             locked = BigDecimal.ZERO;
         }
-        if(amount.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             alloc = alloc.multiply(new BigDecimal(-1));
             locked = locked.multiply(new BigDecimal(-1));
         }
@@ -564,22 +565,23 @@ public class TransactionModel extends Transaction {
         return tagList;
     }
 
-    public List<Tag> getTags() {
-        List<Tag> tagList = new ArrayList<Tag>();
-        if(tags != null) {
-            for(TransactionTagModel model : tags){
-                tagList.add(model.getTag());
+    public List<Tag> getTagsList() {
+        List<Tag> tagsList = new ArrayList<Tag>();
+        if (tags != null) {
+            for (TransactionTagModel model : tags) {
+                tagsList.add(model.getTag());
             }
         }
 
-        return tagList;
+        return tagsList;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTagsList(List<Tag> tags) {
+
         this.tags = new ArrayList<TransactionTagModel>();
 
-        if(tags != null) {
-            for(Tag tag : tags) {
+        if (tags != null) {
+            for (Tag tag : tags) {
                 TransactionTagModel model = new TransactionTagModel();
                 model.setTransactionId(parentTransaction.getId());
                 model.setTag(tag);
@@ -588,9 +590,7 @@ public class TransactionModel extends Transaction {
         }
         // more happens in the setter.
         this.setTagModels(this.tags);
-
     }
-
 
 
     public List<TransactionTagModel> getTagModels() {
@@ -694,27 +694,27 @@ public class TransactionModel extends Transaction {
         return null;
     }
 
-    public boolean isPaymentRefundable(){
+    public boolean isPaymentRefundable() {
         if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
             Payment payment = (Payment) parentTransaction;
 
             // status must be active.
-            if(! TransactionStatus.ACTIVE.equals(payment.getStatus())) {
+            if (!TransactionStatus.ACTIVE.equals(payment.getStatus())) {
                 return false;
             }
 
             // No negative or zero amounts are refundable
-            if(payment.getAmount().compareTo(BigDecimal.ZERO) < 1){
+            if (payment.getAmount().compareTo(BigDecimal.ZERO) < 1) {
                 return false;
             }
 
             // has an unallocated balance
-            if(payment.getUnallocatedAmount().compareTo(BigDecimal.ZERO) < 1){
+            if (payment.getUnallocatedAmount().compareTo(BigDecimal.ZERO) < 1) {
                 return false;
             }
 
             // clear date in the past
-            if(payment.getClearDate().after(new Date())){
+            if (payment.getClearDate().after(new Date())) {
                 return false;
             }
 
@@ -723,6 +723,7 @@ public class TransactionModel extends Transaction {
         return false;
 
     }
+
     public String getPaymentRefundable() {
         if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.PAYMENT) {
             return ((Payment) parentTransaction).isRefundable().toString();
@@ -737,22 +738,22 @@ public class TransactionModel extends Transaction {
         return null;
     }
 
-    public BigDecimal getOriginalAmount(){
-        if(parentTransaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT){
+    public BigDecimal getOriginalAmount() {
+        if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT) {
             return ((Deferment) parentTransaction).getOriginalAmount();
         }
         return null;
     }
 
-    public Date getDefermentExpirationDate(){
-        if(parentTransaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT){
+    public Date getDefermentExpirationDate() {
+        if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.DEFERMENT) {
             return ((Deferment) parentTransaction).getExpirationDate();
         }
         return null;
     }
 
-    public String getChargeCancellationRule(){
-        if(parentTransaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE){
+    public String getChargeCancellationRule() {
+        if (parentTransaction.getTransactionTypeValue() == TransactionTypeValue.CHARGE) {
             return ((Charge) parentTransaction).getCancellationRule();
         }
         return null;
@@ -790,16 +791,16 @@ public class TransactionModel extends Transaction {
         this.newAllocation = newAllocation;
     }
 
-    public String getStatusString(){
-        if(parentTransaction != null){
+    public String getStatusString() {
+        if (parentTransaction != null) {
             return parentTransaction.getStatus().toString();
         }
         return "";
     }
 
     public void setStatusString(String status) {
-        if(parentTransaction != null){
-            TransactionStatus transactionStatus =  EnumUtils.findById(TransactionStatus.class, status);
+        if (parentTransaction != null) {
+            TransactionStatus transactionStatus = EnumUtils.findById(TransactionStatus.class, status);
             parentTransaction.setStatus(transactionStatus);
         }
     }
@@ -820,14 +821,8 @@ public class TransactionModel extends Transaction {
         this.reverseTransactionInternalOnly = reverseTransactionInternalOnly;
     }
 
-    public boolean isReversable() {
-        if(getUnallocatedAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            return false;
-        }
-        if(TransactionStatus.REFUND_REQUESTED.equals(parentTransaction.getStatus())) {
-            return false;
-        }
-        return true;
-
+    public boolean isReversible() {
+        return !(getUnallocatedAmount().compareTo(BigDecimal.ZERO) <= 0) &&
+        !TransactionStatus.REFUND_REQUESTED.equals(parentTransaction.getStatus());
     }
 }

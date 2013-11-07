@@ -668,7 +668,7 @@
           p:progressiveRenderViaAJAX="true"
           p:width="50%">
         <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.Tag"/>
-        <property name="propertyName" value="tags"/>
+        <property name="propertyName" value="tagsList"/>
         <property name="readOnly" value="false"/>
         <property name="layoutManager.sequencePropertyName" value="id"/>
         <property name="layoutManager.richTable.render" value="true"/>

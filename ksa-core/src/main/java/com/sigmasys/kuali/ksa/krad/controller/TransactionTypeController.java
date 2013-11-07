@@ -282,7 +282,7 @@ public class TransactionTypeController extends GenericSearchController {
             return getUIFModelAndView(form);
         }
 
-        transactionType.setTags(tags);
+        transactionType.setTags(new HashSet<Tag>(tags));
 
         Long rollupId;
         try {

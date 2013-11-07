@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.model.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -52,7 +53,9 @@ public class TransactionTypeModel implements Serializable {
             this.setGlBreakdownType("None");
         }
 
-        this.setTags(parentEntity.getTags());
+        if (parentEntity.getTags() != null) {
+            setTags(new ArrayList<Tag>(parentEntity.getTags()));
+        }
 
     }
 
@@ -175,9 +178,9 @@ public class TransactionTypeModel implements Serializable {
 
     //@Override
     public TransactionTypeId getId() {
-        try{
+        try {
             return parentEntity.getId();
-        } catch(NullPointerException npe){
+        } catch (NullPointerException npe) {
             npe.printStackTrace();
             return null;
         }
@@ -193,7 +196,7 @@ public class TransactionTypeModel implements Serializable {
         }
     }
 
-    public Integer getPriority(){
+    public Integer getPriority() {
         return parentEntity.getPriority();
     }
 
@@ -267,7 +270,7 @@ public class TransactionTypeModel implements Serializable {
         this.setGlBreakdownTooltip(tooltip);
     }
 
-    public String getAuditTooltip(){
+    public String getAuditTooltip() {
         return AuditTooltipUtil.getAuditTooltip(this);
     }
 }

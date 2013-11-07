@@ -418,7 +418,7 @@ public class TransactionUtils {
         }
         for (String tagCode : tagCodes) {
             for (Transaction transaction : transactions) {
-                List<Tag> tags = transaction.getTags();
+                Set<Tag> tags = transaction.getTags();
                 if (tags != null) {
                     for (Tag tag : tags) {
                         if (tagCode.equals(tag.getCode())) {
@@ -466,7 +466,7 @@ public class TransactionUtils {
         @Override
         public int compare(Transaction t1, Transaction t2) {
             int compare = t1.getEffectiveDate().compareTo(t2.getEffectiveDate());
-            if(compare == 0) {
+            if (compare == 0) {
                 return t1.getCreationDate().compareTo(t2.getCreationDate());
             } else {
                 return compare;

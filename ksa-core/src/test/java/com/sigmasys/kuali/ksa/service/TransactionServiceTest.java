@@ -13,9 +13,7 @@ import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kuali.student.r2.core.constants.HoldServiceConstants;
 import org.kuali.student.r2.core.hold.dto.AppliedHoldInfo;
-import org.kuali.student.r2.core.hold.dto.HoldIssueInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -1966,7 +1964,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         int numberOfTags = 100;
 
-        List<Tag> tags = new ArrayList<Tag>(numberOfTags);
+        Set<Tag> tags = new HashSet<Tag>(numberOfTags);
 
         for (int i = 0; i < numberOfTags; i++) {
             int j = i + 1;
@@ -1979,7 +1977,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Assert.notNull(transaction);
         Assert.notNull(transaction.getId());
 
-        transaction = transactionService.addTagsToTransaction(transaction.getId(), tags);
+        transaction = transactionService.addTagsToTransaction(transaction.getId(), new ArrayList<Tag>(tags));
 
         tags = transaction.getTags();
 
@@ -1999,7 +1997,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Tag tag = auditableEntityService.createAuditableEntity("t##", "t##", "Tag desc ##", Tag.class);
         tags.add(tag);
 
-        transaction = transactionService.addTagsToTransaction(transaction.getId(), tags);
+        transaction = transactionService.addTagsToTransaction(transaction.getId(), new ArrayList<Tag>(tags));
 
         tags = transaction.getTags();
 
@@ -2014,7 +2012,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
 
         int numberOfTags = 66;
 
-        List<Tag> tags = new ArrayList<Tag>(numberOfTags);
+        Set<Tag> tags = new HashSet<Tag>(numberOfTags);
 
         for (int i = 0; i < numberOfTags; i++) {
             int j = i + 1;
@@ -2027,7 +2025,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Assert.notNull(transactionType);
         Assert.notNull(transactionType.getId());
 
-        transactionType = transactionService.addTagsToTransactionType(transactionType.getId(), tags);
+        transactionType = transactionService.addTagsToTransactionType(transactionType.getId(), new ArrayList<Tag>(tags));
 
         tags = transactionType.getTags();
 
@@ -2047,7 +2045,7 @@ public class TransactionServiceTest extends AbstractServiceTest {
         Tag tag = auditableEntityService.createAuditableEntity("t##", "t##", "Tag desc ##", Tag.class);
         tags.add(tag);
 
-        transactionType = transactionService.addTagsToTransactionType(transactionType.getId(), tags);
+        transactionType = transactionService.addTagsToTransactionType(transactionType.getId(), new ArrayList<Tag>(tags));
 
         tags = transactionType.getTags();
 

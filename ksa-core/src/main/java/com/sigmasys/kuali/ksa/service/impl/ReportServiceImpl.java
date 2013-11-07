@@ -481,7 +481,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         for (Transaction transaction : transactions) {
             TransactionTypeValue transactionTypeValue = transaction.getTransactionTypeValue();
             BigDecimal transactionAmount = (transaction.getAmount() != null) ? transaction.getAmount() : BigDecimal.ZERO;
-            List<Tag> tags = transaction.getTransactionType().getTags();
+            Set<Tag> tags = transaction.getTransactionType().getTags();
             if (CollectionUtils.isNotEmpty(tags)) {
                 if (TransactionTypeValue.PAYMENT.equals(transactionTypeValue)) {
                     if (containsTag(insuranceRefundTag, tags)) {
@@ -1879,7 +1879,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
     private <T extends Transaction> Set<T> getTransactionsByTag(Set<T> transactions, Tag tag) {
         Set<T> transactionsForTag = new HashSet<T>();
         for (T transaction : transactions) {
-            List<Tag> tags = transaction.getTags();
+            Set<Tag> tags = transaction.getTags();
             if (CollectionUtils.isNotEmpty(tags)) {
                 boolean tagIsPresent = false;
                 for (Tag t : tags) {

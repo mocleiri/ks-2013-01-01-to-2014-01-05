@@ -310,10 +310,10 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
         newTransaction.setDocument(transaction.getDocument());
         newTransaction.setRollup(transaction.getRollup());
 
-        List<Tag> transactionTags = transaction.getTags();
+        Set<Tag> transactionTags = transaction.getTags();
 
         if (CollectionUtils.isNotEmpty(transactionTags)) {
-            newTransaction.setTags(new ArrayList<Tag>(transactionTags));
+            newTransaction.setTags(new HashSet<Tag>(transactionTags));
         }
 
         Account studentAccount = transaction.getAccount();

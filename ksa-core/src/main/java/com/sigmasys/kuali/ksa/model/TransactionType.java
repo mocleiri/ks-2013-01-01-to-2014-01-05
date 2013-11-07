@@ -4,7 +4,7 @@ import com.sigmasys.kuali.ksa.annotation.Auditable;
 import com.sigmasys.kuali.ksa.service.TransactionTypeVisitor;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -34,7 +34,7 @@ public abstract class TransactionType extends AuditableEntity<TransactionTypeId>
 
     protected String defaultStatement;
 
-    protected List<Tag> tags;
+    protected Set<Tag> tags;
 
     /**
      * Transaction priority
@@ -128,11 +128,11 @@ public abstract class TransactionType extends AuditableEntity<TransactionTypeId>
                             {"TRANSACTION_TYPE_ID_FK", "TRANSACTION_TYPE_SUB_CODE_FK", "TAG_ID_FK"})
             }
     )
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 
