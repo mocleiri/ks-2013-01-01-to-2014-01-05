@@ -14,6 +14,15 @@ Then /^an error message appears indicating that the Population Name is NOT uniqu
   end
 end
 
+Then /^there is no new population created$/ do
+  go_to_manage_population
+  on ManagePopulations do |page|
+    page.keyword.set @population.name
+    page.search
+    page.results_list.length.should == page.results_list.uniq.length
+  end
+end
+
 Then /^the population exists with a state of "(.*?)"$/ do |state|
   go_to_manage_population
   on ManagePopulations do |page|
