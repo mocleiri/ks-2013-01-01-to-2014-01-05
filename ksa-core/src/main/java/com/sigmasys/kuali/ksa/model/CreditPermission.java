@@ -61,7 +61,7 @@ public class CreditPermission implements Identifiable {
         this.priority = priority;
     }
 
-    @Column(name = "ALLOWABLE_DEBIT_TYPE_MASK", length = 20)
+    @Column(name = "ALLOWABLE_DEBIT_TYPE_MASK", length = 500)
     public String getAllowableDebitType() {
         return allowableDebitType;
     }

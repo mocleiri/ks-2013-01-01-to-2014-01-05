@@ -94,7 +94,7 @@ public class ThirdPartyAllowableCharge implements Identifiable {
         this.plan = plan;
     }
 
-    @Column(name = "TRANSACTION_TYPE_MASK", length = 100, nullable = false)
+    @Column(name = "TRANSACTION_TYPE_MASK", length = 500, nullable = false)
     public String getTransactionTypeMask() {
         return transactionTypeMask;
     }

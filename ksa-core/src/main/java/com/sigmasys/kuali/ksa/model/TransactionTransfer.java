@@ -211,7 +211,7 @@ public class TransactionTransfer implements Identifiable {
         this.groupId = groupId;
     }
 
-    @Column(name = "TRANSACTION_TYPE_MASK", length = 100)
+    @Column(name = "TRANSACTION_TYPE_MASK", length = 500)
     public String getTransactionTypeMask() {
         return transactionTypeMask;
     }
