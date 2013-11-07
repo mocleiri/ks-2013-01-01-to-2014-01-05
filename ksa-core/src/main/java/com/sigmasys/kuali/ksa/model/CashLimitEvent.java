@@ -190,7 +190,7 @@ public class CashLimitEvent implements Identifiable {
         this.chargeAmount = chargeAmount;
     }
 
-    @Column(name = "SERIALS", length = 1)
+    @Column(name = "SERIALS", length = 4000)
     public String getSerials() {
         return serials;
     }
