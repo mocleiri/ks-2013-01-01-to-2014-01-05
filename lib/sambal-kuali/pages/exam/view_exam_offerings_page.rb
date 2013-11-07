@@ -2,6 +2,7 @@ class ViewExamOfferings < BasePage
 
   wrapper_elements
   frame_element
+  expected_element :exam_offerings_page_section
 
   element(:exam_offerings_page_section) { |b| b.frm.div(id: "viewExamOfferingsPage")}
 

@@ -3,6 +3,8 @@ class FEMatrixView < BasePage
   wrapper_elements
   frame_element
 
+  expected_element :cancel_link
+
   element(:fe_agenda_view_page) { |b| b.frm.div( id: "KSFE-AgendaManagement-View")}
   element(:fe_agenda_maintenance_page) { |b| b.fe_agenda_view_page.div( id: "KSFE-AgendaMaintenance-Page")}
 
@@ -12,7 +14,7 @@ class FEMatrixView < BasePage
   element(:submit_btn) { |b| b.div( id: "KSFE-DocumentPageFooter-SubmitCancel").button( text: /Submit/)}
   action(:submit) { |b| b.submit_btn.click}
   element(:cancel_link) { |b| b.div( id: "KSFE-DocumentPageFooter-SubmitCancel").a( text: /Cancel/)}
-  action(:cancel) { |b| b.cancel_link.click}
+  action(:cancel) { |b| b.cancel_link.click; b.loading.wait_while_present}
 
   COURSE_REQUIREMENTS = 0
   EXAM_DAY = 1

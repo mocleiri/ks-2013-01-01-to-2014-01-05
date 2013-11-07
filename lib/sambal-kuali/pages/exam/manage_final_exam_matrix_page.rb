@@ -3,6 +3,8 @@ class ManageFEMatrix < BasePage
   wrapper_elements
   frame_element
 
+  expected_element :show_btn
+
   element(:fe_search_page) { |b| b.frm.div( id: "finalExamMatrixManagementView")}
   element(:fe_matrix_criteria_section) { |b| b.fe_search_page.div( id: "finalExamMatrixManagementCriteriaSection")}
 

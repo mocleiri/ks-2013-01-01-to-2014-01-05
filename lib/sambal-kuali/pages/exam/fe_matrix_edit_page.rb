@@ -3,6 +3,8 @@ class FEMatrixEdit < BasePage
   wrapper_elements
   krms_frame_elements
 
+  expected_element :add_statement_btn
+
   element(:fe_agenda_view_page) { |b| b.frm.div( id: "KSFE-AgendaManagement-View")}
   element(:fe_rule_maintenance_page) { |b| b.fe_agenda_view_page.div( id: "KSFE-RuleMaintenance-Page")}
 
@@ -54,8 +56,8 @@ class FEMatrixEdit < BasePage
 
   element(:update_rule_btn) { |b| b.fe_rule_maintenance_page.button( id: "KSFE-UpdateRule-Button")}
   action(:update_rule) { |b| b.update_rule_btn.click}
-  element(:cancel_rule_btn) { |b| b.fe_rule_maintenance_page.button( id: "KSFE-CancelRule-Button")}
-  action(:cancel_rule) { |b| b.cancel_rule_btn.click}
+  element(:cancel_rule_btn) { |b| b.fe_rule_maintenance_page.link( id: "KSFE-CancelRule-Button")}
+  action(:cancel_rule) { |b| b.cancel_rule_btn.click; ; b.loading.wait_while_present}
 
   element(:lookup_results_section) { |b| b.frm_popup.div( id: "uLookupResults")}
   element(:lookup_course_code) { |b| b.frm_popup.text_field( name: "lookupCriteria[code]")}
