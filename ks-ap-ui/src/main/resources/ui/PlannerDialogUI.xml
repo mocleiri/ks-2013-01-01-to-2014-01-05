@@ -47,11 +47,16 @@
 		<property name="innerViewWrapperId" value="planner_add_course_inner" />
 		<property name="headerText" value="What would you like to add to @{term.name}?" />
 		<property name="items">
-			<list merge="true">
+			<list>
+				<bean parent="planner_hidden_input" p:propertyName="learningPlanId" />
+				<bean parent="planner_hidden_input" p:propertyName="termId" />
+				<bean parent="planner_hidden_input" p:propertyName="planItemId" />
+				<bean parent="planner_hidden_input" p:propertyName="uniqueId" />
+				
 				<bean parent="planner_course_code_input" />
-<!-- 				<bean parent="planner_course_credit_input" />
-				<bean parent="Uif-Message" p:messageText="Montse's code goes here" p:render="@{courseCd ne null}" />
--->
+<!-- 				<bean parent="planner_course_credit_input" /> -->
+<!-- 				<bean parent="Uif-Message" p:messageText="Montse's code goes here" p:render="@{courseCd ne null}" /> -->
+				<bean parent="planner_course_id_input"  p:render="@{courseCd ne null}"/>
 				<bean parent="planner_course_note_input" />
 			</list>
 		</property>
@@ -531,6 +536,21 @@
 			</bean>
 		</property>
 	</bean>
+
+<!-- SCT-6322: ADDING courseId -->
+       <bean id="planner_course_id_input" parent="planner_dialog_input">
+              <property name="propertyName" value="courseId" />
+              <property name="label" value="CourseId" />
+              <property name="instructionalText" value="Please select a course from this list." />
+              <property name="control">
+                     <bean parent="Uif-DropdownControl" />
+              </property>
+              <property name="optionsFinder">          
+                     <bean class="edu.iu.sis.arm.planner.ks.CourseListBuilder">
+                     </bean>
+              </property>
+       </bean>
+
 
 <!-- 	<bean id="planner_course_credit_input" parent="planner_dialog_input"> -->
 <!-- 		<property name="propertyName" value="courseCredit" /> -->
