@@ -77,8 +77,8 @@ Feature: EC.Holiday Calendar CRED
     And I add a new Holiday with a blank start date
     Then a Holiday Dates warning message is displayed stating "Start date should not be empty"
 
-  Scenario: Verify error message when adding a Holiday with a start date which has an invalid format
-    Given I create a Holiday Calendar
+  Scenario: Verify error when adding a Holiday with a start date which has an invalid format
+    Given I edit a Holiday Calendar
     And I add a new Holiday with a start date with an invalid format
     Then the holiday start date field is highlighted for the error
 

@@ -2,6 +2,10 @@ When /^I create a Holiday Calendar$/ do
   @holiday_calendar = create HolidayCalendar, :year => "2014"
 end
 
+When /^I edit a Holiday Calendar$/ do
+  @holiday_calendar = make HolidayCalendar, :name=>"2012-2013 Holiday Calendar", :year => "2014"
+end
+
 Then /^The Make Official button for the Holiday Calendar should become active$/ do
   @holiday_calendar.edit
   on CreateEditHolidayCalendar do |page|
@@ -166,8 +170,8 @@ When /^I add a new Holiday with a blank start date$/ do
 end
 
 When /^I add a new Holiday with a start date with an invalid format$/ do
-  holiday = (make Holiday, :type => "Veterans Day",
-                  :start_date => "2014/11/11",
+  holiday = (make Holiday, :type => "Christmas observed",
+                  :start_date => "2012/11/11",
                   :instructional => true) #ensures error message is displayed, focus leaves start date field)
   @holiday_calendar.add_holiday :holiday =>  holiday, :defer_add => true
 end
@@ -176,6 +180,7 @@ Then /^the holiday start date field is highlighted for the error$/ do
   on CreateEditHolidayCalendar do |page|
     page.holiday_start_date.click
     page.holiday_start_time.click
+    sleep 2
     page.holiday_start_date.attribute_value('class').should match /error/
     page.cancel
   end
