@@ -27,14 +27,15 @@ public class CashLimitForm extends TransactionFilterForm {
     private boolean generateDocumentsFromSelected = true;
 
     /**
-     * Whether to start download of the generated archive after submission.
-     */
-    private boolean downloadGeneratedArchive = true;
-
-    /**
      * Error message.
      */
     private String xmlGenerationError;
+
+    /**
+     * A comma-separated string of IDs of last completed CashLimitEvents.
+     * This is needed to generate an archive of the generated IRS forms 8300.
+     */
+    private String lastCompletedCashLimitEventIds;
 
 
     public List<CashLimitEventModel> getCashLimitEvents() {
@@ -53,19 +54,19 @@ public class CashLimitForm extends TransactionFilterForm {
         this.generateDocumentsFromSelected = generateDocumentsFromSelected;
     }
 
-    public boolean isDownloadGeneratedArchive() {
-        return downloadGeneratedArchive;
-    }
-
-    public void setDownloadGeneratedArchive(boolean downloadGeneratedArchive) {
-        this.downloadGeneratedArchive = downloadGeneratedArchive;
-    }
-
     public String getXmlGenerationError() {
         return xmlGenerationError;
     }
 
     public void setXmlGenerationError(String xmlGenerationError) {
         this.xmlGenerationError = xmlGenerationError;
+    }
+
+    public String getLastCompletedCashLimitEventIds() {
+        return lastCompletedCashLimitEventIds;
+    }
+
+    public void setLastCompletedCashLimitEventIds(String lastCompletedCashLimitEventIds) {
+        this.lastCompletedCashLimitEventIds = lastCompletedCashLimitEventIds;
     }
 }

@@ -132,29 +132,26 @@
 								</property>
 							</bean>
 							<bean parent="Uif-LinkField" p:linkText="Download XML" p:target="_self"
-								  p:align="center" p:width="10%" p:hidden="@{#line.cashLimitEvent.status.id != 'Q'}"
+								  p:align="center" p:width="10%" 
 								  p:href="batchCashLimitView?methodToCall=downloadCashEventXml&amp;viewId=BatchCashLimitView&amp;cashLimitEventId=@{#line.cashLimitEvent.id}&amp;accountId=@{#line.cashLimitEvent.accountId}&amp;eventDateString=@{#line.eventDateString}"/>
 						</list>
 					</property>
 				</bean>
 				
-				<!-- Generate Documents from Selected checkbox -->
-				<bean parent="Uif-InputField" p:propertyName="generateDocumentsFromSelected" p:hidden="@{cashLimitEvents.size() == 0}">
+				<!-- Generate Documents from Selected checkbox. Hiding it for now. Always generate an XML for selected -->
+				<bean parent="Uif-InputField" p:propertyName="generateDocumentsFromSelected" p:hidden="true"> <!-- p:hidden="@{cashLimitEvents.size() == 0}" -->
 					<property name="control">
 						<bean parent="Uif-CheckboxControl"  p:checkboxLabel="Generate Documents from Selected" p:componentSecurity.viewAuthz="true"/>
 					</property>
 				</bean>
 				
-				<!-- Download Archive of Generated Documents checkbox -->
-				<bean parent="Uif-InputField" p:propertyName="downloadGeneratedArchive" p:hidden="@{cashLimitEvents.size() == 0}">
-					<property name="control">
-						<bean parent="Uif-CheckboxControl"  p:checkboxLabel="Download Archive of Generated Documents" p:componentSecurity.viewAuthz="true"/>
-					</property>
-				</bean>
-				
 				<!-- Form submission action button -->
-				<bean parent="Uif-PrimaryActionButton" p:actionLabel="Submit" p:methodToCall="submitCashAccounts" p:hidden="@{cashLimitEvents.size() == 0}"
-						p:successCallback="batchCashLimitView?methodToCall=downloadGeneratedArchiveXml&amp;viewId=BatchCashLimitView"/>
+				<bean parent="Uif-SecondaryActionButton" p:actionLabel="Complete Selected" p:methodToCall="completeSelectedAccounts" p:hidden="@{cashLimitEvents.size() == 0}"/>
+						
+				<!-- Generated Document Archive Download link -->
+				<bean parent="Uif-LinkField" p:linkText="Download Generated Documents" p:style="padding-top: 5px;" p:target="_self" 
+						p:hidden="@{lastCompletedCashLimitEventIds == null or lastCompletedCashLimitEventIds.trim().length() == 0}" 
+						p:href="batchCashLimitView?methodToCall=downloadGeneratedArchiveXml&amp;viewId=BatchCashLimitView&amp;cashLimitEventIds=@{lastCompletedCashLimitEventIds}"/>
 						
 				<!-- XML Generation error message -->
 				<bean id="form8300XmlGenerationError" parent="Uif-Message" p:messageText="@{getXmlGenerationError()}" p:hidden="@{getXmlGenerationError() == null}" p:style="color: red"/>
