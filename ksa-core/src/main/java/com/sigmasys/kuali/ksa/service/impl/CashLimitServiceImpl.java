@@ -438,9 +438,9 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * Completes a CashLimitEvent with the given ID.
      * Optionally, generates an IRS form 8300.
      *
-     * @param id                ID of a CashLimitEvent to complete.
-     * @param generateForm8300  Whether to generate an IRS form 8300.
-     * @return                  The completed CashLimitEvent.
+     * @param id               ID of a CashLimitEvent to complete.
+     * @param generateForm8300 Whether to generate an IRS form 8300.
+     * @return The completed CashLimitEvent.
      */
     @Override
     @Transactional(readOnly = false)
@@ -464,22 +464,19 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
             if (StringUtils.isNotBlank(form8300)) {
 
                 // Create a new XML document with the form and persist:
-                XmlDocument form8300Xml = new XmlDocument();
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.setXml(form8300);
 
-                form8300Xml.setXml(form8300);
-                cashLimitEvent.setXmlDocument(form8300Xml);
+                persistEntity(xmlDocument);
+
+                cashLimitEvent.setXmlDocument(xmlDocument);
             }
         }
 
         // Mark the CashLimitEvent complete:
         cashLimitEvent.setStatus(CashLimitEventStatus.COMPLETED);
 
-        // Persist:
-        if (cashLimitEvent.getXmlDocument() != null) {
-            em.persist(cashLimitEvent.getXmlDocument());
-        }
-
-        em.persist(cashLimitEvent);
+        persistEntity(cashLimitEvent);
 
         return cashLimitEvent;
     }
@@ -487,23 +484,16 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     /**
      * Generates an IRS form 8300 for a CashLimitEvent and sets it in the object.
      *
-     * @param cashLimitEvent    CashLimitEvent for which to generate form 8300.
-     * @return          The generated form 8300.
+     * @param cashLimitEvent CashLimitEvent for which to generate form 8300.
+     * @return The generated form 8300.
      */
     private String getOrGenerateForm8300(CashLimitEvent cashLimitEvent) {
 
         // Check if the CashLimitEvent already has an attached Form 8300:
-        String form8300 = (cashLimitEvent != null) && (cashLimitEvent.getXmlDocument() != null)
-                ? cashLimitEvent.getXmlDocument().getXml() : null;
+        String form8300 = (cashLimitEvent.getXmlDocument() != null) ? cashLimitEvent.getXmlDocument().getXml() : null;
 
-        if (StringUtils.isBlank(form8300)) {
-
-            // If there is no form, generate it using the ReportService:
-            try {
-                form8300 = reportService.generateIrs8300Report(cashLimitEvent.getId());
-            } catch (Exception e) {
-                logger.error("Error generating form 8300. See log file for details.", e);
-            }
+        if (StringUtils.isNotBlank(form8300)) {
+            form8300 = reportService.generateIrs8300Report(cashLimitEvent.getId());
         }
 
         return form8300;

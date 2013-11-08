@@ -448,7 +448,7 @@ public class CombinedCashLimitController extends TransactionFilterController {
         if (!zipEntries.isEmpty()) {
 
             // Generate a name for the ZIP Archive:
-            zipFile = ZipUtils.createZip(zipEntries, null);
+            zipFile = ZipUtils.createZipFile(zipEntries, null);
         }
 
         return zipFile;
