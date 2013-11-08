@@ -18,7 +18,7 @@ INSERT INTO KSEN_STATE (ID, NAME, LIFECYCLE_KEY, DESCR_PLAIN, DESCR_FORMATTED, C
 /
 
 INSERT INTO KSEN_STATE (ID, NAME, LIFECYCLE_KEY, DESCR_PLAIN, DESCR_FORMATTED, CREATEID, CREATETIME, EFF_DT, EXPIR_DT, OBJ_ID, UPDATEID, UPDATETIME, VER_NBR)
- VALUES ('kuali.org.state.inactive', 'Active', 'kuali.org.lifecycle', 'Organization is inactive', 'Organization is inactive', 'SYSTEMLOADER', TO_DATE('1/1/2013', 'MM/DD/YYYY'), TO_DATE('', 'MM/DD/YYYY'), TO_DATE('', 'MM/DD/YYYY'), NVL('', SYS_GUID()), '', TO_DATE('', 'MM/DD/YYYY'), 0)
+ VALUES ('kuali.org.state.inactive', 'Inactive', 'kuali.org.lifecycle', 'Organization is inactive', 'Organization is inactive', 'SYSTEMLOADER', TO_DATE('1/1/2013', 'MM/DD/YYYY'), TO_DATE('', 'MM/DD/YYYY'), TO_DATE('', 'MM/DD/YYYY'), NVL('', SYS_GUID()), '', TO_DATE('', 'MM/DD/YYYY'), 0)
 /
 
 INSERT INTO KSEN_STATE (ID, NAME, LIFECYCLE_KEY, DESCR_PLAIN, DESCR_FORMATTED, CREATEID, CREATETIME, EFF_DT, EXPIR_DT, OBJ_ID, UPDATEID, UPDATETIME, VER_NBR)
