@@ -601,6 +601,7 @@ public class TransactionModel extends Transaction {
         this.tags = tags;
 
         if (tags == null || tags.size() == 0) {
+            this.tags = new ArrayList<TransactionTagModel>();
             this.tagList = "None";
             return;
         }
