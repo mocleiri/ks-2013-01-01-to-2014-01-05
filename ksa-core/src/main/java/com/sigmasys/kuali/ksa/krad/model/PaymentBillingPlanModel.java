@@ -19,7 +19,9 @@ public class PaymentBillingPlanModel {
 
     private List<ThirdPartyAllowableCharge> thirdPartyAllowableCharges;
 
-    private List<PaymentBillingQueue> paymentBillingQueues;
+    private List<PaymentBillingQueue> queuedMembers;
+    private List<PaymentBillingQueue> planMembers;
+    private List<PaymentBillingQueue> reversedMembers;
 
     private List<TransactionTransferModel> transferDetails;
 
@@ -128,14 +130,36 @@ public class PaymentBillingPlanModel {
         this.transferDetails = transferDetails;
     }
 
-    public List<PaymentBillingQueue> getPaymentBillingQueues() {
-        if(paymentBillingQueues == null) {
-            paymentBillingQueues = new ArrayList<PaymentBillingQueue>();
+    public List<PaymentBillingQueue> getQueuedMembers() {
+        if(queuedMembers == null) {
+            queuedMembers = new ArrayList<PaymentBillingQueue>();
         }
-        return paymentBillingQueues;
+        return queuedMembers;
     }
 
-    public void setPaymentBillingQueues(List<PaymentBillingQueue> paymentBillingQueues) {
-        this.paymentBillingQueues = paymentBillingQueues;
+    public void setQueuedMembers(List<PaymentBillingQueue> queuedMembers) {
+        this.queuedMembers = queuedMembers;
+    }
+
+    public List<PaymentBillingQueue> getPlanMembers() {
+        if(planMembers == null) {
+            planMembers = new ArrayList<PaymentBillingQueue>();
+        }
+        return planMembers;
+    }
+
+    public void setPlanMembers(List<PaymentBillingQueue> planMembers) {
+        this.planMembers = planMembers;
+    }
+
+    public List<PaymentBillingQueue> getReversedMembers() {
+        if(reversedMembers == null) {
+            reversedMembers = new ArrayList<PaymentBillingQueue>();
+        }
+        return reversedMembers;
+    }
+
+    public void setReversedMembers(List<PaymentBillingQueue> reversedMembers) {
+        this.reversedMembers = reversedMembers;
     }
 }

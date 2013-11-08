@@ -635,7 +635,7 @@ public class PaymentPlanController extends GenericSearchController {
         List<PaymentBillingPlan> allPlans = new ArrayList<PaymentBillingPlan>();
 
         if(form.getFilterPaymentBillingPlans().size() == 0) {
-            //paymentBillingService.getPay
+            allPlans = paymentBillingService.getPaymentBillingPlans();
         } else {
             allPlans.addAll(form.getFilterPaymentBillingPlans());
         }
@@ -646,6 +646,22 @@ public class PaymentPlanController extends GenericSearchController {
 
             PaymentBillingPlanModel model = new PaymentBillingPlanModel();
             model.setParent(plan);
+
+            List<PaymentBillingQueue> paymentBillingQueues = paymentBillingService.getPaymentBillingQueuesByPlanId(plan.getId());
+
+            for(PaymentBillingQueue paymentBillingQueue : paymentBillingQueues) {
+                paymentBillingQueue.getDirectChargeAccount().getCompositeDefaultPersonName();
+                PaymentBillingTransferDetail transferDetail = paymentBillingQueue.getTransferDetail();
+                if(transferDetail == null) {
+                    model.getQueuedMembers().add(paymentBillingQueue);
+                } else if(PaymentBillingChargeStatus.ACTIVE.equals(transferDetail.getChargeStatus())){
+                    model.getPlanMembers().add(paymentBillingQueue);
+                } else if(PaymentBillingChargeStatus.REVERSED.equals(transferDetail.getChargeStatus())) {
+                    model.getReversedMembers().add(paymentBillingQueue);
+                }
+            }
+
+
 
             models.add(model);
 
