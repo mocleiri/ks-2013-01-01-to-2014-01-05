@@ -32,8 +32,8 @@ end
 Then /^the alias course does not exist$/ do
   @course_offering_alias.manage
 
-  expected_errMsg = "Cannot find any course offering for the Course Code code: (#{@course_offering_alias.course}"
-  on(ManageCourseOfferings).first_msg.should match /.*#{Regexp.escape(expected_errMsg)}.*/
+  expected_errMsg = "Cannot find any course offering for the Course Code code: \u201C#{@course_offering_alias.course}"
+  on(ManageCourseOfferings).first_msg.should match /#{expected_errMsg}/
 end
 
 And /^I remove a cross-listed Course Offering$/ do
