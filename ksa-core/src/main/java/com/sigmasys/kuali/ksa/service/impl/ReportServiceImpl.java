@@ -1223,8 +1223,8 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
 
         Account accountEntity = accountService.getFullAccount(cashLimitEvent.getAccountId());
 
-        // Detaching Account object to cast it to DirectChargeAccount avoiding proxy problems.
-        em.detach(accountEntity);
+        // Create a copy of the Account object:
+        accountEntity = BeanUtils.getDeepCopy(accountEntity);
 
         DirectChargeAccount account = (DirectChargeAccount) accountEntity;
         if (account == null) {
