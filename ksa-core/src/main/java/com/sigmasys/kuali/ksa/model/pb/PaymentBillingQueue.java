@@ -13,7 +13,7 @@ import java.util.Date;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_PB_QUEUE")
+@Table(name = "KSSA_PB_QUEUE", uniqueConstraints = {@UniqueConstraint(columnNames = {"ACNT_ID_FK", "PB_PLAN_ID_FK"})})
 public class PaymentBillingQueue implements Identifiable {
 
     /**

@@ -329,5 +329,13 @@ public interface PaymentBillingService {
                                                   Date initiationDate,
                                                   boolean forceReversal);
 
+    /**
+     * Removes PaymentBillingQueue entity from the persistent store by plan and account IDs.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param accountId            DirectChargeAccount ID
+     * @return true if  PaymentBillingQueue entity has been deleted, false - otherwise
+     */
+    boolean deletePaymentBillingQueue(Long paymentBillingPlanId, String accountId);
 
 }

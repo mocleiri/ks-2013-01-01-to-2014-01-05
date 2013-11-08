@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.pb.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.pb.*;
@@ -7,7 +8,6 @@ import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -93,12 +93,11 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.GENERATE_PAYMENT_BILLING_TRANSFER)
     public PaymentBillingTransferDetail generatePaymentBillingTransfer(Long paymentBillingPlanId,
                                                                        String accountId,
                                                                        BigDecimal maxAmount,
                                                                        Date initiationDate) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_TRANSFER);
 
         PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
         if (billingPlan == null) {
@@ -165,6 +164,15 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
         persistEntity(transferDetail);
 
+        query = em.createQuery("update PaymentBillingQueue set transferDetail = :transferDetail " +
+                " where plan.id = :planId and directChargeAccount.id = :accountId");
+
+        query.setParameter("transferDetail", transferDetail);
+        query.setParameter("planId", paymentBillingPlanId);
+        query.setParameter("accountId", accountId);
+
+        query.executeUpdate();
+
         return transferDetail;
     }
 
@@ -196,6 +204,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_PAYMENT_BILLING_PLAN)
     public PaymentBillingPlan createPaymentBillingPlan(
             String code,
             String name,
@@ -217,8 +226,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             String statementPrefix,
             PaymentRoundingType paymentRoundingType,
             ScheduleType scheduleType) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_PAYMENT_BILLING_PLAN);
 
         if (StringUtils.isBlank(code)) {
             String errMsg = "PaymentBillingPlan code is required";
@@ -305,9 +312,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return PaymentBillingPlan instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_PLAN)
     public PaymentBillingPlan getPaymentBillingPlan(Long paymentBillingPlanId) {
-
-        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_PLAN);
 
         Query query = em.createQuery(PAYMENT_PLAN_SELECT + " where p.id = :id");
 
@@ -325,9 +331,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingPlan instances.
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_PLAN)
     public List<PaymentBillingPlan> getPaymentBillingPlansByNamePattern(String pattern) {
-
-        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_PLAN);
 
         Query query = em.createQuery(PAYMENT_PLAN_SELECT + " where upper(p.name) like :pattern or " +
                 " upper(p.code) like :pattern or upper(p.description) like :pattern order by p.id desc");
@@ -343,12 +348,9 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingPlan instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_PLAN)
     public List<PaymentBillingPlan> getPaymentBillingPlans() {
-
-        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_PLAN);
-
         Query query = em.createQuery(PAYMENT_PLAN_SELECT + " order by p.id desc");
-
         return query.getResultList();
     }
 
@@ -359,9 +361,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingPlan instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_PLAN)
     public List<PaymentBillingPlan> getPaymentBillingPlansByAccountId(String accountId) {
-
-        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_PLAN);
 
         Query query = em.createQuery(PAYMENT_PLAN_SELECT +
                 " where p.id in ( select distinct plan.id from PaymentBillingTransferDetail " +
@@ -379,9 +380,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of Account IDs
      */
     @Override
+    @PermissionsAllowed({Permission.READ_PAYMENT_BILLING_PLAN, Permission.READ_ACCOUNT})
     public List<String> getAccountsByPlanId(Long paymentBillingPlanId) {
-
-        PermissionUtils.checkPermissions(Permission.READ_PAYMENT_BILLING_PLAN, Permission.READ_ACCOUNT);
 
         Query query = em.createQuery("select distinct directChargeAccount.id from PaymentBillingTransferDetail " +
                 " where plan.id = :planId order by directChargeAccount.id asc");
@@ -399,10 +399,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_PAYMENT_BILLING_PLAN)
     public Long persistPaymentBillingPlan(PaymentBillingPlan billingPlan) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_PAYMENT_BILLING_PLAN);
-
         return persistEntity(billingPlan);
     }
 
@@ -413,9 +411,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return PaymentBillingTransferDetail instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL)
     public PaymentBillingTransferDetail getPaymentBillingTransferDetail(Long transferDetailId) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
 
         Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where d.id = :id");
 
@@ -436,9 +433,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REVERSE_PAYMENT_BILLING_TRANSFER)
     public PaymentBillingTransferDetail reversePaymentBillingTransfer(Long transferDetailId, String memoText, boolean removeFees) {
-
-        PermissionUtils.checkPermission(Permission.REVERSE_PAYMENT_BILLING_TRANSFER);
 
         PaymentBillingTransferDetail transferDetail = getPaymentBillingTransferDetail(transferDetailId);
         if (transferDetail == null) {
@@ -483,6 +479,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_PAYMENT_BILLING_TRANSFER)
     public Long persistPaymentBillingTransferDetail(PaymentBillingTransferDetail transferDetail) {
         return persistEntity(transferDetail);
     }
@@ -494,9 +491,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingTransaction instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_TRANSACTION)
     public List<PaymentBillingTransaction> getPaymentBillingTransactionsByPlanId(Long paymentBillingPlanId) {
-
-        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_TRANSACTION);
 
         Query query = em.createQuery(TRANSACTION_SELECT + " where p.id = :planId order by pbt.id desc");
 
@@ -512,9 +508,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingTransaction instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_TRANSACTION)
     public List<PaymentBillingTransaction> getPaymentBillingTransactionsByTransferDetailId(Long transferDetailId) {
-
-        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_TRANSACTION);
 
         Query query = em.createQuery(TRANSACTION_SELECT + " where td.id = :transferDetailId order by pbt.id desc");
 
@@ -530,9 +525,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingSchedule instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_SCHEDULE)
     public List<PaymentBillingSchedule> getPaymentBillingSchedulesByTransferDetailId(Long transferDetailId) {
-
-        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_SCHEDULE);
 
         Query query = em.createQuery("select s from PaymentBillingSchedule s " +
                 " inner join fetch s.transferDetail d " +
@@ -555,6 +549,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.GENERATE_PAYMENT_BILLING_SCHEDULE)
     public List<PaymentBillingSchedule> generatePaymentBillingSchedules(Long transferDetailId) {
 
         PaymentBillingTransferDetail transferDetail = getPaymentBillingTransferDetail(transferDetailId);
@@ -576,8 +571,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
     protected List<PaymentBillingSchedule> generatePaymentBillingSchedules(PaymentBillingTransferDetail transferDetail,
                                                                            int roundingFactor) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_SCHEDULE);
 
         if (transferDetail.getChargeStatus() != PaymentBillingChargeStatus.ALLOWABLE) {
             String errMsg = "PaymentBillingTransferDetail must be " + PaymentBillingChargeStatus.ALLOWABLE.toString();
@@ -783,9 +776,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.GENERATE_PAYMENT_BILLING_TRANSACTIONS)
     public List<PaymentBillingTransaction> generatePaymentBillingTransactions(Long transferDetailId) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_TRANSACTIONS);
 
         PaymentBillingTransferDetail transferDetail = getPaymentBillingTransferDetail(transferDetailId);
         if (transferDetail == null) {
@@ -914,6 +906,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.GENERATE_PAYMENT_BILLING_TRANSACTIONS)
     public PaymentBillingTransferDetail transferPaymentBillingTransactions(Long transferDetailId) {
 
         PaymentBillingTransferDetail transferDetail = getPaymentBillingTransferDetail(transferDetailId);
@@ -1141,13 +1134,12 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_PAYMENT_BILLING_ALLOWABLE_CHARGE)
     public PaymentBillingAllowableCharge createPaymentBillingAllowableCharge(Long paymentBillingPlanId,
                                                                              String transactionTypeMask,
                                                                              BigDecimal maxAmount,
                                                                              BigDecimal maxPercentage,
                                                                              int priority) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_PAYMENT_BILLING_ALLOWABLE_CHARGE);
 
         PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
         if (billingPlan == null) {
@@ -1207,6 +1199,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingAllowableCharge instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_ALLOWABLE_CHARGE)
     public List<PaymentBillingAllowableCharge> getPaymentBillingAllowableCharges(Long paymentBillingPlanId) {
 
         Query query = em.createQuery("select c from PaymentBillingAllowableCharge c " +
@@ -1230,12 +1223,11 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_PAYMENT_BILLING_DATE)
     public PaymentBillingDate createPaymentBillingDate(Long paymentBillingPlanId,
                                                        Long rollupId,
                                                        BigDecimal percentage,
                                                        Date effectiveDate) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_PAYMENT_BILLING_DATE);
 
         PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
         if (billingPlan == null) {
@@ -1288,9 +1280,8 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingDate instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_DATE)
     public List<PaymentBillingDate> getPaymentBillingDates(Long paymentBillingPlanId) {
-
-        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_DATE);
 
         Query query = em.createQuery("select d from PaymentBillingDate d " +
                 " inner join fetch d.plan p " +
@@ -1310,6 +1301,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingQueue instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_QUEUE)
     public List<PaymentBillingQueue> getPaymentBillingQueuesByPlanId(Long paymentBillingPlanId) {
         Query query = em.createQuery(QUEUE_SELECT + " where p.id = :planId order by q.creationDate desc");
         query.setParameter("planId", paymentBillingPlanId);
@@ -1324,6 +1316,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingQueue instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_QUEUE)
     public List<PaymentBillingQueue> getPaymentBillingQueues(String accountId, Long transferDetailId) {
         return getPaymentBillingQueues(accountId, transferDetailId, false);
     }
@@ -1336,13 +1329,12 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      * @return list of PaymentBillingQueue instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_PAYMENT_BILLING_QUEUE)
     public List<PaymentBillingQueue> getPaymentBillingQueuesByCreatorId(String creatorId, Long transferDetailId) {
         return getPaymentBillingQueues(creatorId, transferDetailId, true);
     }
 
     protected List<PaymentBillingQueue> getPaymentBillingQueues(String userId, Long transferDetailId, boolean isCreatorId) {
-
-        PermissionUtils.checkPermission(Permission.READ_PAYMENT_BILLING_QUEUE);
 
         Query query = em.createQuery(QUEUE_SELECT +
                 " where " + (isCreatorId ? "q.creatorId" : "a.id") + " = :userId and " +
@@ -1369,12 +1361,11 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.GENERATE_PAYMENT_BILLING_TRANSFER)
     public PaymentBillingTransferDetail executePaymentBilling(Long paymentBillingPlanId,
                                                               String accountId,
                                                               BigDecimal maxAmount,
                                                               Date initiationDate) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_PAYMENT_BILLING_TRANSFER);
 
         PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
         if (billingPlan == null) {
@@ -1409,8 +1400,6 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
     }
 
     protected void processPaymentBillingQueues(String userId, boolean isCreatorId) {
-
-        PermissionUtils.checkPermission(Permission.PROCESS_PAYMENT_BILLING_QUEUE);
 
         // Getting the list of PaymentBillingQueue objects with no PaymentBillingTransferDetail
         List<PaymentBillingQueue> billingQueues = isCreatorId ? getPaymentBillingQueuesByCreatorId(userId, null) :
@@ -1480,6 +1469,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PROCESS_PAYMENT_BILLING_QUEUE)
     public void processPaymentBillingQueues(String accountId) {
         processPaymentBillingQueues(accountId, false);
     }
@@ -1492,6 +1482,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PROCESS_PAYMENT_BILLING_QUEUE)
     public void processPaymentBillingQueuesByCreator(String creatorId) {
         processPaymentBillingQueues(creatorId, true);
     }
@@ -1508,13 +1499,12 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_PAYMENT_BILLING_QUEUE)
     public PaymentBillingQueue createPaymentBillingQueue(Long paymentBillingPlanId,
                                                          String accountId,
                                                          BigDecimal maxAmount,
                                                          Date initiationDate,
                                                          boolean forceReversal) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_PAYMENT_BILLING_QUEUE);
 
         PaymentBillingPlan billingPlan = getPaymentBillingPlan(paymentBillingPlanId);
         if (billingPlan == null) {
@@ -1563,6 +1553,28 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         persistEntity(billingQueue);
 
         return billingQueue;
+    }
+
+
+    /**
+     * Removes PaymentBillingQueue entity from the persistent store by plan and account IDs.
+     *
+     * @param paymentBillingPlanId PaymentBillingPlan ID
+     * @param accountId            DirectChargeAccount ID
+     * @return true if  PaymentBillingQueue entity has been deleted, false - otherwise
+     */
+    @Override
+    @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_PAYMENT_BILLING_QUEUE)
+    public boolean deletePaymentBillingQueue(Long paymentBillingPlanId, String accountId) {
+
+        Query query = em.createQuery("delete from PaymentBillingQueue " +
+                " where transferDetail is null and plan.id = :planId and directChargeAccount.id = :accountId");
+
+        query.setParameter("planId", paymentBillingPlanId);
+        query.setParameter("accountId", accountId);
+
+        return query.executeUpdate() > 0;
     }
 
 

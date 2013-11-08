@@ -559,5 +559,40 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
 
     }
 
+    @Test
+    public void removePaymentBillingQueue() throws Exception {
+
+        PaymentBillingPlan plan = _createPaymentBillingPlan();
+
+        PaymentBillingQueue billingQueue = _createPaymentBillingQueue(plan.getId());
+
+        Assert.notNull(billingQueue);
+        Assert.notNull(billingQueue.getId());
+
+        List<PaymentBillingQueue> billingQueues = billingService.getPaymentBillingQueuesByPlanId(plan.getId());
+
+        Assert.notNull(billingQueues);
+        Assert.notEmpty(billingQueues);
+
+        boolean isQueuePresent = false;
+
+        for (PaymentBillingQueue queue : billingQueues) {
+
+            Assert.notNull(queue);
+            Assert.notNull(queue.getId());
+
+            if (queue.getId().equals(billingQueue.getId())) {
+                isQueuePresent = true;
+            }
+
+            boolean deleted = billingService.deletePaymentBillingQueue(plan.getId(), TEST_USER_ID);
+
+            Assert.isTrue(deleted);
+        }
+
+        Assert.isTrue(isQueuePresent);
+
+    }
+
 
 }
