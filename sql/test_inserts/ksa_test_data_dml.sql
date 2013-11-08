@@ -1576,3 +1576,14 @@ Insert into KSSA_REFUND_TYPE (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITO
 Insert into KSSA_REFUND_TYPE (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,CREDIT_TYPE_ID,DEBIT_TYPE_ID) values (3,'account',to_timestamp('01-JAN-20 10.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'admin','Default refund type for account refunds',null,null,'Account','cash','refund');
 Insert into KSSA_REFUND_TYPE (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,CREDIT_TYPE_ID,DEBIT_TYPE_ID) values (4,'check',to_timestamp('01-JAN-20 10.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'admin','Default "Check" refund type.',null,null,'Check',null,'check');
 Insert into KSSA_REFUND_TYPE (ID,CODE,CREATION_DATE,CREATOR_ID,DESCRIPTION,EDITOR_ID,LAST_UPDATE,NAME,CREDIT_TYPE_ID,DEBIT_TYPE_ID) values (5,'ach',to_timestamp('01-JAN-20 10.00.00.000000000 AM','DD-MON-RR HH.MI.SS.FF AM'),'admin','Default "ACH" refund type.',null,null,'ACH',null,'ach');
+
+-- Cash Limit Events
+-- Cash limit event 1
+insert into kssa_cash_limit_event values(1, 'user1', 0, 'admin', sysdate-30, 'Y', sysdate-20, 10000, 'Peter Griffin', sysdate-10, '15430598, daslkfj3333, 454545sdfkak', 'Q', null);
+insert into kssa_cash_limit_event_trans values (1, 5);
+insert into kssa_cash_limit_event_trans values (1, 6);
+
+-- Cash limit event 2
+insert into kssa_cash_limit_event values(2, 'user1', 20000, 'admin', sysdate-40, 'Y', sysdate-30, 30000, 'Stewart Gilligan Griffin', sysdate-20, '111111111, 2222222222, 343424', 'Q', null);
+insert into kssa_cash_limit_event_trans values (2, 7);
+insert into kssa_cash_limit_event_trans values (2, 8);
