@@ -1133,8 +1133,8 @@ class DeliveryLogistics
       @end_time = ""
       @end_time_ampm = ""
     end
-    @facility_long_name = ao_table_row.cells[ManageCourseOfferings::AO_BLDG].text
-    @facility = ""
+    @facility_long_name = ""
+    @facility = ao_table_row.cells[ManageCourseOfferings::AO_BLDG].text
     @room = ao_table_row.cells[ManageCourseOfferings::AO_ROOM].text
   end
 
