@@ -7,6 +7,7 @@ import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private ReportService reportService;
 
 
     /**
@@ -430,4 +434,78 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
         return false;
     }
 
+    /**
+     * Completes a CashLimitEvent with the given ID.
+     * Optionally, generates an IRS form 8300.
+     *
+     * @param id                ID of a CashLimitEvent to complete.
+     * @param generateForm8300  Whether to generate an IRS form 8300.
+     * @return                  The completed CashLimitEvent.
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public CashLimitEvent completeCashLimitEvent(Long id, boolean generateForm8300) {
+
+        // Find the CashLimitEvent
+        CashLimitEvent cashLimitEvent = getCashLimitEvent(id);
+
+        if (cashLimitEvent == null) {
+            String errorMsg = String.format("Cannot find a Cash Limit Event with ID %d.", id);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        // Generate an IRS form 8300 without persisting the CashLimitEvent:
+        if (generateForm8300) {
+
+            String form8300 = getOrGenerateForm8300(cashLimitEvent);
+
+            // Save the form if it was successfully generated:
+            if (StringUtils.isNotBlank(form8300)) {
+
+                // Create a new XML document with the form and persist:
+                XmlDocument form8300Xml = new XmlDocument();
+
+                form8300Xml.setXml(form8300);
+                cashLimitEvent.setXmlDocument(form8300Xml);
+            }
+        }
+
+        // Mark the CashLimitEvent complete:
+        cashLimitEvent.setStatus(CashLimitEventStatus.COMPLETED);
+
+        // Persist:
+        if (cashLimitEvent.getXmlDocument() != null) {
+            em.persist(cashLimitEvent.getXmlDocument());
+        }
+
+        em.persist(cashLimitEvent);
+
+        return cashLimitEvent;
+    }
+
+    /**
+     * Generates an IRS form 8300 for a CashLimitEvent and sets it in the object.
+     *
+     * @param cashLimitEvent    CashLimitEvent for which to generate form 8300.
+     * @return          The generated form 8300.
+     */
+    private String getOrGenerateForm8300(CashLimitEvent cashLimitEvent) {
+
+        // Check if the CashLimitEvent already has an attached Form 8300:
+        String form8300 = (cashLimitEvent != null) && (cashLimitEvent.getXmlDocument() != null)
+                ? cashLimitEvent.getXmlDocument().getXml() : null;
+
+        if (StringUtils.isBlank(form8300)) {
+
+            // If there is no form, generate it using the ReportService:
+            try {
+                form8300 = reportService.generateIrs8300Report(cashLimitEvent.getId());
+            } catch (Exception e) {
+                logger.error("Error generating form 8300. See log file for details.", e);
+            }
+        }
+
+        return form8300;
+    }
 }

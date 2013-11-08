@@ -118,4 +118,13 @@ public interface CashLimitService {
      */
     CashLimitParameter getCashLimitParameter(Long id);
 
+    /**
+     * Completes a CashLimitEvent with the given ID.
+     * Optionally, generates an IRS form 8300.
+     *
+     * @param id                ID of a CashLimitEvent to complete.
+     * @param generateForm8300  Whether to generate an IRS form 8300.
+     * @return                  The completed CashLimitEvent.
+     */
+    CashLimitEvent completeCashLimitEvent(Long id, boolean generateForm8300);
 }
