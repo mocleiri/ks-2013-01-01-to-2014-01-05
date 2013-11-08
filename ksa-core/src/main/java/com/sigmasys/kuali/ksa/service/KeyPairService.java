@@ -21,7 +21,7 @@ public interface KeyPairService {
      * @param keyPairs list of key pairs
      * @return KeyPairAware object
      */
-    KeyPairAware addKeyPairs(KeyPairAware entity, List<KeyPair> keyPairs);
+    <T extends KeyPairAware> T addKeyPairs(T entity, List<KeyPair> keyPairs);
 
     /**
      * Adds new or merges existing key pairs of the given KeyPairAware instance.
@@ -30,7 +30,7 @@ public interface KeyPairService {
      * @param keyPairs list of key pairs
      * @return KeyPairAware object
      */
-    KeyPairAware addKeyPairs(KeyPairAware entity, KeyPair... keyPairs);
+    <T extends KeyPairAware> T addKeyPairs(T entity, KeyPair... keyPairs);
 
     /**
      * Removes key pairs specified by IDs from the given KeyPairAware instance.
@@ -39,7 +39,7 @@ public interface KeyPairService {
      * @param keyPairIds list of key pair IDs
      * @return KeyPairAware object
      */
-    KeyPairAware removeKeyPairs(KeyPairAware entity, List<Long> keyPairIds);
+    <T extends KeyPairAware> T removeKeyPairs(T entity, List<Long> keyPairIds);
 
     /**
      * Removes key pairs specified by IDs from the given KeyPairAware instance.
@@ -48,7 +48,7 @@ public interface KeyPairService {
      * @param keyPairIds list of key pair IDs
      * @return KeyPairAware object
      */
-    KeyPairAware removeKeyPairs(KeyPairAware entity, Long... keyPairIds);
+    <T extends KeyPairAware> T removeKeyPairs(T entity, Long... keyPairIds);
 
     /**
      * Removes key pairs specified by keys from the given KeyPairAware instance.
@@ -57,7 +57,7 @@ public interface KeyPairService {
      * @param keys   list of KeyPair keys
      * @return KeyPairAware object
      */
-    KeyPairAware removeKeyPairsByKeys(KeyPairAware entity, List<String> keys);
+    <T extends KeyPairAware> T removeKeyPairsByKeys(T entity, List<String> keys);
 
     /**
      * Removes key pairs specified by keys from the given KeyPairAware instance.
@@ -66,7 +66,7 @@ public interface KeyPairService {
      * @param keys   list of KeyPair keys
      * @return KeyPairAware object
      */
-    KeyPairAware removeKeyPairsByKeys(KeyPairAware entity, String... keys);
+    <T extends KeyPairAware> T removeKeyPairsByKeys(T entity, String... keys);
 
     /**
      * Updates a key pair specified by ID of the given KeyPairAware instance.
@@ -78,6 +78,6 @@ public interface KeyPairService {
      * @param value     New KeyPair value
      * @return KeyPairAware object
      */
-    KeyPairAware updateKeyPair(KeyPairAware entity, Long keyPairId, String key, String value);
+    <T extends KeyPairAware> T updateKeyPair(T entity, Long keyPairId, String key, String value);
 
 }

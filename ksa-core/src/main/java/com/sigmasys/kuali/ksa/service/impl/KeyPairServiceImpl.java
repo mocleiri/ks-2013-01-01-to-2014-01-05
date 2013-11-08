@@ -96,7 +96,7 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
      * @return KeyPairAware object
      */
     @Override
-    public KeyPairAware addKeyPairs(KeyPairAware entity, List<KeyPair> keyPairs) {
+    public <T extends KeyPairAware> T addKeyPairs(T entity, List<KeyPair> keyPairs) {
         Set<KeyPair> updatedKeyPairs = mergeNewAndPersistentKeyPairs(keyPairs, entity.getKeyPairs());
         entity.setKeyPairs(updatedKeyPairs);
         return entity;
@@ -110,7 +110,7 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
      * @return KeyPairAware object
      */
     @Override
-    public KeyPairAware addKeyPairs(KeyPairAware entity, KeyPair... keyPairs) {
+    public <T extends KeyPairAware> T addKeyPairs(T entity, KeyPair... keyPairs) {
         return addKeyPairs(entity, Arrays.asList(keyPairs));
     }
 
@@ -122,7 +122,7 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
      * @return KeyPairAware object
      */
     @Override
-    public KeyPairAware removeKeyPairs(KeyPairAware entity, List<Long> keyPairIds) {
+    public <T extends KeyPairAware> T removeKeyPairs(T entity, List<Long> keyPairIds) {
         Set<KeyPair> updatedKeyPairs = removeKeyPairs(keyPairIds, entity.getKeyPairs());
         entity.setKeyPairs(updatedKeyPairs);
         return entity;
@@ -136,7 +136,7 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
      * @return KeyPairAware object
      */
     @Override
-    public KeyPairAware removeKeyPairs(KeyPairAware entity, Long... keyPairIds) {
+    public <T extends KeyPairAware> T removeKeyPairs(T entity, Long... keyPairIds) {
         return removeKeyPairs(entity, Arrays.asList(keyPairIds));
     }
 
@@ -148,7 +148,7 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
      * @return KeyPairAware object
      */
     @Override
-    public KeyPairAware removeKeyPairsByKeys(KeyPairAware entity, List<String> keys) {
+    public <T extends KeyPairAware> T removeKeyPairsByKeys(T entity, List<String> keys) {
         Set<KeyPair> updatedKeyPairs = removeKeyPairsByKeys(keys, entity.getKeyPairs());
         entity.setKeyPairs(updatedKeyPairs);
         return entity;
@@ -162,7 +162,7 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
      * @return KeyPairAware object
      */
     @Override
-    public KeyPairAware removeKeyPairsByKeys(KeyPairAware entity, String... keys) {
+    public <T extends KeyPairAware> T removeKeyPairsByKeys(T entity, String... keys) {
         return removeKeyPairsByKeys(entity, Arrays.asList(keys));
     }
 
@@ -177,7 +177,7 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
      * @return KeyPairAware object
      */
     @Override
-    public KeyPairAware updateKeyPair(KeyPairAware entity, Long keyPairId, String key, String value) {
+    public <T extends KeyPairAware> T updateKeyPair(T entity, Long keyPairId, String key, String value) {
 
         Set<KeyPair> keyPairs = entity.getKeyPairs();
 
