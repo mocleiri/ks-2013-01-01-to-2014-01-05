@@ -52,6 +52,7 @@ Then /^the "(ADL|RDL)s" are successfully copied as RDLs in the new AO$/ do |sour
   @ao_copy.edit
 
   on ActivityOfferingMaintenance do |page|
+    page.view_requested_delivery_logistics
     page.requested_logistics_table.rows.size.should be > 2 #should be more than header/footer rows
     row = page.requested_logistics_table.rows[1]
     page.get_requested_logistics_days(row).delete(' ').should == source_delivery_logistics.days
