@@ -3,7 +3,7 @@ class FEMatrixView < BasePage
   wrapper_elements
   frame_element
 
-  expected_element :cancel_link
+  expected_element :fe_agenda_view_page
 
   element(:fe_agenda_view_page) { |b| b.frm.div( id: "KSFE-AgendaManagement-View")}
   element(:fe_agenda_maintenance_page) { |b| b.fe_agenda_view_page.div( id: "KSFE-AgendaMaintenance-Page")}
