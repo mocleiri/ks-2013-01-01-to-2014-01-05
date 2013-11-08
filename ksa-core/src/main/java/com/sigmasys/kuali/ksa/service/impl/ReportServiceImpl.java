@@ -1221,14 +1221,12 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
             throw new IllegalStateException(errMsg);
         }
 
-        // Sergey: I have to detach the Account entity first. I'm always getting a Javassist proxy
-        // and therefore I'm getting a ClassCastException trying to cast to DirectChargeAccount.
-        // You may investigate of leave the "detach" call here.
+        Account accountEntity = accountService.getFullAccount(cashLimitEvent.getAccountId());
 
-        Object accountEntity = accountService.getFullAccount(cashLimitEvent.getAccountId());
+        // Detaching Account object to cast it to DirectChargeAccount avoiding proxy problems.
         em.detach(accountEntity);
 
-        DirectChargeAccount account = (DirectChargeAccount) accountService.getFullAccount(cashLimitEvent.getAccountId());
+        DirectChargeAccount account = (DirectChargeAccount) accountEntity;
         if (account == null) {
             String errMsg = "Account with ID = " + cashLimitEvent.getAccountId() + " does not exist";
             logger.error(errMsg);
@@ -1236,17 +1234,6 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         }
 
         AccountProtectedInfo accountInfo = accountService.getAccountProtectedInfo(cashLimitEvent.getAccountId());
-
-        // Sergey: An account may not have an AccountProtectedInfo.
-        // There is no error in Paul's documentation on this method.
-        // Please review this code change and make a decision based on the logic in "Process Diagrams"
-
-//        if (accountInfo == null) {
-//            String errMsg = "AccountProtectedInfo does not exist for Account ID = " + cashLimitEvent.getAccountId();
-//            logger.error(errMsg);
-//            throw new UserNotFoundException(errMsg);
-//        }
-
 
         Set<Payment> payments = cashLimitEvent.getPayments();
 
@@ -1282,22 +1269,24 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         // Filling out Payer
         Irs8300.Payer payer = new Irs8300.Payer();
         Irs8300.Payer.Identity identity = new Irs8300.Payer.Identity();
-        Irs8300.Payer.Identity.IdentityDocument identityDocument = new Irs8300.Payer.Identity.IdentityDocument();
 
         identity.setDateOfBirth(CalendarUtils.toXmlGregorianCalendar(account.getDateOfBirth()));
 
         if (accountInfo != null) {
+
             TaxType taxType = accountInfo.getTaxType();
             if (taxType != null && taxType.getCode().equals(configService.getParameter(Constants.KSA_8300_SSN_TAX_TYPE))) {
                 identity.setTaxIdentifier(accountInfo.getTaxReference());
             }
 
+            Irs8300.Payer.Identity.IdentityDocument identityDocument = new Irs8300.Payer.Identity.IdentityDocument();
+
             identityDocument.setIdIssuer(accountInfo.getIdentityIssuer());
             identityDocument.setIdSerial(accountInfo.getIdentitySerial());
             identityDocument.setIdType(accountInfo.getIdentityType().getCode());
-        }
 
-        identity.setIdentityDocument(identityDocument);
+            identity.setIdentityDocument(identityDocument);
+        }
 
         payer.setIdentity(identity);
 
@@ -1345,6 +1334,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                 new Irs8300.TransactionDescription.Detail.FinancialBreakdown();
 
         StringBuilder serials = new StringBuilder();
+
         for (CashLimitParameter parameter : activeParameters) {
 
             Tag tag = parameter.getTag();
