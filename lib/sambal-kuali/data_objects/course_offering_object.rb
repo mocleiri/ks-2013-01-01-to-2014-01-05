@@ -530,10 +530,10 @@ class CourseOffering
       st_time = Time.new
       page.show
       end_time = Time.new
-      #TODO: add code in case there is only 1 course
+      #in case there is only 1 course, want to show list
       if page.list_all_course_link.exists? then
         page.list_all_course_link.click
-        page.loading.wait_until_present
+        page.loading.wait_while_present
       end
       puts "#{@course[0,4]} subj code search time: #{end_time-st_time}"
     end
