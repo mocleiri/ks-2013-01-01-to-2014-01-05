@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,6 +60,19 @@ public interface CashLimitService {
      * @return true if there has been a cash limit event, otherwise false
      */
     boolean checkCashLimit(String userId);
+
+    /**
+     * Retrieves all CashLimitEvent objects for the given list of Account IDs and CashLimitEvent statuses
+     * and where the "Event Date" falls in the specified date range.
+     *
+     * @param userIds   Account IDs
+     * @param dateFrom  Beginning of the date range for "Event Date" search.
+     * @param dateTo    End of the date range for "Event Date" search.
+     * @param statuses  CashLimitEvent statuses
+     * @return a list of cash limit events
+     */
+    @WebMethod(exclude = true)
+    List<CashLimitEvent> getCashLimitEvents(List<String> userIds, Date dateFrom, Date dateTo, CashLimitEventStatus... statuses);
 
     /**
      * Retrieves all CashLimitEvent objects for the given list of Account IDs and CashLimitEvent statuses.
@@ -120,11 +134,32 @@ public interface CashLimitService {
 
     /**
      * Completes a CashLimitEvent with the given ID.
+     * Only "Queued" CashLimitEvents can be Completed.
      * Optionally, generates an IRS form 8300.
      *
      * @param id                ID of a CashLimitEvent to complete.
      * @param generateForm8300  Whether to generate an IRS form 8300.
-     * @return                  The completed CashLimitEvent.
+     * @return                  The just Completed CashLimitEvent.
      */
     CashLimitEvent completeCashLimitEvent(Long id, boolean generateForm8300);
+
+    /**
+     * Ignores a CashLimitEvent with the given ID.
+     * Only "Queued" CashLimitEvents can be Ignored.
+     * Removes the stored IRS form 8300.
+     *
+     * @param id    ID of a CashLimitEvent to ignore.
+     * @return      The just Ignored CashLimitEvent.
+     */
+    CashLimitEvent ignoreCashLimitEvent(Long id);
+
+    /**
+     * Enqueues a CashLimitEvent with the given ID.
+     * Both "Ignored" and "Completed" CashLimitEvents can be Enqueued.
+     * Removes the stored IRS form 8300.
+     *
+     * @param id    ID of a CashLimitEvent to enqueue.
+     * @return      The just enqueued CashLimitEvent.
+     */
+    CashLimitEvent enqueueCashLimitEvent(Long id);
 }

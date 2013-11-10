@@ -131,15 +131,18 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     }
 
     /**
-     * Retrieves all CashLimitEvent objects for the given list of Account IDs and CashLimitEvent statuses.
+     * Retrieves all CashLimitEvent objects for the given list of Account IDs and CashLimitEvent statuses
+     * and where the "Event Date" falls in the specified date range.
      *
-     * @param userIds  Account IDs
-     * @param statuses CashLimitEvent statuses
+     * @param userIds   Account IDs
+     * @param dateFrom  Beginning of the date range for "Event Date" search.
+     * @param dateTo    End of the date range for "Event Date" search.
+     * @param statuses  CashLimitEvent statuses
      * @return a list of cash limit events
      */
+    @WebMethod(exclude = true)
     @Override
-    @WebMethod(exclude = false)
-    public List<CashLimitEvent> getCashLimitEvents(List<String> userIds, CashLimitEventStatus... statuses) {
+    public List<CashLimitEvent> getCashLimitEvents(List<String> userIds, Date dateFrom, Date dateTo, CashLimitEventStatus... statuses) {
 
         PermissionUtils.checkPermission(Permission.READ_IRS_8300);
 
@@ -159,6 +162,15 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
             builder.append(" and cle.statusCode in (:statusCodes) ");
         }
 
+        // Add "Event Date" filtering range:
+        if (dateFrom != null) {
+            builder.append(" and cle.eventDate >= :dateFrom ");
+        }
+
+        if (dateTo != null) {
+            builder.append(" and cle.eventDate <= :dateTo ");
+        }
+
         builder.append(" order by cle.eventDate desc");
 
         Query query = em.createQuery(builder.toString());
@@ -173,7 +185,29 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
             query.setParameter("statusCodes", statusCodes);
         }
 
+        // Set "Event Date" filtering range parameter values:
+        if (dateFrom != null) {
+            query.setParameter("dateFrom", CalendarUtils.removeTime(dateFrom), TemporalType.DATE);
+        }
+
+        if (dateTo != null) {
+            query.setParameter("dateTo", CalendarUtils.removeTime(dateTo), TemporalType.DATE);
+        }
+
         return query.getResultList();
+    }
+
+    /**
+     * Retrieves all CashLimitEvent objects for the given list of Account IDs and CashLimitEvent statuses.
+     *
+     * @param userIds  Account IDs
+     * @param statuses CashLimitEvent statuses
+     * @return a list of cash limit events
+     */
+    @Override
+    @WebMethod(exclude = true)
+    public List<CashLimitEvent> getCashLimitEvents(List<String> userIds, CashLimitEventStatus... statuses) {
+        return getCashLimitEvents(userIds, null, null, statuses);
     }
 
     /**
@@ -435,6 +469,91 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     }
 
     /**
+     * Ignores a CashLimitEvent with the given ID.
+     * Only "Queued" CashLimitEvents can be Ignored.
+     * Removes the stored IRS form 8300.
+     *
+     * @param id    ID of a CashLimitEvent to ignore.
+     * @return      The just Ignored CashLimitEvent.
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public CashLimitEvent ignoreCashLimitEvent(Long id) {
+
+        // Find the CashLimitEvent
+        CashLimitEvent cashLimitEvent = getCashLimitEvent(id);
+
+        if (cashLimitEvent == null) {
+            String errorMsg = String.format("Cannot find a Cash Limit Event with ID %d.", id);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        // Check that only "Queued" CashLimitEvents can be Ignored:
+        if (cashLimitEvent.getStatus() != CashLimitEventStatus.QUEUED) {
+            String errorMsg = String.format(
+                    "Only Queued Cash Limit Events can be Ignored, but Cash Limit Event with ID %d is %s.", id, cashLimitEvent.getStatus());
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        }
+
+        // Set the "Ignored" status and remove the generated Form 8300:
+        cashLimitEvent.setStatus(CashLimitEventStatus.IGNORED);
+
+        if (cashLimitEvent.getXmlDocument() != null) {
+            deleteEntity(cashLimitEvent.getXmlDocument().getId(), XmlDocument.class);
+            cashLimitEvent.setXmlDocument(null);
+        }
+
+        // Persist:
+        persistEntity(cashLimitEvent);
+
+        return cashLimitEvent;
+    }
+
+    /**
+     * Enqueues a CashLimitEvent with the given ID.
+     * Both "Ignored" and "Completed" CashLimitEvents can be Enqueued.
+     * Removes the stored IRS form 8300.
+     *
+     * @param id    ID of a CashLimitEvent to enqueue.
+     * @return      The just enqueued CashLimitEvent.
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public CashLimitEvent enqueueCashLimitEvent(Long id) {
+
+        // Find the CashLimitEvent
+        CashLimitEvent cashLimitEvent = getCashLimitEvent(id);
+
+        if (cashLimitEvent == null) {
+            String errorMsg = String.format("Cannot find a Cash Limit Event with ID %d.", id);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        // Check that only "Queued" CashLimitEvents can be Ignored:
+        if (cashLimitEvent.getStatus() == CashLimitEventStatus.QUEUED) {
+            String errorMsg = String.format("Queued Cash Limit Event with ID %d cannot be Enqueued.", id);
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
+        }
+
+        // Set the "Ignored" status and remove the generated Form 8300:
+        cashLimitEvent.setStatus(CashLimitEventStatus.QUEUED);
+
+        if (cashLimitEvent.getXmlDocument() != null) {
+            em.remove(cashLimitEvent.getXmlDocument());
+            cashLimitEvent.setXmlDocument(null);
+        }
+
+        // Persist:
+        persistEntity(cashLimitEvent);
+
+        return cashLimitEvent;
+    }
+
+    /**
      * Completes a CashLimitEvent with the given ID.
      * Optionally, generates an IRS form 8300.
      *
@@ -453,6 +572,14 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
             String errorMsg = String.format("Cannot find a Cash Limit Event with ID %d.", id);
             logger.error(errorMsg);
             throw new IllegalArgumentException(errorMsg);
+        }
+
+        // Check that only "Queued" CashLimitEvents can be Ignored:
+        if (cashLimitEvent.getStatus() != CashLimitEventStatus.QUEUED) {
+            String errorMsg = String.format(
+                    "Only Queued Cash Limit Events can be Completed, but Cash Limit Event with ID %d is %s.", id, cashLimitEvent.getStatus());
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
         }
 
         // Generate an IRS form 8300 without persisting the CashLimitEvent:
@@ -492,7 +619,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
         // Check if the CashLimitEvent already has an attached Form 8300:
         String form8300 = (cashLimitEvent.getXmlDocument() != null) ? cashLimitEvent.getXmlDocument().getXml() : null;
 
-        if (StringUtils.isNotBlank(form8300)) {
+        if (StringUtils.isBlank(form8300)) {
             form8300 = reportService.generateIrs8300Report(cashLimitEvent.getId());
         }
 
