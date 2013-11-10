@@ -169,7 +169,7 @@ public class CombinedCashLimitController extends TransactionFilterController {
         }
 
         // Reset the error message:
-        form.setXmlGenerationError(null);
+        form.setFormSubmissionError(null);
 
         // If the form content is available, start download:
         if (StringUtils.isNotEmpty(form8300)) {
@@ -182,7 +182,7 @@ public class CombinedCashLimitController extends TransactionFilterController {
             cashLimitEvent.setXmlDocument(null);
         } else {
             // Set the error on the form and return the ModelAndView:
-            form.setXmlGenerationError("Error obtaining IRS form 8300. See log file for details.");
+            form.setFormSubmissionError("Error obtaining IRS form 8300. See log file for details.");
 
             return getUIFModelAndView(form);
         }
@@ -191,7 +191,7 @@ public class CombinedCashLimitController extends TransactionFilterController {
     }
 
     /**
-     * Invoked when the "Submit" button is pressed.
+     * Invoked when the "Complete Selected" button is pressed.
      *
      * @param form      The form object.
      * @return          ModelAndView
@@ -204,14 +204,19 @@ public class CombinedCashLimitController extends TransactionFilterController {
         List<CashLimitEventModel> selectedCashLimitEvents = getSelectedCashLimitEvents(form);
         boolean generateForm8300 = form.isGenerateDocumentsFromSelected();
         List<String> completedCashLimitEventIds = new ArrayList<String>();
+        String formSubmissionError = null;
 
-        // Completed each CashLimitEvent:
-        for (CashLimitEventModel model : selectedCashLimitEvents) {
+        // Completed each selected CashLimitEvent:
+        try {
+            for (CashLimitEventModel model : selectedCashLimitEvents) {
 
-            Long id = model.getCashLimitEvent().getId();
+                Long id = model.getCashLimitEvent().getId();
 
-            cashLimitService.completeCashLimitEvent(id, generateForm8300);
-            completedCashLimitEventIds.add(id.toString());
+                cashLimitService.completeCashLimitEvent(id, generateForm8300);
+                completedCashLimitEventIds.add(id.toString());
+            }
+        } catch (Exception e) {
+            formSubmissionError = e.getMessage();
         }
 
         // Refresh the model:
@@ -219,6 +224,73 @@ public class CombinedCashLimitController extends TransactionFilterController {
 
         // Set the IDs of the completed CashLimitEvents:
         form.setLastCompletedCashLimitEventIds(org.springframework.util.StringUtils.collectionToCommaDelimitedString(completedCashLimitEventIds));
+        form.setFormSubmissionError(formSubmissionError);
+
+        return getUIFModelAndView(form);
+    }
+
+    /**
+     * Invoked when the "Ignore Selected" button is pressed.
+     *
+     * @param form      The form object.
+     * @return          ModelAndView
+     * @throws Exception If an error occurs.
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=ignoreSelectedAccounts")
+    public ModelAndView ignoreSelectedAccounts(@ModelAttribute("KualiForm") CashLimitForm form) throws Exception {
+
+        // Get the selected CashLimitAccounts from the form:
+        List<CashLimitEventModel> selectedCashLimitEvents = getSelectedCashLimitEvents(form);
+        String formSubmissionError = null;
+
+        // Ignore each selected CashLimitEvent:
+        try {
+            for (CashLimitEventModel model : selectedCashLimitEvents) {
+
+                Long id = model.getCashLimitEvent().getId();
+
+                cashLimitService.ignoreCashLimitEvent(id);
+            }
+        } catch (Exception e) {
+            formSubmissionError = e.getMessage();
+        }
+
+        // Refresh the model:
+        refreshModel(form);
+        form.setFormSubmissionError(formSubmissionError);
+
+        return getUIFModelAndView(form);
+    }
+
+    /**
+     * Invoked when the "Enqueue Selected" button is pressed.
+     *
+     * @param form      The form object.
+     * @return          ModelAndView
+     * @throws Exception If an error occurs.
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=enqueueSelectedAccounts")
+    public ModelAndView enqueueSelectedAccounts(@ModelAttribute("KualiForm") CashLimitForm form) throws Exception {
+
+        // Get the selected CashLimitAccounts from the form:
+        List<CashLimitEventModel> selectedCashLimitEvents = getSelectedCashLimitEvents(form);
+        String formSubmissionError = null;
+
+        // Ignore each selected CashLimitEvent:
+        try {
+            for (CashLimitEventModel model : selectedCashLimitEvents) {
+
+                Long id = model.getCashLimitEvent().getId();
+
+                cashLimitService.enqueueCashLimitEvent(id);
+            }
+        } catch (Exception e) {
+            formSubmissionError = e.getMessage();
+        }
+
+        // Refresh the model:
+        refreshModel(form);
+        form.setFormSubmissionError(formSubmissionError);
 
         return getUIFModelAndView(form);
     }
@@ -238,8 +310,9 @@ public class CombinedCashLimitController extends TransactionFilterController {
         // Set the models on the form:
         ((CashLimitForm)form).setCashLimitEvents(cashLimitEventModels);
 
-        // Remove the list of last generated Form 8300:
+        // Remove the properties that must be reset on each refresh:
         ((CashLimitForm)form).setLastCompletedCashLimitEventIds(null);
+        ((CashLimitForm)form).setFormSubmissionError(null);
     }
 
 
@@ -264,7 +337,17 @@ public class CombinedCashLimitController extends TransactionFilterController {
         // Get CashLimitEvent objects for the selected Accounts:
         if (CollectionUtils.isNotEmpty(accountIds)) {
 
-            List<CashLimitEvent> cashLimitEvents = cashLimitService.getCashLimitEvents(accountIds);
+            // Get the filtering values:
+            CashLimitForm thisForm = (CashLimitForm)form;
+            CashLimitEventStatus filteringStatus = thisForm.getFilterCashLimitEventStatus();
+            boolean applyDateRange = "RANGE".equals(thisForm.getDateRangeType());
+            Date dateFrom = applyDateRange ? thisForm.getFilterDateFrom() : null;
+            Date dateTo = applyDateRange ? thisForm.getFilterDateTo() : null;
+
+            // Get the CashLimitEvent objects based on the filtering criteria:
+            List<CashLimitEvent> cashLimitEvents = (filteringStatus != null)
+                    ? cashLimitService.getCashLimitEvents(accountIds, dateFrom, dateTo, filteringStatus)
+                    : cashLimitService.getCashLimitEvents(accountIds, dateFrom, dateTo);
 
             if (CollectionUtils.isNotEmpty(cashLimitEvents)) {
 
@@ -380,7 +463,7 @@ public class CombinedCashLimitController extends TransactionFilterController {
             for (CashLimitEventModel model : allModels) {
 
                 // Check if the model is selected and "Queued"
-                if (model.isSelected() && (model.getCashLimitEvent().getStatus() == CashLimitEventStatus.QUEUED)) {
+                if (model.isSelected()) {
 
                     selected.add(model);
                 }

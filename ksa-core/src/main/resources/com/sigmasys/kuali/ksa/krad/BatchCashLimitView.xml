@@ -45,7 +45,7 @@
 									<list>
 										<ref bean="accountFilterGroup"/>
 										<ref bean="dateRangeFilterGroup"/>
-										<ref bean="transactionStatusFilterDropdown"/>
+										<ref bean="cashLimitEventStatusFilterDropdown"/>
 										<ref bean="filterRefreshViewhButton"/>
 								   </list>
 								</property>
@@ -87,7 +87,7 @@
                     <property name="layoutManager.richTable.disableTableSort" value="true"/>
 					<property name="items">
 						<list>
-							<bean parent="Uif-InputField" p:propertyName="selected" p:label="Select" p:readOnly="false" p:hidden="@{#line.cashLimitEvent.status.id != 'Q'}">
+							<bean parent="Uif-InputField" p:propertyName="selected" p:label="Select" p:readOnly="false">
 								<property name="control">
 									<bean parent="Uif-CheckboxControl"/>
 								</property>
@@ -132,7 +132,7 @@
 								</property>
 							</bean>
 							<bean parent="Uif-LinkField" p:linkText="Download XML" p:target="_self"
-								  p:align="center" p:width="10%" 
+								  p:align="center" p:width="10%" p:hidden="@{#line.cashLimitEvent.status.id == 'I'}"
 								  p:href="batchCashLimitView?methodToCall=downloadCashEventXml&amp;viewId=BatchCashLimitView&amp;cashLimitEventId=@{#line.cashLimitEvent.id}&amp;accountId=@{#line.cashLimitEvent.accountId}&amp;eventDateString=@{#line.eventDateString}"/>
 						</list>
 					</property>
@@ -145,16 +145,29 @@
 					</property>
 				</bean>
 				
-				<!-- Form submission action button -->
-				<bean parent="Uif-SecondaryActionButton" p:actionLabel="Complete Selected" p:methodToCall="completeSelectedAccounts" p:hidden="@{cashLimitEvents.size() == 0}"/>
-						
+				<!-- Action buttons row -->
+				<bean parent="Uif-HorizontalBoxSection">
+					<property name="items">
+						<list>
+							<!-- "Completed Selected" button -->
+							<bean parent="Uif-SecondaryActionButton" p:actionLabel="Complete Selected" p:methodToCall="completeSelectedAccounts" p:hidden="@{cashLimitEvents.size() == 0}"/>
+							
+							<!-- "Ignore Selected" button -->
+							<bean parent="Uif-SecondaryActionButton" p:actionLabel="Ignore Selected" p:methodToCall="ignoreSelectedAccounts" p:hidden="@{cashLimitEvents.size() == 0}"/>
+							
+							<!-- "Enqueue Selected" button -->
+							<bean parent="Uif-SecondaryActionButton" p:actionLabel="Enqueue Selected" p:methodToCall="enqueueSelectedAccounts" p:hidden="@{cashLimitEvents.size() == 0}"/>
+						</list>
+					</property>
+				</bean>
+				
 				<!-- Generated Document Archive Download link -->
 				<bean parent="Uif-LinkField" p:linkText="Download Generated Documents" p:style="padding-top: 5px;" p:target="_self" 
 						p:hidden="@{lastCompletedCashLimitEventIds == null or lastCompletedCashLimitEventIds.trim().length() == 0}" 
 						p:href="batchCashLimitView?methodToCall=downloadGeneratedArchiveXml&amp;viewId=BatchCashLimitView&amp;cashLimitEventIds=@{lastCompletedCashLimitEventIds}"/>
 						
 				<!-- XML Generation error message -->
-				<bean id="form8300XmlGenerationError" parent="Uif-Message" p:messageText="@{getXmlGenerationError()}" p:hidden="@{getXmlGenerationError() == null}" p:style="color: red"/>
+				<bean parent="Uif-Message" p:messageText="@{getFormSubmissionError()}" p:hidden="@{getFormSubmissionError() == null}" p:style="color: red"/>
 			</list>
 		</property>
 	</bean>

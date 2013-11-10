@@ -186,10 +186,27 @@
 			<bean class="com.sigmasys.kuali.ksa.krad.util.TransactionStatusPropertyEditor"/>
 		</property>
 		<property name="control">
-			<bean parent="Uif-DropdownControl" p:width="100%"	/>
+			<bean parent="Uif-DropdownControl" p:width="100%"/>
 		</property>
 		<property name="optionsFinder">
 			<bean class="com.sigmasys.kuali.ksa.krad.util.TransactionStatusKeyValuesFinder"/>
+		</property>
+	</bean>
+
+	<!--
+	
+	******************************* CashLimitEvent Status Filter *********************************
+	
+	-->
+	<bean id="cashLimitEventStatusFilterDropdown" parent="Uif-InputField-LabelTop" p:propertyName="filterCashLimitEventStatus" p:label="Status" p:fieldLabel.renderColon="false">
+		<property name="propertyEditor">
+			<bean class="com.sigmasys.kuali.ksa.krad.util.CashLimitEventStatusPropertyEditor"/>
+		</property>
+		<property name="control">
+			<bean parent="Uif-DropdownControl" p:width="100%"/>
+		</property>
+		<property name="optionsFinder">
+			<bean class="com.sigmasys.kuali.ksa.krad.util.CashLimitEventStatusKeyValuesFinder"/>
 		</property>
 	</bean>
 

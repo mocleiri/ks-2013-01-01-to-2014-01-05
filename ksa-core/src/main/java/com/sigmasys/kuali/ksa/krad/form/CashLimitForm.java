@@ -1,7 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.krad.model.CashLimitEventModel;
-import com.sigmasys.kuali.ksa.model.CashLimitEvent;
+import com.sigmasys.kuali.ksa.model.CashLimitEventStatus;
 
 import java.util.List;
 
@@ -29,7 +29,12 @@ public class CashLimitForm extends TransactionFilterForm {
     /**
      * Error message.
      */
-    private String xmlGenerationError;
+    private String formSubmissionError;
+
+    /**
+     * CashLimitEvent filtering status.
+     */
+    private CashLimitEventStatus filterCashLimitEventStatus;
 
     /**
      * A comma-separated string of IDs of last completed CashLimitEvents.
@@ -54,12 +59,12 @@ public class CashLimitForm extends TransactionFilterForm {
         this.generateDocumentsFromSelected = generateDocumentsFromSelected;
     }
 
-    public String getXmlGenerationError() {
-        return xmlGenerationError;
+    public String getFormSubmissionError() {
+        return formSubmissionError;
     }
 
-    public void setXmlGenerationError(String xmlGenerationError) {
-        this.xmlGenerationError = xmlGenerationError;
+    public void setFormSubmissionError(String formSubmissionError) {
+        this.formSubmissionError = formSubmissionError;
     }
 
     public String getLastCompletedCashLimitEventIds() {
@@ -68,5 +73,13 @@ public class CashLimitForm extends TransactionFilterForm {
 
     public void setLastCompletedCashLimitEventIds(String lastCompletedCashLimitEventIds) {
         this.lastCompletedCashLimitEventIds = lastCompletedCashLimitEventIds;
+    }
+
+    public CashLimitEventStatus getFilterCashLimitEventStatus() {
+        return filterCashLimitEventStatus;
+    }
+
+    public void setFilterCashLimitEventStatus(CashLimitEventStatus filterCashLimitEventStatus) {
+        this.filterCashLimitEventStatus = filterCashLimitEventStatus;
     }
 }
