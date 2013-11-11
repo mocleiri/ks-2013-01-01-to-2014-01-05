@@ -3,7 +3,6 @@ package com.sigmasys.kuali.ksa.krad.form;
 import com.sigmasys.kuali.ksa.krad.model.AccountInformationHolder;
 import com.sigmasys.kuali.ksa.krad.model.AccountSearchInformationHolder;
 import com.sigmasys.kuali.ksa.krad.model.AccountSearchResultModel;
-import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.Activity;
 import com.sigmasys.kuali.ksa.model.GlTransaction;
 
@@ -15,11 +14,6 @@ import java.util.List;
  */
 @SuppressWarnings("all")
 public class AdminForm extends AbstractViewModel {
-	
-	/**
-	 * Account for creation or editing.
-	 */
-	private Account account;
 	
 	/**
 	 * Account information holder object
@@ -73,14 +67,6 @@ public class AdminForm extends AbstractViewModel {
    		this.activities = activities;
    	}
 
-	public Account getAccount() {
-		return account;
-	}
-	
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-	
 	public AccountInformationHolder getAccountInfo() {
 		return accountInfo;
 	}

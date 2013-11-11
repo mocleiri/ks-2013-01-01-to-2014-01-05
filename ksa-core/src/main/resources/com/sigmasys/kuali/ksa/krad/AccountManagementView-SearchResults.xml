@@ -59,9 +59,9 @@
 									<property name="items">
 										<list>
 											<bean parent="Uif-DataField" p:label="Account ID" p:propertyName="account.id"/>
-											<bean parent="Uif-DataField" p:label="Last Name" p:propertyName="account.defaultPersonName.firstName"/>
-											<bean parent="Uif-DataField" p:label="Identity Detail" p:propertyName="accountProtectedInfo.identityType.description"/>
-											<bean parent="Uif-DataField" p:label="Date of Birth" p:propertyName="dateOfBirth"/>
+											<bean parent="Uif-DataField" p:label="Last Name" p:propertyName="account.defaultPersonName.lastName"/>
+                                            <bean parent="Uif-DataField" p:label="Last Name" p:propertyName="account.defaultPersonName.firstName"/>
+                                            <bean parent="Uif-DataField" p:label="Date of Birth" p:propertyName="dateOfBirth"/>
 										</list>
 									</property>
 							</bean>

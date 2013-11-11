@@ -593,6 +593,7 @@
                                 </property>
                             </bean>
 
+                            <!--
                             <bean parent="Uif-InputField" p:propertyName="account.latePeriod.id" p:labelPlacement="TOP"
                                   p:label="Late Period"
                                   p:fieldLabel.renderColon="false">
@@ -610,6 +611,7 @@
                                     </bean>
                                 </property>
                             </bean>
+                            -->
                         </list>
                     </property>
                 </bean>
