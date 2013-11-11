@@ -149,10 +149,37 @@ public class PaymentPlanController extends GenericSearchController {
         String planIdString = request.getParameter("actionParameters[planId]");
         Long planId = Long.parseLong(planIdString);
 
-        thirdPartyTransferService.generateThirdPartyTransfer(planId, memberIdString, new Date());
-        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, memberIdString + " enrolled.");
+        try {
+            thirdPartyTransferService.generateThirdPartyTransfer(planId, memberIdString, new Date());
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, memberIdString + " enrolled.");
+        } catch(IllegalArgumentException e) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+        }
 
         populateThirdPartyForm(form);
+
+        return getUIFModelAndView(form);
+
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=enrollPaymentBilling")
+    public ModelAndView enrollPaymentBilling(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+
+        String memberIdString = request.getParameter("actionParameters[memberId]");
+
+        String planIdString = request.getParameter("actionParameters[planId]");
+        Long planId = Long.parseLong(planIdString);
+
+        PaymentBillingPlan plan = paymentBillingService.getPaymentBillingPlan(planId);
+
+        try{
+            paymentBillingService.generatePaymentBillingTransfer(planId, memberIdString, plan.getMaxAmount(), new Date());
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, memberIdString + " enrolled.");
+        } catch(IllegalArgumentException e) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+        }
+
+        populatePaymentBillingForm(form);
 
         return getUIFModelAndView(form);
 
@@ -177,6 +204,32 @@ public class PaymentPlanController extends GenericSearchController {
         GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, message);
 
         populateThirdPartyForm(form);
+
+        return getUIFModelAndView(form);
+
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=removeFromPaymentBillingQueue")
+    public ModelAndView removeFromPaymentBillingQueue(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+
+        String memberIdString = request.getParameter("actionParameters[memberId]");
+
+        String planIdString = request.getParameter("actionParameters[planId]");
+        Long planId = Long.parseLong(planIdString);
+
+
+        boolean result = paymentBillingService.deletePaymentBillingQueue(planId, memberIdString);
+
+        String message = "";
+        if(result){
+            message = memberIdString + " removed from the plan";
+        } else {
+            message = memberIdString + " not removed from the plan";
+        }
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, message);
+
+
+        populatePaymentBillingForm(form);
 
         return getUIFModelAndView(form);
 
@@ -621,6 +674,36 @@ public class PaymentPlanController extends GenericSearchController {
 
 
         populateThirdPartyForm(form);
+
+        return getUIFModelAndView(form);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=reexecutePaymentBilling")
+    public ModelAndView reexecutePaymentBilling(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
+        String planIdString = request.getParameter("actionParameters[planId]");
+        Long planId;
+
+        try {
+            planId = Long.parseLong(planIdString);
+        } catch(NumberFormatException e) {
+            String errorMessage = planIdString + " is not a valid Payment Billing Plan";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
+        PaymentBillingPlan plan = paymentBillingService.getPaymentBillingPlan(planId);
+
+        String userId = request.getParameter("actionParameters[accountId]");
+
+        try{
+            paymentBillingService.generatePaymentBillingTransfer(planId, userId, plan.getMaxAmount(), new Date());
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan re-executed for user " + userId);
+        } catch(RuntimeException e) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+            return getUIFModelAndView(form);
+        }
+
+        populatePaymentBillingForm(form);
 
         return getUIFModelAndView(form);
     }

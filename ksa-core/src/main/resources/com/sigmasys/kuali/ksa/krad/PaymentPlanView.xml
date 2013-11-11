@@ -899,7 +899,7 @@
                                         <bean parent="Uif-ImageField" p:source="../images/plan_members_reversed.png" p:style="cursor:pointer;" p:altText="View Reversed Plan Members" p:title=""
                                               p:onClickScript="showLightboxComponent('paymentBillingReversedLightbox@{#lineSuffix}');"/>
                                         <bean id="paymentBillingReversedLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
-                                            <property name="headerText" value="Payment Billing Plan Queued Members"/>
+                                            <property name="headerText" value="Payment Billing Plan Reversed Members"/>
                                             <property name="hidden" value="true"/>
                                             <property name="items">
                                                 <list>
@@ -1074,9 +1074,50 @@
                             <bean parent="Uif-InputField" p:label="Account ID" p:propertyName="directChargeAccount.id"/>
                             <bean parent="Uif-InputField" p:label="Name" p:propertyName="directChargeAccount.compositeDefaultPersonName"/>
                             <bean parent="Uif-InputField" p:label="Initiation Date" p:propertyName="initiationDate"/>
-                            <bean parent="Uif-InputField" p:label="Executed" p:propertyName="executed">
-                                <property name="control">
-                                    <bean parent="Uif-CheckboxControl" p:disabled="true"/>
+                            <bean parent="Uif-InputField" p:label="Maximum Requested Amount" p:propertyName="transferDetail.maxAmount"/>
+                            <bean parent="Uif-InputField" p:label="Actual Plan Amount" p:propertyName="transferDetail.planAmount"/>
+                            <bean parent="Uif-InputField" p:label="Flat Charge" p:propertyName="transferDetail.flatFeeCharge"/>
+                            <bean parent="Uif-InputField" p:label="Variable Charge" p:propertyName="transferDetail.variableFeeCharge"/>
+                            <bean parent="Uif-InputField" p:label="Status" p:propertyName="transferDetail.chargeStatus"/>
+                            <bean parent="Uif-HorizontalFieldGroup" p:label="Actions" p:style="white-space: nowrap;">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-ImageField" p:source="../images/re_execute.png" p:style="cursor:pointer;" p:altText="Re-execute the Payment Billing Plan" p:title=""
+                                              p:onClickScript="showLightboxComponent('PaymentBillingReExecutePlanLightbox@{#lineSuffix}');">
+                                            <!--<property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="Re-execute the Third Party Payment Plan"/>
+                                            </property>-->
+                                        </bean>
+                                        <ref bean="PaymentBillingReExecutePlanLightbox"/>
+
+                                        <!--
+                                        <bean parent="Uif-ActionLink" p:methodToCall="transactionTransferList" p:actionParameters="memberId:@{#line.transferDetail.directChargeAccount.id},planId:@{#line.plan.id},transferDetailId:@{#line.transferDetail.id}"
+                                              p:onClickScript="jQuery.fancybox.close();">
+                                            <property name="actionImage">
+                                                <bean parent="Uif-Image" p:source="../images/transaction_transfer_list.png" p:altText="Transaction Transfer List"/>
+                                            </property>
+                                        </bean>
+                                        <bean parent="Uif-ImageField" p:source="../images/delete.png" p:style="cursor:pointer;" p:altText="Reverse the Third Party Payment Plan" p:title=""
+                                              p:onClickScript="showLightboxComponent('reverseThirdPartyMemberLightbox@{#lineSuffix}');" p:render="@{#line.transferDetailId > 0}"/>
+                                        <bean id="reverseThirdPartyMemberLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+                                            <property name="headerText" value="Reverse the Third Party Payment Plan"/>
+                                            <property name="hidden" value="true"/>
+                                            <property name="items">
+                                                <list>
+                                                    <bean parent="Uif-InputField" p:propertyName="plan.name"/>
+                                                    <bean parent="Uif-InputField" p:propertyName="plan.code"/>
+                                                    <bean parent="Uif-InputField" p:label="Member" p:propertyName="transferDetail.directChargeAccount.compositeDefaultPersonName"/>
+                                                    <bean parent="Uif-MessageField" p:label="Mandatory Memo" p:labelPlacement="TOP"
+                                                          p:messageText="Please describe why the Third Party Payment Plan is being reversed"/>
+                                                    <bean parent="Uif-InputField" p:propertyName="memo.text" p:readOnly="false"/>
+
+                                                    <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="reverseThirdPartyPlan" p:actionLabel="Reverse Plan"
+                                                          p:actionParameters="transferDetailId:@{#line.transferDetailId},planId:@{#line.plan.id}" p:preSubmitCall="jQuery.fancybox.close(); return true;"/>
+                                                </list>
+                                            </property>
+                                        </bean>
+                                        -->
+                                    </list>
                                 </property>
                             </bean>
                         </list>
@@ -1111,7 +1152,25 @@
                         <list>
                             <bean parent="Uif-InputField" p:label="Account ID" p:propertyName="directChargeAccount.id"/>
                             <bean parent="Uif-InputField" p:label="Name" p:propertyName="directChargeAccount.compositeDefaultPersonName"/>
-
+                            <bean parent="Uif-InputField" p:label="Queued Date" p:propertyName="initiationDate"/>
+                            <bean parent="Uif-HorizontalFieldGroup" p:label="Actions">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="Uif-ActionLink" p:methodToCall="enrollPaymentBilling" p:actionParameters="memberId:@{#line.directChargeAccount.id},planId:@{#line.plan.id}"
+                                              p:onClickScript="jQuery.fancybox.close();">
+                                            <property name="actionImage">
+                                                <bean parent="Uif-Image" p:source="../images/move_waiting_to_participant_green.png" p:altText="Enroll Now"/>
+                                            </property>
+                                        </bean>
+                                        <bean parent="Uif-ActionLink" p:methodToCall="removeFromPaymentBillingQueue" p:actionParameters="memberId:@{#line.directChargeAccount.id},planId:@{#line.plan.id}"
+                                              p:onClickScript="jQuery.fancybox.close();">
+                                            <property name="actionImage">
+                                                <bean parent="Uif-Image" p:source="../images/remove_from_queue.png" p:altText="Remove from the queue"/>
+                                            </property>
+                                        </bean>
+                                    </list>
+                                </property>
+                            </bean>
                         </list>
                     </property>
                 </bean>
@@ -1168,6 +1227,26 @@
 
                 <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="reexecuteThirdParty" p:actionLabel="Re-execute Plan"
                       p:actionParameters="planId:@{#line.plan.id},accountId:@{#line.transferDetail.directChargeAccount.id}" p:onClickScript="jQuery.fancybox.close();"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PaymentBillingReExecutePlanLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL" p:headerText="Re-Execute the Payment Billing Plan">
+        <property name="hidden" value="true"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-InputField" p:propertyName="plan.name"/>
+                <bean parent="Uif-InputField" p:propertyName="plan.description"/>
+                <bean parent="Uif-InputField" p:label="Account ID" p:propertyName="directChargeAccount.id"/>
+                <bean parent="Uif-InputField" p:label="Name" p:propertyName="directChargeAccount.compositeDefaultPersonName"/>
+
+                <bean parent="Uif-MessageField" p:label="Please Note" p:labelPlacement="TOP"
+                      p:messageText="If any of the original settings for this Payment Billing Plan have changed since&lt;br&gt;
+                                        this account was enrolled then the new settings (percentages, schedule of payments, etc.)&lt;br&gt;
+                                        will apply upon re-execution of the plan."/>
+
+                <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="reexecutePaymentBilling" p:actionLabel="Re-execute Plan"
+                      p:actionParameters="planId:@{#line.plan.id},accountId:@{#line.directChargeAccount.id}" p:onClickScript="jQuery.fancybox.close();"/>
             </list>
         </property>
     </bean>
