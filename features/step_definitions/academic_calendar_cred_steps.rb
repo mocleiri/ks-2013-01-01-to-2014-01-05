@@ -338,7 +338,7 @@ When /^I add a Holiday Calendar to the Academic Calendar$/ do
   on EditAcademicCalendar do |page|
     #toggle Holiday?
     page.add_holiday_calendar_select.select @holiday_calendar.name
-    page.add_holiday_calendar_button.click
+    page.add_holiday_calendar
     page.save
   end
 end
