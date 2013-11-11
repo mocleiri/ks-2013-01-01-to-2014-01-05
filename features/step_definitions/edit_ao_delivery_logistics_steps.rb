@@ -36,7 +36,8 @@ When /^I add RDLs for an AO specifying (times|times and facility|times and room)
 
   # add new RDL row
   @activity_offering.edit
-  dl_obj = create DeliveryLogistics, :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => optional_field_facility, :room => optional_field_room
+  dl_obj = create DeliveryLogistics, :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
+                  :facility => optional_field_facility, :facility_long_name => optional_field_facility, :room => optional_field_room
   @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
   # if entering an invalid combination, need to stay on page to see the error message, so skip the page submit
   @activity_offering.save unless optional_field == "times and room"
@@ -62,7 +63,7 @@ Then /^the AO's delivery logistics shows the new schedule$/ do
       page.get_requested_logistics_days(row).delete(' ').should == del_logisitics.days
       page.get_requested_logistics_start_time(row).delete(' ').should == "#{del_logisitics.start_time}#{del_logisitics.start_time_ampm}"
       page.get_requested_logistics_end_time(row).delete(' ').should == "#{del_logisitics.end_time}#{del_logisitics.end_time_ampm}"
-      page.get_requested_logistics_facility(row).should == del_logisitics.facility
+      page.get_requested_logistics_facility(row).should == del_logisitics.facility_long_name
       page.get_requested_logistics_room(row).should == del_logisitics.room
     end
     page.cancel
@@ -97,7 +98,8 @@ When /^I add RDLs for an AO$/ do
   #@orig_rdls = @new_rdls
   # add new RDL row
   @activity_offering.edit
-  dl_obj = create DeliveryLogistics, :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  dl_obj = create DeliveryLogistics, :days => "TH", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
+                  :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
   @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
   @activity_offering.save
 end
@@ -127,10 +129,12 @@ When /^I add (standard|ad hoc) RDLs for an AO$/ do |tsType|
   # add new RDL row
   @activity_offering.edit
   if tsType=="standard"
-    dl_obj = create DeliveryLogistics, :std_ts => true, :days => "MWF", :start_time => "08:00", :start_time_ampm => "am", :end_time => "08:35", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+    dl_obj = create DeliveryLogistics, :std_ts => true, :days => "MWF", :start_time => "08:00", :start_time_ampm => "am", :end_time => "08:35", :end_time_ampm => "am",
+                    :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
     @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
   elsif tsType=="ad hoc"
-    dl_obj = create DeliveryLogistics, :std_ts => false, :days => "TH", :start_time => "08:21", :start_time_ampm => "pm", :end_time => "09:04", :end_time_ampm => "pm", :facility => "PHYS", :room => "4102"
+    dl_obj = create DeliveryLogistics, :std_ts => false, :days => "TH", :start_time => "08:21", :start_time_ampm => "pm", :end_time => "09:04", :end_time_ampm => "pm",
+                    :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
     @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
   end
   @activity_offering.save

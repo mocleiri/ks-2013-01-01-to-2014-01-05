@@ -587,7 +587,10 @@ end
 
 Given /^I add requested delivery logistics to the activity offering$/ do
   @rdl_list = {}
-  @rdl_list["MTW"] = make DeliveryLogistics, :days => "MTW", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  @rdl_list["MTW"] = make DeliveryLogistics, :days => "MTW",
+                          :start_time => "10:00", :start_time_ampm => "am",
+                          :end_time => "10:50", :end_time_ampm => "am",
+                          :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
 
   @activity_offering.edit :requested_delivery_logistics_list => @rdl_list
 

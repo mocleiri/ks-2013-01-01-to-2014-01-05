@@ -67,14 +67,18 @@ And /^I create a Course Offering from catalog with Activity Offerings assigned t
                             :delivery_format_list => delivery_format_list
 
   @rdl_list = {}
-  @rdl_list["MT"] = make DeliveryLogistics, :days => "MT", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  @rdl_list["MT"] = make DeliveryLogistics, :days => "MT",
+                         :start_time => "10:00", :start_time_ampm => "am",
+                         :end_time => "10:50", :end_time_ampm => "am",
+                         :facility => "PHYS", :facility_long_name => "PHYS" , :room => "4102"
 
   @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering,  :subterm => @subterm_list[0].subterm_type,
                               :format => "Lab Only", :activity_type => "Lab" , :requested_delivery_logistics_list => @rdl_list
   @activity_offering.save
 
   @rdl_list2 = {}
-  @rdl_list2["WF"] = make DeliveryLogistics, :days => "WF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  @rdl_list2["WF"] = make DeliveryLogistics, :days => "WF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
+                          :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
   @activity_offering2 = create ActivityOffering,  :parent_course_offering => @course_offering, :subterm => @subterm_list[1].subterm_type,
                                :format => "Lab Only", :activity_type => "Lab" , :requested_delivery_logistics_list => @rdl_list2
 
@@ -94,14 +98,16 @@ And /^I create a Course Offering from catalog with Activity Offerings assigned t
                             :delivery_format_list => delivery_format_list
 
   @rdl_list = {}
-  @rdl_list["MT"] = make DeliveryLogistics, :days => "MT", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  @rdl_list["MT"] = make DeliveryLogistics, :days => "MT", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
+                         :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
 
   @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering,  :subterm => @subterm_list[0].subterm_type,
                               :format => "Lecture Only", :activity_type => "Lecture" , :requested_delivery_logistics_list => @rdl_list
   @activity_offering.save
 
   @rdl_list2 = {}
-  @rdl_list2["WF"] = make DeliveryLogistics, :days => "WF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  @rdl_list2["WF"] = make DeliveryLogistics, :days => "WF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
+                          :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
   @activity_offering2 = create ActivityOffering,  :parent_course_offering => @course_offering, :subterm => @subterm_list[1].subterm_type,
                                :format => "Lecture Only", :activity_type => "Lecture" , :requested_delivery_logistics_list => @rdl_list2
 
@@ -117,14 +123,16 @@ And /^I create a Course Offering from catalog with Activity Offerings$/ do
                             :delivery_format_list => delivery_format_list
 
   @rdl_list = {}
-  @rdl_list["MT"] = make DeliveryLogistics, :days => "MT", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  @rdl_list["MT"] = make DeliveryLogistics, :days => "MT", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
+                         :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
 
   @activity_offering = create ActivityOffering, :parent_course_offering => @course_offering, # :subterm => @subterm_list[0].subterm_type,
                               :format => "Lab Only", :activity_type => "Lab" , :requested_delivery_logistics_list => @rdl_list
   @activity_offering.save
 
   @rdl_list2 = {}
-  @rdl_list2["WF"] = make DeliveryLogistics, :days => "WF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  @rdl_list2["WF"] = make DeliveryLogistics, :days => "WF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
+                          :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
   @activity_offering2 = create ActivityOffering,  :parent_course_offering => @course_offering, #:subterm => @subterm_list[1].subterm_type,
                                :format => "Lab Only", :activity_type => "Lab" , :requested_delivery_logistics_list => @rdl_list2
   @activity_offering2.save

@@ -253,6 +253,15 @@ class ActivityOffering
     st_times = ao_table_row.cells[ManageCourseOfferings::AO_ST_TIME].text.split("\n")
     end_times = ao_table_row.cells[ManageCourseOfferings::AO_END_TIME].text.split("\n")
     fac_names = ao_table_row.cells[ManageCourseOfferings::AO_BLDG].text.split("\n")
+    fac_long_names = []
+    fac_long_names_tooltip = ao_table_row.cells[ManageCourseOfferings::AO_BLDG].hidden.value
+    if fac_long_names_tooltip[/(?<=, ')\S*/] == "<span"
+      #createTooltip('u432_line0_line10', '<span class=&quot;uif-scheduled-dl&quot; >Tawes Fine Arts Bldg.</span><br><span class=&quot;uif-scheduled-dl&quot; >Mathematics Bldg.</span>', {always
+      fac_long_names = fac_long_names_tooltip.scan(/(?<=;uif-scheduled-dl&quot; \>).*?(?=\<\/span)/)
+    else
+      #createTooltip('u432_line0_line2', 'Tawes Fine Arts Bldg.', {always...
+      fac_long_names << fac_long_names_tooltip[/(?<=, ').*?(?=',)/]
+    end
     rooms = ao_table_row.cells[ManageCourseOfferings::AO_ROOM].text.split("\n")
 
     i=0
@@ -267,7 +276,7 @@ class ActivityOffering
                 :end_time => et,
                 :end_time_ampm => et_ampm,
                 :facility => fac_names[i],
-                :facility_long_name => fac_names[i],
+                :facility_long_name => fac_long_names[i],
                 :room => rooms[i]
       dl_list << dl
       i += 1
