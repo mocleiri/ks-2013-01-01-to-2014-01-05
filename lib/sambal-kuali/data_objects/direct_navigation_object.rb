@@ -22,12 +22,14 @@ class DirectNavigation
 
   def setup_search_edit_co_urls
 
+    go_to_manage_course_offerings
+    @manage_course_offering = @browser.url
+
     @course_offering = make CourseOffering, :term=>Rollover::MAIN_TEST_TERM_SOURCE, :course=>"CHEM132"
     @course_offering.search_by_subjectcode
     @course_offering_results = @browser.url
 
     @course_offering.manage
-    @manage_course_offering = @browser.url
     @single_course_results = @browser.url
 
     on ManageCourseOfferings do |page|
@@ -42,7 +44,7 @@ class DirectNavigation
 
   def setup_create_co_urls
     @course_offering = make CourseOffering, :term=>Rollover::MAIN_TEST_TERM_SOURCE, :course=>"CHEM132"
-    @create_course_offering = @course_offering.start_create_by_search
+    @course_offering.start_create_by_search
     @create_course_offering = @browser.url
     on CreateCourseOffering do  |page|
       page.catalogue_course_code.set ""

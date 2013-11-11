@@ -20,6 +20,7 @@ When /^I do not have direct url access to the manage course offerings search pag
 end
 
 When /^I do not have direct url access to the course offering results page$/ do
+  #access is now blocked with error
   @browser.goto @direct_navigation.course_offering_results
   on ErrorPage do |page|
     page.error_401.should == true
@@ -27,6 +28,7 @@ When /^I do not have direct url access to the course offering results page$/ do
 end
 
 When /^I do not have direct url access to the course offering single course results page$/ do
+  #access is now blocked with error
   @browser.goto @direct_navigation.single_course_results
   on ErrorPage do |page|
     page.error_401.should == true
