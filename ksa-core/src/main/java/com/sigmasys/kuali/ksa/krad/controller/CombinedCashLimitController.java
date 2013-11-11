@@ -282,7 +282,7 @@ public class CombinedCashLimitController extends TransactionFilterController {
 
                 Long id = model.getCashLimitEvent().getId();
 
-                cashLimitService.enqueueCashLimitEvent(id);
+                cashLimitService.queueCashLimitEvent(id);
             }
         } catch (Exception e) {
             formSubmissionError = e.getMessage();

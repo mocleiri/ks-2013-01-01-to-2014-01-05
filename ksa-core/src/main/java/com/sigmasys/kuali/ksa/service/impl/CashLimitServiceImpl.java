@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
@@ -66,11 +67,10 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_CASH_LIMIT_PARAMETER)
     public CashLimitParameter createCashLimitParameter(String code, String name, String description, Tag tag,
                                                        BigDecimal lowerLimit, BigDecimal upperLimit, boolean isActive,
                                                        String authorityName, String xmlElement) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_CASH_LIMIT_PARAMETER);
 
         if (cashLimitParameterExists(code)) {
             String errMsg = "CashLimitParameter already exists with code '" + code + "'";
@@ -102,10 +102,8 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.EDIT_CASH_LIMIT_PARAMETER)
     public Long persistCashLimitParameter(CashLimitParameter cashLimitParameter) {
-
-        PermissionUtils.checkPermission(cashLimitParameter.getId() == null ?
-                Permission.CREATE_CASH_LIMIT_PARAMETER : Permission.EDIT_CASH_LIMIT_PARAMETER);
 
         Tag tag = cashLimitParameter.getTag();
         if (tag != null) {
@@ -134,17 +132,16 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * Retrieves all CashLimitEvent objects for the given list of Account IDs and CashLimitEvent statuses
      * and where the "Event Date" falls in the specified date range.
      *
-     * @param userIds   Account IDs
-     * @param dateFrom  Beginning of the date range for "Event Date" search.
-     * @param dateTo    End of the date range for "Event Date" search.
-     * @param statuses  CashLimitEvent statuses
+     * @param userIds  Account IDs
+     * @param dateFrom Beginning of the date range for "Event Date" search.
+     * @param dateTo   End of the date range for "Event Date" search.
+     * @param statuses CashLimitEvent statuses
      * @return a list of cash limit events
      */
-    @WebMethod(exclude = true)
     @Override
+    @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_IRS_8300)
     public List<CashLimitEvent> getCashLimitEvents(List<String> userIds, Date dateFrom, Date dateTo, CashLimitEventStatus... statuses) {
-
-        PermissionUtils.checkPermission(Permission.READ_IRS_8300);
 
         if (CollectionUtils.isEmpty(userIds)) {
             String errMsg = "List of Account IDs cannot be empty";
@@ -206,6 +203,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_IRS_8300)
     public List<CashLimitEvent> getCashLimitEvents(List<String> userIds, CashLimitEventStatus... statuses) {
         return getCashLimitEvents(userIds, null, null, statuses);
     }
@@ -217,6 +215,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * @return a list of cash limit events
      */
     @Override
+    @PermissionsAllowed(Permission.READ_IRS_8300)
     public List<CashLimitEvent> getCashLimitEvents(List<String> userIds) {
         return getCashLimitEvents(userIds, (CashLimitEventStatus[]) null);
     }
@@ -228,9 +227,8 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * @return CashLimitEvent instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_IRS_8300)
     public CashLimitEvent getCashLimitEvent(Long id) {
-
-        PermissionUtils.checkPermission(Permission.READ_IRS_8300);
 
         Query query = em.createQuery("select cle from CashLimitEvent cle " +
                 " left outer join fetch cle.xmlDocument xml " +
@@ -248,9 +246,8 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * @return a list of cash limit parameters
      */
     @Override
+    @PermissionsAllowed(Permission.READ_CASH_LIMIT_PARAMETER)
     public List<CashLimitParameter> getCashLimitParameters(boolean activeOnly) {
-
-        PermissionUtils.checkPermission(Permission.READ_CASH_LIMIT_PARAMETER);
 
         Query query = em.createQuery("select clp from CashLimitParameter clp " +
                 " left outer join fetch clp.tag tag " +
@@ -267,9 +264,8 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * @return true if it exists, false - otherwise
      */
     @Override
+    @PermissionsAllowed(Permission.READ_CASH_LIMIT_PARAMETER)
     public boolean cashLimitParameterExists(String code) {
-
-        PermissionUtils.checkPermission(Permission.READ_CASH_LIMIT_PARAMETER);
 
         Query query = em.createQuery("select 1 from CashLimitParameter where code = :code");
 
@@ -286,9 +282,8 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * @return CashLimitParameter instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_CASH_LIMIT_PARAMETER)
     public CashLimitParameter getCashLimitParameterByCode(String code) {
-
-        PermissionUtils.checkPermission(Permission.READ_CASH_LIMIT_PARAMETER);
 
         Query query = em.createQuery("select clp from CashLimitParameter clp " +
                 " left outer join fetch clp.tag tag " +
@@ -308,9 +303,8 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * @return CashLimitParameter instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_CASH_LIMIT_PARAMETER)
     public CashLimitParameter getCashLimitParameter(Long id) {
-
-        PermissionUtils.checkPermission(Permission.READ_CASH_LIMIT_PARAMETER);
 
         Query query = em.createQuery("select clp from CashLimitParameter clp " +
                 " left outer join fetch clp.tag tag " +
@@ -334,13 +328,12 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CHECK_CASH_LIMIT)
     public boolean checkCashLimit(String userId) {
 
         if (!"ON".equalsIgnoreCase(configService.getParameter(Constants.CASH_TRACKING_SYSTEM))) {
             return false;
         }
-
-        PermissionUtils.checkPermission(Permission.CHECK_CASH_LIMIT);
 
         String trackingTag = configService.getParameter(Constants.CASH_TRACKING_TAG);
 
@@ -473,18 +466,19 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      * Only "Queued" CashLimitEvents can be Ignored.
      * Removes the stored IRS form 8300.
      *
-     * @param id    ID of a CashLimitEvent to ignore.
-     * @return      The just Ignored CashLimitEvent.
+     * @param id ID of a CashLimitEvent to ignore.
+     * @return Ignored CashLimitEvent
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.READ_IRS_8300)
     public CashLimitEvent ignoreCashLimitEvent(Long id) {
 
         // Find the CashLimitEvent
         CashLimitEvent cashLimitEvent = getCashLimitEvent(id);
 
         if (cashLimitEvent == null) {
-            String errorMsg = String.format("Cannot find a Cash Limit Event with ID %d.", id);
+            String errorMsg = String.format("Cannot find a Cash Limit Event with ID = %d", id);
             logger.error(errorMsg);
             throw new IllegalArgumentException(errorMsg);
         }
@@ -492,7 +486,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
         // Check that only "Queued" CashLimitEvents can be Ignored:
         if (cashLimitEvent.getStatus() != CashLimitEventStatus.QUEUED) {
             String errorMsg = String.format(
-                    "Only Queued Cash Limit Events can be Ignored, but Cash Limit Event with ID %d is %s.", id, cashLimitEvent.getStatus());
+                    "Only Queued Cash Limit Events can be Ignored, Cash Limit Event with ID %d is '%s'", id, cashLimitEvent.getStatus());
             logger.error(errorMsg);
             throw new IllegalStateException(errorMsg);
         }
@@ -512,29 +506,30 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
     }
 
     /**
-     * Enqueues a CashLimitEvent with the given ID.
-     * Both "Ignored" and "Completed" CashLimitEvents can be Enqueued.
+     * Queues a CashLimitEvent with the given ID.
+     * Both "Ignored" and "Completed" CashLimitEvents can be queued.
      * Removes the stored IRS form 8300.
      *
-     * @param id    ID of a CashLimitEvent to enqueue.
-     * @return      The just enqueued CashLimitEvent.
+     * @param id ID of a CashLimitEvent to enqueue.
+     * @return Queued CashLimitEvent
      */
     @Override
     @Transactional(readOnly = false)
-    public CashLimitEvent enqueueCashLimitEvent(Long id) {
+    @PermissionsAllowed(Permission.READ_IRS_8300)
+    public CashLimitEvent queueCashLimitEvent(Long id) {
 
         // Find the CashLimitEvent
         CashLimitEvent cashLimitEvent = getCashLimitEvent(id);
 
         if (cashLimitEvent == null) {
-            String errorMsg = String.format("Cannot find a Cash Limit Event with ID %d.", id);
+            String errorMsg = String.format("Cannot find a Cash Limit Event with ID = %d", id);
             logger.error(errorMsg);
             throw new IllegalArgumentException(errorMsg);
         }
 
         // Check that only "Queued" CashLimitEvents can be Ignored:
         if (cashLimitEvent.getStatus() == CashLimitEventStatus.QUEUED) {
-            String errorMsg = String.format("Queued Cash Limit Event with ID %d cannot be Enqueued.", id);
+            String errorMsg = String.format("Queued Cash Limit Event with ID %d cannot be Queued", id);
             logger.error(errorMsg);
             throw new IllegalStateException(errorMsg);
         }
@@ -559,17 +554,18 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
      *
      * @param id               ID of a CashLimitEvent to complete.
      * @param generateForm8300 Whether to generate an IRS form 8300.
-     * @return The completed CashLimitEvent.
+     * @return Completed CashLimitEvent
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.READ_IRS_8300)
     public CashLimitEvent completeCashLimitEvent(Long id, boolean generateForm8300) {
 
         // Find the CashLimitEvent
         CashLimitEvent cashLimitEvent = getCashLimitEvent(id);
 
         if (cashLimitEvent == null) {
-            String errorMsg = String.format("Cannot find a Cash Limit Event with ID %d.", id);
+            String errorMsg = String.format("Cannot find a Cash Limit Event with ID = %d", id);
             logger.error(errorMsg);
             throw new IllegalArgumentException(errorMsg);
         }
@@ -577,7 +573,7 @@ public class CashLimitServiceImpl extends GenericPersistenceService implements C
         // Check that only "Queued" CashLimitEvents can be Ignored:
         if (cashLimitEvent.getStatus() != CashLimitEventStatus.QUEUED) {
             String errorMsg = String.format(
-                    "Only Queued Cash Limit Events can be Completed, but Cash Limit Event with ID %d is %s.", id, cashLimitEvent.getStatus());
+                    "Only Queued Cash Limit Events can be Completed, Cash Limit Event with ID %d is '%s'", id, cashLimitEvent.getStatus());
             logger.error(errorMsg);
             throw new IllegalStateException(errorMsg);
         }
