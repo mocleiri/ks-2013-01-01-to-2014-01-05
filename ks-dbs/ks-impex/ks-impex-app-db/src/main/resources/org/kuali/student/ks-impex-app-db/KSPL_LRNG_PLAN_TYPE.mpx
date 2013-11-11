@@ -1,3 +1,0 @@
-TYPE_KEY,OBJ_ID,VER_NBR,TYPE_DESC,EFF_DT,EXPIR_DT,NAME,REF_OBJECT_URI
-"kuali.academicplan.type.plan","obj-plan-type-1","0","Learning plan description","${mpx.null}","${mpx.null}","Learning Plan","${mpx.null}"
-"kuali.academicplan.type.plan.template","obj-plan-type-2","0","Learning plan template description","${mpx.null}","${mpx.null}","Learning Plan Template","${mpx.null}"

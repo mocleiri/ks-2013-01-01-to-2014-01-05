@@ -1,6 +1,0 @@
-TYPE_KEY,OBJ_ID,VER_NBR,TYPE_DESC,EFF_DT,EXPIR_DT,NAME,REF_OBJECT_URI
-"kuali.academicplan.item.backup","obj-plan-item-backup","0","Backup item description","${mpx.null}","${mpx.null}","Backup Item","${mpx.null}"
-"kuali.academicplan.item.cart","obj-plan-item-cart","0","A plan item that has been added to the shopping cart.","${mpx.null}","${mpx.null}","Shopping Cart Item","${mpx.null}"
-"kuali.academicplan.item.planned","obj-plan-item-planned","0","Planned item description","${mpx.null}","${mpx.null}","Planned Item","${mpx.null}"
-"kuali.academicplan.item.whatif","obj-plan-item-whatif","0","What-if description","${mpx.null}","${mpx.null}","What-if Item","${mpx.null}"
-"kuali.academicplan.item.wishlist","obj-plan-item-wishlist","0","Wishlist item description","${mpx.null}","${mpx.null}","Wishlist Item","${mpx.null}"
