@@ -1,6 +1,6 @@
 When /^I edit a Standard Final Exam rule on the matrix$/ do
   @matrix = make FinalExamMatrix
-  @matrix.edit :defer_save => true
+  @matrix.edit :defer_save => true, :defer_submit => true
 end
 
 When /^I open the Final Exam Matrix for ([^"]*)$/ do |term|

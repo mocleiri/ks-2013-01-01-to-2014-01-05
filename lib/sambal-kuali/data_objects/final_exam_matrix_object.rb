@@ -16,7 +16,7 @@ class FinalExamMatrix
     defaults = {
       :term_type => "Fall Term",
       :exam_type => "Standard",
-      :rule_requirements => "TH at 11:00 AM",
+      :rule_requirements => "TH",
       :rule => "If Course meets on <timeslot>",
       :days => "MWF",
       :start_time => "05:00",
@@ -106,7 +106,8 @@ class FinalExamMatrix
         :time_ampm => @time_ampm,
         :free_text => @free_text,
         :defer_save => @defer_save,
-        :navigate_to_page => true
+        :navigate_to_page => true,
+        :defer_submit => @defer_submit
     }
     options = defaults.merge(opts)
 
@@ -121,11 +122,15 @@ class FinalExamMatrix
       edit_statement options
     end
 
-    on(FEMatrixEdit).update_rule unless options[:defer_save] == true
+    if options[:defer_save] == false
+      on(FEMatrixEdit).update_rule
+    end
 
-    on FEMatrixView do |page|
-      page.submit unless @defer_submit == true
-      page.loading.wait_while_present
+    if options[:defer_submit] == false
+      on FEMatrixView do |page|
+        page.submit
+        page.loading.wait_while_present
+      end
     end
 
     set_options(options)

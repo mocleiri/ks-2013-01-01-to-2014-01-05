@@ -3,7 +3,7 @@ class FEMatrixEdit < BasePage
   wrapper_elements
   krms_frame_elements
 
-  expected_element :add_statement_btn
+  expected_element :cancel_rule_btn
 
   element(:fe_agenda_view_page) { |b| b.frm.div( id: "KSFE-AgendaManagement-View")}
   element(:fe_rule_maintenance_page) { |b| b.fe_agenda_view_page.div( id: "KSFE-RuleMaintenance-Page")}
