@@ -181,6 +181,10 @@
                       p:href="reportReconciliationView?methodToCall=get&amp;viewId=ReportReconciliationView&amp;pageId=AgedBalanceView"/>
                 <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerMainPage"
                       p:actionLabel="General Ledger"/>
+                <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerPriorBatchPage"
+                      p:actionLabel="General Ledger Prior Batch"/>
+                <bean parent="Uif-NavigationActionLink" p:navigateToPageId="GeneralLedgerPendingPage"
+                      p:actionLabel="General Ledger Pending"/>
             </list>
         </property>
     </bean>

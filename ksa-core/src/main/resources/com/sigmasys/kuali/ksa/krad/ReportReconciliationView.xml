@@ -47,6 +47,8 @@
                 <!--Begin General Ledger Page-->
 
                 <ref bean="GeneralLedgerMainPage"/>
+                <ref bean="GeneralLedgerPriorBatchPage"/>
+                <ref bean="GeneralLedgerPendingPage"/>
 				<ref bean="GeneralLedgerBatchDetailsPage"/>
 
                 <!--End General Ledger Page-->
