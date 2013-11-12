@@ -884,7 +884,7 @@
                             <bean p:id="deleteCourseYesButton" parent="KSAP-PrimaryActionButton-Small"
                                   p:actionLabel="Delete">
                                 <property name="actionScript" value="
-                                    var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'removeItem', courseId:'@{courseSummaryDetails.courseId}'};
+                                    var additionalFormData = {viewId:'PlannedCourse-FormView', methodToCall:'removeItem', courseId:'@{courseSummaryDetails.courseId}', code:'@{courseSummaryDetails.code}'};
                                     submitPopupForm(additionalFormData, e, false);
                                 "/>
                                 <property name="onDocumentReadyScript" value="
