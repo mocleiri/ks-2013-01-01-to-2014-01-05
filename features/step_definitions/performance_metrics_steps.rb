@@ -1,19 +1,19 @@
 When /^I log in as a Schedule Coordinator$/ do
   @performance_test = make PerformanceTest
-
-  visit LUMMainPage do |page|
+  on KSFunctionalHome do |page|
+  #visit LUMMainPage do |page|
     page.logout
     page.username_field.set "martha"
     page.password_field.set "martha"
     @performance_test.start
     page.login_button.click
 
-  on KSFunctionalHome do |page|
+
     page.enrollment_link.wait_until_present
     @performance_test.end
   end
 
-  end
+ # end
 end
 
 Then /^the transaction takes less than "([^"]*)" seconds$/ do |time_requirement|
