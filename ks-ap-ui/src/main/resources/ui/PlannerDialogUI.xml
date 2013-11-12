@@ -540,7 +540,7 @@
 <!-- SCT-6322: ADDING courseId -->
        <bean id="planner_course_id_input" parent="planner_dialog_input">
               <property name="propertyName" value="courseId" />
-              <property name="label" value="CourseId" />
+              <property name="label" value="Which @{courseCd} course would you like to add?" />
               <property name="instructionalText" value="Please select a course from this list." />
               <property name="control">
                      <bean parent="Uif-DropdownControl" />
