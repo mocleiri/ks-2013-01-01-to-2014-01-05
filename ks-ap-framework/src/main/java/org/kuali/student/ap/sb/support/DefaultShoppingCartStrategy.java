@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -112,6 +113,7 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 				courseOptions.size());
 		for (CourseOption courseOption : courseOptions) {
 			ShoppingCartRequestInfo cartRequest = new ShoppingCartRequestInfo();
+			cartRequest.setUniqueId(UUID.randomUUID().toString());
 			cartRequest.setTerm(new TermInfo(term));
 			cartRequest.setCourse(courseHelper.getCourseInfo(courseOption
 					.getCourseId()));
@@ -245,6 +247,7 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 				ShoppingCartRequestInfo cartRequest = rmap.get(primaryCode);
 				if (cartRequest == null) {
 					cartRequest = new ShoppingCartRequestInfo();
+					cartRequest.setUniqueId(UUID.randomUUID().toString());
 					cartRequest.setAddToCart(false);
 					cartRequest.setCourse(KsapFrameworkServiceLocator.getCourseHelper()
 							.getCourseInfo(planItem.getRefObjectId()));
@@ -325,6 +328,7 @@ public class DefaultShoppingCartStrategy implements ShoppingCartStrategy,
 				ShoppingCartRequestInfo cartRequest = amap.get(primaryCode);
 				if (cartRequest == null) {
 					cartRequest = new ShoppingCartRequestInfo();
+					cartRequest.setUniqueId(UUID.randomUUID().toString());
 					cartRequest.setAddToCart(true);
 					cartRequest.setCourse(courseHelper.getCourseInfo(ao.getCourseId()));
 					cartRequest.setPrimaryRegistrationCode(primaryCode);

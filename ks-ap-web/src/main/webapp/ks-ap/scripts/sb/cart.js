@@ -91,7 +91,7 @@ function ksapCartUpdateEvent(response, textStatus, jqXHR) {
 			}
 		}
 
-		if (!response.error || true) {
+		if (!response.error) {
 			jQuery("#sb_cart_update_cart_button").hide();
 			jQuery("#sb_cart_go_to_cart_button").show();
 		}
@@ -119,8 +119,6 @@ function ksapCartUpdateEvent(response, textStatus, jqXHR) {
 				ksapPlannerUpdateCredits(data);
 			}
 		}
-		
-				// <bean parent="Uif-Message" p:id="sb_cart_request_@{#line.uniqueId}" p:hidden="true" />
 
 		if (response.message != null)
 			showGrowl(response.message);

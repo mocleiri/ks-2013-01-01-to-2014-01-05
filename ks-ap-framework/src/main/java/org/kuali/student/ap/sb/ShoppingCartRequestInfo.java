@@ -52,7 +52,6 @@ public class ShoppingCartRequestInfo implements ShoppingCartRequest,
 	private List<?> _futureElements;
 
 	public ShoppingCartRequestInfo() {
-		uniqueId = UUID.randomUUID().toString();
 	}
 
 	public ShoppingCartRequestInfo(ShoppingCartRequest copy) {
