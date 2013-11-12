@@ -10,7 +10,8 @@ When /^I revise an AO's requested delivery logistics$/ do
   # edit RDLs
   @activity_offering.edit
   orig_key = @activity_offering.requested_delivery_logistics_list.keys[0]
-  @activity_offering.requested_delivery_logistics_list.values[0].edit :days => "SU", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am", :facility => "PHYS", :room => "4102"
+  @activity_offering.requested_delivery_logistics_list.values[0].edit :days => "SU", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
+                                                                      :facility => "PHYS", :facility_long_name => "PHYS",:room => "4102"
   @activity_offering.requested_delivery_logistics_list["SU10:00AM"] = @activity_offering.requested_delivery_logistics_list.values[0]
   @activity_offering.requested_delivery_logistics_list.delete(orig_key)
   @activity_offering.save
