@@ -398,7 +398,7 @@
 					p:headerText="Classes to add to cart" p:id="sb_add_to_cart" p:propertyName="addToCart" />
 				<bean parent="sb_cart_courses" p:render="@{!keepInCart.empty}" 
 					p:headerText="Already registered or keep in cart" p:id="sb_keep_in_cart" p:propertyName="keepInCart">
-					<property name="items[0].items[0].disclosure.defaultOpen" value="false" />
+					<property name="items[0].items[0].disclosure.defaultOpen" value="true" />
 				</bean>
 			</list>
 		</property>
