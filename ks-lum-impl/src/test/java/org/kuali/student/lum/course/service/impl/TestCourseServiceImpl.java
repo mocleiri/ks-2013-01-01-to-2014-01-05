@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1414,6 +1415,69 @@ public class TestCourseServiceImpl{
         //List<VersionDisplayInfo> versions = courseService.getVersionsInDateRange(CourseServiceConstants.COURSE_NAMESPACE_URI, createdCourse.getVersion().getVersionIndId(), yesterday, tomorrow);
         
         //assertEquals(1, versions.size());
+    }
+
+    @Test
+    public void testCreateCourseMultipleCredit() throws Exception {
+        System.out.println("testCreateCourse");
+        CourseDataGenerator generator = new CourseDataGenerator();
+
+        CourseInfo cInfo = null;
+        try {
+            assertNotNull(cInfo = generator.getCourseTestData());
+
+            // add a multiple credit option ResultValueGroup
+            cInfo.getCreditOptions().add(generateMultipleCreditOption());
+
+            CourseInfo createdCourse = courseService.createCourse(cInfo, contextInfo);
+            assertNotNull(createdCourse);
+            assertEquals(DtoConstants.STATE_DRAFT, createdCourse.getStateKey());
+            assertEquals("kuali.lu.type.CreditCourse", createdCourse.getTypeKey());
+
+            // check to see that multiple credit result value groups have their key properly sorted after being disassembled
+            for(ResultValuesGroupInfo rvg : createdCourse.getCreditOptions()) {
+                // This test is only valid for multiple credit result types
+                if(rvg.getTypeKey().equals(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE)) {
+
+                    // remove the prefix string to get the comma separated list of credit values
+                    String csv = rvg.getKey().replace(CourseAssemblerConstants.COURSE_RESULT_COMP_CREDIT_PREFIX, "");
+
+                    // split the csv token by comma
+                    String[] numberTokens = csv.split(",");
+
+                    List<Double> numbers = new ArrayList<Double>(numberTokens.length);
+
+                    for(String num : numberTokens) {
+                        numbers.add(Double.parseDouble(num));
+                    }
+
+                    // create a copy of the numbers list and sort it
+                    List<Double> sortedNumbers = new ArrayList<Double>(numbers);
+                    Collections.sort(sortedNumbers);
+
+                    // compare the two lists for exact match
+                    assertEquals(sortedNumbers, numbers);
+                }
+            }
+        } catch (DataValidationErrorException e) {
+            dumpValidationErrors(cInfo);
+            fail("DataValidationError: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    protected ResultValuesGroupInfo generateMultipleCreditOption() {
+
+        ResultValuesGroupInfo result = new ResultValuesGroupInfo();
+
+        result.setTypeKey(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE);
+        result.setResultScaleKey("kuali.result.scale.credit.degree");
+        result.setStateKey("kuali.result.values.group.state.approved");
+        result.setResultValueKeys(Arrays.asList("kuali.result.value.credit.degree.1.0", "kuali.result.value.credit.degree.11.0", "kuali.result.value.credit.degree.2.0"));
+
+        return result;
     }
     
 }

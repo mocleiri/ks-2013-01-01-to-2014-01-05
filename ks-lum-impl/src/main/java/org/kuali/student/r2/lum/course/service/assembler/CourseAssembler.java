@@ -634,17 +634,34 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
                         resultValueRange.setMaxValue(String.valueOf(fixedCreditValue));
                     }else if(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE.equals(creditOption.getTypeKey())){
                         Collections.sort(creditOption.getResultValueKeys());
-                        StringBuilder sb = new StringBuilder(CourseAssemblerConstants.COURSE_RESULT_COMP_CREDIT_PREFIX);
-                        for(Iterator<String> iter = creditOption.getResultValueKeys().iterator();iter.hasNext();){
-                            String valueKey = iter.next();
-                            if(valueKey.startsWith(resultValueKeyPrefix)){
-                                valueKey = valueKey.replace(resultValueKeyPrefix,"");
+
+                        // create a float for each result value key
+                        List<Float> numericResultValues = new ArrayList<Float>(creditOption.getResultValueKeys().size());
+                        for (String valueKey : creditOption.getResultValueKeys()) {
+                            if(valueKey.startsWith(resultValueKeyPrefix)) {
+                                numericResultValues.add(Float.parseFloat(valueKey.replace(resultValueKeyPrefix,"")));
                             }
-                            float creditValue = Float.parseFloat(valueKey);
-                            sb.append(String.valueOf(creditValue));
-                            if(iter.hasNext()){
+                            else {
+                                numericResultValues.add(Float.parseFloat(valueKey));
+                            }
+                        }
+
+                        // sort the list of floats
+                        Collections.sort(numericResultValues);
+
+                        // Generate a key for the ResultValuesGroup with a set prefix, followed by a comma separated list
+                        // of the sorted values
+                        StringBuilder sb = new StringBuilder(CourseAssemblerConstants.COURSE_RESULT_COMP_CREDIT_PREFIX);
+                        boolean first = true;
+                        for (Float value : numericResultValues) {
+                            // skip putting a comma before the first entry
+                            if(first) {
+                                first = false;
+                            }
+                            else {
                                 sb.append(",");
                             }
+                            sb.append(value);
                         }
                         id = sb.toString();
                         type = CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE;
