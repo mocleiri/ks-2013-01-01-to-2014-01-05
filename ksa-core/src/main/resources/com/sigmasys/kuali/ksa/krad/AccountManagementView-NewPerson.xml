@@ -304,7 +304,7 @@
 						<bean parent="Uif-TextControl" p:size="11" p:maxLength="20"/>
 					</property>
 				</bean>
-				
+				<!--
 				<bean parent="Uif-InputField" p:propertyName="account.latePeriod.id" p:labelPlacement="TOP" p:label="Late Period" 
 						p:fieldLabel.renderColon="false">
 					<property name="control">
@@ -320,7 +320,7 @@
 						</bean>
 					</property>
 				</bean>
-				
+				-->
 				<bean parent="Uif-InputField" p:propertyName="account.ableToAuthenticate">
 					<property name="control">
 						<bean parent="Uif-CheckboxControl"  p:checkboxLabel="Account can Authenticate"/>
