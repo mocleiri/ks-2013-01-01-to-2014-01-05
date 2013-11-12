@@ -96,20 +96,20 @@ public class ScheduleBuilder implements Serializable {
 		}
 		boolean untilEpoch = isEpoch(c);
 
+		long[] block = block(fromSlot, toSlot);
+		if (sameActivityBlock != null) {
+			long[] toblock = Arrays.copyOf(block, 5);
+			filter(toblock, sameActivityBlock);
+			union(sameActivityBlock, block);
+			block = toblock;
+		}
+
 		for (int i = 0; i < sundays.length; i++) {
 			if (!startEpoch && !weekBeforeStart.before(sundays[i]))
 				continue;
 			if (!untilEpoch && !until.after(sundays[i]))
 				continue;
 			
-			long[] block = block(fromSlot, toSlot);
-			if (sameActivityBlock != null) {
-				long[] toblock = Arrays.copyOf(block, 5);
-				filter(toblock, sameActivityBlock);
-				union(sameActivityBlock, block);
-				block = toblock;
-			}
-
 			if (event.isSunday()) {
 				if (intersects(days[i][0], block))
 					return false;
