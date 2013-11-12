@@ -255,12 +255,12 @@ Then /^the rules should be sorted on the Days and Time columns$/ do
     table_text = page.standard_final_exam_table.text
     table_text.should match /Day 1.*Day 2.*Day 3.*Day 4.*Day 5.*Day 6/m
     day_one_text = []
-    day_one_text << page.standard_fe_target_row( "TH at 06:00 AM - 07:15 AM.").text
-    day_one_text << page.standard_fe_target_row( "MWF at 03:00 AM - 03:50 AM. Or MW at 03:00 AM - 04:15 AM.").text
+    day_one_text << page.standard_fe_target_row( "TH at 11:00 AM - 12:15 PM.").text
+    day_one_text << page.standard_fe_target_row( "MWF at 08:00 AM - 08:50 AM. Or MW at 08:00 AM - 09:15 AM.").text
     table_text.should match /#{day_one_text[0]}.*#{day_one_text[1]}/m
     day_six_text = []
-    day_six_text << page.standard_fe_target_row( "MWF at 05:00 AM - 05:50 AM. Or MW at 04:30 AM - 05:45 AM.").text
-    day_six_text << page.standard_fe_target_row( "TH at 10:30 AM - 11:45 AM.").text
+    day_six_text << page.standard_fe_target_row( "MWF at 10:00 AM - 10:50 AM. Or MW at 09:30 AM - 10:45 AM.").text
+    day_six_text << page.standard_fe_target_row( "TH at 03:30 PM - 04:45 PM.").text
     table_text.should match /#{day_six_text[0]}.*#{day_six_text[1]}/m
   end
 end
