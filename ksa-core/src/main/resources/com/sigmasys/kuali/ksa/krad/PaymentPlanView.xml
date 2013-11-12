@@ -555,6 +555,9 @@
                                                         <property name="actionImage">
                                                             <bean parent="Uif-Image" p:source="../images/remove.png"/>
                                                         </property>
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Remove the Third Party Payment Plan"/>
+                                                        </property>
                                                     </bean>
                                                 </list>
                                             </property>
@@ -599,6 +602,9 @@
                                                     <bean parent="Uif-ActionLink" p:actionLabel="Remove" p:methodToCall="removeThirdPartyAccount" p:actionParameters="accountId:@{#line.id}">
                                                         <property name="actionImage">
                                                             <bean parent="Uif-Image" p:source="../images/remove.png"/>
+                                                        </property>
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Remove the Third Party Payment Plan"/>
                                                         </property>
                                                     </bean>
                                                 </list>
@@ -654,6 +660,9 @@
                                                     <bean parent="Uif-ActionLink" p:actionLabel="Remove" p:methodToCall="removePaymentBillingPlan" p:actionParameters="planId:@{#line.id}">
                                                         <property name="actionImage">
                                                             <bean parent="Uif-Image" p:source="../images/remove.png"/>
+                                                        </property>
+                                                        <property name="toolTip">
+                                                            <bean parent="Uif-Tooltip" p:tooltipContent="Remove the Payment Billing Plan"/>
                                                         </property>
                                                     </bean>
                                                 </list>
@@ -775,7 +784,11 @@
                                     <list>
 
                                         <bean parent="Uif-ImageField" p:source="../images/plan_members.png" p:style="cursor:pointer;" p:altText="View Plan Members" p:title=""
-                                              p:onClickScript="showLightboxComponent('planMemberLightbox@{#lineSuffix}');"/>
+                                              p:onClickScript="showLightboxComponent('planMemberLightbox@{#lineSuffix}');">
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="View Plan Members"/>
+                                            </property>
+                                        </bean>
                                         <bean id="planMemberLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                                             <property name="headerText" value="Third Party Payment Plan Members"/>
                                             <property name="hidden" value="true"/>
@@ -791,7 +804,11 @@
                                             </property>
                                         </bean>
                                         <bean parent="Uif-ImageField" p:source="../images/queue.png" p:style="cursor:pointer;" p:altText="View Plan Queue" p:title=""
-                                              p:onClickScript="showLightboxComponent('planQueueLightbox@{#lineSuffix}');"/>
+                                              p:onClickScript="showLightboxComponent('planQueueLightbox@{#lineSuffix}');">
+                                        <property name="toolTip">
+                                            <bean parent="Uif-Tooltip" p:tooltipContent="View Plan Queue"/>
+                                        </property>
+                                        </bean>
                                         <bean id="planQueueLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                                             <property name="headerText" value="Third Party Payment Plan - Queued Members"/>
                                             <property name="hidden" value="true"/>
@@ -807,7 +824,11 @@
                                             </property>
                                         </bean>
                                         <bean parent="Uif-ImageField" p:source="../images/settings.png" p:style="cursor:pointer;" p:altText="View Plan Settings" p:title=""
-                                              p:onClickScript="showLightboxComponent('planSettingsLightbox@{#lineSuffix}');"/>
+                                              p:onClickScript="showLightboxComponent('planSettingsLightbox@{#lineSuffix}');">
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="View Plan Settings"/>
+                                            </property>
+                                        </bean>
                                         <bean id="planSettingsLightbox" parent="Uif-VerticalBoxSection">
                                             <property name="headerText" value="Third Party Payment Plan Settings"/>
                                             <property name="hidden" value="true"/>
@@ -869,7 +890,11 @@
                                     <list>
 
                                         <bean parent="Uif-ImageField" p:source="../images/plan_members.png" p:style="cursor:pointer;" p:altText="View Plan Members" p:title=""
-                                              p:onClickScript="showLightboxComponent('paymentBillingMemberLightbox@{#lineSuffix}');"/>
+                                              p:onClickScript="showLightboxComponent('paymentBillingMemberLightbox@{#lineSuffix}');">
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="View Plan Members"/>
+                                            </property>
+                                        </bean>
                                         <bean id="paymentBillingMemberLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                                             <property name="headerText" value="Payment Billing Plan Members"/>
                                             <property name="hidden" value="true"/>
@@ -883,7 +908,11 @@
                                         </bean>
 
                                         <bean parent="Uif-ImageField" p:source="../images/queue.png" p:style="cursor:pointer;" p:altText="View Plan Queue" p:title=""
-                                              p:onClickScript="showLightboxComponent('paymentBillingQueueLightbox@{#lineSuffix}');"/>
+                                              p:onClickScript="showLightboxComponent('paymentBillingQueueLightbox@{#lineSuffix}');">
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="View Plan Queue"/>
+                                            </property>
+                                        </bean>
                                         <bean id="paymentBillingQueueLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                                             <property name="headerText" value="Payment Billing Plan Queued Members"/>
                                             <property name="hidden" value="true"/>
@@ -897,7 +926,11 @@
                                         </bean>
 
                                         <bean parent="Uif-ImageField" p:source="../images/plan_members_reversed.png" p:style="cursor:pointer;" p:altText="View Reversed Plan Members" p:title=""
-                                              p:onClickScript="showLightboxComponent('paymentBillingReversedLightbox@{#lineSuffix}');"/>
+                                              p:onClickScript="showLightboxComponent('paymentBillingReversedLightbox@{#lineSuffix}');">
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="View Reversed Plan Members"/>
+                                            </property>
+                                        </bean>
                                         <bean id="paymentBillingReversedLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                                             <property name="headerText" value="Payment Billing Plan Reversed Members"/>
                                             <property name="hidden" value="true"/>
@@ -957,11 +990,17 @@
                                             <property name="actionImage">
                                                 <bean parent="Uif-Image" p:source="../images/move_waiting_to_participant_green.png" p:altText="Enroll Now"/>
                                             </property>
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="Enroll Now"/>
+                                            </property>
                                         </bean>
                                         <bean parent="Uif-ActionLink" p:methodToCall="removeFromThirdPartyQueue" p:actionParameters="memberId:@{#line.directChargeAccount.id},planId:@{#line.plan.id}"
                                               p:onClickScript="jQuery.fancybox.close();">
                                             <property name="actionImage">
                                                 <bean parent="Uif-Image" p:source="../images/remove_from_queue.png" p:altText="Remove from the queue"/>
+                                            </property>
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="Remove from the queue"/>
                                             </property>
                                         </bean>
 
@@ -1007,9 +1046,9 @@
                                     <list>
                                         <bean parent="Uif-ImageField" p:source="../images/re_execute.png" p:style="cursor:pointer;" p:altText="Re-execute the Third Party Payment Plan" p:title=""
                                               p:onClickScript="showLightboxComponent('ThirdPartyReExecutePlanLightbox@{#lineSuffix}');">
-                                            <!--<property name="toolTip">
+                                            <property name="toolTip">
                                                 <bean parent="Uif-Tooltip" p:tooltipContent="Re-execute the Third Party Payment Plan"/>
-                                            </property>-->
+                                            </property>
                                         </bean>
                                         <ref bean="ThirdPartyReExecutePlanLightbox"/>
 
@@ -1018,9 +1057,16 @@
                                             <property name="actionImage">
                                                 <bean parent="Uif-Image" p:source="../images/transaction_transfer_list.png" p:altText="Transaction Transfer List"/>
                                             </property>
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="Transaction Transfer List"/>
+                                            </property>
                                         </bean>
                                         <bean parent="Uif-ImageField" p:source="../images/delete.png" p:style="cursor:pointer;" p:altText="Reverse the Third Party Payment Plan" p:title=""
-                                              p:onClickScript="showLightboxComponent('reverseThirdPartyMemberLightbox@{#lineSuffix}');" p:render="@{#line.transferDetailId > 0}"/>
+                                              p:onClickScript="showLightboxComponent('reverseThirdPartyMemberLightbox@{#lineSuffix}');" p:render="@{#line.transferDetailId > 0}">
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="Re-execute the Third Party Payment Plan"/>
+                                            </property>
+                                        </bean>
                                         <bean id="reverseThirdPartyMemberLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                                             <property name="headerText" value="Reverse the Third Party Payment Plan"/>
                                             <property name="hidden" value="true"/>
@@ -1084,9 +1130,9 @@
                                     <list>
                                         <bean parent="Uif-ImageField" p:source="../images/re_execute.png" p:style="cursor:pointer;" p:altText="Re-execute the Payment Billing Plan" p:title=""
                                               p:onClickScript="showLightboxComponent('PaymentBillingReExecutePlanLightbox@{#lineSuffix}');">
-                                            <!--<property name="toolTip">
-                                                <bean parent="Uif-Tooltip" p:tooltipContent="Re-execute the Third Party Payment Plan"/>
-                                            </property>-->
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="Re-execute the Payment Billing Plan"/>
+                                            </property>
                                         </bean>
                                         <ref bean="PaymentBillingReExecutePlanLightbox"/>
 
@@ -1161,11 +1207,17 @@
                                             <property name="actionImage">
                                                 <bean parent="Uif-Image" p:source="../images/move_waiting_to_participant_green.png" p:altText="Enroll Now"/>
                                             </property>
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="Enroll Now"/>
+                                            </property>
                                         </bean>
                                         <bean parent="Uif-ActionLink" p:methodToCall="removeFromPaymentBillingQueue" p:actionParameters="memberId:@{#line.directChargeAccount.id},planId:@{#line.plan.id}"
                                               p:onClickScript="jQuery.fancybox.close();">
                                             <property name="actionImage">
                                                 <bean parent="Uif-Image" p:source="../images/remove_from_queue.png" p:altText="Remove from the queue"/>
+                                            </property>
+                                            <property name="toolTip">
+                                                <bean parent="Uif-Tooltip" p:tooltipContent="Remove from the queue"/>
                                             </property>
                                         </bean>
                                     </list>
