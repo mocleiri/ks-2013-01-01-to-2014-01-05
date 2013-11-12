@@ -350,8 +350,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Override
     @Transactional(readOnly = true, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public List<String> getScheduleRequestIdsByRefObject(String refObjectType, String refObjectId,  ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        List<ScheduleRequestEntity> entityList = scheduleRequestDao.getScheduleRequestsByRefObject(refObjectType, refObjectId);
-        return getIdList(entityList);
+        return scheduleRequestDao.getScheduleRequestIdsByRefObject(refObjectType, refObjectId);
     }
 
     
