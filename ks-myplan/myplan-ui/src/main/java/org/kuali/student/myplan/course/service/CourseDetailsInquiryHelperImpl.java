@@ -644,11 +644,11 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
      * @param termId
      * @return
      */
-    public List<ActivityOfferingItem> getActivityOfferingItemsById(String courseId, String termId) {
+    public List<ActivityOfferingItem> getActivityOfferingItemsByIdAndCd(String courseId,String courseCd, String termId) {
 
         List<ActivityOfferingItem> activityOfferingItems = new ArrayList<ActivityOfferingItem>();
 
-        CourseInfo course = getCourseHelper().getCourseInfoByIdAndCd(courseId, null);
+        CourseInfo course = getCourseHelper().getCourseInfoByIdAndCd(courseId, courseCd);
         try {
 
             /*TODO: Replace the getCourseOfferingsByCourseAndTerm() with new one which accepts a composite key or courseId + course Cd instead of just a courseId*/

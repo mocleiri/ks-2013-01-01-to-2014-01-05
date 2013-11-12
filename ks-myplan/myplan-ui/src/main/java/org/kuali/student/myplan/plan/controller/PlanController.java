@@ -549,7 +549,7 @@ public class PlanController extends UifControllerBase {
         form.setJavascriptEvents(events);
 
         //  Pass the ATP name in the params.
-        String[] params = {makeLinkToAtp(planItemAtpId,AtpHelper.atpIdToTermName(planItemAtpId))};
+        String[] params = {makeLinkToAtp(planItemAtpId, AtpHelper.atpIdToTermName(planItemAtpId))};
         return doPlanActionSuccess(form, PlanConstants.SUCCESS_KEY_PLANNED_ITEM_MARKED_BACKUP, params);
     }
 
@@ -653,7 +653,7 @@ public class PlanController extends UifControllerBase {
 
         form.setJavascriptEvents(events);
 
-        String[] params = {makeLinkToAtp(planItemAtpId,AtpHelper.atpIdToTermName(planItemAtpId))};
+        String[] params = {makeLinkToAtp(planItemAtpId, AtpHelper.atpIdToTermName(planItemAtpId))};
         return doPlanActionSuccess(form, PlanConstants.SUCCESS_KEY_PLANNED_ITEM_MARKED_PLANNED, params);
     }
 
@@ -1313,7 +1313,7 @@ public class PlanController extends UifControllerBase {
         */
 
         if (form.getSectionCode() != null) {
-            List<ActivityOfferingItem> activityOfferings = getCourseDetailsInquiryService().getActivityOfferingItemsById(courseDetails.getCourseId(), form.getAtpId());
+            List<ActivityOfferingItem> activityOfferings = getCourseDetailsInquiryService().getActivityOfferingItemsByIdAndCd(courseDetails.getCourseId(), isCrossListedCourse ? courseDetails.getCode() : null, form.getAtpId());
             Map<String, String> primaryActivityToRegCode = new HashMap<String, String>();
             /*Populate the primary and secondary flags*/
             for (ActivityOfferingItem activityOfferingItem : activityOfferings) {
@@ -1520,11 +1520,11 @@ public class PlanController extends UifControllerBase {
 
         String[] params = {};
         if (planItem != null) {
-            params = new String[]{makeLinkToAtp(planItem.getPlanPeriods().get(0),AtpHelper.atpIdToTermName(planItem.getPlanPeriods().get(0)))};
+            params = new String[]{makeLinkToAtp(planItem.getPlanPeriods().get(0), AtpHelper.atpIdToTermName(planItem.getPlanPeriods().get(0)))};
         } else if (primaryPlanItem != null) {
-            params = new String[]{makeLinkToAtp(primaryPlanItem.getPlanPeriods().get(0),AtpHelper.atpIdToTermName(primaryPlanItem.getPlanPeriods().get(0)))};
+            params = new String[]{makeLinkToAtp(primaryPlanItem.getPlanPeriods().get(0), AtpHelper.atpIdToTermName(primaryPlanItem.getPlanPeriods().get(0)))};
         } else if (secondaryPlanItem != null) {
-            params = new String[]{makeLinkToAtp(secondaryPlanItem.getPlanPeriods().get(0),AtpHelper.atpIdToTermName(secondaryPlanItem.getPlanPeriods().get(0)))};
+            params = new String[]{makeLinkToAtp(secondaryPlanItem.getPlanPeriods().get(0), AtpHelper.atpIdToTermName(secondaryPlanItem.getPlanPeriods().get(0)))};
         }
 
         return doPlanActionSuccess(form, PlanConstants.SUCCESS_KEY_PLANNED_ITEM_ADDED, params);
