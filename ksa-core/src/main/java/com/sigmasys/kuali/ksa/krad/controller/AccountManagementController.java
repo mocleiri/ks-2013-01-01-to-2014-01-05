@@ -1,23 +1,27 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
-import java.math.BigDecimal;
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.sigmasys.kuali.ksa.krad.form.AdminForm;
+import com.sigmasys.kuali.ksa.krad.model.AccountInformationHolder;
+import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.service.AuditableEntityService;
+import com.sigmasys.kuali.ksa.service.PersistenceService;
+import com.sigmasys.kuali.ksa.service.UserPreferenceService;
+import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.sigmasys.kuali.ksa.krad.form.AdminForm;
-import com.sigmasys.kuali.ksa.krad.model.AccountInformationHolder;
-import com.sigmasys.kuali.ksa.model.*;
-import com.sigmasys.kuali.ksa.service.*;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/accountManagement")
@@ -95,6 +99,19 @@ public class AccountManagementController extends GenericSearchController {
 
         // Persist the objects:
         persistenceService.persistEntity(account);
+
+        if(accountProtectedInfo.getBankType() != null && accountProtectedInfo.getBankType().getId() == null) {
+            accountProtectedInfo.setBankType(null);
+        }
+
+        if(accountProtectedInfo.getTaxType() != null && accountProtectedInfo.getTaxType().getId() == null) {
+            accountProtectedInfo.setTaxType(null);
+        }
+
+        if(accountProtectedInfo.getIdentityType() != null && accountProtectedInfo.getIdentityType().getId() == null) {
+            accountProtectedInfo.setIdentityType(null);
+        }
+
         accountProtectedInfo.setId(accountId);
         persistenceService.persistEntity(accountProtectedInfo);
 
