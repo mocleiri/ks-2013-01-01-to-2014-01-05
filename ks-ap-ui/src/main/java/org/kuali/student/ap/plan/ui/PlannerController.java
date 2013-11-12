@@ -17,6 +17,7 @@ import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
 import org.kuali.student.ap.framework.context.PlanConstants;
 import org.kuali.student.ap.framework.util.KsapStringUtil;
 import org.kuali.student.ap.plan.PlannerForm;
+import org.kuali.student.ap.plan.support.DefaultPlannerForm;
 import org.kuali.student.ap.plan.support.PlanItemControllerHelper;
 import org.kuali.student.ap.plan.util.PlanEventUtils;
 import org.kuali.student.enrollment.acal.infc.Term;
@@ -377,12 +378,6 @@ public class PlannerController extends UifControllerBase {
 			return null;
 		}
 		
-		UifFormBase uifForm = (UifFormBase) form;
-		if ("refresh".equals(uifForm.getMethodToCall())) {
-			uifForm.setMethodToCall(null);
-			return super.refresh(uifForm, result, request, response);
-		}
-
 		Course course;
 		try {
 			List<Course> courses = KsapFrameworkServiceLocator.getCourseHelper().getCoursesByCode(courseCd);
@@ -392,11 +387,26 @@ public class PlannerController extends UifControllerBase {
 				return null;
 				// SCT-6322 TODO: Montse, add this code to enable dynamic dialog updates
 			} else if (courses.size() > 1 ){
-				if ( form.getCourseId() == null) {			
+				if ( form.getCourseId() == null) {
 					// ask user to pick one
 					LOG.debug("form getCourseId() is null");
-					PlanEventUtils.sendRefresh(ADD_COURSE_PAGE, response);
-					return null;
+					
+					UifFormBase uifForm = (UifFormBase) form;
+					if ("refresh".equals(uifForm.getMethodToCall())) {
+						// KRAD update-page refresh callback
+						uifForm.setMethodToCall(null);
+						
+						if (form instanceof DefaultPlannerForm) {
+							// Normalize course code for display based on first course returned
+							((DefaultPlannerForm) form).setCourseCd(courses.get(0).getCode());
+						}
+
+						return super.refresh(uifForm, result, request, response);
+					} else {
+						// JSON refresh request
+						PlanEventUtils.sendRefresh(ADD_COURSE_PAGE, response);
+						return null;
+					}
 				} else {
 					// they already picked
 					LOG.debug("form getCourseId() is not null:  " + form.getCourseId());
