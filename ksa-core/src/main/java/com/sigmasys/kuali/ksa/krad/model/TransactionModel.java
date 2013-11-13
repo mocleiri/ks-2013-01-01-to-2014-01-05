@@ -11,10 +11,7 @@ import org.kuali.rice.core.api.util.tree.Tree;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by: dmulderink on 9/27/12 at 7:46 AM
@@ -119,9 +116,10 @@ public class TransactionModel extends Transaction {
 
         transactionTypeValue = transaction.getTransactionTypeValue();
 
-        if (transaction.getTags() != null) {
-            setTags(transaction.getTags());
-        }
+        Set<Tag> transactionTags = transaction.getTags();
+
+        setTags(transactionTags != null ? transactionTags : new HashSet<Tag>());
+        setTagsList(transactionTags != null ? new ArrayList<Tag>(transactionTags) : new ArrayList<Tag>());
 
         // populate TransactionModel's properties from Transaction instance
         setId(transaction.getId());
