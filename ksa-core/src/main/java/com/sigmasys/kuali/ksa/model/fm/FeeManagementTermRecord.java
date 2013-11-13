@@ -14,9 +14,8 @@ import java.util.Set;
  * Note that we do not persist these objects. This construction is used purely to allow the transfer of
  * data from an external registration system.
  * <p/>
- * User: Sergey
- * Date: 10/8/13
- * Time: 12:23 AM
+ *
+ * @author Sergey Godunov
  */
 public class FeeManagementTermRecord implements KeyPairAware {
 
@@ -31,7 +30,7 @@ public class FeeManagementTermRecord implements KeyPairAware {
      * @see FeeManagementSessionStatus#SIMULATED
      * @see FeeManagementSessionStatus#CURRENT
      */
-    private FeeManagementSessionStatus fmSessionStatus;
+    private FeeManagementSessionStatus sessionStatus;
 
     /**
      * The ATP identifier for the whole session.
@@ -39,7 +38,7 @@ public class FeeManagementTermRecord implements KeyPairAware {
     private String atpId;
 
     /**
-     * List of session keypairs. This is where registration information (or
+     * List of session key pairs. This is where registration information (or
      * what if information) can be passed to KSA.
      */
     private Set<KeyPair> keyPairs;
@@ -68,12 +67,12 @@ public class FeeManagementTermRecord implements KeyPairAware {
         this.accountId = accountId;
     }
 
-    public FeeManagementSessionStatus getFmSessionStatus() {
-        return fmSessionStatus;
+    public FeeManagementSessionStatus getSessionStatus() {
+        return sessionStatus;
     }
 
-    public void setFmSessionStatus(FeeManagementSessionStatus fmSessionStatus) {
-        this.fmSessionStatus = fmSessionStatus;
+    public void setSessionStatus(FeeManagementSessionStatus sessionStatus) {
+        this.sessionStatus = sessionStatus;
     }
 
     public String getAtpId() {

@@ -6,9 +6,7 @@ import java.util.Date;
 /**
  * FeeManagement report item.
  *
- * User: Sergey
- * Date: 10/8/13
- * Time: 1:01 AM
+ * @author Sergey Godunov
  */
 public class FeeManagementReportItem {
 

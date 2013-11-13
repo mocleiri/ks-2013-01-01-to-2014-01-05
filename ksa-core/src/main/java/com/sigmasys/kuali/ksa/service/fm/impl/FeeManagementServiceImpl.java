@@ -426,7 +426,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
 
         // Check the FM Term Record status. Must be either CURRENT or SIMULATED:
-        FeeManagementSessionStatus status = feeManagementTermRecord.getFmSessionStatus();
+        FeeManagementSessionStatus status = feeManagementTermRecord.getSessionStatus();
 
         if ((status != FeeManagementSessionStatus.CURRENT) && (status != FeeManagementSessionStatus.SIMULATED)) {
             String errorMsg = String.format("Invalid FeeManagement Session status [%s]. Session status must be CURRENT or SIMULATED to call \"createFeeManagementSession\".", status);
@@ -509,7 +509,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         newSession.setReviewRequired(false);
         newSession.setReviewComplete(false);
         newSession.setCreationDate(new Date());
-        newSession.setChargeStatus(feeManagementTermRecord.getFmSessionStatus());
+        newSession.setChargeStatus(feeManagementTermRecord.getSessionStatus());
         newSession.setQueued(false);
 
         // Persist the new FM Session:
@@ -609,7 +609,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         // Use the RateService to find the Rate:
         String rateCode = incomingRateInfo.getRateCode();
-        String rateSubCode = incomingRateInfo.getRateSubcode();
+        String rateSubCode = incomingRateInfo.getRateSubCode();
         String atpId = incomingSignup.getAtpId();
         Rate rate = null;
 

@@ -1,37 +1,33 @@
 package com.sigmasys.kuali.ksa.model.fm;
 
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 /**
  * The incoming signup object is used to store the details of signup activity from the registration system.
- *
+ * <p/>
  * Note that we do not persist these objects. This construction is used purely to allow the transfer of
  * data from an external registration system.
  *
- * User: Sergey
- * Date: 10/8/13
- * Time: 12:26 AM
- * To change this template use File | Settings | File Templates.
+ * @author Sergey Godunov
  */
 public class FeeManagementIncomingSignup {
 
     /**
      * The identifier of the signup activity. This is a unique identifier for
-     the registration activity, supplied by the registration system, which
-     is the system of record for this information. Each time a student
-     signs up, the registration system sends the whole activity instead
-     of just the delta, so we use this identifier to tie together the
-     records.
+     * the registration activity, supplied by the registration system, which
+     * is the system of record for this information. Each time a student
+     * signs up, the registration system sends the whole activity instead
+     * of just the delta, so we use this identifier to tie together the
+     * records.
      */
     private String registrationId;
 
     /**
      * This date is for audit purposes only. This is the date in the
-     registration that the activity was created. KSA doesn’t use this date
-     directly in fee management.
+     * registration that the activity was created. KSA doesn’t use this date
+     * directly in fee management.
      */
     private Date creationDate;
 

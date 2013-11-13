@@ -5,9 +5,7 @@ import com.sigmasys.kuali.ksa.model.Identifiable;
 /**
  * Offering types.
  *
- * User: Sergey
- * Date: 10/8/13
- * Time: 12:36 AM
+ * @author Sergey Godunov
  */
 public enum OfferingType implements Identifiable {
 
@@ -29,10 +27,9 @@ public enum OfferingType implements Identifiable {
     }
 
     public String toString() {
-        switch(this) {
+        switch (this) {
             case PROGRAM_OFFERING:
                 return "Program Offering";
-
             case ACTIVITY_OFFERING:
                 return "Activity Offering";
         }

@@ -4,9 +4,7 @@ package com.sigmasys.kuali.ksa.model.fm;
  * The FeeManagementIncomingRateInfo object is used to store the details of Rate from the registration system.
  * When this is translated into a session, the Rate will be converted to the appropriate ID.
  *
- * User: Sergey
- * Date: 10/8/13
- * Time: 12:43 AM
+ * @author Sergey Godunov
  */
 public class FeeManagementIncomingRateInfo {
 
@@ -16,9 +14,9 @@ public class FeeManagementIncomingRateInfo {
     private String rateCode;
 
     /**
-     * Subcode for the attached rate.
+     * Sub-code for the attached rate.
      */
-    private String rateSubcode;
+    private String rateSubCode;
 
 
     public String getRateCode() {
@@ -29,11 +27,11 @@ public class FeeManagementIncomingRateInfo {
         this.rateCode = rateCode;
     }
 
-    public String getRateSubcode() {
-        return rateSubcode;
+    public String getRateSubCode() {
+        return rateSubCode;
     }
 
-    public void setRateSubcode(String rateSubcode) {
-        this.rateSubcode = rateSubcode;
+    public void setRateSubCode(String rateSubCode) {
+        this.rateSubCode = rateSubCode;
     }
 }

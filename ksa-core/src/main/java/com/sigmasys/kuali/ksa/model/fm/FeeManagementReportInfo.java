@@ -8,9 +8,7 @@ import java.util.List;
  * This class is used to return information to a calling system when a what-if call is made. This data is not
  * persisted. It is used only as the data structure to send the message back to the caller.
  *
- * User: Sergey
- * Date: 10/8/13
- * Time: 12:59 AM
+ * @author Sergey Godunov
  */
 public class FeeManagementReportInfo {
 
