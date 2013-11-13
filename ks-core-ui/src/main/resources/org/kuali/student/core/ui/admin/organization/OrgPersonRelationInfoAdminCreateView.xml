@@ -38,6 +38,17 @@
 									<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.rice.kim.api.identity.Person"
 									p:fieldConversions="principalId:orgPersonRelation.personId" />
 								</property>
+								<!-- 
+								<property name="suggest">
+							          <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="name">
+							              <property name="suggestQuery">
+							                <bean parent="Uif-AttributeQueryConfig" 
+							                    p:dataObjectClassName="org.kuali.rice.kim.api.identity.Person"
+						                        p:queryMethodToCall="suggestPersonsByName" />									                      
+							              </property>										              
+							          </bean>
+						        </property>
+						         -->	
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
 								p:propertyName="orgPersonRelation.typeKey" p:label="Type" p:required="true">

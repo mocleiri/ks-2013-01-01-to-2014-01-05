@@ -43,6 +43,7 @@ import org.kuali.student.r2.core.organization.dto.OrgInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -96,7 +97,7 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
         }
         
         if (StringUtils.isNotBlank(organizationName) && !organizationName.isEmpty()) {
-        	qBuilder.setPredicates(PredicateFactory.equal("longName",organizationName));
+        	qBuilder.setPredicates(PredicateFactory.like("longName",organizationName));
         	List<OrgInfo> orgInfos = this.getOrganizationService().searchForOrgs(qBuilder.build(), getContextInfo());
         	
         	if(orgInfos.size() != 0){
@@ -115,31 +116,28 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
         
         try {
         	
-        	if(!searchForm.getResultSize().equalsIgnoreCase("All") && searchForm.isRenderSizeDrop()){
+        	if(!searchForm.getResultSize().equalsIgnoreCase("All")){
         		qBuilder.setMaxResults (Integer.parseInt(searchForm.getResultSize()));
         	} 
-        	
-            List<OrgPersonRelationInfo> relations = this.getOrganizationService().searchForOrgPersonRelations(qBuilder.build(), getContextInfo());
             
-            if(relations.size() > 100 && !searchForm.isRenderSizeDrop()){
-            	GlobalVariables.getMessageMap().putWarning("KS-OrgPersonRelationSearch-CriteriaSection","tooManyResult");
-            	searchForm.setRenderSizeDrop(true);
-            	return getUIFModelAndView(searchForm);
-            }
+        	List<OrgPersonRelationInfo> relations = this.getOrganizationService().searchForOrgPersonRelations(qBuilder.build(), getContextInfo());
             
             results.clear();
             
-            for (OrgPersonRelationInfo orgPersonRelationInfo : relations) {
-            	
-            	OrgPersonRelationUIModel orgPersonUIModel = new OrgPersonRelationUIModel();
-            	
-            	BeanUtils.copyProperties(orgPersonUIModel, orgPersonRelationInfo);
-                
-            	this.setOtherInfo(orgPersonUIModel);
-            	
-            	results.add(orgPersonUIModel);
-			}
-            
+            if (!CollectionUtils.isEmpty(relations)) {
+	            for (OrgPersonRelationInfo orgPersonRelationInfo : relations) {
+	            	
+	            	OrgPersonRelationUIModel orgPersonUIModel = new OrgPersonRelationUIModel();
+	            	
+	            	BeanUtils.copyProperties(orgPersonUIModel, orgPersonRelationInfo);
+	                
+	            	this.setOtherInfo(orgPersonUIModel);
+	            	
+	            	results.add(orgPersonUIModel);
+				}
+            } else {
+            	GlobalVariables.getMessageMap().putInfo("KS-OrgPersonRelationSearch-CriteriaSection","noSearchResults");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Error Performing Search",e); //To change body of catch statement use File | Settings | File Templates.
@@ -167,7 +165,7 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
 	}
 	
 	@RequestMapping(params = "methodToCall=cancel")
-	public ModelAndView cancel(@ModelAttribute("KualiForm") UifFormBase uifForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView cancel(@ModelAttribute("KualiForm") UifFormBase uifForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) {		
 		OrgPersonRelationInfoAdminSearchForm viewForm = (OrgPersonRelationInfoAdminSearchForm)uifForm;
 		String returnViewName = viewForm.getActionParamaterValue("returnViewName");
 		return getUIFModelAndView(viewForm, returnViewName);

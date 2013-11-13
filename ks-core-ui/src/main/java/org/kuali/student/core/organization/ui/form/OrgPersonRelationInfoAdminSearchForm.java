@@ -16,7 +16,6 @@ public class OrgPersonRelationInfoAdminSearchForm extends UifFormBase{
 	private String personId;
 	private String personName;
 	private String resultSize;
-	private boolean renderSizeDrop;
 	private String selectedOrgPersonRelationId;
 	private OrgPersonRelationUIModel orgPersonRelation;
 	private ArrayList<OrgPersonRelationUIModel> orgPersonRelationUIModel;
@@ -76,14 +75,6 @@ public class OrgPersonRelationInfoAdminSearchForm extends UifFormBase{
 
 	public void setResultSize(String resultSize) {
 		this.resultSize = resultSize;
-	}
-
-	public boolean isRenderSizeDrop() {
-		return renderSizeDrop;
-	}
-
-	public void setRenderSizeDrop(boolean renderSizeDrop) {
-		this.renderSizeDrop = renderSizeDrop;
-	}
+	}	
 	
 }

@@ -13,6 +13,7 @@ import org.apache.commons.beanutils.converters.DateConverter;
 import org.springframework.util.StringUtils;
 import org.apache.log4j.Logger;
 import org.displaytag.util.CollectionUtil;
+import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
@@ -77,31 +78,39 @@ public class OrgInfoAdminSearchController extends UifControllerBase {
 	
 	@RequestMapping(params = "methodToCall=search")
 	public ModelAndView search(@ModelAttribute("KualiForm") OrgInfoAdminSearchForm searchForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {	   
-	    		
-        String organizationName = StringUtils.hasText(searchForm.getKeywordSearch())?searchForm.getKeywordSearch():"*";
-        String typeKey = StringUtils.hasText(searchForm.getTypeInfoKey())?searchForm.getTypeInfoKey():"*";
-        String stateKey = StringUtils.hasText(searchForm.getStateInfoKey())?searchForm.getStateInfoKey():"*";
- 
+	    
+		String organizationName = "*" + searchForm.getKeywordSearch() + "*";
+        String typeKey = searchForm.getTypeInfoKey();
+        String stateKey = searchForm.getStateInfoKey();
+        
         resetForm(searchForm);
  
+        ArrayList<Predicate> predicates = new ArrayList<Predicate>();        
         QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
         
-        qBuilder.setPredicates(PredicateFactory.and(PredicateFactory.like("longName",organizationName),PredicateFactory.like("orgType",typeKey),PredicateFactory.like("orgState",stateKey)));              
+        if(StringUtils.hasText(organizationName)){
+        	predicates.add(PredicateFactory.like("longName",organizationName));
+        }
+		if(StringUtils.hasText(typeKey)){
+			predicates.add(PredicateFactory.like("orgType",typeKey));	
+		}
+		if(StringUtils.hasText(stateKey)){
+			predicates.add(PredicateFactory.like("orgState",stateKey));
+		}
         
         results.clear();
         
-        if(!searchForm.getResultSize().equalsIgnoreCase("All") && searchForm.isRenderSizeDrop()){
+        if(!searchForm.getResultSize().equalsIgnoreCase("All")){
     		qBuilder.setMaxResults (Integer.parseInt(searchForm.getResultSize()));
-    	} 
+    	}
+        
+        if (!predicates.isEmpty())
+		{
+			qBuilder.setPredicates(PredicateFactory.and(predicates.toArray(new Predicate[predicates.size()])));
+		}
         
         List<OrgInfo> orgInfos = this.getOrganizationService().searchForOrgs(qBuilder.build(), getContextInfo());
-        
-        if(orgInfos.size() > 100 && !searchForm.isRenderSizeDrop()){
-        	GlobalVariables.getMessageMap().putWarning("KS-OrgInfoSearch-CriteriaSection","tooManyResult");
-        	searchForm.setRenderSizeDrop(true);
-        	return getUIFModelAndView(searchForm);
-        }
-        	
+                	
         if (!CollectionUtils.isEmpty(orgInfos)) {
            
             for (OrgInfo orgInfo : orgInfos) {
@@ -122,6 +131,8 @@ public class OrgInfoAdminSearchController extends UifControllerBase {
 
                 results.add(orgUIModel);
             }
+        } else {
+        	GlobalVariables.getMessageMap().putInfo("KS-OrgInfoSearch-CriteriaSection","noSearchResults");
         }
        
        searchForm.setOrgUIModel((ArrayList<OrgUIModel>) results);

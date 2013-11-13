@@ -15,7 +15,6 @@ public class OrgInfoAdminSearchForm extends UifFormBase{
 	
 	private String keywordSearch;
 	private String resultSize;
-	private boolean renderSizeDrop;
 	private String orgId;
 	private String selectedOrgId;
 	private String typeInfoKey;
@@ -99,14 +98,5 @@ public class OrgInfoAdminSearchForm extends UifFormBase{
 
 	public void setResultSize(String resultSize) {
 		this.resultSize = resultSize;
-	}
-
-	public boolean isRenderSizeDrop() {
-		return renderSizeDrop;
-	}
-
-	public void setRenderSizeDrop(boolean renderSizeDrop) {
-		this.renderSizeDrop = renderSizeDrop;
-	}
-	
+	}	
 }
