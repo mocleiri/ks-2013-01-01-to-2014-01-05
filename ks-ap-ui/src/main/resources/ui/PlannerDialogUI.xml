@@ -53,9 +53,8 @@
 				<bean parent="planner_hidden_input" p:propertyName="planItemId" />
 				<bean parent="planner_hidden_input" p:propertyName="uniqueId" />
 				
-				<bean parent="planner_course_code_input" />
+				<bean parent="planner_course_code_input" p:id="planner_add_course_code"/>
 <!-- 				<bean parent="planner_course_credit_input" /> -->
-<!-- 				<bean parent="Uif-Message" p:messageText="Montse's code goes here" p:render="@{courseCd ne null}" /> -->
 				<bean parent="planner_course_id_input"  p:render="@{courseCd ne null}"/>
 				<bean parent="planner_course_note_input" />
 			</list>
