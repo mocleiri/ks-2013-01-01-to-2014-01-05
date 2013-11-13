@@ -1065,8 +1065,8 @@ class DeliveryLogistics
         #page.edit_rdl_row(target_row)
         sleep 2
 
-        @end_time_ampm.upcase!
-        @start_time_ampm.upcase!
+        @end_time_ampm.upcase! unless @end_time_ampm.nil?
+        @start_time_ampm.upcase! unless @start_time_ampm.nil?
 
         if @tba
           page.add_tba.set

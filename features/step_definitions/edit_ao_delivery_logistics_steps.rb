@@ -110,7 +110,7 @@ When /^I add RDLs for an AO checking the TBA flag$/ do
   #@new_rdls = @activity_offering.requested_delivery_logistics_list.values[0]
   # add new TBA RDL row
   @activity_offering.edit
-  dl_obj = create DeliveryLogistics,  :tba => true, :days => "", :start_time => "", :start_time_ampm => "", :end_time => "", :end_time_ampm => ""
+  dl_obj = create DeliveryLogistics,  :tba => true, :days => nil, :start_time => nil, :start_time_ampm => nil, :end_time => nil, :end_time_ampm => nil
   @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
   @activity_offering.save
 end
