@@ -572,6 +572,12 @@ Then /^I have access to edit the honors flag$/ do
   end
 end
 
+And /^I can cancel the Activity Offering Edit$/ do
+  on ActivityOfferingMaintenance do |page|
+    page.cancel
+  end
+end
+
 Then /^I do not have access to edit activity offerings$/ do
   on ManageCourseOfferings do |page|
     page.codes_list.each do |ao_code|

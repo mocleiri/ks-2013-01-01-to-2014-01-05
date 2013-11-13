@@ -95,6 +95,7 @@ Feature: EC.Department Schedule Coordinator Authorization SOC state Final Edits
     And I have access to edit the evaluation flag
     And I have access to edit the honors flag
     But I do not have access to add or edit seat pools
+    And I can cancel the Activity Offering Edit
 
   Scenario: AZ 4.1A/4.2/Full_final_edits.6 Department Schedule Coordinator Carol can access the Manage AO set of pages for COs for her own admin org
     When I manage a course offering in my admin org
