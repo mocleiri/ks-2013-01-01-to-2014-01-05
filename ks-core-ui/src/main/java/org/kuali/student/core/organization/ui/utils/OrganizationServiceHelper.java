@@ -85,9 +85,17 @@ public class OrganizationServiceHelper extends ViewHelperServiceImpl{
 	
 	
 	public List<Person> suggestPersonsByName(String personName){
-		HashMap<String,String> criteriaMap = new HashMap<String,String>();
-		criteriaMap.put("name", personName);
-		return this.getPersonService().findPeople(criteriaMap);
+		HashMap<String,String> criteriaMap = new HashMap<String,String>();		
+		criteriaMap.put("firstName", personName);		
+		List<Person> persons = getPersonService().findPeople(criteriaMap);
+		
+		if(persons.isEmpty()){
+			criteriaMap.clear();
+			criteriaMap.put("lastName", personName);
+			persons = getPersonService().findPeople(criteriaMap);
+		}
+		
+		return persons;
 	}
 
 }

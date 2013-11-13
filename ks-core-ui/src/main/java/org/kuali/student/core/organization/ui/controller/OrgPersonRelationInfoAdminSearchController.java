@@ -1,6 +1,7 @@
 package org.kuali.student.core.organization.ui.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,9 +17,11 @@ import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.principal.EntityNamePrincipalName;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.kuali.rice.kim.impl.identity.PersonServiceImpl;
 import org.kuali.rice.krad.service.KRADServiceLocatorWeb;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
@@ -84,25 +87,49 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
 	public ModelAndView search(@ModelAttribute("KualiForm") OrgPersonRelationInfoAdminSearchForm searchForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
         String organizationName = searchForm.getKeywordSearch();
-        String personId = searchForm.getPersonId();
- 
-        resetForm(searchForm);
+        String personName = searchForm.getPersonName();
         
-        ArrayList<Predicate> predicates = new ArrayList<Predicate>();
- 
+        ArrayList<Predicate> predicates = new ArrayList<Predicate>();        
         QueryByCriteria.Builder qBuilder = QueryByCriteria.Builder.create();
         
-        if (StringUtils.isNotBlank(personId) && !personId.isEmpty()) {
-        	predicates.add(PredicateFactory.equal("personId",personId));
+        if(StringUtils.isNotEmpty(personName)){
+        	HashMap<String,String> criteriaMap = new HashMap<String,String>();
+        	
+        	if(personName.contains(",")){
+        		String[] personTokens = personName.split(",");
+        		if(StringUtils.isNotEmpty(personTokens[0])){
+        			criteriaMap.put("lastName", personTokens[0]);
+        		}
+        		if(StringUtils.isNotEmpty(personTokens[1])){
+        			criteriaMap.put("firstName", personTokens[1]);
+        		}
+        	
+	    		List<Person> persons = ((PersonServiceImpl) GlobalResourceLoader.getService(new QName("personService"))).findPeople(criteriaMap);
+	    		
+	    		if(!persons.isEmpty()){
+		    		String[] personIds = new String[persons.size()];
+		    		for(int index = 0 ; index < personIds.length ; index++){
+		    			personIds[index] = persons.get(index).getPrincipalId();
+		    		}
+		    		predicates.add(PredicateFactory.in("personId",personIds));
+	    		}
+        	}
         }
         
+        resetForm(searchForm);
+        
         if (StringUtils.isNotBlank(organizationName) && !organizationName.isEmpty()) {
-        	qBuilder.setPredicates(PredicateFactory.like("longName",organizationName));
+        	qBuilder.setPredicates(PredicateFactory.like("longName","*" + organizationName + "*"));
         	List<OrgInfo> orgInfos = this.getOrganizationService().searchForOrgs(qBuilder.build(), getContextInfo());
-        	
-        	if(orgInfos.size() != 0){
-        		predicates.add(PredicateFactory.equal("orgId",orgInfos.get(0).getId()));
+        	LOG.info("Organizations found : " + orgInfos.size());
+        	if(!orgInfos.isEmpty()){
+	    		String[] orgIds = new String[orgInfos.size()];
+	    		for(int index = 0 ; index < orgIds.length ; index++){
+	    			orgIds[index] = orgInfos.get(index).getId();
+	    		}
+	    		predicates.add(PredicateFactory.in("orgId",orgIds));
         	} else {
+        		LOG.info("No organizations found.");
         		return getUIFModelAndView(searchForm, null);
         	}
         } else {
@@ -120,8 +147,12 @@ public class OrgPersonRelationInfoAdminSearchController extends UifControllerBas
         		qBuilder.setMaxResults (Integer.parseInt(searchForm.getResultSize()));
         	} 
             
+        	LOG.info("Predicates : " + predicates);
+        	
         	List<OrgPersonRelationInfo> relations = this.getOrganizationService().searchForOrgPersonRelations(qBuilder.build(), getContextInfo());
             
+        	LOG.info("Relations found : " + relations.size());
+        	
             results.clear();
             
             if (!CollectionUtils.isEmpty(relations)) {

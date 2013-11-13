@@ -42,13 +42,8 @@
 										          </bean>
 									          </property>									          
 										</bean>
-										<bean parent="Uif-InputField" p:propertyName="personName" p:additionalHiddenPropertyNames="personId"
-											 p:label="Person" p:helpSummary="Please enter person name." >
-											 <property name="quickfinder">
-												<bean parent="Uif-QuickFinder" p:dataObjectClassName="org.kuali.rice.kim.api.identity.Person"
-												p:fieldConversions="principalId:personId,name:personName" />
-											</property>
-											 <!-- 
+										<bean parent="Uif-InputField" p:propertyName="personName"
+											 p:label="Person" p:helpSummary="Please enter person name." >											  
 								        	<property name="suggest">
 									          <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="name">
 									              <property name="suggestQuery">
@@ -57,8 +52,7 @@
 								                        p:queryMethodToCall="suggestPersonsByName" />									                      
 									              </property>										              
 									          </bean>
-								           </property>
-								            -->	  
+								           </property>								            	  
 								        </bean>
 										<bean parent="Uif-InputField" p:propertyName="resultSize" p:width="auto" p:defaultValue="25">
 								          <property name="control">
@@ -95,15 +89,16 @@
     </bean>
  
     <bean id="KS-OrgPersonRelationLookup-Result" parent="Uif-TableCollectionSection"
-          p:layoutManager.numberOfColumns="5" p:renderAddLine="false">
+          p:layoutManager.numberOfColumns="6" p:renderAddLine="false">
         <property name="collectionObjectClass" value="org.kuali.student.core.organization.ui.form.model.OrgPersonRelationUIModel" />
         <property name="propertyName" value="orgPersonRelationUIModel" />        
         <property name="layoutManager.renderSequenceField" value="false" />
-        <property name="layoutManager.applyDefaultCellWidths" value="true" />
+        <property name="layoutManager.applyDefaultCellWidths" value="false" />
         <property name="layoutManager.applyAlternatingRowStyles" value="false" />
         <property name="layoutManager.actionColumnPlacement" value="LEFT" />        
         <property name="items">
-            <list>               
+            <list>
+            	<bean parent="Uif-DataField" p:propertyName="orgId" p:readOnlyDisplayReplacementPropertyName="orgInfo.longName" p:label="Organization"/>               
                 <bean parent="Uif-DataField" p:propertyName="personId" p:readOnlyDisplayReplacementPropertyName="personName" p:label="Person"/>		       	   
 		        <bean parent="Uif-DataField" p:propertyName="typeKey" p:readOnlyDisplayReplacementPropertyName="typeInfo.name" p:label="Type"/>
 		        <bean parent="Uif-DataField" p:propertyName="stateKey" p:readOnlyDisplayReplacementPropertyName="stateInfo.name" p:label="State"/>

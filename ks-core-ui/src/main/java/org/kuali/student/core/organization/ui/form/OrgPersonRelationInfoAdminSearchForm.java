@@ -13,7 +13,6 @@ public class OrgPersonRelationInfoAdminSearchForm extends UifFormBase{
 	private static final long serialVersionUID = 4703388779356717776L;
 	
 	private String keywordSearch;
-	private String personId;
 	private String personName;
 	private String resultSize;
 	private String selectedOrgPersonRelationId;
@@ -35,14 +34,6 @@ public class OrgPersonRelationInfoAdminSearchForm extends UifFormBase{
 
 	public void setKeywordSearch(String keywordSearch) {
 		this.keywordSearch = keywordSearch;
-	}
-	
-	public String getPersonId() {
-		return personId;
-	}
-
-	public void setPersonId(String personId) {
-		this.personId = personId;
 	}
 
 	public String getPersonName() {
