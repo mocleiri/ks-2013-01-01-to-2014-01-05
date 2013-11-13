@@ -594,10 +594,14 @@ public class TransactionModel extends Transaction {
 
 
     public List<TransactionTagModel> getTagModels() {
+        if (tags == null) {
+            tags = new ArrayList<TransactionTagModel>();
+        }
         return tags;
     }
 
     public void setTagModels(List<TransactionTagModel> tags) {
+
         this.tags = tags;
 
         if (tags == null || tags.size() == 0) {
@@ -824,6 +828,6 @@ public class TransactionModel extends Transaction {
 
     public boolean isReversible() {
         return !(getUnallocatedAmount().compareTo(BigDecimal.ZERO) <= 0) &&
-        !TransactionStatus.REFUND_REQUESTED.equals(parentTransaction.getStatus());
+                !TransactionStatus.REFUND_REQUESTED.equals(parentTransaction.getStatus());
     }
 }
