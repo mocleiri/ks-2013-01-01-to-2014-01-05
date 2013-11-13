@@ -138,7 +138,9 @@ Then /^I should be able to choose any one of Day 1 to 6 for the rule$/ do
     for i in 1..6
       page.rdl_days.option( value: "#{i}").text.should == "Day #{i}"
     end
+    page.cancel_rule
   end
+  on(FEMatrixView).cancel
 end
 
 Then /^I can only view all the rules in the Final Exam Matrix$/ do
