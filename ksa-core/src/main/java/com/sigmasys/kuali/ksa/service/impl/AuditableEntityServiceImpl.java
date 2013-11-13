@@ -1,6 +1,8 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -136,6 +138,7 @@ public class AuditableEntityServiceImpl extends GenericPersistenceService implem
      * @return Currency instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_CURRENCY)
     public Currency getCurrency(String code) {
         Query query = em.createQuery("select c from Currency c where upper(c.code) = upper(:code)");
         query.setParameter("code", code);
@@ -152,6 +155,7 @@ public class AuditableEntityServiceImpl extends GenericPersistenceService implem
      * @return List of currencies
      */
     @Override
+    @PermissionsAllowed(Permission.READ_CURRENCY)
     public List<Currency> getCurrencies() {
         return getEntities(Currency.class, new Pair<String, SortOrder>("code", SortOrder.ASC));
     }

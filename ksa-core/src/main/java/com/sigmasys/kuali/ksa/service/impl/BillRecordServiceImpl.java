@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.BillRecord;
@@ -7,7 +8,6 @@ import com.sigmasys.kuali.ksa.model.Transaction;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.BillRecordService;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -61,6 +61,7 @@ public class BillRecordServiceImpl extends GenericPersistenceService implements 
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_BILL_RECORD)
     public BillRecord createBillRecord(String accountId,
                                        String message,
                                        Date billDate,
@@ -71,8 +72,6 @@ public class BillRecordServiceImpl extends GenericPersistenceService implements 
                                        boolean showDeferments,
                                        boolean showDependents,
                                        Set<Long> transactionIds) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_BILL_RECORD);
 
         Account account = accountService.getFullAccount(accountId);
         if (account == null) {
@@ -157,9 +156,8 @@ public class BillRecordServiceImpl extends GenericPersistenceService implements 
      * @return Information instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BILL)
     public BillRecord getBillRecord(Long id) {
-
-        PermissionUtils.checkPermission(Permission.READ_BILL);
 
         Query query = em.createQuery(GET_BILL_RECORD_SELECT + " where b.id = :id");
 
@@ -177,9 +175,8 @@ public class BillRecordServiceImpl extends GenericPersistenceService implements 
      * @return List of Information instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BILL)
     public List<BillRecord> getBillRecords(String accountId) {
-
-        PermissionUtils.checkPermission(Permission.READ_BILL);
 
         Query query = em.createQuery(GET_BILL_RECORD_SELECT + " where a.id = :accountId order by b.id desc");
 
@@ -195,9 +192,8 @@ public class BillRecordServiceImpl extends GenericPersistenceService implements 
      * @return BillRecord instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BILL)
     public BillRecord getLatestBillRecord(String accountId) {
-
-        PermissionUtils.checkPermission(Permission.READ_BILL);
 
         Query query = em.createQuery(GET_BILL_RECORD_SELECT + " where a.id = :accountId order by b.endDate desc");
 
@@ -218,8 +214,8 @@ public class BillRecordServiceImpl extends GenericPersistenceService implements 
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_BILL)
     public Long persistBillRecord(BillRecord billRecord) {
-        PermissionUtils.checkPermission(Permission.UPDATE_BILL);
         return persistEntity(billRecord);
     }
 
@@ -231,8 +227,8 @@ public class BillRecordServiceImpl extends GenericPersistenceService implements 
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_BILL)
     public boolean deleteBillRecord(Long id) {
-        PermissionUtils.checkPermission(Permission.DELETE_BILL);
         return deleteEntity(id, BillRecord.class);
     }
 

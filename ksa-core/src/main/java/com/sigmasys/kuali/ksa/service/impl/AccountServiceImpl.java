@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.AccountTypeNotFoundException;
 import com.sigmasys.kuali.ksa.exception.ConfigurationException;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
@@ -9,7 +10,6 @@ import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.ActivityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.jaxb.Ach;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.CommonUtils;
 import com.sigmasys.kuali.ksa.util.RequestUtils;
@@ -100,9 +100,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return a list of pairs [Debit, BigDecimal]
      */
     @Override
+    @PermissionsAllowed(Permission.REBALANCE_ACCOUNT)
     public List<Pair<Debit, BigDecimal>> rebalance(String userId, boolean ignoreDeferment) {
-
-        PermissionUtils.checkPermission(Permission.REBALANCE_ACCOUNT);
 
         Query query = em.createQuery("select t from Transaction t " +
                 " where t.account.id = :userId and " +
@@ -155,9 +154,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false, timeout = 1200)
+    @PermissionsAllowed(Permission.AGE_DEBT)
     public void ageDebt(boolean ignoreDeferment) {
-
-        PermissionUtils.checkPermission(Permission.AGE_ACCOUNT);
 
         String ageDebtMethodName = configService.getParameter(Constants.AGE_DEBT_METHOD);
         if (StringUtils.isBlank(ageDebtMethodName)) {
@@ -179,8 +177,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
     protected ChargeableAccount ageDebt(ChargeableAccount chargeableAccount, AgeDebtMethod ageDebtMethod, Date ageDate,
                                         boolean ignoreDeferment) {
-
-        PermissionUtils.checkPermission(Permission.AGE_ACCOUNT);
 
         LatePeriod latePeriod = chargeableAccount.getLatePeriod();
 
@@ -274,6 +270,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.AGE_DEBT)
     public ChargeableAccount ageDebt(String userId, boolean ignoreDeferment) {
         return ageDebt(userId, new Date(), ignoreDeferment);
     }
@@ -289,6 +286,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.AGE_DEBT)
     public ChargeableAccount ageDebt(String userId, Date ageDate, boolean ignoreDeferment) {
 
         String ageDebtMethodName = configService.getParameter(Constants.AGE_DEBT_METHOD);
@@ -313,6 +311,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.AGE_DEBT)
     public ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, boolean ignoreDeferment) {
         return ageDebt(userId, ageDebtMethod, new Date(), ignoreDeferment);
     }
@@ -328,6 +327,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.AGE_DEBT)
     public ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, Date ageDate, boolean ignoreDeferment) {
 
         Account account = getFullAccount(userId);
@@ -354,6 +354,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return The future balance amount
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BALANCE)
     public BigDecimal getFutureBalance(String userId, boolean ignoreDeferment) {
         return getFutureBalance(userId, new Date(), ignoreDeferment);
     }
@@ -367,6 +368,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return The future balance amount
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BALANCE)
     public BigDecimal getFutureBalance(String userId, Date balanceDate, boolean ignoreDeferment) {
         return getBalance(userId, balanceDate, ignoreDeferment, true);
     }
@@ -379,6 +381,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return total amount of balance due
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BALANCE)
     public BigDecimal getDueBalance(String userId, boolean ignoreDeferment) {
         return getDueBalance(userId, new Date(), ignoreDeferment);
     }
@@ -392,6 +395,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return total amount of balance due
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BALANCE)
     public BigDecimal getDueBalance(String userId, Date balanceDate, boolean ignoreDeferment) {
         return getBalance(userId, balanceDate, ignoreDeferment, false);
     }
@@ -404,9 +408,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return Amount
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BALANCE)
     public BigDecimal getBalance(String userId, Date toDate) {
-
-        PermissionUtils.checkPermission(Permission.READ_BALANCE);
 
         if (toDate == null) {
             return BigDecimal.ZERO;
@@ -447,6 +450,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return total amount of outstanding balance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BALANCE)
     public BigDecimal getOutstandingBalance(String userId, boolean ignoreDeferment) {
         return getOutstandingBalance(userId, new Date(), ignoreDeferment);
     }
@@ -460,14 +464,13 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return total amount of outstanding balance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BALANCE)
     public BigDecimal getOutstandingBalance(String userId, Date balanceDate, boolean ignoreDeferment) {
         BigDecimal futureBalance = getFutureBalance(userId, balanceDate, ignoreDeferment);
         return futureBalance.add(getDueBalance(userId, balanceDate, ignoreDeferment));
     }
 
     protected BigDecimal getBalance(String userId, Date balanceDate, boolean ignoreDeferment, boolean notYetEffective) {
-
-        PermissionUtils.checkPermission(Permission.READ_BALANCE);
 
         balanceDate = CalendarUtils.removeTime(balanceDate);
 
@@ -530,9 +533,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return unallocated balance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BALANCE)
     public BigDecimal getUnallocatedBalance(String userId) {
-
-        PermissionUtils.checkPermission(Permission.READ_BALANCE);
 
         List<Payment> payments = transactionService.getPayments(userId);
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -547,6 +549,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
                 totalAmount = totalAmount.add(difference);
             }
         }
+
         return totalAmount;
     }
 
@@ -557,6 +560,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return deferred amount
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BALANCE)
     public BigDecimal getDeferredBalance(String userId) {
         return getDeferredBalance(userId, new Date());
     }
@@ -569,6 +573,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return deferred amount
      */
     @Override
+    @PermissionsAllowed(Permission.READ_BALANCE)
     public BigDecimal getDeferredBalance(String userId, Date balanceDate) {
         List<Deferment> deferments = transactionService.getDeferments(userId);
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -590,6 +595,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return true if the account exists, false otherwise
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCOUNT)
     public boolean ksaAccountExists(String userId) {
         return getEntity(userId, Account.class) != null;
     }
@@ -603,6 +609,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false, noRollbackFor = UserNotFoundException.class)
+    @PermissionsAllowed(Permission.READ_ACCOUNT)
     public boolean accountExists(String userId) {
         if (StringUtils.isNotEmpty(userId)) {
             try {
@@ -621,14 +628,15 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return the account instance or null if the account does not exist
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCOUNT)
     public Account getFullAccount(String userId) {
-
-        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         Query query = em.createQuery("select distinct a from Account a " + GET_FULL_ACCOUNTS_JOIN + " where a.id = :id");
 
         query.setParameter("id", userId);
+
         List<Account> accounts = query.getResultList();
+
         return (accounts != null && !accounts.isEmpty()) ? accounts.get(0) : null;
     }
 
@@ -638,10 +646,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return the list account instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCOUNT)
     public List<Account> getFullAccounts() {
-
-        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
-
         Query query = em.createQuery(GET_FULL_ACCOUNTS_QUERY);
         return query.getResultList();
     }
@@ -653,6 +659,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return the list of Account instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCOUNT)
     public List<Account> getAccountsByNamePattern(String pattern) {
         return getAccountsByNamePattern(pattern, Account.class);
     }
@@ -665,9 +672,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return the list of Account instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCOUNT)
     public <T extends Account> List<T> getAccountsByNamePattern(String pattern, Class<T> accountClass) {
-
-        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         Query query = em.createQuery("select distinct a from " + accountClass.getName() + " a " +
                 GET_FULL_ACCOUNTS_WHERE + " and upper(a.id) like upper(:pattern)");
@@ -688,9 +694,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed({Permission.CREATE_ACCOUNT, Permission.READ_ACCOUNT})
     public Account getOrCreateAccount(String userId) {
-
-        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         Account account = getEntity(userId, Account.class);
         if (account == null) {
@@ -709,8 +714,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
     private Account createAccount(Person person) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_ACCOUNT);
 
         TransactionStatus transaction = getTransaction();
 
@@ -825,6 +828,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_ACCOUNT)
     public PersonName addPersonName(String userId, PersonName personName) {
         return addPersonName(userId, personName, true);
     }
@@ -842,8 +846,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
     protected PersonName addPersonName(Account account, PersonName personName, boolean createKimName) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
         Set<PersonName> personNames = account.getPersonNames();
         if (personNames == null) {
@@ -885,6 +887,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_ACCOUNT)
     public PostalAddress addPostalAddress(String userId, PostalAddress postalAddress) {
         return addPostalAddress(userId, postalAddress, true);
     }
@@ -902,8 +905,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
     protected PostalAddress addPostalAddress(Account account, PostalAddress postalAddress, boolean createKimAddress) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
         Set<PostalAddress> addresses = account.getPostalAddresses();
         if (addresses == null) {
@@ -945,6 +946,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_ACCOUNT)
     public ElectronicContact addElectronicContact(String userId, ElectronicContact electronicContact) {
         return addElectronicContact(userId, electronicContact, true);
     }
@@ -962,8 +964,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
     }
 
     protected ElectronicContact addElectronicContact(Account account, ElectronicContact electronicContact, boolean createKimContact) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
         Set<ElectronicContact> contacts = account.getElectronicContacts();
         if (contacts == null) {
@@ -1004,8 +1004,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_ACCOUNT)
     public Long persistPersonName(PersonName personName) {
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
         return persistEntity(personName);
     }
 
@@ -1017,8 +1017,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_ACCOUNT)
     public Long persistPostalAddress(PostalAddress postalAddress) {
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
         return persistEntity(postalAddress);
     }
 
@@ -1030,8 +1030,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_ACCOUNT)
     public Long persistElectronicContact(ElectronicContact electronicContact) {
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
         return persistEntity(electronicContact);
     }
 
@@ -1043,9 +1043,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return Ach instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACH)
     public Ach getAch(String userId) {
-
-        PermissionUtils.checkPermission(Permission.READ_ACH);
 
         String errMsg = "ACH Account with ID = " + userId + " does not exist";
 
@@ -1101,9 +1100,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return AccountProtectedInfo instance
      */
     @Override
+    @PermissionsAllowed(Permission.VIEW_ACCOUNT_PROTECTED_INFO)
     public AccountProtectedInfo getAccountProtectedInfo(String userId) {
-
-        PermissionUtils.checkPermission(Permission.VIEW_ACCOUNT_PROTECTED_INFO);
 
         Query query = em.createQuery("select a from AccountProtectedInfo a " +
                 " left outer join fetch a.bankType" +
@@ -1136,9 +1134,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return List of Account instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCOUNT)
     public List<Account> findAccountsByNamePattern(String namePattern) {
-
-        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         boolean patternIsNotEmpty = (namePattern != null) && !namePattern.isEmpty();
 
@@ -1167,9 +1164,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return List of matching Accounts.
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCOUNT)
     public List<Account> findAccountsByExpandedSearchPatterns(String... searchPatterns) {
-
-        PermissionUtils.checkPermission(Permission.READ_ACCOUNT);
 
         // Remove empty elements resulted from extra spaces in the search string:
         searchPatterns = removeEmptyStrings(searchPatterns);
@@ -1563,9 +1559,8 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_ACCOUNT)
     public void updateAccount(Account account, String password) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCOUNT);
 
         if (!ksaAccountExists(account.getId())) {
             String errMsg = "Account '" + account.getId() + "' does not exist";
@@ -1599,10 +1594,9 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_ACCOUNT)
     public Account createAccount(Account account, PersonName defaultName, PostalAddress defaultAddress,
                                  ElectronicContact defaultContact, String password) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_ACCOUNT);
 
         if (StringUtils.isBlank(password)) {
             String errMsg = "Password cannot be empty";

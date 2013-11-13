@@ -1,10 +1,10 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.*;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 import com.sigmasys.kuali.ksa.util.GuidGenerator;
@@ -62,10 +62,9 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_GL_TYPE)
     public GeneralLedgerType createGeneralLedgerType(String code, String name, String description, String glAccountId,
                                                      GlOperationType glOperationOnCharge) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_GL_TYPE);
 
         if (!isGlAccountValid(glAccountId)) {
             String errMsg = "GL Account '" + glAccountId + "' is invalid";
@@ -92,10 +91,9 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return GL type ID
      */
     @Override
+    @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.EDIT_GL_TYPE)
     public Long persistGeneralLedgerType(GeneralLedgerType glType) {
-
-        PermissionUtils.checkPermission(Permission.EDIT_GL_TYPE);
-
         return persistEntity(glType);
     }
 
@@ -105,10 +103,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return list of GeneralLedgerType instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_GL_TYPE)
     public List<GeneralLedgerType> getGeneralLedgerTypes() {
-
-        PermissionUtils.checkPermission(Permission.READ_GL_TYPE);
-
         return getEntities(GeneralLedgerType.class, new Pair<String, SortOrder>("creationDate", SortOrder.ASC),
                 new Pair<String, SortOrder>("id", SortOrder.ASC));
     }
@@ -128,14 +124,13 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false, noRollbackFor = GlTransactionFailedException.class)
+    @PermissionsAllowed(Permission.CREATE_GL_TRANSACTION)
     public GlTransaction createGlTransaction(Long transactionId,
                                              String glAccountId,
                                              BigDecimal amount,
                                              GlOperationType operationType,
                                              String statement,
                                              boolean isQueued) throws GlTransactionFailedException {
-
-        PermissionUtils.checkPermission(Permission.CREATE_GL_TRANSACTION);
 
         if (!isGlAccountValid(glAccountId)) {
             String errMsg = "GL Account '" + glAccountId + "' is invalid";
@@ -199,6 +194,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false, noRollbackFor = GlTransactionFailedException.class)
+    @PermissionsAllowed(Permission.CREATE_GL_TRANSACTION)
     public GlTransaction createGlTransaction(Long transactionId,
                                              String glAccountId,
                                              BigDecimal amount,
@@ -215,8 +211,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.EDIT_GL_TRANSACTION)
     public Long persistGlTransaction(GlTransaction glTransaction) {
-        PermissionUtils.checkPermission(Permission.EDIT_GL_TRANSACTION);
         return persistEntity(glTransaction);
     }
 
@@ -229,9 +225,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.SUMMARIZE_GL_TRANSACTIONS)
     public List<GlTransaction> summarizeGlTransactions(List<GlTransaction> transactions) {
-
-        PermissionUtils.checkPermission(Permission.SUMMARIZE_GL_TRANSACTIONS);
 
         // Creating a new array list based on the given GL transaction list
         List<GlTransaction> glTransactions = new ArrayList<GlTransaction>(transactions);
@@ -342,9 +337,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return GeneralLedgerType instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_GL_TYPE)
     public GeneralLedgerType getGeneralLedgerType(String glTypeCode) {
-
-        PermissionUtils.checkPermission(Permission.READ_GL_TYPE);
 
         Query query = em.createQuery("select t from GeneralLedgerType t where t.code = :code");
         query.setParameter("code", glTypeCode);
@@ -365,8 +359,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_GL_TYPE)
     public GeneralLedgerType getGeneralLedgerType(Long glTypeId) {
-        PermissionUtils.checkPermission(Permission.READ_GL_TYPE);
         return getEntity(glTypeId, GeneralLedgerType.class);
     }
 
@@ -376,8 +370,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return GeneralLedgerType instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_GL_TYPE)
     public GeneralLedgerType getDefaultGeneralLedgerType() {
-        PermissionUtils.checkPermission(Permission.READ_GL_TYPE);
         String defaultGlTypeCode = configService.getParameter(DEFAULT_GL_TYPE);
         if (StringUtils.isBlank(defaultGlTypeCode)) {
             String errMsg = "Configuration parameter '" + DEFAULT_GL_TYPE + "' is required";
@@ -406,8 +400,6 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     private GlTransmission createGlTransmission(String glAccountId, Date earliestDate, Date latestDate,
                                                 GlOperationType glOperation, BigDecimal amount,
                                                 GlRecognitionPeriod recognitionPeriod, String batchId) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_GL_TRANSMISSION);
 
         if (!isGlAccountValid(glAccountId)) {
             String errMsg = "GL Account '" + glAccountId + "' is invalid";
@@ -467,10 +459,9 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_GL_TRANSMISSION)
     public List<GlTransmission> createGlTransmissions(Date fromDate, Date toDate, boolean isEffectiveDate,
                                                       String... recognitionPeriods) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_GL_TRANSMISSION);
 
         if (fromDate != null && toDate != null && fromDate.after(toDate)) {
             String errMsg = "Start Date cannot be greater than End Date: Start Date = " + fromDate +
@@ -636,9 +627,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_GL_TRANSMISSION)
     public List<GlTransmission> getGlTransmissionsForBatch(String batchId, GlTransmissionStatus... statuses) {
-
-        PermissionUtils.checkPermission(Permission.READ_GL_TRANSMISSION);
 
         List<String> statusCodes = new ArrayList<String>(statuses.length);
 
@@ -757,9 +747,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return list of GlTransaction instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_GL_TRANSACTION)
     public List<GlTransaction> getGlTransactions(Date startDate, Date endDate, String glAccountId) {
-
-        PermissionUtils.checkPermission(Permission.READ_GL_TRANSACTION);
 
         if (startDate == null || endDate == null) {
             String errMsg = "Start Date and End Date cannot be null";
@@ -801,6 +790,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_GL_TRANSACTION)
     public List<GlTransaction> getGlTransactions(Date startDate, Date endDate) {
         return getGlTransactions(startDate, endDate, null);
     }
@@ -812,9 +802,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return list of GlTransaction instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_GL_TRANSACTION)
     public List<GlTransaction> getGlTransactionsByStatus(GlTransactionStatus status) {
-
-        PermissionUtils.checkPermission(Permission.READ_GL_TRANSACTION);
 
         if (status == null) {
             String errMsg = "Status cannot be null";
@@ -842,9 +831,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_GL_TRANSACTION)
     public List<GlTransaction> getGlTransactionsForBatch(String batchId) {
-
-        PermissionUtils.checkPermission(Permission.READ_GL_TRANSACTION);
 
         if (StringUtils.isBlank(batchId)) {
             String errMsg = "Batch ID cannot be empty or null";
@@ -870,9 +858,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return A list of GL Transmissions with the specified statuses.
      */
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_GL_TRANSMISSION)
     public List<GlTransmission> getGlTransmissionsByStatuses(GlTransmissionStatus... statuses) {
-
-        PermissionUtils.checkPermission(Permission.READ_GL_TRANSMISSION);
 
         List<String> statusCodes = new ArrayList<String>(statuses.length);
 
@@ -899,6 +886,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed({Permission.READ_TRANSACTION, Permission.READ_GL_TRANSMISSION})
     public List<GlBatchBaseline> createGlBaselineAmounts(String batchId) {
 
         Query query = em.createQuery("select 1 from GlTransmission where batchId = :batchId");
@@ -920,6 +908,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
                     " group by glt.code");
 
             List<Object[]> results = query.getResultList();
+
             if (!CollectionUtils.isEmpty(results)) {
                 for (Object[] values : results) {
 
@@ -967,13 +956,11 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
             }
 
             return baselines;
-
         }
 
         String errMsg = "Batch ID = " + batchId + " does not exist";
         logger.error(errMsg);
         throw new IllegalArgumentException(errMsg);
-
     }
 
     /**
@@ -1000,9 +987,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return list of GlBreakdownOverride instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_GL_BREAKDOWN)
     public List<GlBreakdownOverride> getGlBreakdownOverrides(Long transactionId) {
-
-        PermissionUtils.checkPermission(Permission.READ_GL_BREAKDOWN);
 
         Query query = em.createQuery("select g from GlBreakdownOverride g inner join fetch g.transaction t " +
                 " where t.id = :transactionId");
@@ -1020,9 +1006,9 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return list of GlBreakdownOverride IDs
      */
     @Override
+    @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_GL_BREAKDOWN)
     public List<Long> createGlBreakdownOverrides(Long transactionId, List<GlBreakdownOverride> glBreakdownOverrides) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_GL_BREAKDOWN);
 
         Transaction transaction = transactionService.getTransaction(transactionId);
         if (transaction == null) {
@@ -1048,7 +1034,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
             overrideIds.add(breakdownId);
         }
 
-        if (org.apache.commons.collections.CollectionUtils.isNotEmpty(glBreakdownOverrides)) {
+        if (!CollectionUtils.isEmpty(glBreakdownOverrides)) {
             transaction.setGlOverridden(true);
         }
 
@@ -1066,9 +1052,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_GL_BREAKDOWN)
     public List<Long> createGlBreakdowns(Long glTypeId, TransactionTypeId transactionTypeId, List<GlBreakdown> breakdowns) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_GL_BREAKDOWN);
 
         List<Long> breakdownIds = new ArrayList<Long>(breakdowns.size());
 
@@ -1117,9 +1102,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return list of GlBreakdown instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_GL_BREAKDOWN)
     public List<GlBreakdown> getGlBreakdowns(TransactionTypeId transactionTypeId) {
-
-        PermissionUtils.checkPermission(Permission.READ_GL_BREAKDOWN);
 
         Query query = em.createQuery("select g from GlBreakdown g " +
                 " left outer join fetch g.transactionType tt " +
@@ -1140,6 +1124,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return list of GlBreakdown or GlBreakdownOverride instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_GL_BREAKDOWN)
     public List<AbstractGlBreakdown> getGlBreakdowns(Transaction transaction) {
 
         GeneralLedgerType glType = transaction.getGeneralLedgerType();
@@ -1180,12 +1165,9 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return list of FailedGlTransaction instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_FAILED_GL_TRANSACTION)
     public List<FailedGlTransaction> getFailedGlTransactions() {
-
-        PermissionUtils.checkPermission(Permission.READ_FAILED_GL_TRANSACTION);
-
         Query query = em.createQuery(SELECT_FAILED_GL_TRANSACTION + " order by f.id desc");
-
         return query.getResultList();
     }
 
@@ -1196,9 +1178,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return list of FailedGlTransaction instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_FAILED_GL_TRANSACTION)
     public List<FailedGlTransaction> getFailedGlTransactionsForAccount(String accountId) {
-
-        PermissionUtils.checkPermission(Permission.READ_FAILED_GL_TRANSACTION);
 
         Query query = em.createQuery(SELECT_FAILED_GL_TRANSACTION + " where t.account.id = :accountId order by f.id desc");
 
@@ -1215,6 +1196,7 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
      * @return list of FailedGlTransaction instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_FAILED_GL_TRANSACTION)
     public List<FailedGlTransaction> getFailedGlTransactionsForDates(Date startDate, Date endDate) {
 
         if (startDate == null || endDate == null) {

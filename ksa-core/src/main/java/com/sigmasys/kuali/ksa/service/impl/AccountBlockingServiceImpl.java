@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.AccountBlockedException;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.Account;
@@ -11,7 +12,6 @@ import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmPersistenceService;
 import com.sigmasys.kuali.ksa.service.brm.BrmService;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -66,9 +66,8 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_ACCOUNT_BLOCK_OVERRIDE)
     public AccountBlockOverride createAccountBlockOverride(String ruleName, String accountId, Date expirationDate, String reason) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_ACCOUNT_BLOCK_OVERRIDE);
 
         Rule rule = brmPersistenceService.getRule(ruleName);
         if (rule == null) {
@@ -120,9 +119,8 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
      * @return AccountBlockOverride instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCOUNT_BLOCK_OVERRIDE)
     public AccountBlockOverride getAccountBlockOverride(Long blockOverrideId) {
-
-        PermissionUtils.checkPermission(Permission.READ_ACCOUNT_BLOCK_OVERRIDE);
 
         Query query = em.createQuery(GET_BLOCK_OVERRIDE_SELECT + " where a.id = :id");
 
@@ -139,9 +137,8 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
      * @return list of AccountBlockOverride instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCOUNT_BLOCK_OVERRIDE)
     public List<AccountBlockOverride> getAccountBlockOverrides() {
-
-        PermissionUtils.checkPermission(Permission.READ_ACCOUNT_BLOCK_OVERRIDE);
 
         Query query = em.createQuery(GET_BLOCK_OVERRIDE_SELECT + " order by a.id desc");
 
@@ -154,9 +151,8 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
      * @return list of AccountBlockOverride instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCOUNT_BLOCK_OVERRIDE)
     public List<AccountBlockOverride> getAccountBlockOverrides(String accountId) {
-
-        PermissionUtils.checkPermission(Permission.READ_ACCOUNT_BLOCK_OVERRIDE);
 
         Query query = em.createQuery(GET_BLOCK_OVERRIDE_SELECT + " where ac.id = :accountId order by a.id desc");
 
@@ -173,8 +169,8 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_ACCOUNT_BLOCK_OVERRIDE)
     public boolean deleteAccountBlockOverride(Long blockOverrideId) {
-        PermissionUtils.checkPermission(Permission.DELETE_ACCOUNT_BLOCK_OVERRIDE);
         return deleteEntity(blockOverrideId, AccountBlockOverride.class);
 
     }
@@ -187,6 +183,7 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.RELEASE_ACCOUNT_BLOCK_OVERRIDE)
     public AccountBlockOverride enableAccountBlockOverride(Long blockOverrideId) {
         return setAccountBlockOverride(blockOverrideId, true);
     }
@@ -199,6 +196,7 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.RELEASE_ACCOUNT_BLOCK_OVERRIDE)
     public AccountBlockOverride disableAccountBlockOverride(Long blockOverrideId) {
         return setAccountBlockOverride(blockOverrideId, false);
     }
@@ -211,8 +209,6 @@ public class AccountBlockingServiceImpl extends GenericPersistenceService implem
      * @return AccountBlockOverride instance
      */
     protected AccountBlockOverride setAccountBlockOverride(Long blockOverrideId, boolean active) {
-
-        PermissionUtils.checkPermission(Permission.RELEASE_ACCOUNT_BLOCK_OVERRIDE);
 
         AccountBlockOverride blockOverride = getAccountBlockOverride(blockOverrideId);
         if (blockOverride == null) {

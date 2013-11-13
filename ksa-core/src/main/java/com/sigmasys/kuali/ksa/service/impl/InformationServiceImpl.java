@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.ConfigurationException;
 import com.sigmasys.kuali.ksa.exception.InformationNotFoundException;
 import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
@@ -706,7 +707,6 @@ public class InformationServiceImpl extends GenericPersistenceService implements
         checkDeletePermission(flagType.getAccessLevel());
 
         return auditableEntityService.deleteAuditableEntity(flagTypeId, FlagType.class);
-
     }
 
     /**
@@ -782,6 +782,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      * @return InformationAccessLevel code
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCESS_LEVEL)
     public String getDefaultMemoLevel() {
         String defaultMemoLevel = configService.getParameter(Constants.DEFAULT_MEMO_LEVEL);
         if (StringUtils.isBlank(defaultMemoLevel)) {
@@ -865,8 +866,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      * @return InformationAccessLevel instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCESS_LEVEL)
     public InformationAccessLevel getInformationAccessLevel(String code) {
-        PermissionUtils.checkPermission(Permission.READ_ACCESS_LEVEL);
         return auditableEntityService.getAuditableEntity(code, InformationAccessLevel.class);
     }
 
@@ -877,8 +878,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      * @return InformationAccessLevel instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_ACCESS_LEVEL)
     public InformationAccessLevel getInformationAccessLevel(Long id) {
-        PermissionUtils.checkPermission(Permission.READ_ACCESS_LEVEL);
         return auditableEntityService.getAuditableEntity(id, InformationAccessLevel.class);
     }
 
@@ -890,8 +891,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_ACCESS_LEVEL)
     public Long persistInformationAccessLevel(InformationAccessLevel accessLevel) {
-        PermissionUtils.checkPermission(Permission.UPDATE_ACCESS_LEVEL);
         return auditableEntityService.persistAuditableEntity(accessLevel);
     }
 
@@ -911,6 +912,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_ACCESS_LEVEL)
     public InformationAccessLevel createInformationAccessLevel(String code,
                                                                String name,
                                                                String description,
@@ -919,8 +921,6 @@ public class InformationServiceImpl extends GenericPersistenceService implements
                                                                String updatePermission,
                                                                String deletePermission,
                                                                String expirePermission) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_ACCESS_LEVEL);
 
         InformationAccessLevel accessLevel = new InformationAccessLevel();
         accessLevel.setCode(code);
@@ -946,6 +946,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      * @return InformationAccessLevel instance
      */
     @Override
+    @PermissionsAllowed(Permission.CREATE_ACCESS_LEVEL)
     public InformationAccessLevel createMemoAccessLevel(String code, String name, String description) {
         return createInformationAccessLevel(code, name, description, Permission.CREATE_MEMO.name(),
                 Permission.READ_MEMO.name(), Permission.UPDATE_MEMO.name(),
@@ -962,6 +963,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_ACCESS_LEVEL)
     public InformationAccessLevel createAlertAccessLevel(String code, String name, String description) {
         return createInformationAccessLevel(code, name, description, Permission.CREATE_ALERT.name(),
                 Permission.READ_ALERT.name(), Permission.UPDATE_ALERT.name(),
@@ -978,6 +980,7 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_ACCESS_LEVEL)
     public InformationAccessLevel createFlagAccessLevel(String code, String name, String description) {
         return createInformationAccessLevel(code, name, description, Permission.CREATE_FLAG.name(),
                 Permission.READ_FLAG.name(), Permission.UPDATE_FLAG.name(),
@@ -992,8 +995,8 @@ public class InformationServiceImpl extends GenericPersistenceService implements
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_ACCESS_LEVEL)
     public boolean deleteInformationAccessLevel(Long id) {
-        PermissionUtils.checkPermission(Permission.DELETE_ACCESS_LEVEL);
         return deleteEntity(id, InformationAccessLevel.class);
     }
 
