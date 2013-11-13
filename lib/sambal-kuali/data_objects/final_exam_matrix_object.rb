@@ -288,7 +288,7 @@ class FinalExamMatrix
         page.preview_change
         page.loading.wait_while_present
       elsif @add_more_statements == true
-        opts = {:rule => "if course is part of <Courses>",
+        opts = {:rule => "If course is part of <Courses>",
                 :courses => "HIST110,ENGL304,BSCI202",
                 :courses_type => "Approved Courses"}
         page.add_statement
