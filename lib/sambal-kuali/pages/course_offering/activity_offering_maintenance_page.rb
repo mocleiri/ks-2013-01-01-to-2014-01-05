@@ -104,9 +104,10 @@ class ActivityOfferingMaintenance < BasePage
 
   element(:view_requested_delivery_logistics_toggle_open) { |b| b.frm.image(id: "ActivityOffering-DeliveryLogistic-Requested_toggle_exp") }
   element(:view_requested_delivery_logistics_link) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-Requested_toggle") }
+
   def view_requested_delivery_logistics
-    if view_requested_delivery_logistics_link.present?
-      view_requested_delivery_logistics_link.click unless view_requested_delivery_logistics_toggle_open.present?
+    if view_requested_delivery_logistics_link.present? && !view_requested_delivery_logistics_toggle_open.present?
+      view_requested_delivery_logistics_link.click
       loading.wait_while_present
     end
   end
