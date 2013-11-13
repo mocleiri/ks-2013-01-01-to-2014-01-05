@@ -266,7 +266,8 @@
 	<bean id="NewPersonAccountAccountInfoSection1" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
 		<property name="items">
 			<list>
-				<bean parent="Uif-InputField" p:propertyName="account.statusType.id" p:labelPlacement="TOP" p:label="Status" 
+
+				<bean parent="Uif-InputField" p:propertyName="accountStatusTypeId" p:labelPlacement="TOP" p:label="Status"
 						p:fieldLabel.renderColon="false">
 					<property name="control">
 						<bean parent="Uif-DropdownControl" p:width="100%"/>
@@ -281,7 +282,7 @@
 						</bean>
 					</property>
 				</bean>
-				
+
 				<bean parent="Uif-InputField" p:propertyName="accountInfo.accountType" p:labelPlacement="TOP" p:label="Account Type" 
 						p:fieldLabel.renderColon="false">
 					<property name="control">
@@ -304,23 +305,6 @@
 						<bean parent="Uif-TextControl" p:size="11" p:maxLength="20"/>
 					</property>
 				</bean>
-				<!--
-				<bean parent="Uif-InputField" p:propertyName="account.latePeriod.id" p:labelPlacement="TOP" p:label="Late Period" 
-						p:fieldLabel.renderColon="false">
-					<property name="control">
-						<bean parent="Uif-DropdownControl" p:width="100%"/>
-					</property>
-					<property name="optionsFinder">
-						<bean class="com.sigmasys.kuali.ksa.krad.util.AuditableEntityKeyValuesFinder">
-							<constructor-arg>
-								<bean class="java.lang.Class" factory-method="forName">
-									<constructor-arg value="com.sigmasys.kuali.ksa.model.LatePeriod"/>
-								</bean>
-							</constructor-arg>
-						</bean>
-					</property>
-				</bean>
-				-->
 				<bean parent="Uif-InputField" p:propertyName="account.ableToAuthenticate">
 					<property name="control">
 						<bean parent="Uif-CheckboxControl"  p:checkboxLabel="Account can Authenticate"/>
@@ -335,7 +319,7 @@
 	<bean id="NewPersonAccountAccountInfoSection2" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
 		<property name="items">
 			<list>
-				<bean parent="Uif-InputField" p:propertyName="accountInfo.accountProtectedInfo.bankType.id" p:labelPlacement="TOP" p:label="Bank Type" 
+				<bean parent="Uif-InputField" p:propertyName="accountBankTypeId" p:labelPlacement="TOP" p:label="Bank Type"
 						p:fieldLabel.renderColon="false">
 					<property name="control">
 						<bean parent="Uif-DropdownControl" p:width="100%"/>
@@ -350,7 +334,7 @@
 						</bean>
 					</property>
 				</bean>
-				
+
 				<bean parent="Uif-InputField" p:propertyName="accountInfo.accountProtectedInfo.bankDetails" p:labelPlacement="TOP" p:label="Bank Detail"
 						p:constraintText="Format: xxx-xxx-xxx">
 					<property name="control">
@@ -358,7 +342,7 @@
 					</property>
 				</bean>
 				
-				<bean parent="Uif-InputField" p:propertyName="accountInfo.accountProtectedInfo.taxType.id" p:labelPlacement="TOP" p:label="Tax Type" 
+				<bean parent="Uif-InputField" p:propertyName="accountTaxTypeId" p:labelPlacement="TOP" p:label="Tax Type"
 						p:fieldLabel.renderColon="false">
 					<property name="control">
 						<bean parent="Uif-DropdownControl" p:width="100%"/>
@@ -389,7 +373,7 @@
 	<bean id="NewPersonAccountAccountInfoSection3" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
 		<property name="items">
 			<list>
-				<bean parent="Uif-InputField" p:propertyName="accountInfo.accountProtectedInfo.identityType.id" p:labelPlacement="TOP" p:label="Identity Type"
+				<bean parent="Uif-InputField" p:propertyName="accountIdentityTypeId" p:labelPlacement="TOP" p:label="Identity Type"
 						p:fieldLabel.renderColon="false">
 					<property name="control">
 						<bean parent="Uif-DropdownControl" p:width="100%"/>
@@ -404,7 +388,6 @@
 						</bean>
 					</property>
 				</bean>
-				
 				<bean parent="Uif-InputField" p:propertyName="accountInfo.accountProtectedInfo.identitySerial" p:labelPlacement="TOP" p:label="Identity Serial"
 						p:constraintText="Format: DL-123456789">
 					<property name="control">

@@ -9,6 +9,8 @@ import com.sigmasys.kuali.ksa.service.UserPreferenceService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.rice.core.api.util.RiceKeyConstants;
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,20 +99,57 @@ public class AccountManagementController extends GenericSearchController {
         List<UserPreference> userPreferences = form.getAccountInfo().getUserPreferences();
         String accountId = account.getId();
 
+        String statusTypeIdString = form.getAccountStatusTypeId();
+        AccountStatusType statusType = null;
+        if(statusTypeIdString != null && !"".equals(statusTypeIdString)) {
+            try {
+                Long statusTypeId = Long.valueOf(statusTypeIdString);
+                statusType = auditableEntityService.getAuditableEntity(statusTypeId, AccountStatusType.class);
+            } catch(Throwable e) {
+                GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+            }
+        }
+        account.setStatusType(statusType);
+
+
         // Persist the objects:
         persistenceService.persistEntity(account);
 
-        if(accountProtectedInfo.getBankType() != null && accountProtectedInfo.getBankType().getId() == null) {
-            accountProtectedInfo.setBankType(null);
+        String bankTypeIdString = form.getAccountBankTypeId();
+        BankType bankType = null;
+        if(bankTypeIdString != null && !"".equals(bankTypeIdString)) {
+            try {
+                Long bankTypeId = Long.valueOf(bankTypeIdString);
+                bankType = auditableEntityService.getAuditableEntity(bankTypeId, BankType.class);
+            } catch(Throwable e) {
+                GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+            }
         }
+        accountProtectedInfo.setBankType(bankType);
 
-        if(accountProtectedInfo.getTaxType() != null && accountProtectedInfo.getTaxType().getId() == null) {
-            accountProtectedInfo.setTaxType(null);
+        String taxTypeIdString = form.getAccountTaxTypeId();
+        TaxType taxType = null;
+        if(taxTypeIdString != null && !"".equals(taxTypeIdString)) {
+            try {
+                Long taxTypeId = Long.valueOf(taxTypeIdString);
+                taxType = auditableEntityService.getAuditableEntity(taxTypeId, TaxType.class);
+            } catch(Throwable e) {
+                GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+            }
         }
+        accountProtectedInfo.setTaxType(taxType);
 
-        if(accountProtectedInfo.getIdentityType() != null && accountProtectedInfo.getIdentityType().getId() == null) {
-            accountProtectedInfo.setIdentityType(null);
+        String identityTypeString = form.getAccountIdentityTypeId();
+        IdentityType identityType = null;
+        if(identityTypeString != null && !"".equals(identityTypeString)) {
+            try {
+                Long identityTypeId = Long.valueOf(identityTypeString);
+                identityType = auditableEntityService.getAuditableEntity(identityTypeId, IdentityType.class);
+            } catch(Throwable e) {
+                GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+            }
         }
+        accountProtectedInfo.setIdentityType(identityType);
 
         accountProtectedInfo.setId(accountId);
         persistenceService.persistEntity(accountProtectedInfo);
@@ -120,6 +159,8 @@ public class AccountManagementController extends GenericSearchController {
             userPreference.setAccountId(accountId);
             userPreferenceService.persistUserPreference(userPreference);
         }
+
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Account saved");
 
         // Return to the landing page:
         return returnToLandingPage(form);
@@ -214,6 +255,29 @@ public class AccountManagementController extends GenericSearchController {
         accountInfo.setUserPreferences(userPreferences);
         accountInfo.setAccountType(getAccountType(account).getId());
 
+        AccountStatusType statusType = account.getStatusType();
+        if(statusType != null && statusType.getId() != null) {
+            form.setAccountStatusTypeId(statusType.getId().toString());
+        }
+
+        if(accountProtectedInfo != null) {
+            BankType bankType = accountProtectedInfo.getBankType();
+            if(bankType != null && bankType.getId() != null) {
+                form.setAccountBankTypeId(bankType.getId().toString());
+            }
+
+            TaxType taxType = accountProtectedInfo.getTaxType();
+            if(taxType != null && taxType.getId() != null) {
+                form.setAccountTaxTypeId(taxType.getId().toString());
+            }
+
+            IdentityType identityType = accountProtectedInfo.getIdentityType();
+            if(identityType != null && identityType.getId() != null) {
+                form.setAccountIdentityTypeId(identityType.getId().toString());
+            }
+
+        }
+
         // Set the form's objects:
         form.setAccountInfo(accountInfo);
         form.setAccount(account);
@@ -273,7 +337,7 @@ public class AccountManagementController extends GenericSearchController {
                     ((ChargeableAccount) newAccount).setLatePeriod(existingLatePeriod);
                 }
 
-                AccountStatusType existingAccountStatusType = auditableEntityService.getAuditableEntity(formAccount.getStatusType().getId(), AccountStatusType.class);
+                AccountStatusType existingAccountStatusType = auditableEntityService.getAuditableEntity(form.getAccountStatusTypeId(), AccountStatusType.class);
 
                 newAccount.setStatusType(existingAccountStatusType);
 

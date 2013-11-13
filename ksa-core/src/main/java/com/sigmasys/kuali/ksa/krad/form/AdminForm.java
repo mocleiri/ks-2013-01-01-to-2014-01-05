@@ -47,6 +47,12 @@ public class AdminForm extends AbstractViewModel {
     private Date startingDate;
     private Date endingDate;
 
+    // drop down column keys
+    private String accountStatusTypeId;
+    private String accountBankTypeId;
+    private String accountTaxTypeId;
+    private String accountIdentityTypeId;
+
    /*
      Get / Set methods
    */
@@ -106,5 +112,37 @@ public class AdminForm extends AbstractViewModel {
 
     public void setEndingDate(Date endingDate) {
         this.endingDate = endingDate;
+    }
+
+    public String getAccountStatusTypeId() {
+        return accountStatusTypeId;
+    }
+
+    public void setAccountStatusTypeId(String accountStatusTypeId) {
+        this.accountStatusTypeId = accountStatusTypeId;
+    }
+
+    public String getAccountBankTypeId() {
+        return accountBankTypeId;
+    }
+
+    public void setAccountBankTypeId(String accountBankTypeId) {
+        this.accountBankTypeId = accountBankTypeId;
+    }
+
+    public String getAccountTaxTypeId() {
+        return accountTaxTypeId;
+    }
+
+    public void setAccountTaxTypeId(String accountTaxTypeId) {
+        this.accountTaxTypeId = accountTaxTypeId;
+    }
+
+    public String getAccountIdentityTypeId() {
+        return accountIdentityTypeId;
+    }
+
+    public void setAccountIdentityTypeId(String accountIdentityTypeId) {
+        this.accountIdentityTypeId = accountIdentityTypeId;
     }
 }
