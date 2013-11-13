@@ -1,5 +1,5 @@
 @nightly
-Feature: EC.Department Schedule Coordinator Authorization Other (non SOC state related) scenarios
+Feature: EC.AZ Dept Schedule Coordinator Other (non SOC state related) scenarios
 
   Background:
     Given I am logged in as a Department Schedule Coordinator

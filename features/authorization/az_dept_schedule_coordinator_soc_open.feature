@@ -1,5 +1,5 @@
 @nightly
-Feature: EC.Department Schedule Coordinator Authorization SOC state Open
+Feature: EC.AZ Dept Schedule Coordinator SOC state Open
 
   Background:
     Given I am logged in as a Department Schedule Coordinator
