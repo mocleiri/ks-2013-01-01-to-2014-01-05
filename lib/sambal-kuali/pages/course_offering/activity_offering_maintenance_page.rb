@@ -63,10 +63,15 @@ class ActivityOfferingMaintenance < BasePage
   element(:jointly_share_enrollment_radio) { |b| b.radio(id: "share_seats_control_0") }
   action(:select_jointly_share_enrollment_radio) { |b| b.jointly_share_enrollment_radio.set }
   element(:separately_manage_enrollment_radio) { |b| b.radio(id: "share_seats_control_1") }
-  action(:select_separately_manage_enrollment_radio) { |b| b.separately_manage_enrollment_radio.wait_until_present; b.separately_manage_enrollment_radio.set; b.colocated_shared_max_enrollment_table_first_ao_input.wait_until_present }
+  action(:select_separately_manage_enrollment_radio) { |b| b.separately_manage_enrollment_radio.wait_until_present; b.separately_manage_enrollment_radio.set; b.colocated_separate_max_enrollment_table.wait_until_present }
   element(:colocated_shared_max_enrollment_input_field) { |b| b.frm.text_field(id: "shared_max_enr_control") }
-  element(:colocated_shared_max_enrollment_table) { |b| b.frm.div(id: "enr_shared_table").table() }
-  element(:colocated_shared_max_enrollment_table_first_ao_input) { |b| b.colocated_shared_max_enrollment_table.text_field }
+  element(:colocated_separate_max_enrollment_table) { |b| b.frm.div(id: "enr_shared_table").table() }
+
+  def edit_separate_max_enr co_code, ao_code, max_enr
+    co_ao_code = "#{co_code} #{ao_code}"
+    row = colocated_separate_max_enrollment_table.row(text: /\b#{Regexp.escape(co_ao_code)}\b/)
+    row.cells[1].text_field.set max_enr
+  end
 
   element(:total_maximum_enrollment) { |b| b.frm.text_field(id: "maximumEnrollment_control") }
 
