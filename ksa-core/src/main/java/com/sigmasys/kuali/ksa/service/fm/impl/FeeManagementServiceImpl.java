@@ -91,45 +91,27 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
 
     /**
-     * Checks if the rules engine is processing a "What-If" scenario.
-     *
-     * @return <code>true</code> if the rules engine is processing a "What-If" scenario or <code>false</code> otherwise.
-     */
-    @Override
-    public boolean isCalculating() {
-        // TODO: Figure out how to find out the fee assessment mode:
-        return false;
-    }
-
-    /**
-     * Checks if the rules engine performs Fee Management that will result in real Account charges/credits.
-     *
-     * @return <code>true</code> if the FM is in the real charge mode, <code>false</code> otherwise.
-     */
-    @Override
-    public boolean isCharging() {
-        return !isCalculating();
-    }
-
-    /**
      * Queues a FeeManagementSession.
      *
      * @param feeManagementSessionId ID of an FM Session to queue.
      */
     @Override
     @Transactional(readOnly = false)
-    public void addSessionToQueue(Long feeManagementSessionId) {
+    public void addFeeManagementSessionToQueue(Long feeManagementSessionId) {
         // Get the FM Session:
         FeeManagementSession fmSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
 
         if (fmSession == null) {
-            logger.error("Cannot find an FM session with the ID " + feeManagementSessionId);
-            throw new IllegalArgumentException("Cannot find an FM session with the ID " + feeManagementSessionId);
+            String errorMsg = String.format("Cannot find an FM session with the ID %d.", feeManagementSessionId);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
         }
 
         // Check if the FM Session is current:
         if (fmSession.getStatus() != FeeManagementSessionStatus.CURRENT) {
-            logger.error("Cannot queue an FM Session that is not CURRENT. FM Session status was " + fmSession.getStatus());
+            String errorMsg = String.format("Only CURRENT FM Session can be Queued. Session was %s.", fmSession.getStatus());
+            logger.error(errorMsg);
+            throw new IllegalStateException(errorMsg);
         }
 
         // Set the FM session as queued:
@@ -145,7 +127,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @Transactional(readOnly = false)
-    public void removeSessionFromQueue(Long feeManagementSessionId) {
+    public void removeFeeManagementSessionFromQueue(Long feeManagementSessionId) {
 
         // Check permissions:
         PermissionUtils.checkPermission(Permission.DELETE_FM_QUEUE);
@@ -154,8 +136,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         FeeManagementSession fmSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
 
         if (fmSession == null) {
-            logger.error("Cannot find an FM session with the ID " + feeManagementSessionId);
-            throw new IllegalArgumentException("Cannot find an FM session with the ID " + feeManagementSessionId);
+            String errorMsg = String.format("Cannot find an FM session with the ID %d.", feeManagementSessionId);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
         }
 
         // If the FM Session is queued, de-queue it:
@@ -163,16 +146,6 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             fmSession.setQueued(false);
             persistEntity(fmSession);
         }
-    }
-
-    @Override
-    public Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     /**
@@ -183,7 +156,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @Transactional(readOnly = false)
-    public void queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
+    public Long queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
 
         // Check permissions:
         PermissionUtils.checkPermission(Permission.RUN_FEE_ASSESSMENT);
@@ -198,10 +171,23 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             throw new IllegalStateException("Cannot create a FeeManagementSession using the FM TermRecord.", e);
         }
 
-        if (feeManagementSessionId == null) {
+        // Check if a new ID exists:
+        if (feeManagementSessionId != null) {
             // Queue the FM Session for later execution:
-            addSessionToQueue(feeManagementSessionId);
+            addFeeManagementSessionToQueue(feeManagementSessionId);
         }
+
+        return feeManagementSessionId;
+    }
+
+    @Override
+    public Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     /**
@@ -223,6 +209,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return The newly generated FM Session.
      */
     @Override
+    @Transactional(readOnly = false)
     public Long createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord) {
 
         // Validate the FM TermRecord. This call with either raise an exception or create a valid Account:
@@ -237,9 +224,31 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         return (newSession != null) ? newSession.getId() : null;
     }
 
+    /**
+     * Creates a report info from an FM Session. Documentation to this method reads:
+     * In order to report back a simulated session, we can use this method to create a simplified version of the
+     * manifest. This can be sent back to an external system.
+     * NOTE: FeeManagementReportInfo is a non-persistent object.
+     *
+     * @param feeManagementSessionId    ID of an FM Session for which to create a report.
+     * @return The newly created report object.
+     */
     @Override
     public FeeManagementReportInfo createFeeManagementReport(Long feeManagementSessionId) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+        // Find the FM Session:
+        FeeManagementSession fmSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
+
+        if (fmSession == null) {
+            String errorMsg = String.format("Cannot find an FM Session with ID %d.", feeManagementSessionId);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        // Create a new FeeManagementReportInfo object:
+        FeeManagementReportInfo reportInfo = createFeeManagementReportInfo(fmSession);
+
+        return reportInfo;
     }
 
     /**
@@ -254,7 +263,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     public void reconcileSession(Long feeManagementSessionId) {
 
         // Get a FeeManagement session with the given ID:
-        FeeManagementSession currentSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
+        FeeManagementSession currentSession = getFullFeeManagementSessionById(feeManagementSessionId);
 
         // Validate the FM session for reconciliation:
         validateSessionForReconciliation(currentSession, feeManagementSessionId);
@@ -303,7 +312,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     public void chargeSession(Long feeManagementSessionId) {
 
         // Get a FeeManagement session with the given ID:
-        FeeManagementSession session = getEntity(feeManagementSessionId, FeeManagementSession.class);
+        FeeManagementSession session = getFullFeeManagementSessionById(feeManagementSessionId);
 
         // Validate the FM Session for charge operation:
         validateSessionForCharge(session, feeManagementSessionId);
@@ -381,6 +390,80 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         return query.getResultList();
     }
 
+
+    /***************************************************************************
+     *
+     *
+     * Private helper methods for "createFeeManagementReport".
+     *
+     *
+     ***************************************************************************/
+
+    /**
+     * Creates a report from an FM Session.
+     * NOTE: FeeManagementReportInfo is a non-persistent object.
+     *
+     * @param fmSession FM Session.
+     * @return The newly created report.
+     */
+    private FeeManagementReportInfo createFeeManagementReportInfo(FeeManagementSession fmSession) {
+
+        // Create a new FeeManagementReportInfo object:
+        FeeManagementReportInfo reportInfo = new FeeManagementReportInfo();
+
+        reportInfo.setAccountId(fmSession.getAccount().getId());
+        reportInfo.setCreationDate(new Date());
+
+        // Get FM Manifests:
+        List<FeeManagementManifest> manifests = getManifests(fmSession.getId());
+        BigDecimal totalCharges = BigDecimal.ZERO;
+        BigDecimal totalCorrections = BigDecimal.ZERO;
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            // Add an empty list of FeeManagementReportItem report items:
+            reportInfo.setReportItems(new ArrayList<FeeManagementReportItem>());
+
+            // Iterate through the manifests:
+            for (FeeManagementManifest manifest : manifests) {
+
+                // Create a report item:
+                FeeManagementReportItem reportItem = new FeeManagementReportItem();
+                String statementText =
+                        (manifest.getTransaction() != null) && (manifest.getTransaction().getTransactionType() != null)
+                        ? manifest.getTransaction().getTransactionType().getDefaultStatement() : null;
+                boolean isAlreadyCharged = !BooleanUtils.toBoolean(manifest.isSessionCurrent());
+
+                reportItem.setTransactionTypeId(manifest.getTransactionTypeId());
+                reportItem.setAmount(manifest.getAmount());
+                reportItem.setEffectiveDate(manifest.getEffectiveDate());
+                reportItem.setManifestType(manifest.getType());
+                reportItem.setAlreadyCharged(isAlreadyCharged);
+                reportItem.setStatementText(statementText);
+
+                // Add to report items:
+                reportInfo.getReportItems().add(reportItem);
+
+                // Adjust the amounts based on the manifest type:
+                switch (manifest.getType()) {
+                case CANCELLATION:
+                case DISCOUNT:
+                case CORRECTION:
+                    totalCorrections = totalCorrections.add(manifest.getAmount());
+                    break;
+
+                default:
+                    totalCharges = totalCharges.add(manifest.getAmount());
+                    break;
+                }
+            }
+        }
+
+        // Calculate the impact on account:
+        reportInfo.setNetImpact(totalCharges.subtract(totalCorrections));
+
+        return reportInfo;
+    }
 
     /***************************************************************************
      *
@@ -464,15 +547,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     private FeeManagementSession getLastCompletedFmSession(FeeManagementTermRecord feeManagementTermRecord) {
 
-        // Create a query:
-        Query query = em.createQuery(GET_FM_SESSION_JOIN + " where s.account.id = :accountId and s.atpId = :atpId and s.nextSession is null ");
-
-        query.setParameter("accountId", feeManagementTermRecord.getAccountId());
-        query.setParameter("atpId", feeManagementTermRecord.getAtpId());
-
-        // Get the results:
-        List results = query.getResultList();
-        FeeManagementSession priorSession = CollectionUtils.isNotEmpty(results) ? (FeeManagementSession)results.get(0) : null;
+        // Get the prior session:
+        FeeManagementSession priorSession = getLastPriorFeeManagementSession(
+                feeManagementTermRecord.getAccountId(), feeManagementTermRecord.getAtpId());
 
         // If a prior FM Session is found, check its status. Keep checking until we either find an FM Session
         // that is not CURRENT or SIMULATED or get to the point where there is no prior FM Session:
@@ -480,13 +557,63 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             FeeManagementSessionStatus status = priorSession.getStatus();
 
             if ((status == FeeManagementSessionStatus.SIMULATED) || (status == FeeManagementSessionStatus.CURRENT)) {
-                // De-queue the session and move to the previous FM Session:
-                removeSessionFromQueue(priorSession.getId());
-                priorSession = priorSession.getPrevSession();
+                // Get the IDs of the current and previous sessions:
+                Long fmSessionId = priorSession.getId();
+                Long prevFmSessionId = (priorSession.getPrevSession() != null) ? priorSession.getPrevSession().getId() : null;
+
+                // Completely remove the current (prior) session:
+                em.remove(priorSession);
+
+                // If there was a previous session, move on to it:
+                if (prevFmSessionId != null) {
+                    priorSession = getFullFeeManagementSessionById(prevFmSessionId);
+                }
             }
         }
 
         return priorSession;
+    }
+
+    /**
+     * Returns a full FeeManagementSession object by an Account ID and an ATP ID.
+     *
+     * @param accountId ID of an Account linked to the FM Session to find.
+     * @param atpId     ATP ID.
+     * @return A FeeManagementSession object with the given ID.
+     */
+    private FeeManagementSession getLastPriorFeeManagementSession(String accountId, String atpId) {
+
+        // Create a query:
+        Query query = em.createQuery(GET_FM_SESSION_JOIN + " where s.account.id = :accountId and s.atpId = :atpId and s.nextSession is null ");
+
+        query.setParameter("accountId", accountId);
+        query.setParameter("atpId", atpId);
+
+        // Get the results:
+        List results = query.getResultList();
+        FeeManagementSession fmSession = CollectionUtils.isNotEmpty(results) ? (FeeManagementSession)results.get(0) : null;
+
+        return fmSession;
+    }
+
+    /**
+     * Returns a full FeeManagementSession object by its ID.
+     *
+     * @param fmSessionId   ID of a FeeManagementSession object.
+     * @return A FeeManagementSession object with the given ID.
+     */
+    private FeeManagementSession getFullFeeManagementSessionById(Long fmSessionId) {
+
+        // Create a query:
+        Query query = em.createQuery(GET_FM_SESSION_JOIN + " where s.id = :id ");
+
+        query.setParameter("id", fmSessionId);
+
+        // Get the result:
+        List results = query.getResultList();
+        FeeManagementSession fmSession = CollectionUtils.isNotEmpty(results) ? (FeeManagementSession)results.get(0) : null;
+
+        return fmSession;
     }
 
     /**
@@ -521,7 +648,11 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             for (KeyPair keyPair : feeManagementTermRecord.getKeyPairs()) {
                 // If the current KeyPair is a valid one, create a new one from it:
                 if (StringUtils.isNotBlank(keyPair.getKey()) && StringUtils.isNotBlank(keyPair.getValue())) {
-                    newSession.getKeyPairs().add(new KeyPair(keyPair.getKey(), keyPair.getValue()));
+                    // Create and persist a new KeyPair:
+                    KeyPair newKeyPair = new KeyPair(keyPair.getKey(), keyPair.getValue());
+
+                    persistEntity(newKeyPair);
+                    newSession.getKeyPairs().add(newKeyPair);
                 }
             }
 

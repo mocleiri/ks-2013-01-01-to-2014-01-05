@@ -84,13 +84,152 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
     private RateService rateService;
 
 
-    /**
+    /*
      * **************************************************************
-     * <p/>
-     * Unit tests for "reconcileSession"
-     * <p/>
+     *
+     * Unit tests for "addFeeManagementSessionToQueue"
+     *
      * **************************************************************
      */
+
+    @Test
+    public void testAddFeeManagementSessionToQueueNoSuchSession() throws Exception {
+
+        // Call the method with a fake FM Session ID:
+        boolean exceptionCaught = false;
+
+        try {
+            fmService.addFeeManagementSessionToQueue(-1L);
+            assertTrue("We must not get here. An exception must occur on the method call.", false);
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot find an FM session with the ID -1.", e.getMessage());
+            exceptionCaught = true;
+        }
+
+        assertTrue("An exception should have been caught", exceptionCaught);
+    }
+
+    @Test
+    public void testAddFeeManagementSessionToQueueSessionNotCurrent() {
+
+        // Create an FM session:
+        FeeManagementSession fmSession = new FeeManagementSession();
+
+        fmSession.setChargeStatus(FeeManagementSessionStatus.RECONCILED);
+        persistenceService.persistEntity(fmSession);
+
+        // Call the method:
+        boolean exceptionCaught = false;
+
+        try {
+            fmService.addFeeManagementSessionToQueue(fmSession.getId());
+            assertTrue("We must not get here. An exception must occur on the method call.", false);
+        } catch (IllegalStateException e) {
+            assertEquals(String.format("Only CURRENT FM Session can be Queued. Session was %s.", fmSession.getStatus()), e.getMessage());
+            exceptionCaught = true;
+        }
+
+        assertTrue("An exception should have been caught", exceptionCaught);
+    }
+
+    @Test
+    public void testAddFeeManagementSessionToQueueGoodCase() {
+
+        // Create an FM session:
+        FeeManagementSession fmSession = new FeeManagementSession();
+
+        fmSession.setChargeStatus(FeeManagementSessionStatus.CURRENT);
+        persistenceService.persistEntity(fmSession);
+
+        // Call the method:
+        fmService.addFeeManagementSessionToQueue(fmSession.getId());
+
+        // Validate that the FM Session was Queued:
+        em.refresh(fmSession);
+        assertTrue("FM Session must be Queued by now.", fmSession.isQueued());
+        assertFalse("FM Session must be marked as NOT Reviewed", fmSession.isReviewComplete());
+    }
+
+    /*
+    * **************************************************************
+    *
+    * Unit tests for "removeFeeManagementSessionFromQueue"
+    *
+    * **************************************************************
+    */
+
+    @Test
+    public void testRemoveFeeManagementSessionFromQueueNoSuchSession() throws Exception {
+
+        // Call the method with a fake FM Session ID:
+        boolean exceptionCaught = false;
+
+        try {
+            fmService.removeFeeManagementSessionFromQueue(-1L);
+            assertTrue("We must not get here. An exception must occur on the method call.", false);
+        } catch (IllegalArgumentException e) {
+            assertEquals("Cannot find an FM session with the ID -1.", e.getMessage());
+            exceptionCaught = true;
+        }
+
+        assertTrue("An exception should have been caught", exceptionCaught);
+    }
+
+    @Test
+    public void testRemoveFeeManagementSessionFromQueueSessionNotQueued() throws Exception {
+
+        // Create an FM session:
+        FeeManagementSession fmSession = new FeeManagementSession();
+
+        fmSession.setChargeStatus(FeeManagementSessionStatus.RECONCILED);
+        fmSession.setQueued(false);
+        persistenceService.persistEntity(fmSession);
+
+        // Call the service method:
+        fmService.removeFeeManagementSessionFromQueue(fmSession.getId());
+
+        // Validate:
+        assertFalse("FM Session was queued, but was not supposed to.", fmSession.isQueued());
+    }
+
+    @Test
+    public void testRemoveFeeManagementSessionFromQueueGoodCase() throws Exception {
+
+        // Create an FM session:
+        FeeManagementSession fmSession = new FeeManagementSession();
+
+        fmSession.setChargeStatus(FeeManagementSessionStatus.RECONCILED);
+        fmSession.setQueued(true);
+        persistenceService.persistEntity(fmSession);
+
+        // Call the service method:
+        fmService.removeFeeManagementSessionFromQueue(fmSession.getId());
+
+        // Validate the FM session was removed from the queue:
+        assertFalse("FM Session was not removed from queue.", fmSession.isQueued());
+    }
+
+
+    /*
+    * **************************************************************
+    *
+    * Unit tests for "queueFeeManagement"
+    *
+    * **************************************************************
+    */
+
+    @Test
+    public void testQueueFeeManagementGoodCase() throws Exception {
+        // This method uses other methods that are covered by their respective unit tests
+    }
+
+    /*
+    * **************************************************************
+    *
+    * Unit tests for "reconcileSession"
+    *
+    * **************************************************************
+    */
 
     @Test
     public void testReconcileSessionNoSessionIdFound() throws Exception {
@@ -350,11 +489,11 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         assertEquals(FeeManagementSessionStatus.RECONCILED, currentSession.getSession().getStatus());
     }
 
-    /**
+    /*
      * **************************************************************
-     * <p/>
+     *
      * Unit tests for "chargeSession"
-     * <p/>
+     *
      * **************************************************************
      */
 

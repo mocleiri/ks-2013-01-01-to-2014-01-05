@@ -64,44 +64,27 @@ public interface FeeManagementService {
     List<FeeManagementManifest> getManifests(Long feeManagementSessionId, FeeManagementManifestType... manifestTypes);
 
     /**
-     * Checks if the rules engine is processing a quote generation/assessment scenario.
-     *
-     * @return <code>true</code> if the rules engine is processing a "What-If" scenario or <code>false</code> otherwise.
-     */
-    boolean isCalculating();
-
-    /**
-     * Checks if the rules engine performs Fee Management that will result in real Account charges/credits.
-     *
-     * @return <code>true</code> if the FM is in the real charge mode, <code>false</code> otherwise.
-     */
-    boolean isCharging();
-
-    /**
      * Queues a FeeManagementSession.
      *
      * @param feeManagementSessionId ID of an FM Session to queue.
      */
-    void addSessionToQueue(Long feeManagementSessionId);
+    void addFeeManagementSessionToQueue(Long feeManagementSessionId);
 
     /**
      * Dequeues a FeeManagementSession.
      *
      * @param feeManagementSessionId ID of an FM Session to dequeue.
      */
-    void removeSessionFromQueue(Long feeManagementSessionId);
-
-    Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
-
-    FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
+    void removeFeeManagementSessionFromQueue(Long feeManagementSessionId);
 
     /**
      * This method kicks off the workflow for assessing fees by creating a fee management session and then
      * queuing it up for later execution.
      *
      * @param feeManagementTermRecord   FM Term Record for FM Session creation.
+     * @return The ID of the newly created and queued FM session.
      */
-    void queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
+    Long queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 
     /**
      * Accesses an FM Session and invokes the Rules Engine to create a Manifest.
@@ -119,5 +102,18 @@ public interface FeeManagementService {
      */
     Long createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord);
 
+    /**
+     * Creates a report info from an FM Session. Documentation to this method reads:
+     * In order to report back a simulated session, we can use this method to create a simplified version of the
+     * manifest. This can be sent back to an external system.
+     * NOTE: FeeManagementReportInfo is a non-persistent object.
+     *
+     * @param feeManagementSessionId    ID of an FM Session for which to create a report.
+     * @return The newly created report object.
+     */
     FeeManagementReportInfo createFeeManagementReport(Long feeManagementSessionId);
+
+    Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
+
+    FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 }
