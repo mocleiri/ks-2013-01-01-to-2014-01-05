@@ -22,6 +22,7 @@ import org.kuali.student.r1.common.entity.Amount;
 import org.kuali.student.r1.common.entity.TimeAmount;
 import org.kuali.student.r1.common.entity.Version;
 import org.kuali.student.r1.common.entity.VersionEntity;
+import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.DtoConstants;
 import org.kuali.student.r2.common.dto.StatusInfo;
@@ -1313,6 +1314,27 @@ public class CluServiceImpl implements CluService {
 
         } else if (clu.getAccounting() != null) {
             clu.setAccounting(null);
+        }
+
+        // build a list of the attribute ids from the original Clu and the updated CluInfo
+        Collection<String> originalAttributeIds = new ArrayList<String>();
+        for (CluAttribute attrib : clu.getAttributes()) {
+            originalAttributeIds.add(attrib.getId());
+        }
+
+        Collection<String> newAttributeIds = new ArrayList<String>();
+        for (AttributeInfo attrib : cluInfo.getAttributes()) {
+            // attributes without an id are new, and do not need to be considered in deletion determination
+            if(attrib.getId() != null) {
+                newAttributeIds.add(attrib.getId());
+            }
+        }
+
+        // delete any attribute ids from the original list that are not included in the updated list
+        for(String originalId : originalAttributeIds) {
+            if (!newAttributeIds.contains(originalId)) {
+                luDao.delete(CluAttribute.class, originalId);
+            }
         }
 
         clu.setAttributes(CluServiceAssembler.toGenericAttributes(

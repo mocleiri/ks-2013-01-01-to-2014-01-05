@@ -27,6 +27,7 @@ import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.common.exceptions.ReadOnlyException;
 import org.kuali.student.r2.common.exceptions.UnsupportedActionException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.core.statement.dto.ReqCompFieldInfo;
@@ -49,11 +50,14 @@ import org.kuali.student.r2.lum.lo.dto.LoCategoryInfo;
 import org.kuali.student.r2.lum.lo.dto.LoInfo;
 import org.kuali.student.r2.lum.lrc.dto.ResultValueRangeInfo;
 import org.kuali.student.r2.lum.lrc.dto.ResultValuesGroupInfo;
+import org.kuali.student.r2.lum.lu.dao.LuDao;
+import org.kuali.student.r2.lum.lu.entity.CluAttribute;
 import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -88,6 +92,9 @@ public class TestCourseServiceImpl{
     CourseService courseService;
     @Autowired
     StatementService statementService;
+
+    @Autowired
+    LuDao cluDao;
 
     Set<String> subjectAreaSet = new TreeSet<String>(Arrays.asList(CourseDataGenerator.subjectAreas));
     
@@ -1478,6 +1485,61 @@ public class TestCourseServiceImpl{
         result.setResultValueKeys(Arrays.asList("kuali.result.value.credit.degree.1.0", "kuali.result.value.credit.degree.11.0", "kuali.result.value.credit.degree.2.0"));
 
         return result;
+    }
+
+    @Test
+    public void testCourseAttributeOrphanRemoval() throws IntrospectionException, InvocationTargetException, NoSuchFieldException, IllegalAccessException, InstantiationException, InvalidParameterException, DataValidationErrorException, MissingParameterException, VersionMismatchException, PermissionDeniedException, OperationFailedException, DependentObjectsExistException, UnsupportedActionException, AlreadyExistsException, CircularRelationshipException, CircularReferenceException, DoesNotExistException, ReadOnlyException {
+
+        CourseDataGenerator courseDataGenerator = new CourseDataGenerator();
+        CourseInfo courseInfo = courseDataGenerator.getCourseTestData();
+
+        CourseInfo createdCourse = courseService.createCourse(courseInfo, contextInfo);
+
+        String courseId = createdCourse.getId();
+
+        // get the ids for the original created attributes
+        Collection<String> origAttribIds = new ArrayList<String>(createdCourse.getAttributes().size());
+        for (AttributeInfo attrib : createdCourse.getAttributes()) {
+            origAttribIds.add(attrib.getId());
+        }
+
+        // remove the old attributes and add a new one
+        createdCourse.getAttributes().clear();
+
+        String testAttribKey = "testAttribKey";
+        String testAttribValue = "testAttribValue";
+
+        createdCourse.getAttributes().add(new AttributeInfo(testAttribKey, testAttribValue));
+
+        // update the course
+        courseService.updateCourse(courseId, createdCourse, contextInfo);
+
+        // Retrieve the course and check attributes
+        CourseInfo afterUpdate = courseService.getCourse(courseId, contextInfo);
+
+        // assert that the updated course has only one attribute with the expected key and value
+        assertEquals("Unexpected number of attributes returned for updated course", 1, afterUpdate.getAttributes().size());
+
+        // assert that the one attribute has the expected key and value
+        AttributeInfo afterUpdateAttrib = afterUpdate.getAttributes().iterator().next();
+
+        assertEquals(testAttribKey, afterUpdateAttrib.getKey());
+        assertEquals(testAttribValue, afterUpdateAttrib.getValue());
+
+        // assert that the updated course's attribute is not one of the ids of our original list of attribute ids
+        assertFalse(origAttribIds.contains(afterUpdateAttrib.getId()));
+
+        // attempt to fetch the original attributes by id.  The fetch should fail if the orphaned attributes were deleted
+        for (String attribId : origAttribIds) {
+            try {
+
+                CluAttribute shouldNotBeFound = cluDao.fetch(CluAttribute.class, attribId);
+
+                fail("Found orphaned clu attribute: id = " + shouldNotBeFound.getId() + ", name = " + shouldNotBeFound.getName() + ", owner = " + shouldNotBeFound.getOwner());
+            }
+            catch (DoesNotExistException e) {
+            }
+        }
     }
     
 }
