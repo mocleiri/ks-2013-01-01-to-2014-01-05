@@ -23,6 +23,7 @@ class DirectNavigation
   def setup_search_edit_co_urls
 
     go_to_manage_course_offerings
+    on(ManageCourseOfferings).term.wait_until_present
     @manage_course_offering = @browser.url
 
     @course_offering = make CourseOffering, :term=>Rollover::MAIN_TEST_TERM_SOURCE, :course=>"CHEM132"
