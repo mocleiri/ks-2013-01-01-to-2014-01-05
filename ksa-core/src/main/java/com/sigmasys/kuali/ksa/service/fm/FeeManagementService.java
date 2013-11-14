@@ -2,7 +2,6 @@ package com.sigmasys.kuali.ksa.service.fm;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.KeyPair;
 import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifest;
 import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifestType;
 import com.sigmasys.kuali.ksa.model.fm.FeeManagementReportInfo;
@@ -81,7 +80,7 @@ public interface FeeManagementService {
      * This method kicks off the workflow for assessing fees by creating a fee management session and then
      * queuing it up for later execution.
      *
-     * @param feeManagementTermRecord   FM Term Record for FM Session creation.
+     * @param feeManagementTermRecord FM Term Record for FM Session creation.
      * @return The ID of the newly created and queued FM session.
      */
     Long queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
@@ -89,15 +88,15 @@ public interface FeeManagementService {
     /**
      * Accesses an FM Session and invokes the Rules Engine to create a Manifest.
      *
-     * @param feeManagementSessionId    ID of an FM session to process.
-     * @return  ID of a created Manifest.
+     * @param feeManagementSessionId ID of an FM session to process.
+     * @return ID of a created Manifest.
      */
     Long processFeeManagementSession(Long feeManagementSessionId);
 
     /**
      * Creates a new FM Session using the given FM TermRecord.
      *
-     * @param feeManagementTermRecord   FM TermRecord.
+     * @param feeManagementTermRecord FM TermRecord.
      * @return The newly generated FM Session.
      */
     Long createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord);
@@ -108,7 +107,7 @@ public interface FeeManagementService {
      * manifest. This can be sent back to an external system.
      * NOTE: FeeManagementReportInfo is a non-persistent object.
      *
-     * @param feeManagementSessionId    ID of an FM Session for which to create a report.
+     * @param feeManagementSessionId ID of an FM Session for which to create a report.
      * @return The newly created report object.
      */
     FeeManagementReportInfo createFeeManagementReport(Long feeManagementSessionId);
