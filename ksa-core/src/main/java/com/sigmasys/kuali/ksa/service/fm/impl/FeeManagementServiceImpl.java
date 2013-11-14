@@ -186,7 +186,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     public void queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
 
         // Check permissions:
-        PermissionUtils.checkPermission(Permission.RUN_FM);
+        PermissionUtils.checkPermission(Permission.RUN_FEE_ASSESSMENT);
 
         // Create an FM Session:
         Long feeManagementSessionId = null;

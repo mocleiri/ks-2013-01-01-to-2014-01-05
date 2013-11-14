@@ -27,7 +27,7 @@ public interface TransactionImportService {
      * @param xml XML content
      * @return XML response
      */
-    String processTransactions(String xml);
+    String importTransactions(String xml);
 
 
 }

@@ -1,12 +1,12 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.config.ConfigService;
 import com.sigmasys.kuali.ksa.exception.InvalidGeneralLedgerAccountException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.export.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -72,6 +72,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
      * @return XML content that contains the transactions to be exported
      */
     @Override
+    @PermissionsAllowed(Permission.EXPORT_GL_TRANSACTIONS)
     public String exportTransactions() {
         List<GlTransmission> transmissions = glService.createGlTransmissions(null, null, true);
         return convertGlTransmissionsToXml(null, transmissions, true);
@@ -84,6 +85,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
      * @return XML content that contains the transactions to be exported
      */
     @Override
+    @PermissionsAllowed(Permission.EXPORT_GL_TRANSACTIONS)
     public String exportTransactionsForBatch(String batchId) {
         return convertGlTransmissionsToXml(batchId, glService.getGlTransmissionsForBatch(batchId, GlTransmissionStatus.TRANSMITTED));
     }
@@ -99,6 +101,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
      * @return XML content that contains the transactions to be exported
      */
     @Override
+    @PermissionsAllowed(Permission.EXPORT_GL_TRANSACTIONS)
     public String exportTransactionsForDates(Date startDate, Date endDate, boolean isEffectiveDate) {
         return convertGlTransmissionsToXml(glService.createGlTransmissions(startDate, endDate, isEffectiveDate));
     }
@@ -110,6 +113,7 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
      * @return XML content that contains the transactions to be exported
      */
     @Override
+    @PermissionsAllowed(Permission.EXPORT_GL_TRANSACTIONS)
     public String exportTransactionsForPeriods(String... recognitionPeriods) {
         return convertGlTransmissionsToXml(glService.createGlTransmissions(null, null, true, recognitionPeriods));
     }
@@ -155,8 +159,6 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
 
     protected String convertGlTransmissionsToXml(String batchId, List<GlTransmission> glTransmissions,
                                                  boolean createGlBaselineAmounts) {
-
-        PermissionUtils.checkPermission(Permission.EXPORT_GL_TRANSMISSION);
 
         if (batchId == null) {
             // Generating the batch ID

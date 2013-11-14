@@ -1,11 +1,13 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.*;
 import com.sigmasys.kuali.ksa.jaxb.Ach;
 import com.sigmasys.kuali.ksa.jaxb.BatchAch;
 import com.sigmasys.kuali.ksa.jaxb.BatchCheck;
 import com.sigmasys.kuali.ksa.jaxb.Check;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.JaxbUtils;
@@ -26,7 +28,6 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.util.*;
-
 
 
 /**
@@ -142,6 +143,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REQUEST_REFUND)
     public List<Refund> checkForRefund(String accountId, Date dateFrom, Date dateTo) {
 
         // Get all payment transactions on account accountId, where effectiveDate > dateFrom and < dateTo:
@@ -186,6 +188,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REQUEST_REFUND)
     public Refund checkForRefund(Long paymentId) {
 
         Payment payment = transactionService.getPayment(paymentId);
@@ -207,6 +210,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REQUEST_REFUND)
     public Refund checkForRefund(Long paymentId, BigDecimal refundAmount) {
 
         Payment payment = transactionService.getPayment(paymentId);
@@ -254,6 +258,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REQUEST_REFUND)
     public List<Refund> checkForRefund(List<String> accountIds, Date dateFrom, Date dateTo) {
 
         List<Refund> allRefunds = new LinkedList<Refund>();
@@ -274,6 +279,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REQUEST_REFUND)
     public List<Refund> checkForRefunds(Date dateFrom, Date dateTo) {
 
         // Get all Accounts and IDs:
@@ -292,6 +298,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REQUEST_REFUND)
     public List<Refund> checkForRefunds() {
         return checkForRefunds(new Date(0), new Date(Long.MAX_VALUE));
     }
@@ -304,6 +311,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return The Refund object.
      */
     @Override
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public Refund performRefund(Long refundId) {
         return performRefund(refundId, null);
     }
@@ -317,6 +325,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return The Refund object.
      */
     @Override
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public Refund performRefund(Long refundId, String batch) {
         return performRefundInternal(refundId, batch, null);
     }
@@ -330,8 +339,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.VALIDATE_REFUND)
     public Refund validateRefund(Long refundId) {
-
         return validateRefundWithAmount(refundId, null);
     }
 
@@ -345,6 +354,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.VALIDATE_REFUND)
     public Refund validateRefundWithAmount(Long refundId, BigDecimal amount) {
         // Get the Refund object by its identifier:
         Refund refund = getRefund(refundId, false);
@@ -373,6 +383,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public Refund doAccountRefund(Long refundId) {
         return doAccountRefund(refundId, null);
     }
@@ -386,6 +397,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public Refund doAccountRefund(Long refundId, String batch) {
 
         // Get the Refund object and check that it's in the VERIFIED status:
@@ -459,6 +471,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public List<Refund> doAccountRefunds(String batch) {
 
         String refundTypeId = configService.getParameter(Constants.REFUND_TYPE_ACCOUNT);
@@ -496,6 +509,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public String doCheckRefund(Long refundId, Date checkDate, String checkMemo) {
         return doCheckRefund(refundId, null, checkDate, checkMemo);
     }
@@ -508,10 +522,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @param checkDate Date on the issued check.
      * @param checkMemo Memo section on the issued check.
      * @return String An XML form of the issued check.
-     * @see RefundService#produceXMLCheck(String, String, PostalAddress, BigDecimal, Date, String)
+     * @see RefundService#produceCheckXml
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public String doCheckRefund(Long refundId, String batch, Date checkDate, String checkMemo) {
         // Check the flag to consolidate same account checks:
         boolean consolidateSameAccountRefunds = BooleanUtils.toBoolean(configService.getParameter(Constants.REFUND_CHECK_GROUP));
@@ -527,10 +542,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @param checkDate Date on the refund checks.
      * @param checkMemo Memo section on the refund checks.
      * @return A batch of checks in form of an XML.
-     * @see RefundService#produceXMLCheck(String, String, PostalAddress, BigDecimal, Date, String)
+     * @see RefundService#produceCheckXml
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public String doCheckRefunds(String batch, Date checkDate, String checkMemo) {
 
         String refundTypeId = configService.getParameter(Constants.REFUND_TYPE_CHECK);
@@ -584,14 +600,14 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @param checkDate     Date on the check.
      * @param memo          Memo section on the check.
      * @return A refund check in an XML form.
-     * @see RefundService#produceXMLCheck(String, String, PostalAddress, BigDecimal, Date, String)
+     * @see RefundService#produceCheckXml
      */
     @Override
     @Transactional(readOnly = true)
-    public String produceXMLCheck(String identifier, String payee, PostalAddress postalAddress, BigDecimal amount, Date checkDate, String memo) {
+    public String produceCheckXml(String identifier, String payee, PostalAddress postalAddress, BigDecimal amount,
+                                  Date checkDate, String memo) {
         // Create a new Check object:
         Check check = produceCheckInternal(identifier, payee, postalAddress, amount, checkDate, memo);
-
         // Marshal the Check object:
         return JaxbUtils.toXml(check);
     }
@@ -601,10 +617,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      *
      * @param refundId Refund identifier.
      * @return String An XML form of the bank account information (Ach).
-     * @see RefundService#produceAchTransmission(Ach, BigDecimal, String)
+     * @see RefundService#produceAchTransmissionXml
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public String doAchRefund(Long refundId) {
         return doAchRefund(refundId, null);
     }
@@ -615,10 +632,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @param refundId Refund identifier.
      * @param batch    ID of a transaction batch.
      * @return String An XML form of the bank account information (Ach).
-     * @see RefundService#produceAchTransmission(Ach, BigDecimal, String)
+     * @see RefundService#produceAchTransmissionXml
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public String doAchRefund(Long refundId, String batch) {
         // Check the flag to consolidate same account checks:
         boolean consolidateSameAccountRefunds = BooleanUtils.toBoolean(configService.getParameter(Constants.REFUND_ACH_GROUP));
@@ -634,10 +652,11 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      *
      * @param batch Batch of transactions.
      * @return String An XML form of a batch of the bank account informations (Ach).
-     * @see RefundService#produceAchTransmission(Ach, BigDecimal, String)
+     * @see RefundService#produceAchTransmissionXml
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public String doAchRefunds(String batch) {
 
         String refundTypeId = configService.getParameter(Constants.REFUND_TYPE_ACH);
@@ -691,10 +710,9 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = true)
-    public String produceAchTransmission(Ach ach, BigDecimal amount, String reference) {
+    public String produceAchTransmissionXml(Ach ach, BigDecimal amount, String reference) {
         // Create a new Ach:
         Ach achTransmission = produceAchTransmissionInternal(amount, reference, ach);
-
         return JaxbUtils.toXml(achTransmission);
     }
 
@@ -707,6 +725,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = true)
+    @PermissionsAllowed(Permission.VALIDATE_REFUND)
     public boolean isRefundRuleValid(String refundRule) {
 
         if (StringUtils.isBlank(refundRule)) {
@@ -765,6 +784,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CANCEL_REFUND)
     public Refund cancelRefund(Long refundId, String memo) {
 
         // Get the Refund object:
@@ -827,6 +847,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return RefundType instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_REFUND_TYPE)
     public RefundType getRefundType(String refundTypeCode) {
         return auditableEntityService.getAuditableEntity(refundTypeCode, RefundType.class);
     }
@@ -839,12 +860,14 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = false)
-    public void deleteRefundType(RefundType refundType) {
-        deleteEntity(refundType.getId(), RefundType.class);
+    @PermissionsAllowed(Permission.EDIT_REFUND_TYPE)
+    public boolean deleteRefundType(RefundType refundType) {
+        return deleteEntity(refundType.getId(), RefundType.class);
     }
 
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public Refund payoffWithRefund(String accountId, BigDecimal maxPayoff) {
         // TODO Auto-generated method stub
         return null;
@@ -852,6 +875,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public Refund doPayoffRefund(Long refundId) {
         // TODO Auto-generated method stub
         return null;
@@ -859,6 +883,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public Refund doPayoffRefund(Long refundId, String batch) {
         // TODO Auto-generated method stub
         return null;
@@ -866,6 +891,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
 
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.PERFORM_REFUND)
     public List<Refund> doPayoffRefunds(String batch) {
         // TODO Auto-generated method stub
         return null;
@@ -879,6 +905,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = true)
+    @PermissionsAllowed(Permission.READ_REFUND)
     public List<Refund> getRefundGroup(String groupId) {
 
         // Create a run a query to get all refunds in the same Group as the given one
@@ -897,8 +924,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = true)
+    @PermissionsAllowed(Permission.READ_REFUND)
     public List<Refund> getAccountRefunds(String userId) {
-
         return getAccountRefunds(userId, null, null);
     }
 
@@ -912,6 +939,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      */
     @Override
     @Transactional(readOnly = true)
+    @PermissionsAllowed(Permission.READ_REFUND)
     public List<Refund> getAccountRefunds(String userId, Date dateFrom, Date dateTo) {
 
         Set<String> accountIds = new HashSet<String>(1);
@@ -928,8 +956,8 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @return Refunds for the given Accounts.
      */
     @Override
+    @PermissionsAllowed(Permission.READ_REFUND)
     public List<Refund> getAccountsRefunds(Set<String> accounts) {
-
         return getAccountsRefunds(accounts, null, null);
     }
 
@@ -937,11 +965,12 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * Returns Refunds for all specified Accounts and date range.
      *
      * @param accountIds Accounts for which to return Refunds.
-     * @param dateFrom Start of the date range.
-     * @param dateTo   End of the date range.
+     * @param dateFrom   Start of the date range.
+     * @param dateTo     End of the date range.
      * @return Refunds for the given Accounts.
      */
     @Override
+    @PermissionsAllowed(Permission.READ_REFUND)
     public List<Refund> getAccountsRefunds(Set<String> accountIds, Date dateFrom, Date dateTo) {
 
         if (CollectionUtils.isEmpty(accountIds)) {
@@ -1458,15 +1487,12 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @param accountId An invalid <code>Account</code> identifier.
      */
     private void createInvalidAccountActivity(String accountId) {
-
         Activity activity = new Activity();
-
         activity.setAccountId(accountId);
         activity.setEntityId(accountId);
         activity.setEntityType(Account.class.getSimpleName());
         activity.setIpAddress(RequestUtils.getClientIpAddress());
         activity.setLogDetail("Invalid account identifier [" + accountId + "] in processing Account Refunds.");
-
         activityService.persistActivity(activity);
     }
 
@@ -1502,7 +1528,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     /**
      * Creates a JAXB Check object.
      *
-     * @param identifier    Check identifier.
+     * @param checkId       Check identifier.
      * @param payee         Payee
      * @param postalAddress Postal address on check.
      * @param amount        Amount of check to produce.
@@ -1510,17 +1536,16 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
      * @param memo          Memo section on check.
      * @return A new Check object.
      */
-    private Check produceCheckInternal(String identifier, String payee, PostalAddress postalAddress, BigDecimal amount, Date checkDate, String memo) {
+    private Check produceCheckInternal(String checkId, String payee, PostalAddress postalAddress, BigDecimal amount,
+                                       Date checkDate, String memo) {
         // Create a new Check object:
         Check check = new Check();
-
-        check.setIdentifier(identifier);
+        check.setIdentifier(checkId);
         check.setPayee(payee);
         check.setPostalAddress(convertToXMLAddress(postalAddress));
         check.setAmount(amount);
         check.setMemo(StringUtils.isNotBlank(memo) ? memo : null);
         check.setDate(produceXMLCheckDate(checkDate));
-
         return check;
     }
 

@@ -1,10 +1,10 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.*;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -74,9 +74,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      * @return TransferType instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSFER_TYPE)
     public TransferType getTransferType(Long transferTypeId) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSFER_TYPE);
 
         Query query = em.createQuery("select t from TransferType t " +
                 " left outer join fetch t.generalLedgerType " +
@@ -100,9 +99,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_TRANSFER_TYPE)
     public TransferType createTransferType(Long glTypeId, String code, String name, String description) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_TRANSFER_TYPE);
 
         if (StringUtils.isBlank(code)) {
             String errMsg = "TransferType code is required";
@@ -139,10 +137,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_TRANSFER_TYPE)
     public Long persistTransferType(TransferType transferType) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_TRANSFER_TYPE);
-
         return auditableEntityService.persistAuditableEntity(transferType);
     }
 
@@ -154,10 +150,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_TRANSFER_TYPE)
     public boolean deleteTransferType(Long transferTypeId) {
-
-        PermissionUtils.checkPermission(Permission.DELETE_TRANSFER_TYPE);
-
         return auditableEntityService.deleteAuditableEntity(transferTypeId, TransferType.class);
     }
 
@@ -167,9 +161,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      * @return list of TransferType instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSFER_TYPE)
     public List<TransferType> getTransferTypes() {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSFER_TYPE);
 
         Query query = em.createQuery("select t from TransferType t " +
                 " left outer join fetch t.generalLedgerType " +
@@ -202,6 +195,7 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_TRANSACTION_TRANSFER)
     public TransactionTransfer transferTransaction(Long transactionId,
                                                    String transactionTypeId,
                                                    Long transferTypeId,
@@ -212,8 +206,6 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
                                                    String memoText,
                                                    String statementPrefix,
                                                    String transactionTypeMask) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_TRANSACTION_TRANSFER);
 
         Account account = accountService.getFullAccount(accountId);
         if (account == null) {
@@ -358,10 +350,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_TRANSACTION_TRANSFER)
     public Long persistTransactionTransfer(TransactionTransfer transactionTransfer) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_TRANSACTION_TRANSFER);
-
         return persistEntity(transactionTransfer);
     }
 
@@ -372,9 +362,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      * @return list of TransactionTransfer instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION_TRANSFER)
     public List<TransactionTransfer> getTransactionTransfersByGroupId(String transferGroupId) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TRANSFER);
 
         if (StringUtils.isBlank(transferGroupId)) {
             String errMsg = "Transfer group ID must not be blank";
@@ -396,9 +385,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      * @return TransactionTransfer instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_TRANSACTION_TRANSFER)
     public TransactionTransfer getTransactionTransfer(Long transactionTransferId) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TRANSFER);
 
         Query query = em.createQuery(TRANSACTION_TRANSFER_SELECT + " where t.id = :id");
 
@@ -417,9 +405,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_TRANSACTION_TRANSFER)
     public void setTransferGroup(String transferGroupId, List<Long> transactionTransferIds) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_TRANSACTION_TRANSFER);
 
         if (CollectionUtils.isEmpty(transactionTransferIds)) {
             String errMsg = "List of transaction transfer IDs must not be empty";
@@ -443,9 +430,8 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_TRANSACTION_TRANSFER)
     public void setRollupForTransferGroup(String transferGroupId, Long rollupId) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_TRANSACTION_TRANSFER);
 
         Rollup rollup = auditableEntityService.getAuditableEntity(rollupId, Rollup.class);
         if (rollup == null) {
@@ -469,8 +455,6 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
 
     protected TransactionTransfer reverseTransactionTransfer(TransactionTransfer transactionTransfer, String memoText,
                                                              BigDecimal reversalAmount) {
-
-        PermissionUtils.checkPermission(Permission.REVERSE_TRANSACTION_TRANSFER);
 
         if (reversalAmount == null || BigDecimal.ZERO.compareTo(reversalAmount) == 0) {
             String errMsg = "Reversal amount cannot be null or 0";
@@ -542,6 +526,7 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REVERSE_TRANSACTION_TRANSFER)
     public TransactionTransfer reverseTransactionTransfer(Long transactionTransferId, String memoText, BigDecimal reversalAmount) {
 
         TransactionTransfer transactionTransfer = getTransactionTransfer(transactionTransferId);
@@ -567,6 +552,7 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REVERSE_TRANSACTION_TRANSFER)
     public TransactionTransfer reverseTransactionTransfer(Long transactionTransferId, String memoText) {
 
         TransactionTransfer transactionTransfer = getTransactionTransfer(transactionTransferId);
@@ -590,6 +576,7 @@ public class TransactionTransferServiceImpl extends GenericPersistenceService im
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REVERSE_TRANSACTION_TRANSFER)
     public List<TransactionTransfer> reverseTransferGroup(String transferGroupId, String memoText, boolean allowLockedAllocations) {
 
         List<TransactionTransfer> transactionTransfers = getTransactionTransfersByGroupId(transferGroupId);

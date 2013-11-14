@@ -96,7 +96,7 @@ public class AccountBlockingServiceTest extends AbstractServiceTest {
 
         try {
 
-            accountBlockingService.checkBlock(userId, attributes, Permission.CREATE_PAYMENT, Permission.CREATE_REFUND);
+            accountBlockingService.checkBlock(userId, attributes, Permission.CREATE_PAYMENT, Permission.REQUEST_REFUND);
 
         } catch (AccountBlockedException abe) {
 

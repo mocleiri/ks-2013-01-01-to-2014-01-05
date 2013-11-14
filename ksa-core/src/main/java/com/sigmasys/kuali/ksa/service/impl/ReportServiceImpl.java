@@ -15,6 +15,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.jaxb.ElectronicContact;
 import com.sigmasys.kuali.ksa.jaxb.Irs1098T;
 import com.sigmasys.kuali.ksa.jaxb.PersonName;
@@ -34,7 +35,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sigmasys.kuali.ksa.model.security.Permission;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.exception.TransactionNotFoundException;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.jaxb.*;
@@ -227,6 +227,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed({Permission.GENERATE_IRS_1098_T, Permission.READ_IRS_1098_T})
     public String generate1098TReport(String accountId, Date startDate, Date endDate, int numberOfDisplayedDigits,
                                       boolean isTransient) {
 
@@ -244,6 +245,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed({Permission.GENERATE_IRS_1098_T, Permission.READ_IRS_1098_T})
     public String convertIrs1098TToXml(Long irs1098TId) {
 
         com.sigmasys.kuali.ksa.model.Irs1098T irs1098T = getIrs1098T(irs1098TId);
@@ -259,8 +261,6 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
     }
 
     private com.sigmasys.kuali.ksa.model.Irs1098T getIrs1098T(Long id) {
-
-        PermissionUtils.checkPermission(Permission.READ_IRS_1098_T);
 
         Query query = em.createQuery("select irs from Irs1098T irs " +
                 " left outer join fetch irs.account account " +
@@ -279,8 +279,6 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      * @return XML representation of IRS 1098T form.
      */
     protected String toXml(String accountId, com.sigmasys.kuali.ksa.model.Irs1098T report) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_IRS_1098_T);
 
         AccountProtectedInfo accountInfo = accountService.getAccountProtectedInfo(accountId);
         if (accountInfo == null) {
@@ -607,6 +605,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      * @return XML representation of an IRS 1098T form.
      */
     @Override
+    @PermissionsAllowed(Permission.READ_IRS_1098_T)
     public String getIrs1098TReport(String accountId, Date startDate, Date endDate) {
 
         AccountProtectedInfo accountInfo = accountService.getAccountProtectedInfo(accountId);
@@ -635,6 +634,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      * @return XML representation of an IRS 1098T form.
      */
     @Override
+    @PermissionsAllowed(Permission.READ_IRS_1098_T)
     public String getIrs1098TReportByYear(String accountId, int year) {
         Date firstDate = CalendarUtils.getFirstDateOfYear(year);
         Date lastDate = CalendarUtils.getLastDateOfYear(year);
@@ -657,6 +657,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      * @return A <code>List</code> of previously generated and saved IRS Forms 1098T.
      */
     @Override
+    @PermissionsAllowed(Permission.READ_IRS_1098_T)
     public List<com.sigmasys.kuali.ksa.model.Irs1098T> getIrs1098TReportsForAccount(String accountId) {
         Query query = em.createQuery("select irs from Irs1098T irs " +
                 " left outer join fetch irs.account account " +
@@ -687,6 +688,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed({Permission.GENERATE_IRS_1098_T, Permission.READ_IRS_1098_T})
     public String generate1098TReportByYear(String accountId, int year, int numberOfDisplayedDigits, boolean isTransient) {
         Date firstDate = CalendarUtils.getFirstDateOfYear(year);
         Date lastDate = CalendarUtils.getLastDateOfYear(year);
@@ -707,6 +709,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed({Permission.GENERATE_IRS_1098_T, Permission.READ_IRS_1098_T})
     public String generate1098TReportByYear(String accountId, int year, boolean isTransient) {
         String paramValue = configService.getParameter(Constants.KSA_1098_SSN_DISPLAY_DIGITS);
         if (StringUtils.isBlank(paramValue)) {
@@ -1204,9 +1207,8 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      * @return String representation of Irs8300 XML report.
      */
     @Override
+    @PermissionsAllowed({Permission.GENERATE_IRS_8300, Permission.READ_IRS_8300})
     public String generateIrs8300Report(Long cashLimitEventId) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_IRS_8300);
 
         CashLimitEvent cashLimitEvent = cashLimitService.getCashLimitEvent(cashLimitEventId);
         if (cashLimitEvent == null) {
@@ -1405,6 +1407,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.GENERATE_BILL)
     public String generateBill(String accountId,
                                String message,
                                Date billDate,
@@ -1417,8 +1420,6 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                                boolean showDependents,
                                boolean showInternalTransactions,
                                boolean runPaymentApplication) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_BILL);
 
         KsaBill ksaBill = createBill(accountId,
                 message,
@@ -1455,6 +1456,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
      */
     @Override
     @Transactional(readOnly = false, timeout = 3600)
+    @PermissionsAllowed(Permission.GENERATE_BILL)
     public String generateBills(List<String> accountIds,
                                 String message,
                                 Date billDate,
@@ -1467,8 +1469,6 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                                 boolean showDependents,
                                 boolean showInternalTransactions,
                                 boolean runPaymentApplication) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_BILL);
 
         BatchKsaBill batchKsaBill = ObjectFactory.getInstance().createBatchKsaBill();
 
@@ -1506,9 +1506,6 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
                                  boolean showDependents,
                                  boolean showInternalTransactions,
                                  boolean runPaymentApplication) {
-
-
-        PermissionUtils.checkPermission(Permission.GENERATE_BILL);
 
         Account account = accountService.getFullAccount(accountId);
         if (account == null) {
@@ -1842,7 +1839,7 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
         }
 
         BillRecord billRecord = billRecordService.createBillRecord(accountId, message, billDate, startDate, endDate,
-                showOnlyUnbilledTransactions, showInternalTransactions, showDeferments, false, transactionIds);
+                showOnlyUnbilledTransactions, showInternalTransactions, showDeferments, showDependents, transactionIds);
 
         ksaBill.setBillId(billRecord.getId().toString());
         ksaBill.setMessage(message);

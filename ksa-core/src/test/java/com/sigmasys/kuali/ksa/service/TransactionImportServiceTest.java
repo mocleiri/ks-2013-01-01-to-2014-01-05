@@ -43,7 +43,7 @@ public class TransactionImportServiceTest extends AbstractServiceTest {
         String content = CommonUtils.getResourceAsString("xmlImport/transaction.xml");
 
         Assert.notNull(content);
-        String response = transactionImportService.processTransactions(content);
+        String response = transactionImportService.importTransactions(content);
         Assert.notNull(response);
 
         logger.info("Response: \n" + response);
@@ -72,7 +72,7 @@ public class TransactionImportServiceTest extends AbstractServiceTest {
         String content = CommonUtils.getResourceAsString("xmlImport/transactions.xml");
 
         Assert.notNull(content);
-        String response = transactionImportService.processTransactions(content);
+        String response = transactionImportService.importTransactions(content);
         Assert.notNull(response);
 
         logger.info("Response: \n" + response);
@@ -101,7 +101,7 @@ public class TransactionImportServiceTest extends AbstractServiceTest {
         String content = CommonUtils.getResourceAsString("xmlImport/transactions_fail.xml");
 
         Assert.notNull(content);
-        String response = transactionImportService.processTransactions(content);
+        String response = transactionImportService.importTransactions(content);
 
         int begIndex = response.indexOf(begValue) + begValue.length();
         int endIndex = response.indexOf(endValue);

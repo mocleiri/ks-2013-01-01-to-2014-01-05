@@ -73,7 +73,7 @@ public enum Permission {
     EDIT_GL_SETTINGS,
     READ_GL_REPORT,
     CREATE_GL_TRANSMISSION,
-    EXPORT_GL_TRANSMISSION,
+    EXPORT_GL_TRANSACTIONS,
     READ_GL_TRANSMISSION,
     CREATE_GL_BREAKDOWN,
     READ_GL_BREAKDOWN,
@@ -167,9 +167,16 @@ public enum Permission {
     CREATE_ACTIVITY_TYPE,
     EDIT_ACTIVITY_TYPE,
 
-    // Refund type permissions
+    // Refund and refund type permissions
     CREATE_REFUND_TYPE,
     EDIT_REFUND_TYPE,
+    READ_REFUND_TYPE,
+    PERFORM_REFUND,
+    READ_REFUND,
+    REQUEST_REFUND,
+    VALIDATE_REFUND,
+    CANCEL_REFUND,
+
 
     // Transfer type permissions
     CREATE_TRANSFER_TYPE,
@@ -184,14 +191,9 @@ public enum Permission {
     DELETE_TRANSACTION_TRANSFER,
     REVERSE_TRANSACTION_TRANSFER,
 
-    // Refund permissions
-    REQUEST_REFUND,
-    CREATE_REFUND,
-    VALIDATE_REFUND,
-    CANCEL_REFUND,
-
     // Payment application permissions
     RUN_PAYMENT_APPLICATION,
+    APPLY_PAYMENTS,
 
     // 1098T permissions
     GENERATE_IRS_1098_T,
@@ -270,7 +272,7 @@ public enum Permission {
     DELETE_RATE_AMOUNT,
 
     // Fee Management permissions:
-    READ_MANIFEST,
+    READ_FM_MANIFEST,
     DELETE_FM_QUEUE,
-    RUN_FM
+    RUN_FEE_ASSESSMENT
 }

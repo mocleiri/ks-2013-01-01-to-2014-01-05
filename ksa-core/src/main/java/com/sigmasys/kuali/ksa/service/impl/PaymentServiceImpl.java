@@ -1,7 +1,9 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmService;
@@ -52,6 +54,7 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.APPLY_PAYMENTS)
     public List<GlTransaction> applyPayments(List<Transaction> transactions, boolean isQueued) {
         return applyPayments(transactions, BigDecimal.valueOf(Long.MAX_VALUE), isQueued);
     }
@@ -64,6 +67,7 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.APPLY_PAYMENTS)
     public List<GlTransaction> applyPayments(List<Transaction> transactions) {
         return applyPayments(transactions, true);
     }
@@ -77,6 +81,7 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.APPLY_PAYMENTS)
     public List<GlTransaction> applyPayments(List<Transaction> transactions, BigDecimal maxAmount) {
         return applyPayments(transactions, maxAmount, true);
     }
@@ -99,6 +104,7 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
      * @return List of generated GL transactions
      */
     @Override
+    @PermissionsAllowed(Permission.APPLY_PAYMENTS)
     public List<GlTransaction> applyPayments(List<Transaction> transactions, BigDecimal maxAmount, boolean isQueued) {
 
         BigDecimal remainingAmount = maxAmount;
@@ -229,6 +235,7 @@ public class PaymentServiceImpl extends GenericPersistenceService implements Pay
      * @return List of generated GL transactions
      */
     @Override
+    @PermissionsAllowed(Permission.RUN_PAYMENT_APPLICATION)
     public List<GlTransaction> paymentApplication(String userId) {
 
         Account account = accountService.getFullAccount(userId);

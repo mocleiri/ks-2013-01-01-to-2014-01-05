@@ -1,5 +1,7 @@
 package com.sigmasys.kuali.ksa.service.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
+import com.sigmasys.kuali.ksa.model.security.Permission;
 import com.sigmasys.kuali.ksa.util.ErrorUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -92,7 +94,8 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
      * @return XML response
      */
     @Override
-    public String processTransactions(String xml) {
+    @PermissionsAllowed(Permission.IMPORT_TRANSACTIONS)
+    public String importTransactions(String xml) {
 
         // Validate XML against the schema
         String errorMessage = schemaValidator.validateXmlAndGetErrorMessage(xml);
@@ -199,8 +202,6 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
                     errMsg = "Transaction is not allowed. Transaction Type = '" +
                             ksaTransaction.getTransactionType() + "', Effective Date = '" + effectiveDate +
                             "', Account ID = '" + currentUserId + "'";
-                } else if (!isWithinCreditLimit(ksaTransaction.getAccountIdentifier())) {
-                    errMsg = "Account '" + ksaTransaction.getAccountIdentifier() + "' has insufficient credit";
                 }
 
                 if (!isTransactionTypeValid(ksaTransaction.getTransactionType(), effectiveDate)) {
@@ -401,22 +402,6 @@ public class TransactionImportServiceImpl extends GenericPersistenceService impl
         query.setParameter("statusCode", BatchReceiptStatus.FAILED_CODE);
         query.setMaxResults(1);
         return CollectionUtils.isNotEmpty(query.getResultList());
-    }
-
-    /**
-     * Determine the credit limit of the account. do not exceed
-     *
-     * @param accountId Account ID to be checked
-     * @return true if the given account is within credit limit, false - otherwise
-     */
-    private boolean isWithinCreditLimit(String accountId) {
-        boolean exitState;
-
-        // TODO need to define a method that checks account is not over credit limit
-        //exitState = transactionService.isWithinCreditLimit(accountId);
-        // TODO remove when isWithinCreditLimit is defined
-        exitState = true;
-        return exitState;
     }
 
     /**

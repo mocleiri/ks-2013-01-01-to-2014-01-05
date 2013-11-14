@@ -165,7 +165,7 @@ Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) va
  '(ATP is "20002001HOLIDAYCALENDAR" and Hold issue is "Unpaid Library Fine")', 'Apply block')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (10, 'Block 3', 3, 0, null,
- '(ATP is "20122" and Hold issue is "Disciplinary Suspension" and Permission is "CREATE_REFUND")', 'Apply block')!
+ '(ATP is "20122" and Hold issue is "Disciplinary Suspension" and Permission is "REQUEST_REFUND")', 'Apply block')!
 
 
 -----------------------------------------------------------------------------------------------------------------------

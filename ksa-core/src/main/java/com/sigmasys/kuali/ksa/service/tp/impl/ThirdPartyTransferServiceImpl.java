@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.tp.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.security.Permission;
@@ -9,7 +10,6 @@ import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.TransactionTransferService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.service.tp.ThirdPartyTransferService;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
@@ -92,6 +92,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_THIRD_PARTY_PLAN)
     public ThirdPartyPlan createThirdPartyPlan(String code,
                                                String name,
                                                String description,
@@ -104,8 +105,6 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                                                Date openPeriodEndDate,
                                                Date chargePeriodStartDate,
                                                Date chargePeriodEndDate) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_THIRD_PARTY_PLAN);
 
         if (StringUtils.isBlank(code)) {
             String errMsg = "ThirdPartyPlan code is required";
@@ -170,9 +169,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_THIRD_PARTY_PLAN_MEMBER)
     public ThirdPartyPlanMember createThirdPartyPlanMember(String accountId, Long thirdPartyPlanId, int priority) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_THIRD_PARTY_PLAN_MEMBER);
 
         ThirdPartyPlan thirdPartyPlan = getThirdPartyPlan(thirdPartyPlanId);
         if (thirdPartyPlan == null) {
@@ -215,14 +213,13 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_THIRD_PARTY_ALLOWABLE_CHARGE)
     public ThirdPartyAllowableCharge createThirdPartyAllowableCharge(Long thirdPartyPlanId,
                                                                      String transactionTypeMask,
                                                                      BigDecimal maxAmount,
                                                                      BigDecimal maxPercentage,
                                                                      int priority,
                                                                      ChargeDistributionPlan distributionPlan) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_THIRD_PARTY_ALLOWABLE_CHARGE);
 
         ThirdPartyPlan thirdPartyPlan = getThirdPartyPlan(thirdPartyPlanId);
         if (thirdPartyPlan == null) {
@@ -271,9 +268,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * @return ThirdPartyPlan instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_PLAN)
     public ThirdPartyPlan getThirdPartyPlan(Long thirdPartyPlanId) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
 
         Query query = em.createQuery(THIRD_PARTY_PLAN_SELECT + " where p.id = :id");
 
@@ -291,9 +287,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * @return list of ThirdPartyPlan instances.
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_PLAN)
     public List<ThirdPartyPlan> getThirdPartyPlanByNamePattern(String pattern) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
 
         Query query = em.createQuery(THIRD_PARTY_PLAN_SELECT + " where upper(p.name) like :pattern or " +
                 " upper(p.code) like :pattern or upper(p.description) like :pattern order by p.id desc");
@@ -310,9 +305,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * @return list of ThirdPartyPlan instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_PLAN)
     public List<ThirdPartyPlan> getThirdPartyPlans(Set<String> thirdPartyAccountIds) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
 
         boolean idsExist = CollectionUtils.isNotEmpty(thirdPartyAccountIds);
 
@@ -332,9 +326,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * @return list of ThirdPartyPlan instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_PLAN)
     public List<ThirdPartyPlan> getThirdPartyPlansByMember(String accountId) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN);
 
         Query query = em.createQuery("select p from ThirdPartyPlan p, ThirdPartyPlanMember m " +
                 THIRD_PARTY_PLAN_JOIN + " where p.id = m.plan.id and m.directChargeAccount.id = :accountId order by p.id desc");
@@ -363,9 +356,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * @return ThirdPartyTransferDetail instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL)
     public ThirdPartyTransferDetail getThirdPartyTransferDetail(Long thirdPartyTransferDetailId) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
 
         Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where d.id = :id and d.chargeStatusCode = :statusCode");
 
@@ -386,9 +378,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL)
     public ThirdPartyTransferDetail getThirdPartyTransferDetail(Long thirdPartyPlanId, String accountId) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
 
         Query query = em.createQuery(TRANSFER_DETAIL_SELECT +
                 " where p.id = :planId and dca.id = :accountId and d.chargeStatusCode = :statusCode");
@@ -409,9 +400,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * @return list of ThirdPartyTransferDetail instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL)
     public List<ThirdPartyTransferDetail> getThirdPartyTransferDetails(String accountId) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
 
         Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where dca.id = :accountId order by d.id desc");
 
@@ -428,9 +418,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * @return list of ThirdPartyAllowableCharge instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_ALLOWABLE_CHARGE)
     public List<ThirdPartyAllowableCharge> getThirdPartyAllowableCharges(Long thirdPartyPlanId) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_ALLOWABLE_CHARGE);
 
         Query query = em.createQuery("select c from ThirdPartyAllowableCharge c " +
                 " inner join fetch c.plan p " +
@@ -449,6 +438,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * @return list of ThirdPartyPlanMember instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_PLAN_MEMBER)
     public List<ThirdPartyPlanMember> getThirdPartyPlanMembers(Long thirdPartyPlanId) {
         return getThirdPartyPlanMembers(thirdPartyPlanId, null);
     }
@@ -461,6 +451,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * @return ThirdPartyPlanMember instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_PLAN_MEMBER)
     public ThirdPartyPlanMember getThirdPartyPlanMember(Long thirdPartyPlanId, String accountId) {
         List<ThirdPartyPlanMember> planMembers = getThirdPartyPlanMembers(thirdPartyPlanId, accountId);
         return CollectionUtils.isNotEmpty(planMembers) ? planMembers.get(0) : null;
@@ -475,9 +466,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_THIRD_PARTY_PLAN_MEMBER)
     public boolean deleteThirdPartyPlanMember(Long thirdPartyPlanId, String accountId) {
-
-        PermissionUtils.checkPermission(Permission.DELETE_THIRD_PARTY_PLAN_MEMBER);
 
         Query query = em.createQuery("delete from ThirdPartyPlanMember where directChargeAccount.id = :accountId" +
                 " and plan.id = :planId");
@@ -489,8 +479,6 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     }
 
     protected List<ThirdPartyPlanMember> getThirdPartyPlanMembers(Long thirdPartyPlanId, String accountId) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_PLAN_MEMBER);
 
         Query query = em.createQuery("select m from ThirdPartyPlanMember m " +
                 " inner join fetch m.directChargeAccount a " +
@@ -518,9 +506,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.GENERATE_THIRD_PARTY_TRANSFER)
     public ThirdPartyTransferDetail generateThirdPartyTransfer(Long thirdPartyPlanId, String accountId, Date initiationDate) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_THIRD_PARTY_TRANSFER);
 
         ThirdPartyPlan thirdPartyPlan = getThirdPartyPlan(thirdPartyPlanId);
         if (thirdPartyPlan == null) {
@@ -812,6 +799,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.GENERATE_THIRD_PARTY_TRANSFER)
     public List<ThirdPartyTransferDetail> generateThirdPartyTransfers(String accountId) {
         return generateThirdPartyTransfers(accountId, new Date(), true);
     }
@@ -827,9 +815,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.GENERATE_THIRD_PARTY_TRANSFER)
     public List<ThirdPartyTransferDetail> generateThirdPartyTransfers(String accountId, Date openPeriodDate, boolean ignoreExecuted) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_THIRD_PARTY_TRANSFER);
 
         if (openPeriodDate == null) {
             String errMsg = "Open Period Date cannot be null";
@@ -888,9 +875,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
     @Override
     @WebMethod(exclude = true)
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.GENERATE_THIRD_PARTY_TRANSFER)
     public List<ThirdPartyTransferDetail> generateThirdPartyTransfers(Long thirdPartyPlanId, boolean ignoreExecuted) {
-
-        PermissionUtils.checkPermission(Permission.GENERATE_THIRD_PARTY_TRANSFER);
 
         ThirdPartyPlan thirdPartyPlan = getThirdPartyPlan(thirdPartyPlanId);
         if (thirdPartyPlan == null) {
@@ -940,9 +926,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      * @return list of ThirdPartyTransferDetail instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL)
     public List<ThirdPartyTransferDetail> getThirdPartyTransfersByPlanId(Long thirdPartyPlanId) {
-
-        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
 
         Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where p.id = :planId and d.chargeStatusCode = :statusCode");
 
@@ -961,9 +946,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.REVERSE_THIRD_PARTY_TRANSFER)
     public ThirdPartyTransferDetail reverseThirdPartyTransfer(Long transferDetailId, String memoText) {
-
-        PermissionUtils.checkPermission(Permission.REVERSE_THIRD_PARTY_TRANSFER);
 
         ThirdPartyTransferDetail transferDetail = getThirdPartyTransferDetail(transferDetailId);
         if (transferDetail == null) {

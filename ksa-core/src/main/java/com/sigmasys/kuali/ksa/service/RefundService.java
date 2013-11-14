@@ -175,7 +175,7 @@ public interface RefundService {
      * @param checkDate Date on the issued check.
      * @param checkMemo Memo section on the issued check.
      * @return String An XML form of the issued check.
-     * @see RefundService#produceXMLCheck(String, String, PostalAddress, BigDecimal, Date, String)
+     * @see RefundService#produceCheckXml(String, String, PostalAddress, BigDecimal, Date, String)
      */
     String doCheckRefund(Long refundId, String batch, Date checkDate, String checkMemo);
 
@@ -186,7 +186,7 @@ public interface RefundService {
      * @param checkDate Date on the refund checks.
      * @param checkMemo Memo section on the refund checks.
      * @return A batch of checks in form of an XML.
-     * @see RefundService#produceXMLCheck(String, String, PostalAddress, BigDecimal, Date, String)
+     * @see RefundService#produceCheckXml(String, String, PostalAddress, BigDecimal, Date, String)
      */
     String doCheckRefunds(String batch, Date checkDate, String checkMemo);
 
@@ -200,16 +200,16 @@ public interface RefundService {
      * @param checkDate     Date on the check.
      * @param memo          Memo section on the check.
      * @return A refund check in an XML form.
-     * @see RefundService#produceXMLCheck(String, String, PostalAddress, BigDecimal, Date, String)
+     * @see RefundService#produceCheckXml(String, String, PostalAddress, BigDecimal, Date, String)
      */
-    String produceXMLCheck(String identifier, String payee, PostalAddress postalAddress, BigDecimal amount, Date checkDate, String memo);
+    String produceCheckXml(String identifier, String payee, PostalAddress postalAddress, BigDecimal amount, Date checkDate, String memo);
 
     /**
      * Performs refund as a bank account credit.
      *
      * @param refundId Refund identifier.
      * @return String An XML form of the bank account information (Ach).
-     * @see RefundService#produceAchTransmission(Ach, BigDecimal, String)
+     * @see RefundService#produceAchTransmissionXml(Ach, BigDecimal, String)
      */
     String doAchRefund(Long refundId);
 
@@ -219,7 +219,7 @@ public interface RefundService {
      * @param refundId Refund identifier.
      * @param batch    ID of a transaction batch.
      * @return String An XML form of the bank account information (Ach).
-     * @see RefundService#produceAchTransmission(Ach, BigDecimal, String)
+     * @see RefundService#produceAchTransmissionXml(Ach, BigDecimal, String)
      */
     String doAchRefund(Long refundId, String batch);
 
@@ -230,7 +230,7 @@ public interface RefundService {
      *
      * @param batch Batch of transactions.
      * @return String An XML form of a batch of the bank account informations (Ach).
-     * @see RefundService#produceAchTransmission(Ach, BigDecimal, String)
+     * @see RefundService#produceAchTransmissionXml(Ach, BigDecimal, String)
      */
     String doAchRefunds(String batch);
 
@@ -242,7 +242,7 @@ public interface RefundService {
      * @param reference Reference information.
      * @return Bank account transmission as an XML document.
      */
-    String produceAchTransmission(Ach ach, BigDecimal amount, String reference);
+    String produceAchTransmissionXml(Ach ach, BigDecimal amount, String reference);
 
     /**
      * Checks if a refund rule is valid.
@@ -277,7 +277,7 @@ public interface RefundService {
      *
      * @param refundType A <code>RefundType</code> to delete from the storage.
      */
-    void deleteRefundType(RefundType refundType);
+    boolean deleteRefundType(RefundType refundType);
 
     /**
      * Performs a pay-off refund.

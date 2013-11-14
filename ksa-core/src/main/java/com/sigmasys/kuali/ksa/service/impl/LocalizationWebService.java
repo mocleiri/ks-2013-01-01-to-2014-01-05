@@ -12,7 +12,7 @@ import javax.jws.WebService;
 import java.util.List;
 
 /**
- * Localization Service implementation.
+ * Localization WS implementation.
  * <p/>
  *
  * @author Michael Ivanov

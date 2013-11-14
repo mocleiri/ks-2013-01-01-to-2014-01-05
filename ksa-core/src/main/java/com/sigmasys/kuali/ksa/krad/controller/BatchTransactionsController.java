@@ -82,7 +82,7 @@ public class BatchTransactionsController extends GenericSearchController {
                     return handleError(form, "XML declaration is invalid");
                 }
 
-                String processResponse = transactionImportService.processTransactions(xmlContent);
+                String processResponse = transactionImportService.importTransactions(xmlContent);
 
                 KsaBatchTransactionResponse responseObject =
                         JaxbUtils.fromXml(processResponse, KsaBatchTransactionResponse.class);
