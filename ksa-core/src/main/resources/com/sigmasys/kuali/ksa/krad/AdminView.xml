@@ -267,6 +267,7 @@
         <property name="propertyName" value="activities"/>
         <property name="layoutManager.sequencePropertyName" value="id"/>
         <property name="layoutManager.richTable.render" value="true"/>
+        <!-- Can't use server side paging because the html isn't compressed.  If it is compressed, it breaks the formatting on the rule pages -->
         <!--<property name="useServerPaging" value="true"/>-->
         <property name="layoutManager.renderSequenceField" value="false"/>
         <property name="layoutManager.applyDefaultCellWidths" value="false"/>
