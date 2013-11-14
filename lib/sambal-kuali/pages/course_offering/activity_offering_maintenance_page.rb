@@ -122,7 +122,7 @@ class ActivityOfferingMaintenance < BasePage
   element(:requested_logistics_div) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-Requested") }
   element(:requested_logistics_table) { |b| b.requested_logistics_div.table() }
 
-  action(:select_end_time) { |time, b| b.link(text: /#{time}/).click }
+  action(:select_end_time) { |time, b| b.link(text: /#{time}/).wait_until_present;b.link(text: /#{time}/).click }
 
   def self.adl_table_accessor_maker(method_name, column)
     define_method method_name.to_s do |row|
