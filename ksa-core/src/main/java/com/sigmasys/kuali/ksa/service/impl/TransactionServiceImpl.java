@@ -548,8 +548,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
     private <T extends TransactionType> T getActiveTransactionType(String transactionTypeId, Class<T> entityType) {
 
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TYPE);
-
         Query query = em.createQuery("select t from " + entityType.getName() + " t where t.endDate is null and t.id.id = :id");
         query.setParameter("id", transactionTypeId);
         query.setMaxResults(1);
@@ -2847,8 +2845,6 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
     @Override
     @PermissionsAllowed(Permission.READ_TRANSACTION)
     public List<Transaction> findTransactionsByStatementPattern(String pattern) {
-
-        PermissionUtils.checkPermission(Permission.READ_TRANSACTION);
 
         boolean patternIsNotEmpty = (pattern != null) && !pattern.isEmpty();
 

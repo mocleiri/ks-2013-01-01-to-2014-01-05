@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.service.fm.impl;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
 import com.sigmasys.kuali.ksa.exception.InvalidRateCatalogException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateException;
 import com.sigmasys.kuali.ksa.exception.InvalidRateTypeException;
@@ -13,7 +14,6 @@ import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.atp.AtpService;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
-import com.sigmasys.kuali.ksa.service.security.PermissionUtils;
 import com.sigmasys.kuali.ksa.util.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -75,9 +75,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_RATE_TYPE)
     public RateType createRateType(String code, String name, String description) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_RATE_TYPE);
 
         RateType rateType = new RateType();
         rateType.setCode(code);
@@ -99,12 +98,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_RATE_TYPE)
     public Long persistRateType(RateType rateType) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE_TYPE);
-
         validateRateType(rateType);
-
         return auditableEntityService.persistAuditableEntity(rateType);
     }
 
@@ -115,10 +111,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_RATE_TYPE)
     public void deleteRateType(Long rateTypeId) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE_TYPE);
-
         auditableEntityService.deleteAuditableEntity(rateTypeId, RateType.class);
     }
 
@@ -129,9 +123,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_RATE_TYPE)
     public void deleteRateTypeByCode(String rateTypeCode) {
-
-        PermissionUtils.checkPermission(Permission.DELETE_RATE_TYPE);
 
         RateType rateType = getRateTypeByCode(rateTypeCode);
         if (rateType == null) {
@@ -150,8 +143,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return RateType instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_TYPE)
     public RateType getRateType(Long rateTypeId) {
-        PermissionUtils.checkPermission(Permission.READ_RATE_TYPE);
         return auditableEntityService.getAuditableEntity(rateTypeId, RateType.class);
     }
 
@@ -162,8 +155,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return RateType instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_TYPE)
     public RateType getRateTypeByCode(String rateTypeCode) {
-        PermissionUtils.checkPermission(Permission.READ_RATE_TYPE);
         return auditableEntityService.getAuditableEntity(rateTypeCode, RateType.class);
     }
 
@@ -174,6 +167,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return true if the rate type exists, false - otherwise
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_TYPE)
     public boolean rateTypeExists(String rateTypeCode) {
         Query query = em.createQuery("select 1 from RateType where code = :code");
         query.setParameter("code", rateTypeCode);
@@ -188,8 +182,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of RateType instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_TYPE)
     public List<RateType> getRateTypesByNamePattern(String namePattern) {
-        PermissionUtils.checkPermission(Permission.READ_RATE_TYPE);
         return auditableEntityService.getAuditableEntitiesByNamePattern(namePattern, RateType.class);
     }
 
@@ -199,8 +193,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of RateType instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_TYPE)
     public List<RateType> getAllRateTypes() {
-        PermissionUtils.checkPermission(Permission.READ_RATE_TYPE);
         return auditableEntityService.getAuditableEntities(RateType.class);
     }
 
@@ -229,6 +223,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_RATE_CATALOG)
     public RateCatalog createRateCatalog(String rateCatalogCode,
                                          String rateTypeCode,
                                          String transactionTypeId,
@@ -247,8 +242,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                                          boolean isKeyPairFinal,
                                          boolean isLimitAmount,
                                          boolean isLimitAmountFinal) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_RATE_CATALOG);
 
         if (StringUtils.isBlank(rateCatalogCode)) {
             String errMsg = "RateCatalog code cannot be empty";
@@ -344,9 +337,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_RATE_CATALOG)
     public Long persistRateCatalog(RateCatalog rateCatalog) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG);
 
         if (!isRateCatalogValid(rateCatalog)) {
             String errMsg = "RateCatalog (code=" + rateCatalog.getCode() + ") is invalid";
@@ -364,9 +356,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_RATE_CATALOG)
     public void deleteRateCatalog(Long rateCatalogId) {
-
-        PermissionUtils.checkPermission(Permission.DELETE_RATE_CATALOG);
 
         RateCatalog rateCatalog = getRateCatalog(rateCatalogId);
 
@@ -394,8 +385,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return RateCatalog instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_CATALOG)
     public RateCatalog getRateCatalog(Long rateCatalogId) {
-        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
@@ -412,8 +403,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return RateCatalog instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_CATALOG)
     public RateCatalog getRateCatalogByRateId(Long rateId) {
-        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc, RateCatalogAtp rca, Rate r " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
@@ -431,8 +422,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return RateCatalog instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_CATALOG)
     public RateCatalog getRateCatalogByCodeAndAtpId(String rateCatalogCode, String atpId) {
-        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc, RateCatalogAtp rca " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
@@ -449,8 +440,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of RateCatalog instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_CATALOG)
     public List<RateCatalog> getRateCatalogsByCode(String rateCatalogCode) {
-        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
@@ -466,8 +457,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of RateCatalog instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_CATALOG)
     public List<RateCatalog> getRateCatalogsByAtpId(String atpId) {
-        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc, RateCatalogAtp rca " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
@@ -477,7 +468,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     }
 
     protected RateCatalogAtp getRateCatalogAtp(String rateCatalogCode, String atpId) {
-        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rca from RateCatalogAtp rca " +
                 " inner join fetch rca.rateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
@@ -495,8 +485,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of RateCatalog instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_CATALOG)
     public List<RateCatalog> getRateCatalogsByNamePattern(String namePattern) {
-        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
@@ -511,8 +501,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of RateCatalog instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_CATALOG)
     public List<RateCatalog> getAllRateCatalogs() {
-        PermissionUtils.checkPermission(Permission.READ_RATE_CATALOG);
         Query query = em.createQuery("select rc from RateCatalog rc " +
                 " left outer join fetch rc.rateType rt " +
                 " left outer join fetch rc.keyPairs kp " +
@@ -543,6 +533,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.CREATE_RATE)
     public Rate createRate(String rateCode,
                            String subCode,
                            String rateName,
@@ -557,8 +548,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                            Date recognitionDate,
                            String atpId,
                            boolean isLimitAmount) {
-
-        PermissionUtils.checkPermission(Permission.CREATE_RATE);
 
         if (StringUtils.isBlank(rateCatalogCode)) {
             String errMsg = "RateCatalog code cannot be empty";
@@ -655,8 +644,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_RATE)
     public Long persistRate(Rate rate) {
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE);
         validateRate(rate);
         return persistEntity(rate);
     }
@@ -668,9 +657,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_RATE)
     public void deleteRate(Long rateId) {
-
-        PermissionUtils.checkPermission(Permission.DELETE_RATE);
 
         Rate rate = getRate(rateId);
         if (rate == null) {
@@ -710,8 +698,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return Rate instance
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE)
     public Rate getRate(Long rateId) {
-        PermissionUtils.checkPermission(Permission.READ_RATE);
         Query query = em.createQuery(GET_RATE_SELECT + " where r.id = :id");
         query.setParameter("id", rateId);
         List<Rate> rates = query.getResultList();
@@ -728,9 +716,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @WebMethod(exclude = true)
+    @PermissionsAllowed(Permission.READ_RATE)
     public Rate getRate(String rateCode, String subCode, String atpId) {
-
-        PermissionUtils.checkPermission(Permission.READ_RATE);
 
         if (!atpService.atpExists(atpId)) {
             String errMsg = "ATP ID = " + atpId + " does not exist";
@@ -756,9 +743,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of Rate instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE)
     public List<Rate> getRatesByCode(String rateCode) {
-
-        PermissionUtils.checkPermission(Permission.READ_RATE);
 
         Query query = em.createQuery(GET_RATE_SELECT + " where r.code = :code order by r.id desc");
 
@@ -775,9 +761,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of Rate instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE)
     public List<Rate> getRatesByCodeAndSubCode(String rateCode, String subCode) {
-
-        PermissionUtils.checkPermission(Permission.READ_RATE);
 
         Query query = em.createQuery(GET_RATE_SELECT + " where r.code = :code and r.subCode = :subCode order by r.id desc");
 
@@ -794,9 +779,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of Rate instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE)
     public List<Rate> getRatesByAtpId(String atpId) {
-
-        PermissionUtils.checkPermission(Permission.READ_RATE);
 
         if (!atpService.atpExists(atpId)) {
             String errMsg = "ATP ID = " + atpId + " does not exist";
@@ -817,8 +801,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of Rate instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE)
     public List<Rate> getRatesByCatalogId(Long rateCatalogId) {
-        PermissionUtils.checkPermission(Permission.READ_RATE);
         Query query = em.createQuery(GET_RATE_SELECT + " where rca.rateCatalog.id = :rateCatalogId");
         query.setParameter("rateCatalogId", rateCatalogId);
         return query.getResultList();
@@ -831,8 +815,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of Rate instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE)
     public List<Rate> getRatesByNamePattern(String namePattern) {
-        PermissionUtils.checkPermission(Permission.READ_RATE);
         Query query = em.createQuery(GET_RATE_SELECT + " where upper(r.name) like upper(:namePattern)");
         query.setParameter("namePattern", "%" + namePattern + "%");
         return query.getResultList();
@@ -844,8 +828,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a list of Rate instances
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE)
     public List<Rate> getAllRates() {
-        PermissionUtils.checkPermission(Permission.READ_RATE);
         Query query = em.createQuery(GET_RATE_SELECT + " order by r.id desc");
         return query.getResultList();
     }
@@ -857,6 +841,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return a set of ATP IDs
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE_CATALOG)
     public Set<String> getAtpsForRateCatalog(Long rateCatalogId) {
         Query query = em.createQuery("select rca.id.atpId from RateCatalogAtp rca where rca.rateCatalog.id = :id");
         query.setParameter("id", rateCatalogId);
@@ -873,6 +858,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @throws InvalidRateTypeException
      */
     @Override
+    @PermissionsAllowed(Permission.VALIDATE_RATE_TYPE)
     public void validateRateType(RateType rateType) throws InvalidRateTypeException {
 
         if (rateType == null) {
@@ -903,6 +889,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      *
      */
     @Override
+    @PermissionsAllowed(Permission.VALIDATE_RATE)
     public void validateRate(Rate rate) throws InvalidRateException {
         RateCatalogAtp rateCatalogAtp = rate.getRateCatalogAtp();
         validateRateWithCatalog(rate, (rateCatalogAtp != null) ? rateCatalogAtp.getRateCatalog() : null);
@@ -961,6 +948,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      *
      */
     @Override
+    @PermissionsAllowed(Permission.VALIDATE_RATE_CATALOG)
     public void validateRateCatalog(RateCatalog rateCatalog) throws InvalidRateException, InvalidRateCatalogException {
 
         if (rateCatalog == null) {
@@ -1053,6 +1041,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      *
      */
     @Override
+    @PermissionsAllowed({Permission.VALIDATE_RATE, Permission.VALIDATE_RATE_CATALOG})
     public void validateRateWithCatalog(Rate rate, RateCatalog rateCatalog) throws InvalidRateException {
 
         if (rate == null) {
@@ -1305,6 +1294,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return true if the rate is valid, otherwise false
      */
     @Override
+    @PermissionsAllowed(Permission.VALIDATE_RATE_TYPE)
     public boolean isRateTypeValid(RateType rateType) {
         try {
             validateRateType(rateType);
@@ -1322,6 +1312,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return true if the rate is valid, otherwise false
      */
     @Override
+    @PermissionsAllowed(Permission.VALIDATE_RATE)
     public boolean isRateValid(Rate rate) {
         try {
             validateRate(rate);
@@ -1338,6 +1329,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return true if the rate catalog is valid, otherwise false
      */
     @Override
+    @PermissionsAllowed(Permission.VALIDATE_RATE_CATALOG)
     public boolean isRateCatalogValid(RateCatalog rateCatalog) {
         try {
             validateRateCatalog(rateCatalog);
@@ -1357,6 +1349,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return true if the rate is valid, otherwise false
      */
     @Override
+    @PermissionsAllowed({Permission.VALIDATE_RATE, Permission.VALIDATE_RATE_CATALOG})
     public boolean isRateValidWithCatalog(Rate rate, RateCatalog rateCatalog) {
         try {
             validateRateWithCatalog(rate, rateCatalog);
@@ -1377,9 +1370,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_RATE_CATALOG)
     public RateCatalog assignAtpsToRateCatalog(Long rateCatalogId, String... atpIds) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG);
 
         // Trying to remove ATPs from the rate catalog first
         RateCatalog rateCatalog = removeAtpsFromRateCatalog(rateCatalogId, atpIds);
@@ -1432,9 +1424,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed({Permission.UPDATE_RATE_CATALOG, Permission.UPDATE_RATE})
     public RateCatalog transferAtpsToRateCatalog(Long rateCatalogId, String... atpIds) {
-
-        PermissionUtils.checkPermissions(Permission.UPDATE_RATE_CATALOG, Permission.UPDATE_RATE);
 
         RateCatalog rateCatalog = getRateCatalog(rateCatalogId);
 
@@ -1497,9 +1488,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_RATE_CATALOG)
     public RateCatalog removeAtpsFromRateCatalog(Long rateCatalogId, String... atpIds) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG);
 
         RateCatalog rateCatalog = getRateCatalog(rateCatalogId);
 
@@ -1543,9 +1533,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed({Permission.UPDATE_RATE_CATALOG, Permission.UPDATE_RATE})
     public RateCatalog addKeyPairToRateCatalog(String key, String value, Long rateCatalogId) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG);
 
         RateCatalog rateCatalog = getRateCatalog(rateCatalogId);
 
@@ -1589,9 +1578,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed({Permission.UPDATE_RATE_CATALOG, Permission.UPDATE_RATE})
     public RateCatalog removeKeyPairFromRateCatalog(String key, Long rateCatalogId) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE_CATALOG);
 
         RateCatalog rateCatalog = getRateCatalog(rateCatalogId);
 
@@ -1625,8 +1613,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     }
 
     protected Rate addKeyPairToRate(String key, String value, Long rateId, boolean checkRestrictions) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE);
 
         if (checkRestrictions) {
 
@@ -1671,8 +1657,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     }
 
     protected Rate removeKeyPairFromRate(String key, Long rateId, boolean checkRestrictions) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE);
 
         Rate rate = getRate(rateId);
 
@@ -1733,6 +1717,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_RATE)
     public Rate addKeyPairToRate(String key, String value, Long rateId) {
         return addKeyPairToRate(key, value, rateId, true);
     }
@@ -1746,6 +1731,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_RATE)
     public Rate removeKeyPairFromRate(String key, Long rateId) {
         return removeKeyPairFromRate(key, rateId, true);
     }
@@ -1759,9 +1745,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.UPDATE_RATE)
     public Rate addAmountsToRate(Long rateId, List<RateAmount> rateAmounts) {
-
-        PermissionUtils.checkPermission(Permission.UPDATE_RATE);
 
         Rate rate = getRate(rateId);
 
@@ -1799,9 +1784,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_RATE_AMOUNT)
     public void deleteRateAmount(Long rateAmountId) {
-
-        PermissionUtils.checkPermission(Permission.DELETE_RATE_AMOUNT);
 
         RateAmount rateAmount = getEntity(rateAmountId, RateAmount.class);
         if (rateAmount == null) {
@@ -1845,9 +1829,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * @return list of Rate sub-codes
      */
     @Override
+    @PermissionsAllowed(Permission.READ_RATE)
     public List<String> getRateSubCodes(String rateCode, String atpId) {
-
-        PermissionUtils.checkPermission(Permission.READ_RATE);
 
         Query query = em.createQuery("select subCode from Rate where code = :rateCode and atpId = :atpId");
 

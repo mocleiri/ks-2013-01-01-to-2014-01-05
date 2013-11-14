@@ -270,6 +270,9 @@ public enum Permission {
     DELETE_RATE_CATALOG,
     READ_RATE_CATALOG,
     DELETE_RATE_AMOUNT,
+    VALIDATE_RATE_TYPE,
+    VALIDATE_RATE_CATALOG,
+    VALIDATE_RATE,
 
     // Fee Management permissions:
     READ_FM_MANIFEST,

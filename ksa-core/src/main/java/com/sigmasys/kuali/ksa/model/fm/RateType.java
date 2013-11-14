@@ -11,7 +11,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "KSSA_RATE_TYPE")
-@AttributeOverride(name = "code", column = @Column(name ="CODE", length = 20, nullable = false, unique = true))
+@AttributeOverride(name = "code", column = @Column(name ="CODE", length = 100, nullable = false, unique = true))
 public class RateType extends AuditableEntity<Long> {
 
     @Id

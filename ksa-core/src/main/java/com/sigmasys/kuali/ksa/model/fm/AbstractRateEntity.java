@@ -16,7 +16,7 @@ import java.util.Set;
  * @author Michael Ivanov
  */
 @MappedSuperclass
-@AttributeOverride(name = "code", column = @Column(name = "CODE", length = 30, nullable = false))
+@AttributeOverride(name = "code", column = @Column(name = "CODE", length = 100, nullable = false))
 public abstract class AbstractRateEntity extends AuditableEntity<Long> implements KeyPairAware {
 
     protected Boolean isLimitAmount;
