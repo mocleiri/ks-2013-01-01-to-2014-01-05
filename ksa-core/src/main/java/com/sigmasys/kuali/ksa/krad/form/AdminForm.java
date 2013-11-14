@@ -5,6 +5,7 @@ import com.sigmasys.kuali.ksa.krad.model.AccountSearchInformationHolder;
 import com.sigmasys.kuali.ksa.krad.model.AccountSearchResultModel;
 import com.sigmasys.kuali.ksa.model.Activity;
 import com.sigmasys.kuali.ksa.model.GlTransaction;
+import com.sigmasys.kuali.ksa.model.OrgName;
 
 import java.util.Date;
 import java.util.List;
@@ -52,6 +53,12 @@ public class AdminForm extends AbstractViewModel {
     private String accountBankTypeId;
     private String accountTaxTypeId;
     private String accountIdentityTypeId;
+
+    // I for individual, O for organization
+    private String accountType;
+    private static final String INDIVIDUAL_ACCOUNT = "I";
+    private static final String ORGANIZATION_ACCOUNT = "O";
+
 
    /*
      Get / Set methods
@@ -144,5 +151,37 @@ public class AdminForm extends AbstractViewModel {
 
     public void setAccountIdentityTypeId(String accountIdentityTypeId) {
         this.accountIdentityTypeId = accountIdentityTypeId;
+    }
+
+    public String getAccountType() {
+        String orgName = null;
+        if(getAccount() != null && getAccount().getOrgName() != null) {
+            orgName = getAccount().getOrgName().getName();
+        }
+        if(orgName != null && !"".equals(orgName.trim())) {
+            accountType = ORGANIZATION_ACCOUNT;
+        } else {
+            accountType = INDIVIDUAL_ACCOUNT;
+        }
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
+    public String getOrganizationName() {
+        if(getAccount() != null && getAccount().getOrgName() != null) {
+            return getAccount().getOrgName().getName();
+        } else {
+            return null;
+        }
+    }
+
+    public void setOrganizationName(String organizationName) {
+        if(getAccount().getOrgName() == null) {
+            getAccount().setOrgName(new OrgName());
+        }
+        getAccount().getOrgName().setName(organizationName);
     }
 }

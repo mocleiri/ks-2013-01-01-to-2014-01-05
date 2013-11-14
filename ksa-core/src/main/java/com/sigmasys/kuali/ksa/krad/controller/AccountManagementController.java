@@ -111,6 +111,9 @@ public class AccountManagementController extends GenericSearchController {
         }
         account.setStatusType(statusType);
 
+        if(account.getOrgName() != null) {
+            persistenceService.persistEntity(account.getOrgName());
+        }
 
         // Persist the objects:
         persistenceService.persistEntity(account);

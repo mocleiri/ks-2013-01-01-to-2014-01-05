@@ -451,17 +451,38 @@
 	********************************************************************************************************************
 	-->
 	
-	<bean id="NewPersonAccountBiographicInformationSecion" parent="Uif-Disclosure-HorizontalBoxSection" p:style="text-decoration:underline">
+	<bean id="NewPersonAccountBiographicInformationSecion" parent="Uif-Disclosure-VerticalBoxSection">
 		<property name="headerText" value="Biographic Information"/>
 		<property name="items">
 			<list>
-				<!-- Name subsection -->
-				<ref bean="NewPersonAccountNameSection"/>
-				<!-- Address subsection -->
-				<ref bean="NewPersonAccountAddressSection"/>
-				<!-- Electronic Contact subsection -->
-				<ref bean="NewPersonAccountElectronicContactSection"/>
-			</list>
+                <bean parent="Uif-InputField" p:propertyName="accountType">
+                <property name="control">
+                    <bean parent="Uif-HorizontalRadioControl">
+                        <property name="options">
+                            <list>
+                                <bean parent="Uif-KeyLabelPair" p:key="I" p:value="Individual Account"/>
+                                <bean parent="Uif-KeyLabelPair" p:key="O" p:value="Organization Account"/>
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+                </bean>
+
+                <bean parent="Uif-InputField" p:label="Organization Name" p:propertyName="organizationName" p:progressiveRender="@{accountType == 'O'}"/>
+
+                <bean parent="Uif-HorizontalBoxSection" p:style="text-decoration:underline">
+                    <property name="items">
+                        <list>
+                            <!-- Name subsection -->
+                            <ref bean="NewPersonAccountNameSection"/>
+                            <!-- Address subsection -->
+                            <ref bean="NewPersonAccountAddressSection"/>
+                            <!-- Electronic Contact subsection -->
+                            <ref bean="NewPersonAccountElectronicContactSection"/>
+	                    </list>
+                    </property>
+                </bean>
+            </list>
 		</property>
 	</bean>
 
