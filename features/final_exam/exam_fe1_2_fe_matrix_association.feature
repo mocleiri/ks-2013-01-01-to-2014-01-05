@@ -7,7 +7,7 @@ Feature: SA.FE1-2 Associate Final Exam Matrix with more than one term
     Given I am logged in as admin
 
   #FE1.2.EB1 (KSENROLL-9797)
-  Scenario: Test that there is more than one option from which to choose the association of the FE Matrix
+  Scenario: Test that the options from which to choose the association of the FE Matrix already has a matrix
     Given there is an Academic Half Term that is not associated with any final exam matrix
     When I view the half term
     Then I should have a choice of terms from which to associate the Final Exam Matrix
@@ -17,9 +17,9 @@ Feature: SA.FE1-2 Associate Final Exam Matrix with more than one term
     Given there is an Academic Term associated with a Final Exam matrix
     And there is a second Academic Term that is not associated with any final exam matrix
     When I associate the second Term with the Final Exam matrix of the initial Term
-    And I view the second term
-    Then there is a message indicating that the final exam matrix for the initial term is used
-    And Standard Final Exam or Common Final Exam rules are listed
+    And I view the initial term
+    Then there is a message indicating that the final exam matrix is also used by the second term
+    And Standard Final Exam or Common Final Exam rules from the initial term are listed with the second term
 
   #FE1.2.EB3 (KSENROLL-9797)
   Scenario: Test that only one matrix can be assigned to a term
@@ -28,6 +28,7 @@ Feature: SA.FE1-2 Associate Final Exam Matrix with more than one term
     And there is a third Academic Term associated with a Final Exam matrix
     And I associate the second Term with the Final Exam matrix of the initial Term
     When I associate the second Term with the Final Exam matrix of the third Term
-    And I view the second term
-    Then there is a message indicating that the final exam matrix for the initial term is not used
-    And Standard Final Exam or Common Final Exam rules are listed
+    And I view the initial term
+    Then there is no message indicating that the final exam matrix is also used by the second term
+    When I view the third term
+    Then there is a message indicating that the final exam matrix is also used by the second term

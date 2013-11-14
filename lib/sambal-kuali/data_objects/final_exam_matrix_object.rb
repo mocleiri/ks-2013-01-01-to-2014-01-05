@@ -8,7 +8,8 @@ class FinalExamMatrix
 
   attr_accessor :term_type, :courses, :days, :start_time,
                 :end_time, :time_ampm, :free_text, :rdl_days,
-                :rule_requirements, :exam_type
+                :rule_requirements, :exam_type, :facility,
+                :room
 
   def initialize(browser,opts = {})
     @browser = browser
@@ -69,19 +70,11 @@ class FinalExamMatrix
       page.preview_change
       page.loading.wait_while_present
 
-      if @add_more_statements == true
-        add_multiple_statements
-      end
-
       page.rdl_days.select @rdl_days
       page.rdl_starttime.set @start_time
       page.rdl_starttime_ampm.select @time_ampm
       page.rdl_endtime.set @end_time
       page.rdl_endtime_ampm.select @time_ampm
-      if @exam_type == "Common"
-        page.rdl_facility.set @facility
-        page.rdl_room.set @room
-      end
 
       page.update_rule unless @defer_save == true
       page.loading.wait_while_present
@@ -183,12 +176,15 @@ class FinalExamMatrix
         :end_time => @end_time,
         :time_ampm => @time_ampm,
         :free_text => @free_text,
-        :defer_save => @defer_save
+        :defer_save => @defer_save,
+        :edit_in_progress => false
     }
     options = defaults.merge(opts)
 
-    manage
-    on(FEMatrixView).edit options[:rule_requirements], options[:exam_type]
+    if options[:edit_in_progress] == false
+      manage
+      on(FEMatrixView).edit options[:rule_requirements], options[:exam_type]
+    end
 
     on FEMatrixEdit do |page|
       select_statement options[:rule_requirements]
@@ -199,6 +195,58 @@ class FinalExamMatrix
     on(FEMatrixEdit).update_rule unless options[:defer_save] == true
 
     set_options(options)
+  end
+
+  def add_edit_rdl_info opts = {}
+    defaults = {
+        :exam_type => @exam_type,
+        :rule_requirements => @rule_requirements,
+        :rdl_days => @rdl_days,
+        :start_time => @start_time,
+        :end_time => @end_time,
+        :time_ampm => @time_ampm,
+        :facility => @facility,
+        :room => @room
+    }
+    options = defaults.merge(opts)
+
+    manage
+    on(FEMatrixView).edit options[:rule_requirements], options[:exam_type]
+
+    on FEMatrixEdit do |page|
+      if options[:rdl_days] != nil
+        page.rdl_days.select options[:rdl_days]
+      end
+
+      if options[:start_time] != nil
+        page.rdl_starttime.set options[:start_time]
+      end
+
+      if options[:end_time] != nil
+        page.rdl_endtime.set options[:end_time]
+      end
+
+      if options[:time_ampm] != nil
+        page.rdl_starttime_ampm.select options[:time_ampm]
+        page.rdl_endtime_ampm.select options[:time_ampm]
+      end
+
+      if options[:exam_type] == "Common"
+        if options[:facility] != nil
+          page.rdl_facility.set options[:facility]
+        end
+        if options[:room] != nil
+          page.rdl_room.set options[:room]
+        end
+      end
+
+      page.update_rule
+    end
+
+    on FEMatrixView do |page|
+      page.submit
+      page.loading.wait_while_present
+    end
   end
 
   def search
@@ -277,7 +325,10 @@ class FinalExamMatrix
     end
   end
 
-  def add_multiple_statements
+  def add_additional_statements
+    manage
+    on(FEMatrixView).edit @rule_requirements, @exam_type
+
     on FEMatrixEdit do |page|
       if @exam_type == "Standard"
         opts = {:rule => "Free Form Text",
@@ -305,6 +356,13 @@ class FinalExamMatrix
         page.preview_change
         page.loading.wait_while_present
       end
+    end
+
+    on(FEMatrixEdit).update_rule
+
+    on FEMatrixView do |page|
+      page.submit
+      page.loading.wait_while_present
     end
   end
 end

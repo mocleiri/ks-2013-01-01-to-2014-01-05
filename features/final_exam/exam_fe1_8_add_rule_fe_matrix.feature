@@ -8,11 +8,7 @@ Feature: SA.FE1-8 Add new rule to the Final Exam Matrix
     Given I am logged in as admin
 
   #FE1.8.EB1 (KSENROLL-9799)
-  Scenario: Test whether a new Common Final Exam rule can be added to the FE Matrix
+  Scenario: Test whether location data can be added to a Common Final Exam rule in the FE Matrix
     When I add a Common Final Exam course rule to the Final Exam Matrix
-    Then I should be able to see the newly created course rule in the Common Final Exam table
-
-  #FE1.8.EB2 (KSENROLL-9799)
-  Scenario: Test whether a new Common Final Exam rule can be added to the FE Matrix and then persisited to the DB
-    When I add a Common Final Exam course rule to the Final Exam Matrix
-    Then I should be able to see the newly created course rule in the Common Final Exam table
+    And I add Building and Room location data to the Requested Exam Offering Delivery Logistic information
+    Then I should be able to see the location data for the exam specified in the course rule in the Common Final Exam table
