@@ -654,7 +654,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             throw new CurrencyNotFoundException(errMsg);
         }
 
-        DefaultTransactionTypeVisitor transactionTypeVisitor = DefaultTransactionTypeVisitor.getInstance();
+        SimpleTransactionTypeVisitor transactionTypeVisitor = SimpleTransactionTypeVisitor.getInstance();
 
         transactionType.accept(transactionTypeVisitor);
 
@@ -1350,7 +1350,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
         if (!transactionType1.getTypeValue().equals(transactionType2.getTypeValue())) {
 
-            DefaultTransactionTypeVisitor transactionTypeVisitor = DefaultTransactionTypeVisitor.getInstance();
+            SimpleTransactionTypeVisitor transactionTypeVisitor = SimpleTransactionTypeVisitor.getInstance();
 
             transactionType1.accept(transactionTypeVisitor);
 
@@ -2654,7 +2654,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
             return false;
         }
 
-        DefaultTransactionTypeVisitor transactionTypeVisitor = DefaultTransactionTypeVisitor.getInstance();
+        SimpleTransactionTypeVisitor transactionTypeVisitor = SimpleTransactionTypeVisitor.getInstance();
 
         transactionType1.accept(transactionTypeVisitor);
         transactionType2.accept(transactionTypeVisitor);
