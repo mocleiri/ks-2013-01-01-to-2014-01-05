@@ -227,18 +227,6 @@
         </constructor-arg>
     </bean>
 
-    <bean id="commentInfoDictionaryLocation" class="java.lang.String">
-        <constructor-arg value="classpath:ks-CommentInfo-dictionary.xml" />
-    </bean>
-
-    <bean name="commentServiceDictionaryLocations" class="java.util.ArrayList">
-        <constructor-arg>
-            <list>
-                <bean parent="commentInfoDictionaryLocation" />
-            </list>
-        </constructor-arg>
-    </bean>
-
     <!--THIS IS USED BY RICE DATA DICTIONARY SERVICE
      and the Global Student Dictionary Service, dataDictionaryServiceForAllUsedByRice
      that is used in the rice dictionary validation service impl -->
@@ -285,7 +273,6 @@
                 <bean parent="buildingInfoDictionaryLocation" />
                 <bean parent="roomInfoDictionaryLocation"/>
                 <bean parent="roomResponsibleOrgInfoDictionaryLocation"/>
-                <bean parent="commentInfoDictionaryLocation" />
             </list>
         </constructor-arg>
     </bean>

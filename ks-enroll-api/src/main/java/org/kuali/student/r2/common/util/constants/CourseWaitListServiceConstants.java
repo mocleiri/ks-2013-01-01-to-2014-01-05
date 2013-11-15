@@ -18,6 +18,4 @@ public class CourseWaitListServiceConstants {
     public static final String COURSE_WAIT_LIST_ACTIVE_STATE_KEY = "kuali.course.waitlist.state.active";
     public static final String COURSE_WAIT_LIST_INACTIVE_STATE_KEY = "kuali.course.waitlist.state.inactive";
 
-    public static final String COURSE_WAIT_LIST_LIFECYCLE_KEY = "kuali.course.waitlist.lifecycle";
-
 }
