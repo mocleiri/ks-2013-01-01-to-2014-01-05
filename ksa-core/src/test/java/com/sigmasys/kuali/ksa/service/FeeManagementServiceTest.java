@@ -146,6 +146,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
 
         // Validate that the FM Session was Queued:
         em.refresh(fmSession);
+
         assertTrue("FM Session must be Queued by now.", fmSession.isQueued());
         assertFalse("FM Session must be marked as NOT Reviewed", fmSession.isReviewComplete());
     }

@@ -2,10 +2,7 @@ package com.sigmasys.kuali.ksa.service.fm;
 
 import com.sigmasys.kuali.ksa.annotation.Url;
 import com.sigmasys.kuali.ksa.model.Constants;
-import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifest;
-import com.sigmasys.kuali.ksa.model.fm.FeeManagementManifestType;
-import com.sigmasys.kuali.ksa.model.fm.FeeManagementReportInfo;
-import com.sigmasys.kuali.ksa.model.fm.FeeManagementTermRecord;
+import com.sigmasys.kuali.ksa.model.fm.*;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -81,17 +78,17 @@ public interface FeeManagementService {
      * queuing it up for later execution.
      *
      * @param feeManagementTermRecord FM Term Record for FM Session creation.
-     * @return The ID of the newly created and queued FM session.
+     * @return FeeManagementSession instance
      */
-    Long queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
+    FeeManagementSession queueFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord);
 
     /**
      * Accesses an FM Session and invokes the Rules Engine to create a Manifest.
      *
      * @param feeManagementSessionId ID of an FM session to process.
-     * @return ID of a created Manifest.
+     * @return FeeManagementManifest instance
      */
-    Long processFeeManagementSession(Long feeManagementSessionId);
+    FeeManagementManifest processFeeManagementSession(Long feeManagementSessionId);
 
     /**
      * Creates a new FM Session using the given FM TermRecord.
@@ -99,7 +96,7 @@ public interface FeeManagementService {
      * @param feeManagementTermRecord FM TermRecord.
      * @return The newly generated FM Session.
      */
-    Long createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord);
+    FeeManagementSession createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord);
 
     /**
      * Creates a report info from an FM Session. Documentation to this method reads:
@@ -112,7 +109,9 @@ public interface FeeManagementService {
      */
     FeeManagementReportInfo createFeeManagementReport(Long feeManagementSessionId);
 
+    // TODO: not sure if Long is what we need to return here
     Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
+
 
     FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 }

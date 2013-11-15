@@ -7,9 +7,12 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.persistence.Query;
 
+import com.sigmasys.kuali.ksa.annotation.PermissionsAllowed;
+import com.sigmasys.kuali.ksa.exception.AccountBlockedException;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingChargeStatus;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
+import com.sigmasys.kuali.ksa.service.AccountBlockingService;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import org.apache.commons.collections.CollectionUtils;
@@ -79,15 +82,18 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
     @Autowired
     private ThirdPartyTransferService thirdPartyService;
-    
+
     @Autowired
     private PaymentBillingService paymentBillingService;
-    
+
     @Autowired
     private TransactionTransferService transactionTransferService;
 
     @Autowired
     private RateService rateService;
+
+    @Autowired
+    private AccountBlockingService accountBlockingService;
 
 
     /**
@@ -98,6 +104,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     @Override
     @Transactional(readOnly = false)
     public void addFeeManagementSessionToQueue(Long feeManagementSessionId) {
+
         // Get the FM Session:
         FeeManagementSession fmSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
 
@@ -117,6 +124,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // Set the FM session as queued:
         fmSession.setQueued(true);
         fmSession.setReviewComplete(false);
+
         persistEntity(fmSession);
     }
 
@@ -127,10 +135,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @Transactional(readOnly = false)
+    @PermissionsAllowed(Permission.DELETE_FM_QUEUE)
     public void removeFeeManagementSessionFromQueue(Long feeManagementSessionId) {
-
-        // Check permissions:
-        PermissionUtils.checkPermission(Permission.DELETE_FM_QUEUE);
 
         // Get the FM Session:
         FeeManagementSession fmSession = getEntity(feeManagementSessionId, FeeManagementSession.class);
@@ -141,63 +147,50 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             throw new IllegalArgumentException(errorMsg);
         }
 
-        // If the FM Session is queued, de-queue it:
-        if (fmSession.isQueued()) {
-            fmSession.setQueued(false);
-            persistEntity(fmSession);
-        }
+        fmSession.setQueued(false);
+
+        persistEntity(fmSession);
     }
 
     /**
      * This method kicks off the workflow for assessing fees by creating a fee management session and then
      * queuing it up for later execution.
      *
-     * @param feeManagementTermRecord   FM Term Record for FM Session creation.
+     * @param feeManagementTermRecord FM Term Record for FM Session creation
+     * @return FeeManagementSession instance
      */
     @Override
     @Transactional(readOnly = false)
-    public Long queueFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
+    @PermissionsAllowed(Permission.RUN_FEE_ASSESSMENT)
+    public FeeManagementSession queueFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord) {
 
-        // Check permissions:
-        PermissionUtils.checkPermission(Permission.RUN_FEE_ASSESSMENT);
+        FeeManagementSession feeManagementSession = createFeeManagementSession(feeManagementTermRecord);
 
-        // Create an FM Session:
-        Long feeManagementSessionId = null;
+        // Queue the FM Session for later execution:
+        addFeeManagementSessionToQueue(feeManagementSession.getId());
 
-        try {
-            feeManagementSessionId = createFeeManagementSession(feeManagementTermRecord);
-        } catch (Exception e) {
-            logger.error("Cannot create a FeeManagementSession using the FM TermRecord " + feeManagementTermRecord);
-            throw new IllegalStateException("Cannot create a FeeManagementSession using the FM TermRecord.", e);
-        }
-
-        // Check if a new ID exists:
-        if (feeManagementSessionId != null) {
-            // Queue the FM Session for later execution:
-            addFeeManagementSessionToQueue(feeManagementSessionId);
-        }
-
-        return feeManagementSessionId;
+        return feeManagementSession;
     }
 
+    // TODO: not sure if Long is what we need to return here
     @Override
     public Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;  // TODO
     }
 
     @Override
     public FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;  // TODO
     }
 
     /**
      * Accesses an FM Session and invokes the Rules Engine to create a Manifest.
      *
-     * @param feeManagementSessionId    ID of an FM session to process.
-     * @return  ID of a created Manifest.
+     * @param feeManagementSessionId ID of an FM session to process.
+     * @return FeeManagementManifest instance
      */
     @Override
-    public Long processFeeManagementSession(Long feeManagementSessionId) {
+    public FeeManagementManifest processFeeManagementSession(Long feeManagementSessionId) {
         // TODO: Figure out how to invoke the Rules Engine to perform Fee Management and create manifest:
         return null;
     }
@@ -205,12 +198,12 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Creates a new FM Session using the given FM TermRecord.
      *
-     * @param feeManagementTermRecord   FM TermRecord.
+     * @param feeManagementTermRecord FM TermRecord.
      * @return The newly generated FM Session.
      */
     @Override
     @Transactional(readOnly = false)
-    public Long createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord) {
+    public FeeManagementSession createFeeManagementSession(FeeManagementTermRecord feeManagementTermRecord) {
 
         // Validate the FM TermRecord. This call with either raise an exception or create a valid Account:
         Account account = validateForFeeManagementSessionCreation(feeManagementTermRecord);
@@ -219,9 +212,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         FeeManagementSession priorSession = getLastCompletedFmSession(feeManagementTermRecord);
 
         // Create a new FM Session using the Prior session, which may not exist:
-        FeeManagementSession newSession = createNewFmSession(priorSession, feeManagementTermRecord, account);
-
-        return (newSession != null) ? newSession.getId() : null;
+        return createNewFmSession(priorSession, feeManagementTermRecord, account);
     }
 
     /**
@@ -230,7 +221,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * manifest. This can be sent back to an external system.
      * NOTE: FeeManagementReportInfo is a non-persistent object.
      *
-     * @param feeManagementSessionId    ID of an FM Session for which to create a report.
+     * @param feeManagementSessionId ID of an FM Session for which to create a report.
      * @return The newly created report object.
      */
     @Override
@@ -246,9 +237,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
 
         // Create a new FeeManagementReportInfo object:
-        FeeManagementReportInfo reportInfo = createFeeManagementReportInfo(fmSession);
-
-        return reportInfo;
+        return createFeeManagementReportInfo(fmSession);
     }
 
     /**
@@ -270,7 +259,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         // Get the last CHARGED FM Session:
         FeeManagementSession lastChargedFmSession = getLastChargedSession(currentSession);
-        
+
         // Get current FM Session's manifests:
         List<FeeManagementManifest> currentManifests = getManifests(currentSession.getId(),
                 FeeManagementManifestType.CHARGE, FeeManagementManifestType.CANCELLATION, FeeManagementManifestType.DISCOUNT);
@@ -280,13 +269,13 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             // Perform line comparison and status adjustment.
             processPriorSessionAdjustment(currentSession, lastChargedFmSession, currentManifests);
         }
-        
+
         // Optionally, remove inverse manifests from the list of current manifests:
         boolean preclearCurrentManifests = BooleanUtils.toBoolean(configService.getParameter(Constants.FM_PRECLEAR_MANIFEST));
-        
+
         if (preclearCurrentManifests) {
-        	// Remove inverse manifests:
-        	removeInverseManifests(currentManifests);
+            // Remove inverse manifests:
+            removeInverseManifests(currentManifests);
         }
 
         // Validate reversal manifests of the current FM session:
@@ -316,26 +305,26 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         // Validate the FM Session for charge operation:
         validateSessionForCharge(session, feeManagementSessionId);
-        
+
         // Get all manifests for the session:
         List<FeeManagementManifest> manifests = getManifests(feeManagementSessionId);
         List<PaymentBillingTransferDetail> pbtDetails = new ArrayList<PaymentBillingTransferDetail>();
-        List <ThirdPartyTransferDetail> tptDetails = new ArrayList<ThirdPartyTransferDetail>();
-        
+        List<ThirdPartyTransferDetail> tptDetails = new ArrayList<ThirdPartyTransferDetail>();
+
         for (FeeManagementManifest manifest : manifests) {
-        	// If there is no transaction, process manifest charge processing.
-        	// Otherwise, continue to the new manifest.
-        	// Inherently, all ORIGINAL manifests will have a Transaction.
-        	if (manifest.getTransaction() == null) {
-        		processManifestCharge(manifest, false, session, pbtDetails, tptDetails);
-        	}
+            // If there is no transaction, process manifest charge processing.
+            // Otherwise, continue to the new manifest.
+            // Inherently, all ORIGINAL manifests will have a Transaction.
+            if (manifest.getTransaction() == null) {
+                processManifestCharge(manifest, false, session, pbtDetails, tptDetails);
+            }
         }
-        
+
         // If there were reversals, perform Transfer Reinstatement:
         if (CollectionUtils.isNotEmpty(pbtDetails) || CollectionUtils.isNotEmpty(tptDetails)) {
-        	performTransferReinstatement(pbtDetails, tptDetails, session.getAccount());
+            performTransferReinstatement(pbtDetails, tptDetails, session.getAccount());
         }
-        
+
         // Set the status of the Session to CHARGE and persist:
         session.setChargeStatus(FeeManagementSessionStatus.CHARGED);
         persistEntity(session);
@@ -431,7 +420,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                 FeeManagementReportItem reportItem = new FeeManagementReportItem();
                 String statementText =
                         (manifest.getTransaction() != null) && (manifest.getTransaction().getTransactionType() != null)
-                        ? manifest.getTransaction().getTransactionType().getDefaultStatement() : null;
+                                ? manifest.getTransaction().getTransactionType().getDefaultStatement() : null;
                 boolean isAlreadyCharged = !BooleanUtils.toBoolean(manifest.isSessionCurrent());
 
                 reportItem.setTransactionTypeId(manifest.getTransactionTypeId());
@@ -446,15 +435,15 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
                 // Adjust the amounts based on the manifest type:
                 switch (manifest.getType()) {
-                case CANCELLATION:
-                case DISCOUNT:
-                case CORRECTION:
-                    totalCorrections = totalCorrections.add(manifest.getAmount());
-                    break;
+                    case CANCELLATION:
+                    case DISCOUNT:
+                    case CORRECTION:
+                        totalCorrections = totalCorrections.add(manifest.getAmount());
+                        break;
 
-                default:
-                    totalCharges = totalCharges.add(manifest.getAmount());
-                    break;
+                    default:
+                        totalCharges = totalCharges.add(manifest.getAmount());
+                        break;
                 }
             }
         }
@@ -478,7 +467,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      *
      * @param feeManagementTermRecord An FM TermRecord for FM Session creation.
      * @return Account Account for which an FM Session is being created.
-     *  Returns null if the account is invalid.
+     *         Returns null if the account is invalid.
      * @throws RuntimeException or a subclass thereof if validation fails.
      */
     private Account validateForFeeManagementSessionCreation(FeeManagementTermRecord feeManagementTermRecord) {
@@ -542,7 +531,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * Returns the last completed FM Session for the Account and ATP ID from the given FM TermRecord.
      * The last recorded FM Session will have the "nextSession" attribute equal to "null".
      *
-     * @param feeManagementTermRecord   FM TermRecord.
+     * @param feeManagementTermRecord FM TermRecord.
      * @return The last completed FM Session with the given parameters from the FM Term Record.
      */
     private FeeManagementSession getLastCompletedFmSession(FeeManagementTermRecord feeManagementTermRecord) {
@@ -591,7 +580,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         // Get the results:
         List results = query.getResultList();
-        FeeManagementSession fmSession = CollectionUtils.isNotEmpty(results) ? (FeeManagementSession)results.get(0) : null;
+        FeeManagementSession fmSession = CollectionUtils.isNotEmpty(results) ? (FeeManagementSession) results.get(0) : null;
 
         return fmSession;
     }
@@ -599,7 +588,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Returns a full FeeManagementSession object by its ID.
      *
-     * @param fmSessionId   ID of a FeeManagementSession object.
+     * @param fmSessionId ID of a FeeManagementSession object.
      * @return A FeeManagementSession object with the given ID.
      */
     private FeeManagementSession getFullFeeManagementSessionById(Long fmSessionId) {
@@ -611,7 +600,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         // Get the result:
         List results = query.getResultList();
-        FeeManagementSession fmSession = CollectionUtils.isNotEmpty(results) ? (FeeManagementSession)results.get(0) : null;
+        FeeManagementSession fmSession = CollectionUtils.isNotEmpty(results) ? (FeeManagementSession) results.get(0) : null;
 
         return fmSession;
     }
@@ -619,13 +608,13 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Creates a new FM Session using the Prior Session, which may not exist.
      *
-     * @param priorSession              A Prior FM Session (optional).
-     * @param feeManagementTermRecord   A FM TermRecord.
-     * @param account                   User Account associated with the new FM Session.
+     * @param priorSession            A Prior FM Session (optional).
+     * @param feeManagementTermRecord A FM TermRecord.
+     * @param account                 User Account associated with the new FM Session.
      * @return The newly created FM Session.
      */
     private FeeManagementSession createNewFmSession(FeeManagementSession priorSession,
-                        FeeManagementTermRecord feeManagementTermRecord, Account account) {
+                                                    FeeManagementTermRecord feeManagementTermRecord, Account account) {
 
         // Create a new FM Session:
         FeeManagementSession newSession = new FeeManagementSession();
@@ -675,8 +664,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Adds <code>Signup</code> from the given FeeManagementTermRecord to the specified FM Session.
      *
-     * @param currentSession            An FM Session to add Signup to.
-     * @param feeManagementTermRecord   Source of IncomingSignup.
+     * @param currentSession          An FM Session to add Signup to.
+     * @param feeManagementTermRecord Source of IncomingSignup.
      */
     private void addSignupToFmSession(FeeManagementSession currentSession, FeeManagementTermRecord feeManagementTermRecord) {
 
@@ -702,9 +691,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Adds FM SignupRates from the specified FM IncomingSignup to the given FM Signup.
      *
-     * @param signup                    FM Signup to add SignupRates to.
-     * @param incomingSignup            FM Incoming Signup.
-     * @param feeManagementTermRecord   FM Term Record.
+     * @param signup                  FM Signup to add SignupRates to.
+     * @param incomingSignup          FM Incoming Signup.
+     * @param feeManagementTermRecord FM Term Record.
      */
     private void addSignupRateToSignup(FeeManagementSignup signup, FeeManagementIncomingSignup incomingSignup,
                                        FeeManagementTermRecord feeManagementTermRecord) {
@@ -729,9 +718,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Attempts to find a Rate using the provided objects.
      *
-     * @param incomingSignup            FM IncomingSignup DTO.
-     * @param incomingRateInfo          FM InfomingRateInfo DTO.
-     * @param feeManagementTermRecord   FM TermRecord DTO.
+     * @param incomingSignup          FM IncomingSignup DTO.
+     * @param incomingRateInfo        FM InfomingRateInfo DTO.
+     * @param feeManagementTermRecord FM TermRecord DTO.
      * @return Rate found using the parameters from the provided objects.
      * @throws IllegalArgumentException If the parameters in the provided objects do not result in a hit.
      */
@@ -775,22 +764,22 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
 
     /***************************************************************************
-    *
-    *
-    * Private helper methods for "chargeSession".
-    *
-    *
-    ***************************************************************************/
-    
+     *
+     *
+     * Private helper methods for "chargeSession".
+     *
+     *
+     ***************************************************************************/
+
     /**
-     * Checks all conditions necessary for FM session charge. 
+     * Checks all conditions necessary for FM session charge.
      * Throws an exception if any of the condition fails validation.
-     * 
-     * @param fmSession					An FM Session.
-     * @param feeManagementSessionId	ID of the FM Session.
+     *
+     * @param fmSession              An FM Session.
+     * @param feeManagementSessionId ID of the FM Session.
      */
     private void validateSessionForCharge(FeeManagementSession fmSession, Long feeManagementSessionId) {
-    	
+
         if (fmSession == null) {
             logger.error("Cannot find an FM session with the ID " + feeManagementSessionId);
             throw new IllegalArgumentException("Cannot find an FM session with the ID " + feeManagementSessionId);
@@ -805,96 +794,96 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             throw new IllegalStateException(errorMsg);
         }
     }
-    
+
     /**
      * The main method for manifest charge processing.
-     * 
-     * @param manifest		    An FM manifest.
-     * @param isLinkedManifest  Is "manifest" an already linked manifest of the main manifest being processed?
-     * @param session		    An FM session the manifest belongs to.
-     * @param pbtDetails	    A list of Payment billing transfer details. An OUT parameter.
-     * @param tptDetails	    A list of Third-party transfer details. An OUT Parameter.
+     *
+     * @param manifest         An FM manifest.
+     * @param isLinkedManifest Is "manifest" an already linked manifest of the main manifest being processed?
+     * @param session          An FM session the manifest belongs to.
+     * @param pbtDetails       A list of Payment billing transfer details. An OUT parameter.
+     * @param tptDetails       A list of Third-party transfer details. An OUT Parameter.
      */
     private void processManifestCharge(FeeManagementManifest manifest, boolean isLinkedManifest, FeeManagementSession session,
                                        List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
-    	
-    	// Check the manifest type:
-    	switch(manifest.getType()) {
-    	case CHARGE:
-    		processChargeTypeManifest(manifest, session, false, pbtDetails, tptDetails);
-    		break;
-    		
-    	case CORRECTION:
-    	case CANCELLATION:
-    	case DISCOUNT:
-    		processNonChargeTypeManifest(manifest, isLinkedManifest, session, pbtDetails, tptDetails);
-    		break;
-    		
-    	default:
-    		break; // Go to the next manifest.
-    	}
+
+        // Check the manifest type:
+        switch (manifest.getType()) {
+            case CHARGE:
+                processChargeTypeManifest(manifest, session, false, pbtDetails, tptDetails);
+                break;
+
+            case CORRECTION:
+            case CANCELLATION:
+            case DISCOUNT:
+                processNonChargeTypeManifest(manifest, isLinkedManifest, session, pbtDetails, tptDetails);
+                break;
+
+            default:
+                break; // Go to the next manifest.
+        }
     }
-    
+
     /**
      * Processes FM manifests only of the CHARGE type.
-     * 
-     * @param manifest 	    An FM manifest of the CHARGE type.
-     * @param session	    An FM session the manifest belongs to.
-     * @param isReversal    Is the Charge a reversal? If yes, negate the amount.
-     * @param pbtDetails	A list of Payment billing transfer details. An OUT parameter.
-     * @param tptDetails	A list of Third-party transfer details. An OUT Parameter.
+     *
+     * @param manifest   An FM manifest of the CHARGE type.
+     * @param session    An FM session the manifest belongs to.
+     * @param isReversal Is the Charge a reversal? If yes, negate the amount.
+     * @param pbtDetails A list of Payment billing transfer details. An OUT parameter.
+     * @param tptDetails A list of Third-party transfer details. An OUT Parameter.
      */
     private void processChargeTypeManifest(FeeManagementManifest manifest, FeeManagementSession session, boolean isReversal,
                                            List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
-    	// Create a charge on the Account associated with the FM session:
-    	String transactionTypeId = manifest.getTransactionTypeId();
-    	
-    	if (StringUtils.isNotEmpty(transactionTypeId) && (session.getAccount() != null) && (manifest.getAmount() != null)) {
-    		// Create a new charge on the Account:
-    		String accountId = session.getAccount().getId();
-    		BigDecimal amount = isReversal ? manifest.getAmount().negate() : manifest.getAmount();
-    		Transaction newCharge = transactionService.createTransaction(transactionTypeId, accountId, new Date(), amount);
-    		
-    		// Update the manifest and session:
-    		manifest.setTransaction(newCharge);
-    		manifest.setSessionCurrent(true);
-    		persistEntity(manifest);
-    		
-    		// If there is a linked manifest, process it:
-    		if (manifest.getLinkedManifest() != null) {
-    			processManifestCharge(manifest.getLinkedManifest(), true, session, pbtDetails, tptDetails);
-    		}
-    	}
+        // Create a charge on the Account associated with the FM session:
+        String transactionTypeId = manifest.getTransactionTypeId();
+
+        if (StringUtils.isNotEmpty(transactionTypeId) && (session.getAccount() != null) && (manifest.getAmount() != null)) {
+            // Create a new charge on the Account:
+            String accountId = session.getAccount().getId();
+            BigDecimal amount = isReversal ? manifest.getAmount().negate() : manifest.getAmount();
+            Transaction newCharge = transactionService.createTransaction(transactionTypeId, accountId, new Date(), amount);
+
+            // Update the manifest and session:
+            manifest.setTransaction(newCharge);
+            manifest.setSessionCurrent(true);
+            persistEntity(manifest);
+
+            // If there is a linked manifest, process it:
+            if (manifest.getLinkedManifest() != null) {
+                processManifestCharge(manifest.getLinkedManifest(), true, session, pbtDetails, tptDetails);
+            }
+        }
     }
-    
+
     /**
      * Processes FM manifests of types other than CHARGE or ORIGINAL.
-     * 
-     * @param manifest		    An FM manifest.
-     * @param isLinkedManifest  Is "manifest" an already linked Manifest of the main manifest being processed?
-     * @param session		    An FM session the manifest belongs to.
-     * @param pbtDetails	    A list of Payment billing transfer details. An OUT parameter.
-     * @param tptDetails	    A list of Third-party transfer details. An OUT Parameter.
+     *
+     * @param manifest         An FM manifest.
+     * @param isLinkedManifest Is "manifest" an already linked Manifest of the main manifest being processed?
+     * @param session          An FM session the manifest belongs to.
+     * @param pbtDetails       A list of Payment billing transfer details. An OUT parameter.
+     * @param tptDetails       A list of Third-party transfer details. An OUT Parameter.
      */
     private void processNonChargeTypeManifest(FeeManagementManifest manifest, boolean isLinkedManifest, FeeManagementSession session,
                                               List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
-    	// Check if the linked manifest is complete, then process manifest charge, otherwise, move to the next manifest:
-    	FeeManagementManifest linkedManifest = isLinkedManifest ? manifest : manifest.getLinkedManifest();
-    	
-    	if (linkedManifest != null) {
-    		if (linkedManifest.getTransaction() != null) {
-    			// Clear all unlockedAllocations against the transaction in the linked manifest (Linked Transaction):
-    			Transaction linkedTransaction = linkedManifest.getTransaction();
+        // Check if the linked manifest is complete, then process manifest charge, otherwise, move to the next manifest:
+        FeeManagementManifest linkedManifest = isLinkedManifest ? manifest : manifest.getLinkedManifest();
 
-    			transactionService.removeAllocations(linkedTransaction.getId());
+        if (linkedManifest != null) {
+            if (linkedManifest.getTransaction() != null) {
+                // Clear all unlockedAllocations against the transaction in the linked manifest (Linked Transaction):
+                Transaction linkedTransaction = linkedManifest.getTransaction();
+
+                transactionService.removeAllocations(linkedTransaction.getId());
 
                 // Get the Implicated Transaction:
                 Transaction implicatedTransaction = getImplicatedTransaction(linkedTransaction);
 
-    			// Process the Implicated Transaction:
-    			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
-    		}
-    	} else {
+                // Process the Implicated Transaction:
+                processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
+            }
+        } else {
             // If there is no linked manifest, mark the session for manual review:
             logger.warn(String.format("Processing reversal charge for FM Session %d. Manifest with ID %d does not have a linked manifest.", session.getId(), manifest.getId()));
             session.setReviewRequired(true);
@@ -931,149 +920,148 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         return null;
     }
-    
+
     /**
      * Processes an Implicated Transaction, i.e. Transaction associated with a linked manifest.
-     * 
-     * @param manifest				Original manifest.
-     * @param linkedManifest		Linked manifest.
+     *
+     * @param manifest              Original manifest.
+     * @param linkedManifest        Linked manifest.
      * @param implicatedTransaction Linked manifest's Transaction.
-     * @param session				FM Session
-     * @param pbtDetails			A list of Payment billing transfer details. An OUT parameter.
-     * @param tptDetails	        A list of Third-party transfer details. An OUT Parameter.
+     * @param session               FM Session
+     * @param pbtDetails            A list of Payment billing transfer details. An OUT parameter.
+     * @param tptDetails            A list of Third-party transfer details. An OUT Parameter.
      */
-    private void processImplicatedTransaction(FeeManagementManifest manifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction, 
-    					FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
-    	// Check if allocations remain. If yes, process the Implicated Transaction based on its type:
-    	boolean allocationsRemain = (implicatedTransaction != null) &&
+    private void processImplicatedTransaction(FeeManagementManifest manifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction,
+                                              FeeManagementSession session, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
+        // Check if allocations remain. If yes, process the Implicated Transaction based on its type:
+        boolean allocationsRemain = (implicatedTransaction != null) &&
                 (implicatedTransaction.getAllocatedAmount() != null) && (implicatedTransaction.getLockedAllocatedAmount() != null)
-    			&& (implicatedTransaction.getAllocatedAmount().compareTo(implicatedTransaction.getLockedAllocatedAmount().negate()) != 0);
-    	
-    	if (allocationsRemain) {
-    		// Check the status of the Implicated Transaction:
-    		switch (implicatedTransaction.getStatus()) {
-    		case TRANSFERRING:
-    			// Process a TRANSFERRING Implicated Transaction and get back to this method:
-    			processTransferFound(linkedManifest, session, implicatedTransaction, pbtDetails, tptDetails);
+                && (implicatedTransaction.getAllocatedAmount().compareTo(implicatedTransaction.getLockedAllocatedAmount().negate()) != 0);
 
-                // Process the implicated transaction again:
-    			processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
-    			break;
-    			
-    		case WRITING_OFF:
-    		case RECIPROCAL_OFFSET:
-    		case REFUNDING:
-    		case BOUNCING:
-    			// Record a log message, mark the session for manual review and skip:
-    			logger.warn("Inappropriate status of Implicated Transaction");
-    			session.setReviewRequired(true);
-    			break;
-    			
-    		case REVERSING:
-    		case DISCOUNTING:
-    		case CANCELLING:
-    		case ACTIVE:
-    			validateUnallocatedBalance(manifest, linkedManifest, implicatedTransaction, session);
-    			break;
-    			
-    		default:
-    			break;
-    		}
-    	} else {
-    		// If no allocations remain, do transaction reversal:
-    		performTransactionReversal(manifest, linkedManifest);
-    	}
+        if (allocationsRemain) {
+            // Check the status of the Implicated Transaction:
+            switch (implicatedTransaction.getStatus()) {
+                case TRANSFERRING:
+                    // Process a TRANSFERRING Implicated Transaction and get back to this method:
+                    processTransferFound(linkedManifest, session, implicatedTransaction, pbtDetails, tptDetails);
+
+                    // Process the implicated transaction again:
+                    processImplicatedTransaction(manifest, linkedManifest, implicatedTransaction, session, pbtDetails, tptDetails);
+                    break;
+
+                case WRITING_OFF:
+                case RECIPROCAL_OFFSET:
+                case REFUNDING:
+                case BOUNCING:
+                    // Record a log message, mark the session for manual review and skip:
+                    logger.warn("Inappropriate status of Implicated Transaction");
+                    session.setReviewRequired(true);
+                    break;
+
+                case REVERSING:
+                case DISCOUNTING:
+                case CANCELLING:
+                case ACTIVE:
+                    validateUnallocatedBalance(manifest, linkedManifest, implicatedTransaction, session);
+                    break;
+
+                default:
+                    break;
+            }
+        } else {
+            // If no allocations remain, do transaction reversal:
+            performTransactionReversal(manifest, linkedManifest);
+        }
     }
-    
+
     /**
      * Process "Transfer Found" logic found in the "Process Diagrams" document.
-     * 
-     * @param linkedManifest		The linked manifest.
-     * @param session				The FM session.
-     * @param implicatedTransaction	Transaction associated with the linked manifest.
-     * @param pbtDetails			A list of Payment billing transfer details. An OUT parameter.
-     * @param tptDetails	        A list of Third-party transfer details. An OUT Parameter.
+     *
+     * @param linkedManifest        The linked manifest.
+     * @param session               The FM session.
+     * @param implicatedTransaction Transaction associated with the linked manifest.
+     * @param pbtDetails            A list of Payment billing transfer details. An OUT parameter.
+     * @param tptDetails            A list of Third-party transfer details. An OUT Parameter.
      */
     private void processTransferFound(FeeManagementManifest linkedManifest, FeeManagementSession session, Transaction implicatedTransaction, List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails) {
-    	
-    	// Look for a TransactionTransfer with a reversal status of Not Reversed or Partially Reversed:
+
+        // Look for a TransactionTransfer with a reversal status of Not Reversed or Partially Reversed:
         Transaction linkedTransaction = linkedManifest.getTransaction();
-    	TransactionTransfer transactionTransfer = findUnreversedTransactionTransfer(linkedTransaction);
-    	String memoText = null;
-    	
-    	if (transactionTransfer != null) {
-    		// Check the TransactionTransfer Group ID: 
-    		String transactionTransferGroupId = transactionTransfer.getGroupId();
-    		
-    		if (StringUtils.isNotBlank(transactionTransferGroupId)) {
-    			// Find PaymentBillingTransferDetail object:
-    			PaymentBillingTransferDetail pbtDetail = findPaymentBillingTransferDetail(transactionTransferGroupId);
-    			
-    			// If found, store the details until later and reverse the PaymentBillingPlan:
-    			if (pbtDetail != null) {
-    				// Add the object found to the list:
-    				pbtDetails.add(pbtDetail);
-    				
-    				// Reverse the PaymentBillingPlan:
-    				memoText = String.format("Payment Billing Transfer %d was reversed under fee management for session %d", pbtDetail.getId(), session.getId());
-    				paymentBillingService.reversePaymentBillingTransfer(pbtDetail.getId(), memoText, true);
-    			} else {
-    				// Search for ThirdPartyTransferDetail with the same Transfer GroupId:
-    				ThirdPartyTransferDetail tptDetail = findThirdPartyTransferDetail(transactionTransferGroupId);
-    				
-    				// If found, store the details until later and reverse the ThirdPartyPlan:
-    				if (tptDetail != null) {
-    					// Add the object found to the list:
-    					tptDetails.add(tptDetail);
-    					
-    					// Reverse the ThirdPartyPlan:
-    					memoText = String.format("Payment Billing Transfer %d was reversed under fee management for session %d", tptDetail.getId(), session.getId());
-    					thirdPartyService.reverseThirdPartyTransfer(tptDetail.getId(), memoText);
-    				} else {
-    					// Reverse TransferGroup:
-    					memoText = String.format("Transaction Transfer Group %s was reversed under fee management for session %d", transactionTransferGroupId, session.getId());
-    					transactionTransferService.reverseTransferGroup(transactionTransferGroupId, memoText, true);
-    				}
-    			}
-    		} else {
-    			// Reverse the one-off manual transfer:
-    			memoText = String.format("Transaction Transfer %d was reversed under fee management for session %d", transactionTransfer.getId(), session.getId());
-    			transactionTransferService.reverseTransactionTransfer(transactionTransfer.getId(), memoText);
-    		}
-    	} else {
-    		// Reverse the Implicated Transaction: 
-    		memoText = String.format("No Transaction Transfer object found for Transaction %d", implicatedTransaction.getId());
-    		reverseTransaction(implicatedTransaction, implicatedTransaction.getAmount(), session);
-    	}
-    	
-		// Mark session for manual review:
-		if (StringUtils.isNotBlank(memoText)) {
-	    	logger.warn(memoText);
-			session.setReviewRequired(true);
-			persistEntity(session);
-		}    	
+        TransactionTransfer transactionTransfer = findUnreversedTransactionTransfer(linkedTransaction);
+        String memoText = null;
+
+        if (transactionTransfer != null) {
+            // Check the TransactionTransfer Group ID:
+            String transactionTransferGroupId = transactionTransfer.getGroupId();
+
+            if (StringUtils.isNotBlank(transactionTransferGroupId)) {
+                // Find PaymentBillingTransferDetail object:
+                PaymentBillingTransferDetail pbtDetail = findPaymentBillingTransferDetail(transactionTransferGroupId);
+
+                // If found, store the details until later and reverse the PaymentBillingPlan:
+                if (pbtDetail != null) {
+                    // Add the object found to the list:
+                    pbtDetails.add(pbtDetail);
+
+                    // Reverse the PaymentBillingPlan:
+                    memoText = String.format("Payment Billing Transfer %d was reversed under fee management for session %d", pbtDetail.getId(), session.getId());
+                    paymentBillingService.reversePaymentBillingTransfer(pbtDetail.getId(), memoText, true);
+                } else {
+                    // Search for ThirdPartyTransferDetail with the same Transfer GroupId:
+                    ThirdPartyTransferDetail tptDetail = findThirdPartyTransferDetail(transactionTransferGroupId);
+
+                    // If found, store the details until later and reverse the ThirdPartyPlan:
+                    if (tptDetail != null) {
+                        // Add the object found to the list:
+                        tptDetails.add(tptDetail);
+
+                        // Reverse the ThirdPartyPlan:
+                        memoText = String.format("Payment Billing Transfer %d was reversed under fee management for session %d", tptDetail.getId(), session.getId());
+                        thirdPartyService.reverseThirdPartyTransfer(tptDetail.getId(), memoText);
+                    } else {
+                        // Reverse TransferGroup:
+                        memoText = String.format("Transaction Transfer Group %s was reversed under fee management for session %d", transactionTransferGroupId, session.getId());
+                        transactionTransferService.reverseTransferGroup(transactionTransferGroupId, memoText, true);
+                    }
+                }
+            } else {
+                // Reverse the one-off manual transfer:
+                memoText = String.format("Transaction Transfer %d was reversed under fee management for session %d", transactionTransfer.getId(), session.getId());
+                transactionTransferService.reverseTransactionTransfer(transactionTransfer.getId(), memoText);
+            }
+        } else {
+            // Reverse the Implicated Transaction:
+            memoText = String.format("No Transaction Transfer object found for Transaction %d", implicatedTransaction.getId());
+            reverseTransaction(implicatedTransaction, implicatedTransaction.getAmount(), session);
+        }
+
+        // Mark session for manual review:
+        if (StringUtils.isNotBlank(memoText)) {
+            logger.warn(memoText);
+            session.setReviewRequired(true);
+            persistEntity(session);
+        }
     }
-    
+
     /**
      * Finds a <code>PaymentBillingTransferDetail</code> object of type Charged and with the given Transfer Group ID.
-     * 
-     * @param transferGroupId	Transfer group ID to match <code>PaymentBillingTransferDetail</code> on.
+     *
+     * @param transferGroupId Transfer group ID to match <code>PaymentBillingTransferDetail</code> on.
      * @return Matching <code>PaymentBillingTransferDetail</code> or <code>null</code> if no such object can be found.
      */
     private PaymentBillingTransferDetail findPaymentBillingTransferDetail(String transferGroupId) {
-        
-    	PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
-    	
-    	// Create and run a query to find PaymentBillingTransferDetail object:
-    	String jpql = "select d from PaymentBillingTransferDetail d " +
+
+        PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
+
+        // Create and run a query to find PaymentBillingTransferDetail object:
+        Query query = em.createQuery("select d from PaymentBillingTransferDetail d " +
                 " left outer join fetch d.directChargeAccount dca " +
                 " left outer join fetch d.plan p " +
                 " left outer join fetch d.flatFeeCharge fc " +
                 " left outer join fetch d.variableFeeCharge vc " +
                 " left outer join fetch p.transferType t " +
                 " left outer join fetch t.generalLedgerType g " +
-                " where d.transferGroupId = :transferGroupId and d.chargeStatusCode = :chargeStatusCode ";
-    	Query query = em.createQuery(jpql);
+                " where d.transferGroupId = :transferGroupId and d.chargeStatusCode = :chargeStatusCode ");
 
         query.setParameter("transferGroupId", transferGroupId);
         query.setParameter("chargeStatusCode", PaymentBillingChargeStatus.ACTIVE_CODE);
@@ -1082,26 +1070,25 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         return CollectionUtils.isNotEmpty(details) ? details.get(0) : null;
     }
-    
+
     /**
      * Finds a <code>ThirdPartyTransferDetail</code> object of type Charged and with the given Transfer Group ID.
-     * 
-     * @param transferGroupId	Transfer group ID to match <code>ThirdPartyTransferDetail</code> on.
+     *
+     * @param transferGroupId Transfer group ID to match <code>ThirdPartyTransferDetail</code> on.
      * @return Matching <code>ThirdPartyTransferDetail</code> or <code>null</code> if no such object can be found.
      */
     private ThirdPartyTransferDetail findThirdPartyTransferDetail(String transferGroupId) {
-    	
+
         PermissionUtils.checkPermission(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL);
 
         // Create and run a query to find ThirdPartyTransferDetailObject:
-        String jpql = "select d from ThirdPartyTransferDetail d " +
+        Query query = em.createQuery("select d from ThirdPartyTransferDetail d " +
                 " left outer join fetch d.directChargeAccount dca " +
                 " left outer join fetch d.plan p " +
                 " left outer join fetch p.thirdPartyAccount tpa " +
                 " left outer join fetch p.transferType t " +
-                " left outer join fetch t.generalLedgerType g " + 
-                " where d.transferGroupId = :transferGroupId ";
-        Query query = em.createQuery(jpql);
+                " left outer join fetch t.generalLedgerType g " +
+                " where d.transferGroupId = :transferGroupId ");
 
         query.setParameter("transferGroupId", transferGroupId);
 
@@ -1109,92 +1096,92 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         return CollectionUtils.isNotEmpty(details) ? details.get(0) : null;
     }
-    
+
     /**
-     * Finds a Partially Reversed or Not Reversed Transaction Transfer object that contains the 
+     * Finds a Partially Reversed or Not Reversed Transaction Transfer object that contains the
      * given Implicated Transaction.
-     * 
-     * @param implicatedTransaction	A Transaction for which to find an unreversed Transaction Transfer.
-     * @return	An unreversed TransactionTransfer for the given Transaction or <code>null</code> if no
-     * 	such Transaction Transfer object can be found.
+     *
+     * @param implicatedTransaction A Transaction for which to find an unreversed Transaction Transfer.
+     * @return An unreversed TransactionTransfer for the given Transaction or <code>null</code> if no
+     *         such Transaction Transfer object can be found.
      */
     private TransactionTransfer findUnreversedTransactionTransfer(Transaction implicatedTransaction) {
-    	
-    	PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TRANSFER);
-    	
-    	// Create a query to select a TransactionTransfer using the search criteria:
-    	String jpql = " select t from TransactionTransfer t " +
+
+        PermissionUtils.checkPermission(Permission.READ_TRANSACTION_TRANSFER);
+
+        // Create a query to select a TransactionTransfer using the search criteria:
+        String jpql = " select t from TransactionTransfer t " +
                 " left outer join fetch t.sourceTransaction " +
                 " left outer join fetch t.destTransaction " +
                 " left outer join fetch t.offsetTransaction " +
                 " left outer join fetch t.sourceReciprocalTransaction " +
                 " left outer join fetch t.destReciprocalTransaction " +
                 " left outer join fetch t.transferType " +
-                " where t.sourceTransaction.id = :transactionId and t.reversalStatusCode in (:reversalStatusCodes)";    	
+                " where t.sourceTransaction.id = :transactionId and t.reversalStatusCode in (:reversalStatusCodes)";
         Query query = em.createQuery(jpql);
 
         query.setParameter("transactionId", implicatedTransaction.getId());
         query.setParameter("reversalStatusCodes", Arrays.asList(ReversalStatus.NOT_REVERSED_CODE, ReversalStatus.PARTIALLY_REVERSED_CODE));
-        
+
         List<TransactionTransfer> transfers = query.getResultList();
 
         return CollectionUtils.isNotEmpty(transfers) ? transfers.get(0) : null;
     }
-    
+
     /**
-     * Performs unallocated balance validation for the Implicated Transaction. 
-     * 
-     * @param originalManifest		The original manifest being processed.
-     * @param linkedManifest		The linked manifest.
-     * @param implicatedTransaction	Transaction associated with the linked manifest.
-     * @param session				FM Session.
+     * Performs unallocated balance validation for the Implicated Transaction.
+     *
+     * @param originalManifest      The original manifest being processed.
+     * @param linkedManifest        The linked manifest.
+     * @param implicatedTransaction Transaction associated with the linked manifest.
+     * @param session               FM Session.
      */
     private void validateUnallocatedBalance(FeeManagementManifest originalManifest, FeeManagementManifest linkedManifest, Transaction implicatedTransaction, FeeManagementSession session) {
-    	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
-    	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
-    		// Write a warning, mark the session for manual review and reverse the transaction:
-    		logger.warn("Performing transaction reversal. FM session manual review required.");
-    		performTransactionReversal(originalManifest, linkedManifest);
-    	} else {
-    		// Reverse all allocations on the Implicated Transaction in the amount of the original manifest's amount:
-    		BigDecimal reversalAmount = originalManifest.getAmount();
-    		
-    		transactionService.reverseAllocations(implicatedTransaction.getId(), reversalAmount);
+        // Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
+        if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
+            // Write a warning, mark the session for manual review and reverse the transaction:
+            logger.warn("Performing transaction reversal. FM session manual review required.");
+            performTransactionReversal(originalManifest, linkedManifest);
+        } else {
+            // Reverse all allocations on the Implicated Transaction in the amount of the original manifest's amount:
+            BigDecimal reversalAmount = originalManifest.getAmount();
+
+            transactionService.reverseAllocations(implicatedTransaction.getId(), reversalAmount);
 
             // Refresh the implicated transaction:
             implicatedTransaction = refreshTransaction(linkedManifest);
-    		
-        	// Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
-        	if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
-        		logger.warn("Performing transaction reversal. FM session manual review required.");
-        		performTransactionReversal(originalManifest, linkedManifest);
-        	} else {
-        		// Write a severe warning, mark the session for manual review:
-        		logger.warn("SEVERE: Not enough unallocated balance to perform correction/cancel/discount after clearing manual allocation. FM session manual review required.");
-        	}
-    	}
-    	
-    	// Mark the session for manual review and persist:
-		session.setReviewRequired(true);
-    	persistEntity(session);
+
+            // Is there enough unallocated balance of the transaction to perform correction/cancel/discount:
+            if (hasUnallocatedBalanceForCorrection(implicatedTransaction)) {
+                logger.warn("Performing transaction reversal. FM session manual review required.");
+                performTransactionReversal(originalManifest, linkedManifest);
+            } else {
+                // Write a severe warning, mark the session for manual review:
+                logger.warn("SEVERE: Not enough unallocated balance to perform correction/cancel/discount after clearing manual allocation. FM session manual review required.");
+            }
+        }
+
+        // Mark the session for manual review and persist:
+        session.setReviewRequired(true);
+        persistEntity(session);
     }
-    
+
     /**
      * Checks if the given Transaction has enough unallocated balance to perform correction/cancel/discount.
-     * 
-     * @param transaction	A Transaction to check its unallocated balance to perform correction/cancel/discount.
+     *
+     * @param transaction A Transaction to check its unallocated balance to perform correction/cancel/discount.
      * @return <code>true</code> if there is enough balance, <code>false</code> otherwise.
      */
-    private final boolean hasUnallocatedBalanceForCorrection(Transaction transaction) {
-    	return (transaction.getAmount() != null) && (transaction.getUnallocatedAmount() != null)
-    			&& (transaction.getUnallocatedAmount().compareTo(transaction.getAmount()) > 0);
+    private boolean hasUnallocatedBalanceForCorrection(Transaction transaction) {
+        return (transaction.getAmount() != null) && (transaction.getUnallocatedAmount() != null)
+                && (transaction.getUnallocatedAmount().compareTo(transaction.getAmount()) > 0);
     }
-    
+
     /**
      * Performs Linked Transaction reversal.
-     * 
-     * @param originalManifest		The original manifest being processed.
-     * @param linkedManifest		The linked manifest.
+     *
+     * @param originalManifest The original manifest being processed.
+     * @param linkedManifest   The linked manifest.
      */
     private void performTransactionReversal(FeeManagementManifest originalManifest, FeeManagementManifest linkedManifest) {
 
@@ -1213,13 +1200,13 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                     linkedTransaction.getId(), originalManifest.getSession().getId()));
         }
     }
-    
+
     /**
      * Reverses the given transaction and returns the reversal Transaction.
-     * 
-     * @param transaction		Transaction to reverse.
-     * @param reversalAmount    Reversal amount.
-     * @param session			FM Session
+     *
+     * @param transaction    Transaction to reverse.
+     * @param reversalAmount Reversal amount.
+     * @param session        FM Session
      * @return The reversal Transaction.
      */
     private Transaction reverseTransaction(Transaction transaction, BigDecimal reversalAmount, FeeManagementSession session) {
@@ -1240,18 +1227,18 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         return reversalTransaction;
     }
-    
+
     /**
      * Performs transfer reinstatement.
-     * 
-     * @param pbtDetails	A list of Payment billing transfer details.
-     * @param tptDetails	A list of Third-party transfer details. An OUT Parameter.
-     * @param account		An Account associated with the the FM Session.
+     *
+     * @param pbtDetails A list of Payment billing transfer details.
+     * @param tptDetails A list of Third-party transfer details. An OUT Parameter.
+     * @param account    An Account associated with the the FM Session.
      */
     private void performTransferReinstatement(List<PaymentBillingTransferDetail> pbtDetails, List<ThirdPartyTransferDetail> tptDetails, Account account) {
-    	
-    	// For each PaymentBilling that was removed, generate payment billing schedule using the stored details:
-    	for (PaymentBillingTransferDetail pbtDetail : pbtDetails) {
+
+        // For each PaymentBilling that was removed, generate payment billing schedule using the stored details:
+        for (PaymentBillingTransferDetail pbtDetail : pbtDetails) {
 
             // Validate the plan still exists:
             PaymentBillingPlan plan = getEntity(pbtDetail.getPlan().getId(), PaymentBillingPlan.class);
@@ -1259,31 +1246,31 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             if (plan != null) {
                 paymentBillingService.generatePaymentBillingTransfer(plan.getId(), account.getId(), pbtDetail.getMaxAmount(), pbtDetail.getInitiationDate());
             }
-    	}
-    	
-    	// For each Third-Party plan that was removed, generate third-party billing transfer for the Account associated with the FM session:
-    	if (account != null) {
-    		String accountId = account.getId();
-    		
-	    	for (ThirdPartyTransferDetail tptDetail : tptDetails) {
+        }
 
-	    		// Generate a Third-Party transfer detail:
+        // For each Third-Party plan that was removed, generate third-party billing transfer for the Account associated with the FM session:
+        if (account != null) {
+            String accountId = account.getId();
+
+            for (ThirdPartyTransferDetail tptDetail : tptDetails) {
+
+                // Generate a Third-Party transfer detail:
                 ThirdPartyPlan plan = getEntity(tptDetail.getPlan().getId(), ThirdPartyPlan.class);
 
                 if (plan != null) {
-		    		thirdPartyService.generateThirdPartyTransfer(plan.getId(), accountId, tptDetail.getInitiationDate());
-	    		}
-	    	}
-    	}
+                    thirdPartyService.generateThirdPartyTransfer(plan.getId(), accountId, tptDetail.getInitiationDate());
+                }
+            }
+        }
     }
 
     /**
      * Refreshes the transaction from the store and sets it on the manifest.
      *
-     * @param manifest  An FM manifest which transactin to refresh.
+     * @param manifest An FM manifest which transactin to refresh.
      * @return A fresh copy of the transaction.
      */
-    private Transaction refreshTransaction (FeeManagementManifest manifest) {
+    private Transaction refreshTransaction(FeeManagementManifest manifest) {
 
         Transaction transaction = manifest.getTransaction();
 
@@ -1296,7 +1283,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         return transaction;
     }
 
-    
+
     /***************************************************************************
      *
      *
@@ -1306,14 +1293,14 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      ***************************************************************************/
 
     /**
-     * Checks all conditions necessary for FM session reconciliation. 
+     * Checks all conditions necessary for FM session reconciliation.
      * Throws an exception if any of the condition fails validation.
-     * 
-     * @param fmSession					An FM Session.
-     * @param feeManagementSessionId	ID of the FM Session.
+     *
+     * @param fmSession              An FM Session.
+     * @param feeManagementSessionId ID of the FM Session.
      */
     private void validateSessionForReconciliation(FeeManagementSession fmSession, Long feeManagementSessionId) {
-    	
+
         if (fmSession == null) {
             logger.error("Cannot find an FM session with the ID " + feeManagementSessionId);
             throw new IllegalArgumentException("Cannot find an FM session with the ID " + feeManagementSessionId);
@@ -1346,7 +1333,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             }
         }
     }
-    
+
     /**
      * A recursive method that checks all previous FM Sessions in succession in
      * order to find the last CHARGED session.
@@ -1372,18 +1359,23 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return boolean Whether the Account associated with the FM Session is blocked.
      */
     private boolean isAccountBlocked(Account account) {
-        // TODO: Perform a check for a blocked account. This method will be defined and implemented later (per Paul):
-        boolean accountBlocked = false;
-
-        return accountBlocked;
+        // TODO: define permissions and account attributes required by FM Session
+        Permission[] permissions = {};
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        try {
+            accountBlockingService.checkBlock(account.getId(), attributes, permissions);
+            return false;
+        } catch (AccountBlockedException e) {
+            return true;
+        }
     }
 
     /**
      * Performs adjustment of lines between the last charged FM Session and the current session.
      *
-     * @param currentFmSession 	Current FM Session.
-     * @param priorFmSession   	Last FM Session in the CHARGED status. Guaranteed not to be null.
-     * @param currentManifests	A list of current FM session's manifests.
+     * @param currentFmSession Current FM Session.
+     * @param priorFmSession   Last FM Session in the CHARGED status. Guaranteed not to be null.
+     * @param currentManifests A list of current FM session's manifests.
      */
     private void processPriorSessionAdjustment(FeeManagementSession currentFmSession, FeeManagementSession priorFmSession, List<FeeManagementManifest> currentManifests) {
         // Get the prior and current FM sessions' manifests:
@@ -1449,10 +1441,10 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * 1. (registrationId + rate) or (offeringId + rate), or
      * 2. internalChargeId + rate.
      *
-     * @param prior				A prior FM session's manifest.
-     * @param current			A current FM session's manifest.
-     * @param matchByOfferingId	Whether to match Manifests by Offering ID vs. Registration ID. 
-     * @return    <code>true</code> if the manifests are a match, <code>false</code> otherwise.
+     * @param prior             A prior FM session's manifest.
+     * @param current           A current FM session's manifest.
+     * @param matchByOfferingId Whether to match Manifests by Offering ID vs. Registration ID.
+     * @return <code>true</code> if the manifests are a match, <code>false</code> otherwise.
      */
     private boolean manifestsMatch(FeeManagementManifest prior, FeeManagementManifest current, boolean matchByOfferingId) {
         if ((prior != null) && (current != null)) {
@@ -1460,11 +1452,11 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             boolean ratesMatch = (prior.getRate() != null) && (current.getRate() != null) && prior.getRate().equals(current.getRate());
 
             // Check if Internal Charge IDs or Registration IDs match:
-            return ratesMatch && 
-            			(equalsExceptNull(prior.getInternalChargeId(), current.getInternalChargeId())
-            				|| (matchByOfferingId 
-            						? equalsExceptNull(prior.getOfferingId(), current.getOfferingId())
-            						: equalsExceptNull(prior.getRegistrationId(), current.getRegistrationId())));
+            return ratesMatch &&
+                    (equalsExceptNull(prior.getInternalChargeId(), current.getInternalChargeId())
+                            || (matchByOfferingId
+                            ? equalsExceptNull(prior.getOfferingId(), current.getOfferingId())
+                            : equalsExceptNull(prior.getRegistrationId(), current.getRegistrationId())));
         }
 
         return false;
@@ -1543,7 +1535,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @return A List of full-reversal Manifest Pairs
      */
     private List<Pair<FeeManagementManifest, FeeManagementManifest>> findReversalManifests(List<FeeManagementManifest> manifests, boolean fullReversal) {
-    	
+
         List<Pair<FeeManagementManifest, FeeManagementManifest>> reversalManifests = new ArrayList<Pair<FeeManagementManifest, FeeManagementManifest>>();
 
         // Iterate through a copy of the list of manifests. Begin with the first manifest and try
@@ -1606,9 +1598,9 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
             // Now check if the manifests match and have the same transactionTypeId and amount:
             if (statusesForReversal && manifestsMatch(fmm1, fmm2, true)) {
-                return fullReversal 
-                		? StringUtils.equals(fmm1.getTransactionTypeId(), fmm2.getTransactionTypeId()) && safeAmountsEqual(fmm1, fmm2) 
-                				: true;
+                return fullReversal
+                        ? StringUtils.equals(fmm1.getTransactionTypeId(), fmm2.getTransactionTypeId()) && safeAmountsEqual(fmm1, fmm2)
+                        : true;
             }
         }
 
@@ -1643,14 +1635,14 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         priorCopy.setLinkedManifest(correctionManifest);
         persistEntity(priorCopy);
     }
-    
+
     /**
-     * Removes inverse manifests from the list of manifests. 
-     * 
+     * Removes inverse manifests from the list of manifests.
+     *
      * @param manifests A list of manifests to remove inverse ones from.
      */
     private void removeInverseManifests(List<FeeManagementManifest> manifests) {
-    	
+
         // Iterate through the list of manifests. Begin with the first manifest and try
         // to find its full-reversal counterpart. If one is found, add a Pair, remove them both from
         // the list and start from the same "startIndex":
@@ -1660,26 +1652,26 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             // Get the first Manifest to match against:
             FeeManagementManifest firstManifest = manifests.get(startIndex);
             boolean matchFound = false;
-            
+
             // Check for the condition to continue:
             if (eligibleForPreclearing(firstManifest)) {
-	            for (int i = startIndex + 1, sz = manifests.size(); (i < sz) && !matchFound; i++) {
-	                // Check if the next manifest is an inverse one:
-	            	FeeManagementManifest anotherManifest = manifests.get(i);
-	            	
-	                matchFound = eligibleForPreclearing(anotherManifest)
-	                				&& manifestsInverse(firstManifest, anotherManifest);
-	
-	                if (matchFound) {
-	                    // Delete both entities, remove both from the list, and start again from the same index:
+                for (int i = startIndex + 1, sz = manifests.size(); (i < sz) && !matchFound; i++) {
+                    // Check if the next manifest is an inverse one:
+                    FeeManagementManifest anotherManifest = manifests.get(i);
+
+                    matchFound = eligibleForPreclearing(anotherManifest)
+                            && manifestsInverse(firstManifest, anotherManifest);
+
+                    if (matchFound) {
+                        // Delete both entities, remove both from the list, and start again from the same index:
                         firstManifest.setSession(null);
                         anotherManifest.setSession(null);
-	                    em.remove(firstManifest);
-	                    em.remove(anotherManifest);
+                        em.remove(firstManifest);
+                        em.remove(anotherManifest);
                         manifests.remove(i);
                         manifests.remove(startIndex);
-	                }
-	            }
+                    }
+                }
             }
 
             // If a match not found, increment the start index and keep searching:
@@ -1688,74 +1680,74 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             }
         }
     }
-    
+
     /**
      * Check if the given manifest is eligible for Manifest pre-clearing.
-     * 
-     * @param manifest	A FM Manifest for eligibility for pre-clearing.
+     *
+     * @param manifest A FM Manifest for eligibility for pre-clearing.
      * @return <code>true</code> if the given FM Manifest is eligible for manifest pre-clearing.
      */
     private boolean eligibleForPreclearing(FeeManagementManifest manifest) {
-    	return (manifest.getTransaction() == null) || (manifest.getLinkedManifest() == null);
+        return (manifest.getTransaction() == null) || (manifest.getLinkedManifest() == null);
     }
-    
+
     /**
      * Checks if two FM manifests are inverse. According to the documentation, FM Manifests are inverse if:
      * If TYPES are inverse {CHARGE vs. CANCEL} with amounts equal
-	 * OR
-	 * Same type {Both CHARGE or CANCEL} with inverse amounts && transactionTypeId is the same
-	 * 
+     * OR
+     * Same type {Both CHARGE or CANCEL} with inverse amounts && transactionTypeId is the same
+     *
      * @param m1 An FM Manifest to compare.
      * @param m2 Another FM Manifest to compare.
      * @return true if the two manifests are inverse, false otherwise.
      */
     private boolean manifestsInverse(FeeManagementManifest m1, FeeManagementManifest m2) {
-    	if ((m1 != null) && (m2 != null) && StringUtils.equals(m1.getTransactionTypeId(), m2.getTransactionTypeId())) {
-    		// Check for inverse statuses and equal amounts or same statuses and inverse amounts:
-    		if (((m1.getType() == FeeManagementManifestType.CHARGE) && (m2.getType() == FeeManagementManifestType.CANCELLATION))
-    				|| ((m1.getType() == FeeManagementManifestType.CANCELLATION) && (m2.getType() == FeeManagementManifestType.CHARGE))) {
-    			return safeAmountsEqual(m1, m2);
-    		} else  if (((m1.getType() == FeeManagementManifestType.CHARGE) && (m2.getType() == FeeManagementManifestType.CHARGE))
-    				|| ((m1.getType() == FeeManagementManifestType.CANCELLATION) && (m2.getType() == FeeManagementManifestType.CANCELLATION))) {
-    			return safeAmountsInverse(m1, m2) && StringUtils.equals(m1.getTransactionTypeId(), m2.getTransactionTypeId());
-    		}
-    	}
-    	
-    	return false;
+        if ((m1 != null) && (m2 != null) && StringUtils.equals(m1.getTransactionTypeId(), m2.getTransactionTypeId())) {
+            // Check for inverse statuses and equal amounts or same statuses and inverse amounts:
+            if (((m1.getType() == FeeManagementManifestType.CHARGE) && (m2.getType() == FeeManagementManifestType.CANCELLATION))
+                    || ((m1.getType() == FeeManagementManifestType.CANCELLATION) && (m2.getType() == FeeManagementManifestType.CHARGE))) {
+                return safeAmountsEqual(m1, m2);
+            } else if (((m1.getType() == FeeManagementManifestType.CHARGE) && (m2.getType() == FeeManagementManifestType.CHARGE))
+                    || ((m1.getType() == FeeManagementManifestType.CANCELLATION) && (m2.getType() == FeeManagementManifestType.CANCELLATION))) {
+                return safeAmountsInverse(m1, m2) && StringUtils.equals(m1.getTransactionTypeId(), m2.getTransactionTypeId());
+            }
+        }
+
+        return false;
     }
-    
+
     /**
      * Safely compares "amount" properties of two <code>FeeManagementManifest</code>s.
      * Calls the "compareTo" method of BigDecimal.
      * Guaranteed not to cause a NullPointerException.
-     * 
+     *
      * @param m1 A <code>FeeManagementManifest</code>.
      * @param m2 A <code>FeeManagementManifest</code>.
      * @return true if "amount" attributes are equal.
      */
     private static boolean safeAmountsEqual(FeeManagementManifest m1, FeeManagementManifest m2) {
-    	return (m1.getAmount() != null) && (m2.getAmount() != null) && (m1.getAmount().compareTo(m2.getAmount()) == 0);
+        return (m1.getAmount() != null) && (m2.getAmount() != null) && (m1.getAmount().compareTo(m2.getAmount()) == 0);
     }
-    
+
     /**
      * Safely compares "amount" properties of two <code>FeeManagementManifest</code>s.
      * Calls the "compareTo" method of BigDecimal.
      * Guaranteed not to cause a NullPointerException.
-     * 
+     *
      * @param m1 A <code>FeeManagementManifest</code>.
      * @param m2 A <code>FeeManagementManifest</code>.
      * @return true if "amount" attributes are inverse.
      */
     private static boolean safeAmountsInverse(FeeManagementManifest m1, FeeManagementManifest m2) {
-    	return (m1.getAmount() != null) && (m2.getAmount() != null) && (m1.getAmount().compareTo(m2.getAmount().negate()) == 0);
+        return (m1.getAmount() != null) && (m2.getAmount() != null) && (m1.getAmount().compareTo(m2.getAmount().negate()) == 0);
     }
 
     /**
      * Compares two Strings for equality using <code>StringUtils.equals</code>
      * except this method returns <code>false</code> when both String are null.
      *
-     * @param str1  The first String to compare.
-     * @param str2  The second String to compare.
+     * @param str1 The first String to compare.
+     * @param str2 The second String to compare.
      * @return true if Strings are equal and not null together.
      */
     public static boolean equalsExceptNull(String str1, String str2) {
@@ -1765,7 +1757,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Validates that full-reversal manifests point at each other. Repoints them at each other if necessary.
      *
-     * @param currentManifests	The current FM Session's manifests to validate reversals.
+     * @param currentManifests The current FM Session's manifests to validate reversals.
      */
     private void validateCurrentReversals(List<FeeManagementManifest> currentManifests) {
 
@@ -1782,18 +1774,18 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             persistEntity(pair.getB());
         }
     }
-    
+
     /**
      * Create a shallow copy of a <code>FeeManagementManifest</code> with only Tags and KeyPairs deep-copied.
      * The new <code>FeeManagementManifest</code> is not attached to any FM session and not linked to any FM Manifests.
-     * 
-     * @param origManifest 	An original FM manifest to copy.
-     * @return	A copy of the original FM manifest.
+     *
+     * @param origManifest An original FM manifest to copy.
+     * @return A copy of the original FM manifest.
      */
     private FeeManagementManifest copyManifest(FeeManagementManifest origManifest) {
-    	
-    	// Create a new FM Manifest as a shallow copy of the original one:
-    	FeeManagementManifest copyManifest = new FeeManagementManifest();
+
+        // Create a new FM Manifest as a shallow copy of the original one:
+        FeeManagementManifest copyManifest = new FeeManagementManifest();
 
         copyManifest.setEffectiveDate(origManifest.getEffectiveDate());
         copyManifest.setRecognitionDate(origManifest.getRecognitionDate());
@@ -1816,39 +1808,39 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
 
         // Create copies of KeyPairs:
-    	if (origManifest.getKeyPairs() != null) {
-    		// Create a new Set of KeyPairs if one is not set yet:
-    		if (copyManifest.getKeyPairs() == null) {
-    			copyManifest.setKeyPairs(new HashSet<KeyPair>()); 
-    		} else {
-    			// Clear the previous tags:
-    			copyManifest.getKeyPairs().clear();
-    		}
-    		
-			// Create and add a new KeyPair identical to the original:
-    		for (KeyPair keyPair : origManifest.getKeyPairs()) {
-    			copyManifest.getKeyPairs().add(new KeyPair(keyPair.getKey(), keyPair.getValue()));
-    		}
-    	}
-    	
-    	// Create copies of Tags:
-    	if (origManifest.getTags() != null) {
-    		// Create a new Set of Tags if one is not set yet:
-    		if (copyManifest.getTags() == null) {
-    			copyManifest.setTags(new HashSet<Tag>());
-    		} else {
-    			copyManifest.getTags().clear();
-    		}
-    		
-    		// Create a new Tag shallow copy:
-    		for (Tag tag : origManifest.getTags()) {
-    			Tag copyTag = BeanUtils.getShallowCopy(tag);
-    			
-    			copyTag.setId(null);
-    			copyManifest.getTags().add(copyTag);
-    		}
-    	}
+        if (origManifest.getKeyPairs() != null) {
+            // Create a new Set of KeyPairs if one is not set yet:
+            if (copyManifest.getKeyPairs() == null) {
+                copyManifest.setKeyPairs(new HashSet<KeyPair>());
+            } else {
+                // Clear the previous tags:
+                copyManifest.getKeyPairs().clear();
+            }
 
-    	return copyManifest;
+            // Create and add a new KeyPair identical to the original:
+            for (KeyPair keyPair : origManifest.getKeyPairs()) {
+                copyManifest.getKeyPairs().add(new KeyPair(keyPair.getKey(), keyPair.getValue()));
+            }
+        }
+
+        // Create copies of Tags:
+        if (origManifest.getTags() != null) {
+            // Create a new Set of Tags if one is not set yet:
+            if (copyManifest.getTags() == null) {
+                copyManifest.setTags(new HashSet<Tag>());
+            } else {
+                copyManifest.getTags().clear();
+            }
+
+            // Create a new Tag shallow copy:
+            for (Tag tag : origManifest.getTags()) {
+                Tag copyTag = BeanUtils.getShallowCopy(tag);
+
+                copyTag.setId(null);
+                copyManifest.getTags().add(copyTag);
+            }
+        }
+
+        return copyManifest;
     }
 }
