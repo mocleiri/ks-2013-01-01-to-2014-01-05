@@ -13,6 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Copyright 2010 The Kuali Foundation
+ *
+ *  Licensed under the the Educational Community License, Version 1.0
+ * (the "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/ecl1.php
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.kuali.student.enrollment.lui.service;
 
@@ -160,6 +175,28 @@ public interface LuiService {
     public List<String> getLuiIdsByAtpAndType(@WebParam(name = "atpId") String atpId,
                                               @WebParam(name = "luiTypeKey") String luiTypeKey,
                                               @WebParam(name = "contextInfo") ContextInfo contextInfo )
+            throws InvalidParameterException,
+            MissingParameterException,
+            OperationFailedException,
+            PermissionDeniedException;
+
+    /**
+     * Retrieves the list of Luis for the specified atp and Lui Type.
+     *
+     * @param atpId an identifier for the Atp
+     * @param luiTypeKey an identifier for the Lui Type
+     * @param contextInfo information containing the principalId and
+     *        locale information about the caller of service operation
+     * @return a list of Luis
+     * @throws InvalidParameterException contextInfo is not valid
+     * @throws MissingParameterException atpId, luiTypeKey, or
+     *         contextInfo is missing or null
+     * @throws OperationFailedException unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
+     */
+    public List<LuiInfo> getLuisByAtpAndType (@WebParam(name = "atpId") String atpId,
+                                              @WebParam(name = "luiTypeKey") String luiTypeKey,
+                                              @WebParam(name = "contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
             MissingParameterException,
             OperationFailedException,

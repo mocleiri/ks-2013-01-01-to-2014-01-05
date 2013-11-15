@@ -34,20 +34,22 @@ import java.io.Serializable;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CourseOfferingCrossListingInfo", propOrder = {
-                "id", "typeKey", "stateKey", "code", "subjectArea",
-        "subjectOrgId", "courseNumberSuffix",
+                "id", "typeKey", "stateKey", "code", "longName", "subjectArea",
+                "subjectOrgId", "courseNumberSuffix",
                 "meta", "attributes", "_futureElements"
 })
 
 public class CourseOfferingCrossListingInfo 
     extends IdNamelessEntityInfo 
-    implements CourseOfferingCrossListing, Serializable,
-                Comparable<CourseOfferingCrossListing> {
+    implements CourseOfferingCrossListing, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @XmlElement
     private String code;
+
+    @XmlElement
+    private String longName;
 
     @XmlElement
     private String subjectArea;
@@ -81,6 +83,7 @@ public class CourseOfferingCrossListingInfo
         super(crossListing);
         if (crossListing != null) {
             this.code = crossListing.getCode();
+            this.longName = crossListing.getLongName();
             this.subjectArea = crossListing.getSubjectArea();
             this.subjectOrgId = crossListing.getSubjectOrgId();
             this.courseNumberSuffix = crossListing.getCourseNumberSuffix();
@@ -95,6 +98,16 @@ public class CourseOfferingCrossListingInfo
     public void setCode(String code) {
         this.code = code;
     }
+
+    @Override
+    public String getLongName() {
+        return longName;
+    }
+
+    public void setLongName(String longName) {
+        this.longName = longName;
+    }
+
 
     @Override
     public String getSubjectArea() {
@@ -136,26 +149,4 @@ public class CourseOfferingCrossListingInfo
     public void setCourseNumberSuffix(String courseNumberSuffix) {
         this.courseNumberSuffix = courseNumberSuffix;
     }
-
-    @Override
-    public int compareTo(CourseOfferingCrossListing that) {
-        final int BEFORE = -1;
-        final int EQUAL = 0;
-        final int AFTER = 1;
-
-        if( that == null ) throw new NullPointerException("that cannot be null");
-        if( this == that ) return EQUAL;
-
-        int comparison = this.getSubjectArea().compareTo(that.getSubjectArea());
-        if( comparison != EQUAL ) return comparison;
-
-        comparison = this.getCode().compareTo(that.getCode());
-        if( comparison != EQUAL ) return comparison;
-
-        comparison = this.getCourseNumberSuffix().compareTo(that.getCourseNumberSuffix());
-        if( comparison != EQUAL ) return comparison;
-
-        return EQUAL;
-    }
-
 }
