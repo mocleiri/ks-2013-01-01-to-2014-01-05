@@ -25,13 +25,13 @@
     <strong>Other Examples</strong>
     <ul class="chan">
         <li><portal:portalLink displayTitle="true" title="Growls"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Growls-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Growls-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Lightboxes (in progress)"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Lightbox-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Lightbox-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Popovers"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Popovers-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Popovers-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Message Box"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-MessageBox-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-MessageBox-View&methodToCall=start" /></li>
     </ul>
 
     <strong>Event Examples</strong>

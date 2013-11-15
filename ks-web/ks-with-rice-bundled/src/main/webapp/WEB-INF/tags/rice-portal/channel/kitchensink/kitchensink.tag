@@ -20,9 +20,9 @@
     <strong>Unified Page Header</strong>
     <ul class="chan">
         <li><portal:portalLink displayTitle="true" title="Context Bar"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-ContextBar-View-Base&methodToCall=start" /></li>
-        <li><a href="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-UnifiedPageHeader-View-Base-M7&methodToCall=start">Unified Page Header M7</a></li>
-        <li><a href="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-UnifiedPageHeader-View-Base&methodToCall=start">Unified Page Header Future</a></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-ContextBar-View-Base&methodToCall=start" /></li>
+        <li><a href="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-UnifiedPageHeader-View-Base-M7&methodToCall=start">Unified Page Header M7</a></li>
+        <li><a href="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-UnifiedPageHeader-View-Base&methodToCall=start">Unified Page Header Future</a></li>
     </ul>
 
     <strong>Data Fields</strong>
@@ -32,23 +32,23 @@
     <strong>Input Fields</strong>
     <ul class="chan">
         <li><portal:portalLink displayTitle="true" title="Checkboxes"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Checkbox-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Checkbox-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Date Text Field"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-DateField-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-DateField-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Link Fields"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Links-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Links-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Multi-Select Control"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-MultiSelect-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-MultiSelect-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Radio Buttons"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-RadioButtons-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-RadioButtons-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Select Control (Dropdown)"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Select-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Select-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Spinner Control"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Spinner-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-Spinner-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Text Area Field"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-TextAreaField-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-TextAreaField-View&methodToCall=start" /></li>
         <li><portal:portalLink displayTitle="true" title="Text Field"
-                               url="${ConfigProperties.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-TextField-View&methodToCall=start" /></li>
+                               url="${ConfigProperties.lum.application.url}/kr-krad/kitchensink?viewId=KS-KitchenSink-TextField-View&methodToCall=start" /></li>
     </ul>
 
     <strong>Other Fields</strong>
