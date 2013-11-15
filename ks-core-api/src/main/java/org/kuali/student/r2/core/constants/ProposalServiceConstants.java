@@ -48,4 +48,19 @@ public class ProposalServiceConstants {
      */
     public static final String PROPOSAL_DOC_RELATION_TYPE_CLU_KEY = "kuali.proposal.referenceType.clu";
 
+    /**
+     * Authorization Request Proposal types
+     */
+    public static final String PROPOSAL_TYPE_CURRICULUM_MANAGEMENT_USER_AUTHORIZATION_ADD_REQUEST = "kuali.proposal.type.curriculum.management.user.authorization.add.request";
+    public static final String PROPOSAL_TYPE_CURRICULUM_MANAGEMENT_USER_AUTHORIZATION_TERMINATE_REQUEST = "kuali.proposal.type.curriculum.management.user.authorization.terminate.request";
+    
+    /**
+     * Proposal states and lifecycles
+     */
+    public static final String PROPOSAL_GENERAL_LIFECYCLE = "kuali.proposal.lifecycle";
+    public static final String PROPOSAL_STATE_DRAFT = "kuali.proposal.state.draft";
+    public static final String PROPOSAL_STATE_SUBMITTED = "kuali.proposal.state.submitted";
+    public static final String PROPOSAL_STATE_APPROVED = "kuali.proposal.state.approved";
+    public static final String PROPOSAL_STATE_NOT_APPROVED = "kuali.proposal.state.not.approved";
+
 }
