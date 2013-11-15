@@ -1316,29 +1316,10 @@ public class CluServiceImpl implements CluService {
             clu.setAccounting(null);
         }
 
-        // build a list of the attribute ids from the original Clu and the updated CluInfo
-        Collection<String> originalAttributeIds = new ArrayList<String>();
-        for (CluAttribute attrib : clu.getAttributes()) {
-            originalAttributeIds.add(attrib.getId());
-        }
+        List<CluAttribute> updatedAttributes = CluServiceAssembler.toGenericAttributes(CluAttribute.class, cluInfo.getAttributes(), clu, luDao);
 
-        Collection<String> newAttributeIds = new ArrayList<String>();
-        for (AttributeInfo attrib : cluInfo.getAttributes()) {
-            // attributes without an id are new, and do not need to be considered in deletion determination
-            if(attrib.getId() != null) {
-                newAttributeIds.add(attrib.getId());
-            }
-        }
-
-        // delete any attribute ids from the original list that are not included in the updated list
-        for(String originalId : originalAttributeIds) {
-            if (!newAttributeIds.contains(originalId)) {
-                luDao.delete(CluAttribute.class, originalId);
-            }
-        }
-
-        clu.setAttributes(CluServiceAssembler.toGenericAttributes(
-                CluAttribute.class, cluInfo.getAttributes(), clu, luDao));
+        clu.getAttributes().clear();
+        clu.getAttributes().addAll(updatedAttributes);
 
         if (cluInfo.getIntensity() != null) {
             if (clu.getIntensity() == null) {
