@@ -66,17 +66,18 @@ public class KSDateTimeFormatter  {
      * @return
      * @throws IllegalArgumentException if the javaDate is invalid
      */
-    public String format(Date javaDate){
-        return this.formatter.print(new DateTime(javaDate));
+    public String format(final DateTime javaDate){
+        return this.formatter.print(javaDate);
     }
 
     /**
-     * Formats a Joda DateTime as a String.
-     * @param dateTime
+     * Helper method that allows a stright  java.util.Date to String converstion
+     * @param javaDate
      * @return
+     * @throws IllegalArgumentException if the javaDate is invalid
      */
-    public String format(DateTime dateTime) {
-       return this.formatter.print(dateTime);
+    public String format(Date javaDate){
+        return this.formatter.print(new DateTime(javaDate));
     }
 
     /**
