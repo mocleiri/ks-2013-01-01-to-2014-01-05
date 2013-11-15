@@ -1061,6 +1061,7 @@ class DeliveryLogistics
   def create
     if isRDL then
       on ActivityOfferingMaintenance do |page|
+        page.view_requested_delivery_logistics
         #target_row = target_row_by_dl_key
         #page.edit_rdl_row(target_row)
         sleep 2

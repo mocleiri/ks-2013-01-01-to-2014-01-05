@@ -107,8 +107,8 @@ class ActivityOfferingMaintenance < BasePage
   element(:add_new_delivery_logistics_button) { |b| b.button(id: "add_rdl_button") }
   action(:add_new_delivery_logistics) { |b| b.add_new_delivery_logistics_button.click; b.adding.wait_while_present }
 
-  element(:view_requested_delivery_logistics_toggle_open) { |b| b.frm.image(id: "ActivityOffering-DeliveryLogistic-Requested_toggle_exp") }
-  element(:view_requested_delivery_logistics_link) { |b| b.frm.link(id: "ActivityOffering-DeliveryLogistic-Requested_toggle") }
+  element(:view_requested_delivery_logistics_toggle_open) { |b| b.frm.image(id: "ActivityOffering-ManageSchedulingInformationSection_toggle_exp") }
+  element(:view_requested_delivery_logistics_link) { |b| b.frm.link(id: "ActivityOffering-ManageSchedulingInformationSection_toggle") }
 
   def view_requested_delivery_logistics
     if view_requested_delivery_logistics_link.present? && !view_requested_delivery_logistics_toggle_open.present?
