@@ -22,6 +22,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-GridSubSection">
+                <property name="headerText" value="Organization Person Relation Search"/>
                 <property name="layoutManager.numberOfColumns" value="3"/>
                 <property name="layoutManager.applyDefaultCellWidths" value="false" />
                 <property name="style" value="margin-bottom:0;"/>
@@ -62,11 +63,11 @@
 										<bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Search" p:methodToCall="search"/>
                                     </list>
                                 </property>
-                            </bean>
-                            <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Create" p:methodToCall="create" p:style="float:right"/>
+                            </bean>                            
                         </list>
                     </property>
                 </bean>
+                <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Create" p:methodToCall="create" p:style="float:right"/>
             </list>
         </property>
     </bean>

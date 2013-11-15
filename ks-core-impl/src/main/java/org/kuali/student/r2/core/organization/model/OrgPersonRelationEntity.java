@@ -53,7 +53,7 @@ public class OrgPersonRelationEntity extends MetaEntity implements AttributeOwne
     @Column(name = "PERS_ID", nullable = false)
     private String personId;
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="EXPIR_DT", nullable = false)
+    @Column(name="EXPIR_DT")
     private Date expirationDate;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="EFF_DT", nullable = false)

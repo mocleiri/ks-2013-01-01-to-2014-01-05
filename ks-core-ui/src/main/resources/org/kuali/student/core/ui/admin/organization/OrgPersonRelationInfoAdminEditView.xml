@@ -23,7 +23,7 @@
 							<bean parent="Uif-InputField" p:style="align: right;"
 								p:propertyName="orgPersonRelation.personName" p:label="Person" p:readOnly="true" />
 							<bean parent="Uif-InputField"  p:style="align: right;"
-								p:propertyName="orgPersonRelation.typeInfo.key" p:label="Type">
+								p:propertyName="orgPersonRelation.typeInfo.key" p:label="Type" p:readOnly="true" >
 								<property name="control">
             						<bean parent="Uif-DropdownControl"/>
           						</property>

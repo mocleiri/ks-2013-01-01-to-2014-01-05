@@ -54,7 +54,7 @@ public class OrgEntity extends MetaEntity implements AttributeOwner<OrgAttribute
     @Column(name = "SHORT_DESCR_FORMATTED", length = KSEntityConstants.EXTRA_LONG_TEXT_LENGTH)
     private String shortDescrFormatted;
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="EXPIR_DT", nullable = false)
+    @Column(name="EXPIR_DT")
     private Date expirationDate;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="EFF_DT", nullable = false)
