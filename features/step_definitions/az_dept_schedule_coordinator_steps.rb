@@ -572,7 +572,7 @@ Then /^I have access to edit the honors flag$/ do
   end
 end
 
-And /^I can cancel the Activity Offering Edit$/ do
+And /^Cancel the Activity Offering Edit to avoid a dirty page warning$/ do
   on ActivityOfferingMaintenance do |page|
     page.cancel
   end
