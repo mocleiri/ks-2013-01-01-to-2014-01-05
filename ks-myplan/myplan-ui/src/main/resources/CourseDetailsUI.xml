@@ -905,8 +905,8 @@
                     <property name="cssClasses" value="removeMargin"/>
                 </bean>
                 <bean id="syllabus_link" parent="Uif-LinkField" p:cssClasses="removeMargin" p:render="@{#line.hasSyllabus}">
-                    <property name="linkText" value="Syllabus Available"/>
-                    <property name="title" value="Syllabus Available"/>
+                    <property name="linkText" value="View syllabus description"/>
+                    <property name="title" value="View syllabus description"/>
                     <property name="href"
                               value="/student/myplan/inquiry?methodToCall=start&amp;viewId=CourseSyllabus-InquiryView&amp;activityId=@{#line.activityId}"/>
                     <property name="lightBox">
