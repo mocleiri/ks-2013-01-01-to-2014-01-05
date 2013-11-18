@@ -27,8 +27,8 @@ class ViewAcademicCalendar < BasePage
   element(:acal_holiday_div) { |b| b.frm.div(id: "acal-holidays") }
   element(:hcal_name_div) { |b| b.acal_holiday_div.div(data_label: "Holiday Calendar Name") }
   value(:hcal_name_text) { |b| b.hcal_name_div.span(index: 2).text }
-  value(:hcal_start_date) { |b| b.acal_holiday_div.div(data_label: "Start Date").span(index: 2).text }
-  value(:hcal_end_date) { |b| b.acal_holiday_div.div(data_label: "End Date").span(index: 2).text }
+  value(:hcal_start_date) { |b| b.frm.text_field(id: "startDate") }
+  value(:hcal_end_date) { |b| b.frm.text_field(id: "endDate") }
 
   def open_events_section()
     if acal_event_list_link.image(alt: "collapse").visible? then # collapse means collapsed
