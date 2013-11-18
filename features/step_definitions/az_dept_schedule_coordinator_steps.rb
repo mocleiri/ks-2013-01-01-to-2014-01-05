@@ -702,6 +702,7 @@ end
 
 Then /^I have access to add new delivery logistics$/ do
   on ActivityOfferingMaintenance do |page|
+    page.view_requested_delivery_logistics
     page.add_new_delivery_logistics_button.present?.should == true
   end
 end
