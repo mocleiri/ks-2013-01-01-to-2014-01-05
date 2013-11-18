@@ -64,6 +64,9 @@ class CreateCOFromCatalog < BasePage
   action(:add_format) { |b| b.add_format_btn.click; b.loading.wait_while_present }
   action(:delete_format_btn) {|b| b.frm.button(id: "KS-CourseOffering-FormatOfferingSubSection_del_line0") }
   value(:final_exam_driver_value) { |b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_DRIVER_COLUMN].text}
+  element(:final_exam_activity_options) { |b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_ACTIVITY_COLUMN].select()}
+  value(:fe_activity_discussion_value) { |b| b.final_exam_activity_options.option(value: /Discussion/).text}
+  value(:fe_activity_lecture_value) { |b| b.final_exam_activity_options.option(value: /Lecture/).text}
 
   def target_format_select(row, format)
     if delivery_formats_table.rows[row].cells[FORMAT_COLUMN].select.include? format

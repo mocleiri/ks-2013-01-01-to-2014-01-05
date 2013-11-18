@@ -7,11 +7,24 @@ Feature: SA.FE2-1 Set Exam Status
     Given I am logged in as admin
 
   #FE2.1.EB1 (KSENROLL-9242)
-  Scenario: Test whether the Final Exam Driver Activity column changes depending on the chosen exam status
-    When I create a Course Offering from catalog with a final exam period
-    Then the Final Exam Driver Activity value should change each time I choose another type of Final Exam
+  Scenario: Test whether the Final Exam data for a course changes depending on the chosen Final Exam indicator when there will be no exam
+    Given that the catalog version of the course is set to have a standard final exam
+    When I create a Course Offering from catalog in a term with a final exam period
+    And I change the Final Exam indicator from Standard final exam to Alternate final assessment or No final exam or assessment
+    Then the Final Exam Driver should not be Activity Offering or Course Offering
+    And the Final Exam Driver Activity field should disappear
 
   #FE2.1.EB2 (KSENROLL-9242)
   Scenario: Test whether a warning is displayed on the edit CO page that exam status differs from catalog
-    When I create and then edit a Course Offering from catalog with an alternate final exam period
+    When I create a Course Offering from catalog with an alternate final assessment option
+    And I edit the Course Offering to have a Standard Final Exam
+    And I return to the Edit Co page for the course after updating the change
     Then a warning about the FE on the Edit CO page is displayed stating "Course exam data differs from Catalog."
+
+  #FE2.1.EB3 (KSENROLL-9242)
+  Scenario: Test whether the Final Exam data for a course changes depending on the chosen Final Exam indicator when there will be an exam
+    Given that the catalog version of the course is set to have No final exam
+    When I create a Course Offering from catalog in a term with a final exam period
+    And I change the Final Exam indicator from No final exam or assessment to Standard final exam
+    Then the Final Exam Driver should allow the user to pick Activity Offering or Course Offering as the exam driver
+    And the Final Exam Driver Activity field should appear if Activity Offering is selected as the exam driver

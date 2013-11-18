@@ -8,15 +8,14 @@ Feature: SA.FE2-2 Create Exam from AO or CO
 
   #FE2.2.EB1 (KSENROLL-9243)
   Scenario: Test whether the Final Exam Driver dropdown is only available for Standard FE
-    When I create a Course Offering from catalog with a final exam period
-    Then the option to specify a Final Exam Driver should only be available for a course offering with a Standard Final Exam
+    Given that the catalog version of the course is set to have a standard final exam
+    When I create a Course Offering from catalog in a term with a final exam period
+    Then the option to specify a Final Exam Driver should only be available for a course offering with a Standard Final Exam option selected
 
   #FE2.2.EB2 (KSENROLL-9243)
-  Scenario: Test whether the FE Driver column's value changes when changing the Driver
-    When I create a Course Offering from catalog with a final exam period
-    Then the status of the Final Exam Driver should change to indicate the driver chosen for the Standard Final Exam
-
-  #FE2.2.EB3 (KSENROLL-9243)
-  Scenario: Test whether the new CO's FE can be edited on the Manage CO page
-    When I create and then edit a Course Offering from catalog with an alternate final exam period
-    Then I should be able to edit and update the Final Exam status
+  Scenario: Test whether the Final Exam data for a course changes depending on the chosen Final Exam indicator when there will be an exam
+    Given that the catalog version of the course is set to not have a standard final exam
+    When I create a Course Offering from catalog in a term with a final exam period
+    And I change the Final Exam indicator from Alternate final assessment to Standard final exam
+    Then the Final Exam Driver value should reflect the value selected in the Final Exam Driver field dropdown
+    And the Final Exam Driver Activity field should exist and be populated with the first activity type of the format offering
