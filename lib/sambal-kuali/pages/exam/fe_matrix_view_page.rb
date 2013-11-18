@@ -10,7 +10,7 @@ class FEMatrixView < BasePage
 
   element(:term_type_select) { |b| b.frm.select( name: "document.newMaintainableObject.dataObject.termToUse")}
 
-  element(:submit_btn) { |b| b.div( id: "KSFE-DocumentPageFooter-SubmitCancel").button( text: /Submit/)}
+  element(:submit_btn) { |b| b.div( id: "KSFE-DocumentPageFooter-SubmitCancel").button( text: /Save/)}
   action(:submit) { |b| b.submit_btn.click}
   element(:cancel_link) { |b| b.div( id: "KSFE-DocumentPageFooter-SubmitCancel").a( text: /Cancel/)}
   action(:cancel) { |b| b.cancel_link.click; b.loading.wait_while_present}

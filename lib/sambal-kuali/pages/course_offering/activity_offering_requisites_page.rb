@@ -170,7 +170,7 @@ class ActivityOfferingRequisites < BasePage
   element(:view_cancel_link) { |b| b.view_section.button(:text => /Close/)}
   action(:view_cancel) { |b| b.view_cancel_link.click; b.loading.wait_while_present}
 
-  element(:submit_btn) { |b| b.frm.button(:text => /Submit/)}
+  element(:submit_btn) { |b| b.frm.button(:text => /Save/)}
   action(:submit) { |b| b.submit_btn.click; b.loading.wait_while_present }
   element(:cancel_btn) { |b| b.frm.a(:text => /Cancel/)}
   action(:cancel) { |b| b.cancel_btn.click; b.loading.wait_while_present }
