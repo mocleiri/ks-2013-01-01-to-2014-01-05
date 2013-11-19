@@ -70,7 +70,7 @@ Feature: EC.Holiday Calendar CRED
   Scenario: Verify error message when adding a Holiday with start date after end date
     Given I create a Holiday Calendar
     And I add a new Holiday with a date later than the Holiday end date
-    Then a Holiday Dates error message is displayed stating "has invalid date range"
+    Then a Holiday Dates error message is displayed stating "The end date for this holiday should not be earlier than the start date"
 
   Scenario: Verify warning message when adding a Holiday with blank start date
     Given I create a Holiday Calendar
