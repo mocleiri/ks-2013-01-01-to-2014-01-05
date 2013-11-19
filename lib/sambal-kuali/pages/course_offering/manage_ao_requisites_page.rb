@@ -43,7 +43,7 @@ class ManageAORequisites < BasePage
   action(:paste_btn) { |b| b.frm.button(:text => /Paste/).when_present.click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   #action(:del_btn) { |b| b.frm.button(id: "KRMS-RuleEditorView-DeleteButton").click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:del_btn) { |b| b.frm.button(:text => /Delete/).when_present.click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
-  action(:add_line_btn) { |b| b.frm.button(:text => /add/).when_present.click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
+  action(:add_line_btn) { |b| b.frm.button(:id=>"KRMS-ApprovedCourseStackedCollectionGroup_add").when_present.click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:delete_line_btn) { |b| b.frm.button(:text => /delete/).when_present.click; b.edit_loading.wait_while_present; b.loading.wait_while_present}
   action(:update_rule_btn) { |b| b.frm.button(text: "Update Rule").when_present.click; b.edit_loading.wait_while_present; b.loading.wait_while_present(60)}
 
