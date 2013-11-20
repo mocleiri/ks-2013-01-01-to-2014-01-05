@@ -415,7 +415,8 @@
 		</property>
 	</bean>
 
-	<bean id="sb_activity_option_row" abstract="true" parent="Uif-HorizontalBoxGroup"
+	<bean id="sb_activity_option_row" abstract="true" parent="sb_activity_option_row_parent" />
+	<bean id="sb_activity_option_row_parent" abstract="true" parent="Uif-HorizontalBoxGroup"
 			p:additionalCssClasses="ksap-sb-@{#line.primary?'primary':'secondary'}-row,ksap-sb-@{#line.selected?'selected':'deselected'},ksap-sb-activity-@{#line.closed?'closed':'open'}">
 		<property name="validationMessages.render" value="false" />
 		<property name="dataAttributes">
