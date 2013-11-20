@@ -1,5 +1,5 @@
 @nightly
-Feature: WC.Schedule of Classes rendered by AO cluster
+Feature: WC.Display Schedule of Classes rendered by AO cluster
 
   As an Admin I want to display a published schedule of classes ordered by
   activity offering cluster for a specific term in order to understand the courses being offered,

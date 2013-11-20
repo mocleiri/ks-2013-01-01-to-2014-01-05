@@ -1,5 +1,5 @@
 @nightly
-Feature: WC.Co-location of Activity Offerings
+Feature: WC.Colocated Activity Offerings
 
 Background:
   Given I am logged in as a Schedule Coordinator

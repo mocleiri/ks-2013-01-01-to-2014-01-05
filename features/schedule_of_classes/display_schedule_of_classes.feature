@@ -1,5 +1,5 @@
 @nightly
-Feature: WC.Schedule of Classes
+Feature: WC.Display Schedule of Classes
 
   As an Admin I want to display a published schedule of classes for a specific term in order to
   understand the courses being offered, including both descriptive and scheduling info

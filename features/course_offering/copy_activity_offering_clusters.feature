@@ -1,5 +1,5 @@
 @nightly
-Feature: EC.Copy course offerings - activity offering clusters 
+Feature: EC.Copy Activity Offering Clusters
 
 	RG 6.2
 
