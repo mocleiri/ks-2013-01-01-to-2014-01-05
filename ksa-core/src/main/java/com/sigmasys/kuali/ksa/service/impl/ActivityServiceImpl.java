@@ -4,7 +4,7 @@ import com.sigmasys.kuali.ksa.model.Activity;
 import com.sigmasys.kuali.ksa.model.ActivityType;
 import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.service.ActivityService;
-import com.sigmasys.kuali.ksa.util.GuidGenerator;
+import com.sigmasys.kuali.ksa.util.LongIdGenerator;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -121,7 +121,7 @@ public class ActivityServiceImpl extends GenericPersistenceService implements Ac
     public Long persistActivity(Activity activity) {
         activity.setTimestamp(new Date());
         if (activity.getId() == null) {
-            activity.setId(GuidGenerator.generateLong());
+            activity.setId(LongIdGenerator.generateLong());
             activity.setCreatorId(userSessionManager.getUserId());
         }
         if (activity.getTypeId() == null) {

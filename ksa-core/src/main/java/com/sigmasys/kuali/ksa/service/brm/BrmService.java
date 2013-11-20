@@ -5,7 +5,7 @@ import com.sigmasys.kuali.ksa.model.rule.RuleSet;
 
 
 /**
- * Drools-based implementation of BrmService
+ * Business Rules Management (BRM) service.
  *
  * @author Michael Ivanov
  */

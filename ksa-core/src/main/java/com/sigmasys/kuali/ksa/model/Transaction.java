@@ -4,11 +4,11 @@ import com.sigmasys.kuali.ksa.annotation.Auditable;
 import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -195,12 +195,8 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_TRAN",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "TRANSACTION_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_TRAN")
+    @GenericGenerator(name="idGenerator", strategy="com.sigmasys.kuali.ksa.util.LongIdGenerator")
+    @GeneratedValue(generator="idGenerator")
     @Override
     public Long getId() {
         return id;

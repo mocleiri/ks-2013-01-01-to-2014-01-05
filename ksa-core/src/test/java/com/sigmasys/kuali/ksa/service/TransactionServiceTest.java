@@ -75,6 +75,8 @@ public class TransactionServiceTest extends AbstractServiceTest {
         isTrue(new Date().compareTo(transaction.getEffectiveDate()) >= 0);
         isTrue(new BigDecimal(10e5).equals(transaction.getNativeAmount()));
 
+        logger.info("Transaction ID = " + transaction.getId());
+        logger.info("Date = " + System.currentTimeMillis());
     }
 
     private Allocation createAllocation(boolean locked, boolean internallyLocked) {

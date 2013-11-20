@@ -3,7 +3,6 @@ package com.sigmasys.kuali.ksa.util;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Creates a Global/Universal Unique ID, per DCE RPC specification.
@@ -11,11 +10,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * Specification found at the OpenGroup.Org web site.
  *
  * @author Michael Ivanov
- * @version $Revision: 1$
  */
 public class GuidGenerator {
-
-    private static final AtomicLong longIdGenerator = new AtomicLong(System.currentTimeMillis() * 100000);
 
     /**
      * CLOCKMOD constitutes the net value range for the clock counter per RFC.
@@ -83,13 +79,8 @@ public class GuidGenerator {
     // Random generator
     private static final Random random = new Random();
 
-
-    public static long generateLong() {
-        return Math.abs(longIdGenerator.incrementAndGet());
-    }
-
     /**
-     * Returns the hexidecimal representation of byte values in the array.
+     * Returns the hexadecimal representation of byte values in the array.
      * Uses Integer.toHexString on each byte, so is relatively expensive.
      * This could easily be ameliorated with some trivial byte-packing
      * but for now I'm just going to do the Simplest Thing Possible.
@@ -290,6 +281,7 @@ public class GuidGenerator {
      * set is where all the work is done
      */
     public void set() {
+
         long millitime, lastmilli, nanomod = 0;
         String temptimemid = "";
         String temptimehi = "";
