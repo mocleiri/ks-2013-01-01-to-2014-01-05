@@ -175,8 +175,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Creates a new FM Session and actually charges it.
      *
-     * @param feeManagementTermRecord   A transient FM data holder.
-     * @return The ID of the newly created FM Session.
+     * @param feeManagementTermRecord A transient FM data holder.
+     * @return FeeManagementSession instance
      */
     @Override
     @Transactional(readOnly = false)
@@ -195,8 +195,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * Simulates Real Time FeeManagement. Doesn't actually charge the FM Session, but rather creates
      * a report displaying what would have happened if the FM Session had been charged.
      *
-     * @param feeManagementTermRecord   A transient FM data holder.
-     * @return  A report with Fee Management assessment.
+     * @param feeManagementTermRecord A transient FM data holder.
+     * @return A report with Fee Management assessment.
      */
     @Override
     @Transactional(readOnly = false)
@@ -420,8 +420,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
     /**
      * Creates and reconciles an FM Session for Real Time Fee Management.
      *
-     * @param fmTermRecord    A transient placeholder for FM data.
-     * @return  A newly created and reconciled FM Session object.
+     * @param fmTermRecord A transient placeholder for FM data.
+     * @return A newly created and reconciled FM Session object.
      */
     private FeeManagementSession reconcileSessionForRealTimeFeeManagement(FeeManagementTermRecord fmTermRecord) {
 
@@ -638,9 +638,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         // Get the results:
         List results = query.getResultList();
-        FeeManagementSession fmSession = CollectionUtils.isNotEmpty(results) ? (FeeManagementSession) results.get(0) : null;
 
-        return fmSession;
+        return CollectionUtils.isNotEmpty(results) ? (FeeManagementSession) results.get(0) : null;
     }
 
     /**
@@ -658,9 +657,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
 
         // Get the result:
         List results = query.getResultList();
-        FeeManagementSession fmSession = CollectionUtils.isNotEmpty(results) ? (FeeManagementSession) results.get(0) : null;
 
-        return fmSession;
+        return CollectionUtils.isNotEmpty(results) ? (FeeManagementSession) results.get(0) : null;
     }
 
     /**
@@ -1046,7 +1044,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // Look for a TransactionTransfer with a reversal status of Not Reversed or Partially Reversed:
         Transaction linkedTransaction = linkedManifest.getTransaction();
         TransactionTransfer transactionTransfer = findUnreversedTransactionTransfer(linkedTransaction);
-        String memoText = null;
+        String memoText;
 
         if (transactionTransfer != null) {
             // Check the TransactionTransfer Group ID:

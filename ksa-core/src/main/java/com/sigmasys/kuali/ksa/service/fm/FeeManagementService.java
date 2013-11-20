@@ -112,8 +112,8 @@ public interface FeeManagementService {
     /**
      * Creates a new FM Session and actually charges it.
      *
-     * @param feeManagementTermRecord   A transient FM data holder.
-     * @return The ID of the newly created FM Session.
+     * @param feeManagementTermRecord A transient FM data holder.
+     * @return FeeManagementSession instance
      */
     FeeManagementSession assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 
@@ -121,8 +121,8 @@ public interface FeeManagementService {
      * Simulates Real Time FeeManagement. Doesn't actually charge the FM Session, but rather creates
      * a report displaying what would have happened if the FM Session had been charged.
      *
-     * @param feeManagementTermRecord   A transient FM data holder.
-     * @return  A report with Fee Management assessment.
+     * @param feeManagementTermRecord A transient FM data holder.
+     * @return A report with Fee Management assessment.
      */
     FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 }
