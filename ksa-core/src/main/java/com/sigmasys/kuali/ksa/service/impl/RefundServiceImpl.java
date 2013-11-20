@@ -865,38 +865,6 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
         return deleteEntity(refundType.getId(), RefundType.class);
     }
 
-    @Override
-    @Transactional(readOnly = false)
-    @PermissionsAllowed(Permission.PERFORM_REFUND)
-    public Refund payoffWithRefund(String accountId, BigDecimal maxPayoff) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    @Transactional(readOnly = false)
-    @PermissionsAllowed(Permission.PERFORM_REFUND)
-    public Refund doPayoffRefund(Long refundId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    @Transactional(readOnly = false)
-    @PermissionsAllowed(Permission.PERFORM_REFUND)
-    public Refund doPayoffRefund(Long refundId, String batch) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    @Transactional(readOnly = false)
-    @PermissionsAllowed(Permission.PERFORM_REFUND)
-    public List<Refund> doPayoffRefunds(String batch) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     /**
      * Returns all Refunds belonging to the same group with the specified Group ID (UUID).
      *

@@ -1090,8 +1090,10 @@ public class ReportServiceImpl extends GenericPersistenceService implements Repo
             personName.setDefault(true);
             name.setPersonName(personName);
         } else {
-            // TODO: set the correct company name
-            name.setCompanyName("");
+            OrgName orgName = account.getOrgName();
+            if (orgName != null) {
+                name.setCompanyName(orgName.getName());
+            }
         }
 
         accountReport.setName(name);

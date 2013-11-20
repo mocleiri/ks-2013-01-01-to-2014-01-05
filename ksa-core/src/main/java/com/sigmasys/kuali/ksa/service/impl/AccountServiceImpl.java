@@ -719,7 +719,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
 
         try {
 
-            // TODO - populate the missing fields
             // TODO: figure out how to distinguish Delegate and DirectCharge account types
 
             String creatorId = userSessionManager.getUserId();

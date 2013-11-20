@@ -280,46 +280,6 @@ public interface RefundService {
     boolean deleteRefundType(RefundType refundType);
 
     /**
-     * Performs a pay-off refund.
-     * TODO: This method will be implemented with the design is finalized.
-     *
-     * @param accountId ID of an account for which to perform payoff with a Refund.
-     * @param maxPayoff Maximum amount of payoff.
-     * @return <code>Refund</code> created during this operation.
-     */
-    Refund payoffWithRefund(String accountId, BigDecimal maxPayoff);
-
-    /**
-     * Performs a pay-off refund.
-     * TODO: This method will be implemented with the design is finalized.
-     *
-     * @param refundId ID of a Refund.
-     * @return <code>Refund</code> created during this operation.
-     */
-    Refund doPayoffRefund(Long refundId);
-
-    /**
-     * Performs a batched pay-off refund.
-     * TODO: This method will be implemented with the design is finalized.
-     *
-     * @param refundId ID of a Refund.
-     * @param batch    ID of a transaction batch.
-     * @return <code>Refund</code> created during this operation.
-     */
-    Refund doPayoffRefund(Long refundId, String batch);
-
-    /**
-     * Performs a pay-off refund.
-     * Goes through the Refund objects. For each validated refund with type set to payoff refund (refund.payoff.type).
-     * For each one that is found, call doPayoffRefund (refundId, batch).
-     * TODO: This method will be implemented with the design is finalized.
-     *
-     * @param batch ID of a transaction batch.
-     * @return A <code>List</code> of <code>Refund</code> objects created during this operation.
-     */
-    List<Refund> doPayoffRefunds(String batch);
-
-    /**
      * Returns a List of Refunds for the given Account ID.
      *
      * @param userId ID of an Account for which to get its Refunds.
