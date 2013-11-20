@@ -411,15 +411,15 @@ public class DefaultPlannerForm extends AbstractPlanItemForm implements
 				}
 			}
 
-			String firstTermId = termIds.first();
-
 			TermHelper termHelper = KsapFrameworkServiceLocator.getTermHelper();
+			List<Term> planningTerms = termHelper.getPlanningTerms();
+			String focusTermId = planningTerms.get(0).getId();
+
+			String firstTermId = termIds.isEmpty() ? focusTermId : termIds.first();
+
 			termHelper.frontLoadForPlanner(firstTermId);
 
 			Term firstTerm = termHelper.getTerm(firstTermId);
-
-			List<Term> planningTerms = termHelper.getPlanningTerms();
-			String focusTermId = planningTerms.get(0).getId();
 
 			for (Term term : planningTerms) {
 				termIds.add(term.getId());

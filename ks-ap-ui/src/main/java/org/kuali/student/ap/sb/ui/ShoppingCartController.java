@@ -378,17 +378,20 @@ public class ShoppingCartController extends UifControllerBase {
 
 				}
 			}
-			
+
 			// Tie in validation results related to keep requests
 			if (cartRequest.getUniqueId() == null) {
-				for (CourseOption co : form.getKeepInCart()) {
-					for (ActivityOption ao : co.getActivityOptions()) {
-						String reg = ao.getRegistrationCode();
-						if (reg.equals(cartRequest.getPrimaryRegistrationCode())) {
-							((ShoppingCartRequestInfo) cartRequest).setUniqueId(ao.getUniqueId());
+				List<CourseOption> keepInCart = form.getKeepInCart();
+				if (keepInCart != null)
+					for (CourseOption co : keepInCart) {
+						for (ActivityOption ao : co.getActivityOptions()) {
+							String reg = ao.getRegistrationCode();
+							if (reg.equals(cartRequest.getPrimaryRegistrationCode())) {
+								((ShoppingCartRequestInfo) cartRequest).setUniqueId(ao
+										.getUniqueId());
+							}
 						}
 					}
-				}
 			}
 
 			JsonObjectBuilder jresult = Json.createObjectBuilder();
