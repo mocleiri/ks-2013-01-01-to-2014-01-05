@@ -180,7 +180,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      */
     @Override
     @Transactional(readOnly = false)
-    public Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
+    public FeeManagementSession assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
 
         // Create and reconcile an FM Session:
         FeeManagementSession fmSession = reconcileSessionForRealTimeFeeManagement(feeManagementTermRecord);
@@ -188,7 +188,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // Charge the FM Session:
         chargeSession(fmSession.getId());
 
-        return fmSession.getId();
+        return fmSession;
     }
 
     /**

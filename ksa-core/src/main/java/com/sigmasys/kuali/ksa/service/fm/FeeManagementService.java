@@ -115,7 +115,7 @@ public interface FeeManagementService {
      * @param feeManagementTermRecord   A transient FM data holder.
      * @return The ID of the newly created FM Session.
      */
-    Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
+    FeeManagementSession assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 
     /**
      * Simulates Real Time FeeManagement. Doesn't actually charge the FM Session, but rather creates
