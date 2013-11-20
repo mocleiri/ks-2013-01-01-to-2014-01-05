@@ -1,5 +1,17 @@
 // KSAP 0.7.5 refactored planner scripts
 
+function ksapOnDialogOpen(pageId) {
+	// Override at institution level
+}
+
+function ksapOnDialogSubmit(pageId) {
+	// Override at institution level
+}
+
+function ksapOnUpdateType() {
+	// Override at institution level
+}
+
 function ksapLoadPlannerItems(imageUrl) {
 	myplanRetrieveComponent(
 			'planner_lookup_wrapper',
@@ -85,6 +97,7 @@ function ksapPlannerOpenDialog(pageId, action, methodToCall, target, e) {
 	openPopup(pageId + "_inner", retrieveData, action, {}, popupOptions, e);
 	var form = jQuery("#popupForm");
 	form.attr("accept-charset", "UTF-8");
+	ksapOnDialogOpen(pageId+"_page");
 }
 
 function ksapPlannerSubmitDialog(e) {
@@ -120,7 +133,7 @@ function ksapPlannerSubmitDialog(e) {
 			button.unblock();
 		}
 	});
-
+	ksapOnDialogSubmit(jQuery("#popupForm .uif-page").attr("id"));
 }
 
 function ksapPlannerUpdateType(backup, target, e) {
@@ -151,6 +164,7 @@ function ksapPlannerUpdateType(backup, target, e) {
 			form.remove();
 		}
 	});
+	ksapOnUpdateType(backup?"backup":"planned");
 }
 
 function ksapPlannerUpdateEvent(response, textStatus, jqXHR) {

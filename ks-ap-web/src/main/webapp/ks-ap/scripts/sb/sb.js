@@ -6,6 +6,10 @@ function uuid() {
 	});
 }
 
+function ksapOnBuild() {
+	// Override at institution level
+}
+
 var KsapScheduleBuild = {
 	pendingBuild : 0,
 	possibleSchedules : null,
@@ -134,6 +138,7 @@ var KsapScheduleBuild = {
 					blockArea.unblock();
 			}
 		});
+		ksapOnBuild();
 	},
 
 	isSaved : function(uniqueId) {
