@@ -153,7 +153,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @param ignoreDeferment boolean value
      */
     @Override
-    @Transactional(readOnly = false, timeout = 1200)
+    @Transactional(readOnly = false, timeout = 3600)
     @PermissionsAllowed(Permission.AGE_DEBT)
     public void ageDebt(boolean ignoreDeferment) {
 
@@ -269,7 +269,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return a chargeable account being updated
      */
     @Override
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, timeout = 3600)
     @PermissionsAllowed(Permission.AGE_DEBT)
     public ChargeableAccount ageDebt(String userId, boolean ignoreDeferment) {
         return ageDebt(userId, new Date(), ignoreDeferment);
@@ -285,7 +285,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return a chargeable account being updated
      */
     @Override
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, timeout = 3600)
     @PermissionsAllowed(Permission.AGE_DEBT)
     public ChargeableAccount ageDebt(String userId, Date ageDate, boolean ignoreDeferment) {
 
@@ -310,7 +310,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return a chargeable account being updated
      */
     @Override
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, timeout = 3600)
     @PermissionsAllowed(Permission.AGE_DEBT)
     public ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, boolean ignoreDeferment) {
         return ageDebt(userId, ageDebtMethod, new Date(), ignoreDeferment);
@@ -326,7 +326,7 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
      * @return a chargeable account being updated
      */
     @Override
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, timeout = 3600)
     @PermissionsAllowed(Permission.AGE_DEBT)
     public ChargeableAccount ageDebt(String userId, AgeDebtMethod ageDebtMethod, Date ageDate, boolean ignoreDeferment) {
 

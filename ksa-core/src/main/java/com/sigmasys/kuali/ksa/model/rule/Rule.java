@@ -1,5 +1,8 @@
 package com.sigmasys.kuali.ksa.model.rule;
 
+import com.sigmasys.kuali.ksa.model.Constants;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 /**
@@ -32,12 +35,8 @@ public class Rule extends AbstractRuleEntity {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_RULE",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "RULE_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_RULE")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;
@@ -69,7 +68,6 @@ public class Rule extends AbstractRuleEntity {
     public void setRhs(String rhs) {
         this.rhs = rhs;
     }
-
 
 
 }

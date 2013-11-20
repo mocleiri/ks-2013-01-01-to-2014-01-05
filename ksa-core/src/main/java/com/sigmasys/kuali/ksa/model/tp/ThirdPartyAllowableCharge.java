@@ -1,7 +1,9 @@
 package com.sigmasys.kuali.ksa.model.tp;
 
+import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.Identifiable;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -69,12 +71,8 @@ public class ThirdPartyAllowableCharge implements Identifiable {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_TP_ALLOWABLE_CHARGE",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "TP_ALLOWABLE_CHARGE_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_TP_ALLOWABLE_CHARGE")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;

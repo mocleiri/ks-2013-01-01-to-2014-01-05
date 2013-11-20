@@ -1995,7 +1995,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
             final String statement = dateFormat.format(transaction.getEffectiveDate()) + ":" +
                     transaction.getAccount().getId() + ":" +
-                    transaction.getTransactionType().getCode() + ":" +
+                    transaction.getTransactionType().getId().getId() + ":" +
                     transaction.getTransactionTypeValue() + ":" +
                     transaction.getStatementText();
 

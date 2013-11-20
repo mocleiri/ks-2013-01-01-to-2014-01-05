@@ -1,10 +1,8 @@
 package com.sigmasys.kuali.ksa.model.fm;
 
-import com.sigmasys.kuali.ksa.model.Account;
-import com.sigmasys.kuali.ksa.model.Identifiable;
-import com.sigmasys.kuali.ksa.model.KeyPair;
-import com.sigmasys.kuali.ksa.model.KeyPairAware;
+import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -57,12 +55,8 @@ public class FeeManagementSession implements Identifiable, KeyPairAware {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_FM_SESSION",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "FM_SESSION_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_FM_SESSION")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;

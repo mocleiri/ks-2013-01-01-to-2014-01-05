@@ -1,6 +1,8 @@
 package com.sigmasys.kuali.ksa.model.fm;
 
+import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.Identifiable;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -28,12 +30,8 @@ public class FeeManagementSignupRateAmount implements Identifiable {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_FM_SIGNUP_RATE_AMOUNT",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "FM_SIGNUP_RATE_AMOUNT_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_FM_SIGNUP_RATE_AMOUNT")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;

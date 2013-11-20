@@ -1,9 +1,11 @@
 package com.sigmasys.kuali.ksa.model.pb;
 
 import com.sigmasys.kuali.ksa.model.Charge;
+import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.DirectChargeAccount;
 import com.sigmasys.kuali.ksa.model.Identifiable;
 import com.sigmasys.kuali.ksa.util.EnumUtils;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -83,12 +85,8 @@ public class PaymentBillingTransferDetail implements Identifiable {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_PB_TRANSFER",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "PB_TRANSFER_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_PB_TRANSFER")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;

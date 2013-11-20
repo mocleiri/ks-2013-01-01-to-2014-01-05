@@ -14,6 +14,10 @@ public interface Constants {
     String KS_PERSISTENCE_UNIT = "ks";
     String KSA_PERSISTENCE_UNIT = "ksa";
 
+    // ID Generator constants
+    String ID_GENERATOR_CLASS = "com.sigmasys.kuali.ksa.util.LongIdGenerator";
+    String ID_GENERATOR_NAME = "idGenerator";
+
     // KSA parameter names
     String LOGGING_OPERATION = "ksa.logging.operation";
 

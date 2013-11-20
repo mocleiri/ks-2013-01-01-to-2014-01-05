@@ -1,10 +1,13 @@
 package com.sigmasys.kuali.ksa.model;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 /**
  * LatePeriod model.
  * <p/>
+ *
  * @author Michael Ivanov
  */
 @Entity
@@ -20,18 +23,14 @@ public class LatePeriod extends AuditableEntity<Long> {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_LATE_PERIOD",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "LATE_PERIOD_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_LATE_PERIOD")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;
     }
 
-    @org.hibernate.annotations.Type(type="yes_no")
+    @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_DEFAULT")
     public Boolean isDefault() {
         return isDefault;

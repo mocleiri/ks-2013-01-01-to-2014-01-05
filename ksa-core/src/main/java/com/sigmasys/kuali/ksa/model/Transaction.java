@@ -195,8 +195,8 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @GenericGenerator(name="idGenerator", strategy="com.sigmasys.kuali.ksa.util.LongIdGenerator")
-    @GeneratedValue(generator="idGenerator")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;
@@ -536,6 +536,6 @@ public abstract class Transaction extends AccountIdAware implements Identifiable
                 "}\n";
     }
 }
-	
+
 
 

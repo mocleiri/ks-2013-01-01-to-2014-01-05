@@ -2,6 +2,7 @@ package com.sigmasys.kuali.ksa.model;
 
 
 import com.sigmasys.kuali.ksa.util.EnumUtils;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -42,12 +43,8 @@ public class GlTransmission extends AbstractGlEntity {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_GL_TRANSMISSION",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "GL_TRANSMISSION_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_GL_TRANSMISSION")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;
@@ -106,6 +103,6 @@ public class GlTransmission extends AbstractGlEntity {
         statusCode = status.getId();
     }
 }
-	
+
 
 

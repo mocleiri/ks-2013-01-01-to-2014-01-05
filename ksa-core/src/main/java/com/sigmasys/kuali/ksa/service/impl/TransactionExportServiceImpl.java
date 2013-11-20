@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.sigmasys.kuali.ksa.model.Constants.*;
+import static com.sigmasys.kuali.ksa.util.CommonUtils.nvl;
 import static com.sigmasys.kuali.ksa.util.TransactionUtils.*;
 
 /**
@@ -189,12 +190,12 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
         // Creating TrailerType instance
         final TrailerType trailerType = objectFactory.createTrailerType();
 
-        final String balanceTypeCode = configService.getParameter(KFS_BALANCE_TYPE_CODE_PARAM_NAME);
-        final String objectTypeCode = configService.getParameter(KFS_OBJECT_TYPE_CODE_PARAM_NAME);
-        final String documentTypeCode = configService.getParameter(KFS_DOCUMENT_TYPE_CODE_PARAM_NAME);
-        final String documentNumberPrefix = configService.getParameter(KFS_DOCUMENT_NUMBER_PREFIX_PARAM_NAME);
-        final String originationCode = configService.getParameter(KFS_ORIGINATION_CODE_PARAM_NAME);
-        final String glEntryDesc = configService.getParameter(KFS_TRANSACTION_GL_ENTRY_DESCRIPTION_PARAM_NAME);
+        final String balanceTypeCode = nvl(configService.getParameter(KFS_BALANCE_TYPE_CODE_PARAM_NAME));
+        final String objectTypeCode = nvl(configService.getParameter(KFS_OBJECT_TYPE_CODE_PARAM_NAME));
+        final String documentTypeCode = nvl(configService.getParameter(KFS_DOCUMENT_TYPE_CODE_PARAM_NAME));
+        final String documentNumberPrefix = nvl(configService.getParameter(KFS_DOCUMENT_NUMBER_PREFIX_PARAM_NAME));
+        final String originationCode = nvl(configService.getParameter(KFS_ORIGINATION_CODE_PARAM_NAME));
+        final String glEntryDesc = nvl(configService.getParameter(KFS_TRANSACTION_GL_ENTRY_DESCRIPTION_PARAM_NAME));
 
         final List<GeneralLedgerType> glTypes = glService.getGeneralLedgerTypes();
         final Set<String> glTypeAccounts = new HashSet<String>(glTypes.size());
@@ -214,7 +215,17 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
 
             final Integer fiscalYear = glTransmission.getRecognitionPeriod().getFiscalYear();
 
-            final String documentNumber = CommonUtils.nvl(documentNumberPrefix) + glTransmission.getId();
+            String glTransmissionId = String.valueOf(glTransmission.getId());
+
+            int glTransmissionIdLength = glTransmissionId.length();
+            int documentNumberPrefixLength = documentNumberPrefix.length();
+
+            while (glTransmissionIdLength + documentNumberPrefixLength > 14) {
+                glTransmissionId = glTransmissionId.substring(1);
+                glTransmissionIdLength = glTransmissionId.length();
+            }
+
+            final String documentNumber = documentNumberPrefix + glTransmissionId;
 
             final List<String> parsedGlAccount = parseGlAccount(glTransmission.getGlAccountId());
 
@@ -316,14 +327,14 @@ public class TransactionExportServiceImpl extends GenericPersistenceService impl
         // Creating HeaderType instance
         HeaderType headerType = objectFactory.createHeaderType();
         headerType.setBatchSequenceNumber(new BigInteger(batchId));
-        headerType.setCampusCode(configService.getParameter(KFS_CAMPUS_CODE_PARAM_NAME));
-        headerType.setChartOfAccountsCode(configService.getParameter(KFS_CHART_OF_ACCOUNTS_CODE_PARAM_NAME));
-        headerType.setDepartmentName(configService.getParameter(KFS_DEPARTMENT_NAME_PARAM_NAME));
-        headerType.setEmailAddress(configService.getParameter(KFS_EMAIL_ADDRESS_PARAM_NAME));
-        headerType.setMailingAddress(configService.getParameter(KFS_POSTAL_ADDRESS_PARAM_NAME));
-        headerType.setOrganizationCode(configService.getParameter(KFS_ORGANIZATION_CODE_PARAM_NAME));
+        headerType.setCampusCode(nvl(configService.getParameter(KFS_CAMPUS_CODE_PARAM_NAME)));
+        headerType.setChartOfAccountsCode(nvl(configService.getParameter(KFS_CHART_OF_ACCOUNTS_CODE_PARAM_NAME)));
+        headerType.setDepartmentName(nvl(configService.getParameter(KFS_DEPARTMENT_NAME_PARAM_NAME)));
+        headerType.setEmailAddress(nvl(configService.getParameter(KFS_EMAIL_ADDRESS_PARAM_NAME)));
+        headerType.setMailingAddress(nvl(configService.getParameter(KFS_POSTAL_ADDRESS_PARAM_NAME)));
+        headerType.setOrganizationCode(nvl(configService.getParameter(KFS_ORGANIZATION_CODE_PARAM_NAME)));
         headerType.setPersonUserId(currentUserId);
-        headerType.setPhoneNumber(configService.getParameter(KFS_PHONE_NUMBER_PARAM_NAME));
+        headerType.setPhoneNumber(nvl(configService.getParameter(KFS_PHONE_NUMBER_PARAM_NAME)));
         headerType.setTransmissionDate(CalendarUtils.toXmlGregorianCalendar(currentDate, true));
 
         batchType.setHeader(headerType);

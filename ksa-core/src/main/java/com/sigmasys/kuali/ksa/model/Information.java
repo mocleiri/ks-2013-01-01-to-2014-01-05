@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.model;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.text.DateFormat;
@@ -12,8 +13,6 @@ import java.util.Date;
  * <p/>
  *
  * @author Michael Ivanov
- *         Date: 1/22/12
- *         Time: 3:47 PM
  */
 @Entity
 @Table(name = "KSSA_INFORMATION")
@@ -79,12 +78,8 @@ public class Information extends AccountIdAware implements Identifiable {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_INFO",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "INFORMATION_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_INFO")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;

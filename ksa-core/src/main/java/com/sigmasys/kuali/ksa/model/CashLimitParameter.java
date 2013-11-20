@@ -1,6 +1,8 @@
 package com.sigmasys.kuali.ksa.model;
 
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -47,12 +49,8 @@ public class CashLimitParameter extends AuditableEntity<Long> {
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_CASH_LIMIT_PARAMETER",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "CASH_LIMIT_PARAMETER_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_CASH_LIMIT_PARAMETER")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;
@@ -114,6 +112,6 @@ public class CashLimitParameter extends AuditableEntity<Long> {
         isActive = active;
     }
 }
-	
+
 
 

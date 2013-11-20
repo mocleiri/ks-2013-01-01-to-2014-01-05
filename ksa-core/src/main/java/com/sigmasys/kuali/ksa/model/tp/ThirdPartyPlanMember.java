@@ -1,8 +1,10 @@
 package com.sigmasys.kuali.ksa.model.tp;
 
 import com.sigmasys.kuali.ksa.model.AccountIdAware;
+import com.sigmasys.kuali.ksa.model.Constants;
 import com.sigmasys.kuali.ksa.model.DirectChargeAccount;
 import com.sigmasys.kuali.ksa.model.Identifiable;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -44,12 +46,8 @@ public class ThirdPartyPlanMember extends AccountIdAware implements Identifiable
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
-    @TableGenerator(name = "TABLE_GEN_TP_PLAN_MEMBER",
-            table = "KSSA_SEQUENCE_TABLE",
-            pkColumnName = "SEQ_NAME",
-            valueColumnName = "SEQ_VALUE",
-            pkColumnValue = "TP_PLAN_MEMBER_SEQ")
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "TABLE_GEN_TP_PLAN_MEMBER")
+    @GenericGenerator(name = Constants.ID_GENERATOR_NAME, strategy = Constants.ID_GENERATOR_CLASS)
+    @GeneratedValue(generator = Constants.ID_GENERATOR_NAME)
     @Override
     public Long getId() {
         return id;
