@@ -109,9 +109,20 @@ public interface FeeManagementService {
      */
     FeeManagementReportInfo createFeeManagementReport(Long feeManagementSessionId);
 
-    // TODO: not sure if Long is what we need to return here
+    /**
+     * Creates a new FM Session and actually charges it.
+     *
+     * @param feeManagementTermRecord   A transient FM data holder.
+     * @return The ID of the newly created FM Session.
+     */
     Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 
-
+    /**
+     * Simulates Real Time FeeManagement. Doesn't actually charge the FM Session, but rather creates
+     * a report displaying what would have happened if the FM Session had been charged.
+     *
+     * @param feeManagementTermRecord   A transient FM data holder.
+     * @return  A report with Fee Management assessment.
+     */
     FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
 }

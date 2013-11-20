@@ -172,15 +172,43 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         return feeManagementSession;
     }
 
-    // TODO: not sure if Long is what we need to return here
+    /**
+     * Creates a new FM Session and actually charges it.
+     *
+     * @param feeManagementTermRecord   A transient FM data holder.
+     * @return The ID of the newly created FM Session.
+     */
     @Override
+    @Transactional(readOnly = false)
     public Long assessRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
-        return null;  // TODO
+
+        // Create and reconcile an FM Session:
+        FeeManagementSession fmSession = reconcileSessionForRealTimeFeeManagement(feeManagementTermRecord);
+
+        // Charge the FM Session:
+        chargeSession(fmSession.getId());
+
+        return fmSession.getId();
     }
 
+    /**
+     * Simulates Real Time FeeManagement. Doesn't actually charge the FM Session, but rather creates
+     * a report displaying what would have happened if the FM Session had been charged.
+     *
+     * @param feeManagementTermRecord   A transient FM data holder.
+     * @return  A report with Fee Management assessment.
+     */
     @Override
+    @Transactional(readOnly = false)
     public FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord) {
-        return null;  // TODO
+
+        // Create and reconcile an FM Session:
+        FeeManagementSession fmSession = reconcileSessionForRealTimeFeeManagement(feeManagementTermRecord);
+
+        // Create an FM Report:
+        FeeManagementReportInfo report = createFeeManagementReport(fmSession.getId());
+
+        return report;
     }
 
     /**
@@ -377,6 +405,36 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
 
         return query.getResultList();
+    }
+
+
+    /***************************************************************************
+     *
+     *
+     * Private helper methods for "assessRealTimeFeeManagement"
+     *  and "simulateRealTimeFeeManagement".
+     *
+     *
+     ***************************************************************************/
+
+    /**
+     * Creates and reconciles an FM Session for Real Time Fee Management.
+     *
+     * @param fmTermRecord    A transient placeholder for FM data.
+     * @return  A newly created and reconciled FM Session object.
+     */
+    private FeeManagementSession reconcileSessionForRealTimeFeeManagement(FeeManagementTermRecord fmTermRecord) {
+
+        // Create a new FM Session. If there are any validation errors, they will be thrown by this call:
+        FeeManagementSession fmSession = createFeeManagementSession(fmTermRecord);
+
+        // Process the FM Session using the rules engine:
+        processFeeManagementSession(fmSession.getId());
+
+        // Reconcile the FM Session:
+        reconcileSession(fmSession.getId());
+
+        return fmSession;
     }
 
 
