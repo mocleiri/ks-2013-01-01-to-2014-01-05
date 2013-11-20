@@ -351,7 +351,8 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 						List<CourseTermKey> kl = coid2key.get(co.getId());
 						if (kl == null)
 							coid2key.put(co.getId(), kl = new ArrayList<CourseTermKey>());
-						kl.add(k);
+						if (!kl.contains(k))
+							kl.add(k);
 					}
 				}
 

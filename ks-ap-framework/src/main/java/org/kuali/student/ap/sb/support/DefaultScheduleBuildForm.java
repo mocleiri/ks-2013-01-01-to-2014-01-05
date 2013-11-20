@@ -34,8 +34,8 @@ public class DefaultScheduleBuildForm extends UifFormBase implements
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DefaultScheduleBuildForm.class);
 
-	private static final int POSSIBLE_LIMIT = 50000;
-	private static final int POSSIBLE_PAGE = 20;
+	private static final int POSSIBLE_LIMIT = 10000;
+	private static final int POSSIBLE_PAGE = 10;
 	
 	private int possibleSchedulesFrom;
 	private int possibleSchedulesTo;
