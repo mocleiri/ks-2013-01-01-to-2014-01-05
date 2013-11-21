@@ -238,7 +238,7 @@ public class ScheduleBuilder implements Serializable {
 								List<ActivityOption> saol = new ArrayList<ActivityOption>(
 										osaol.size());
 								for (ActivityOption sao : osaol)
-									if (sao.isSelected() || sao.isLockedIn())
+									if (sao.isSelected() || sao.isLockedIn() || ao.isEnrollmentGroup())
 										saol.add(sao);
 								if (saol.isEmpty()) {
 									LOG.warn("Primary activity option is selected, but has no selected activities for "

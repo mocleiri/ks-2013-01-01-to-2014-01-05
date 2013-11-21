@@ -374,7 +374,9 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 				transform.endTrace();
 			}
 
-			for (ActivityOption primary : primaryActivities) {
+			Iterator<ActivityOption> primaryIter = primaryActivities.iterator();
+			while (primaryIter.hasNext()) {
+				ActivityOption primary = primaryIter.next();
 				String parentUniqueId = primary.getUniqueId();
 				Map<String, List<ActivityOptionInfo>> secondaryGroup = secondaryActivities
 						.get(primary.getActivityOfferingId());
@@ -404,7 +406,9 @@ public class DefaultScheduleBuildStrategy implements ScheduleBuildStrategy,
 						i++;
 					}
 					((ActivityOptionInfo) primary).setSecondaryOptions(sao);
-				}
+				} else if (primary.isEnrollmentGroup())
+					// prune empty enrollment groups
+					primaryIter.remove();
 			}
 			Collections.sort(primaryActivities);
 			courseOption.setActivityOptions(primaryActivities);
