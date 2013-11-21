@@ -95,8 +95,7 @@ class CORequisitesData
         page.alert.ok
       end
     end
-    # TODO: Adding a sleep as a temporary workaround, see KSENROLL-8312
-    #sleep 15
+
     if return_to_edit_page == true
       on ManageCourseOfferings do |page|
         page.manage_course_offering_requisites
@@ -156,14 +155,7 @@ class CORequisitesData
       page.lookup_search_button
       page.loading.wait_while_present
       page.lookup_results.a(:title => /.*#{Regexp.escape(code)}.*/i).when_present.click
-
-      ##############################################################
-      ### TODO adding if statement due to tabs switching when AFT runs, will have to investigate if this is a bug
-      if page.object_tab.parent.attribute_value('class') !~ /ui-tabs-active/
-        page.object_tab.when_present.click
-        page.edit_loading.wait_while_present
-      end
-      ##############################################################
+      page.loading.wait_while_present
     end
   end
 
@@ -206,78 +198,6 @@ class CORequisitesData
     end
   end
 
-  #def create_rule_tree
-  #  on ManageCORequisites do |page|
-  #    create_course_rule( "add", "", "ENGL101")
-  #    create_course_rule( "add", "", "HIST639")
-  #    create_text_rule( "add", "", "free form text input value")
-  #    create_all_courses_rule( "group", "A", "ENGL478,HIST416", "", "")
-  #    create_text_rule( "add", "", "Text")
-  #    create_text_rule( "group", "D", "Text to copy")
-  #    create_number_courses_rule( "add", "C", "1", "HIST395,HIST210", "", "")
-  #    page.loading.wait_while_present
-  #    page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
-  #    page.edit_loading.wait_while_present
-  #    page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
-  #    page.edit_loading.wait_while_present
-  #  end
-  #end
-  #
-  #def create_smaller_rule_tree
-  #  groups = check_number_groups
-  #  statements = check_number_statements
-  #  data_setup_needed = false
-  #  if statements == 1
-  #    create_course_rule( "add", "A", "HIST639")
-  #    statements+=1
-  #    data_setup_needed = true
-  #  end
-  #  if statements == 2
-  #    create_course_rule( "add", "B", "ENGL101")
-  #    statements+=1
-  #    data_setup_needed = true
-  #  end
-  #  if groups == 0 && statements == 3
-  #    create_text_rule( "group", "A", "free form text input value")
-  #    groups+=1
-  #    create_all_courses_rule( "add", "", "ENGL478,HIST416", "", "")
-  #    statements+=1
-  #    data_setup_needed = true
-  #  else
-  #    if groups == 0
-  #      create_text_rule( "group", "A", "free form text input value")
-  #      groups+=1
-  #      data_setup_needed = true
-  #    end
-  #    if statements == 3
-  #      create_all_courses_rule( "add", "B", "ENGL478,HIST416", "", "")
-  #      statements+=1
-  #      data_setup_needed = true
-  #    end
-  #  end
-  #  if groups == 1
-  #    create_text_rule( "group", "D", "Text")
-  #    groups += 1
-  #    data_setup_needed = true
-  #  end
-  #  if statements == 4
-  #    create_number_courses_rule( "add", "C", "1", "HIST395,HIST210", "", "")
-  #    statements += 1
-  #    data_setup_needed = true
-  #  end
-  #  if groups >= 2
-  #    on ManageCORequisites do |page|
-  #      page.loading.wait_while_present
-  #      page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
-  #      page.edit_loading.wait_while_present
-  #      page.edit_tree_section.select(:id => /u\d+_node_\d+_parent_node_\d+_parent_node_0_parent_root_control/).when_present.select "OR"
-  #      page.edit_loading.wait_while_present
-  #      page.update_rule_btn
-  #    end
-  #  end
-  #  return data_setup_needed
-  #end
-
   def add_courses( course, set, range)
     on ManageCORequisites do |page|
       courses = create_array( course)
@@ -310,12 +230,6 @@ class CORequisitesData
           page.adding.wait_while_present
         end
       end
-      #if range != "" && range != nil         ###FIX##################################
-      #  page.multi_course_dropdown.when_present.select /Course Ranges/
-      #  advanced_search("course range", range)
-      #  page.add_line_btn
-      #  page.adding.wait_while_present
-      #end                              ######################################
     end
   end
 
