@@ -26,33 +26,7 @@ function truncateField(id, floated) {
         }
     });
 }
-function indicateViewingAudit(id, type) {
-    var open = false;
-    var currentAudit = jQuery("." + type + ".auditHtml .myplan-audit-report");
-    var currentAuditId = currentAudit.attr("auditid");
 
-    jQuery("#" + id + " .uif-collectionItem").not(".pending").each(function (index) {
-        if (jQuery(this).attr("id").replace("link_", "") == currentAuditId && currentAudit.is(":visible")) {
-            if (type == 'degreeAudit') {
-                jQuery(this).find(".uif-label label").html("Viewing");
-            }
-            if (type == 'planAudit') {
-                if (index > 1) open = true;
-                jQuery(this).addClass("viewing");
-            }
-        } else {
-            if (type == 'degreeAudit') {
-                jQuery(this).find(".uif-label label").html("View");
-            }
-            if (type == 'planAudit') {
-                jQuery(this).removeClass("viewing");
-            }
-        }
-    });
-    if (open) {
-        jQuery("#plan_audit_toggle_link").click();
-    }
-}
 
 /*
  ######################################################################################
@@ -317,7 +291,7 @@ function buildTooltip(id, content, position, align, delay, speed) {
 
 function fnCreateDate(sData) {
     var jTemp = jQuery(sData);
-    jTemp.find("legend, .myplan-sort-remove").remove();
+    jTemp.find("legend, .removeSort").remove();
     var sDate = jQuery.trim(jTemp.text());
     if (sDate.length > 2) {
         return Date.parse(sDate);
@@ -341,7 +315,7 @@ function switchFetchAction(actionId, toggleId) {
 function buttonState(parentId, buttonId) {
     var disabled = false;
     var button = jQuery("button#" + buttonId);
-    jQuery("#" + parentId + " .myplan-required").each(function () {
+    jQuery("#" + parentId + " .requiredField").each(function () {
         var value;
         if (jQuery(this).val()) {
             value = jQuery(this).val().replace(/\n/g, '');
@@ -584,26 +558,7 @@ function animateHighlight(obj) {
         jQuery(this).removeAttr("style");
     });
 }
-/*
- #################################################################
- Function: remove course from saved courses list
- #################################################################
- */
-function fnRemoveSavedItem(planItemId, cssStyle) {
-    jQuery("." + cssStyle + " #" + planItemId).parents("li").fadeOut(250, function () {
-        jQuery(this).remove();
-    });
-}
-/*
- #################################################################
- Function: update the count of saved courses
- #################################################################
- */
-function fnUpdateSavedCount(savedItemCount) {
-    jQuery(".myplan-saved-courses-detail .uif-sectionHeader .uif-headerText strong").fadeOut(250, function () {
-        jQuery(this).html(savedItemCount - 1).fadeIn(250);
-    });
-}
+
 /*
  #################################################################
  Function: update the credits total in the quarter plan view

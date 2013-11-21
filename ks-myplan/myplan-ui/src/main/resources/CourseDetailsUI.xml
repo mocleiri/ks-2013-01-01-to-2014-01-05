@@ -123,7 +123,24 @@
                       p:condition="T(org.kuali.student.myplan.plan.util.AtpHelper).getUserSessionHelper().isAdviser()">
                     <property name="replacement">
                         <list>
-                            <ref bean="course_adviser_actions_message"/>
+                            <!--  Message to use when an adviser can't perform a particular action. -->
+                            <bean parent="KSAP-InfoMessage">
+                                <property name="items">
+                                    <list>
+                                        <bean parent="KSAP-Message"
+                                              p:messageText="Advisers are unable to add or bookmark courses and sections. [0]">
+                                            <property name="inlineComponents">
+                                                <list>
+                                                    <bean parent="Uif-Link" p:linkText="Learn more about Adviser View.">
+                                                        <property name="href"
+                                                                  value="javascript:openHelpWindow('https://depts.washington.edu/myplan/adviser-help/#view');"/>
+                                                    </bean>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
                         </list>
                     </property>
                 </bean>
@@ -328,10 +345,9 @@
                                                           p:label="Projected Quarter Info"
                                                           p:render="@{dataObject.courseSummaryDetails.termsOffered.size() eq 0}">
                                                         <property name="fieldLabel.cssClasses" value="normalLightText"/>
-                                                        <property name="fieldLabel.renderColon" value="true"/>
                                                         <property name="cssClasses" value="inlineElement"/>
-                                                        <property name="messageText"
-                                                                  value="Check with the department or your adviser for more information about this course."/>
+                                                        <property name="fieldLabel.renderColon" value="true"/>
+                                                        <property name="messageText" value="Check with the department or your adviser for more information about this course."/>
                                                     </bean>
                                                     <bean parent="KSAP-Message"
                                                           p:messageText="(Source: Course Catalog)">
@@ -1075,7 +1091,7 @@
         </property>
         <property name="onLoadScript" value=""/>
         <property name="page">
-            <bean parent="Uif-Page" p:id="course_details_sections_page">
+            <bean parent="KSAP-Page" p:id="course_details_sections_page">
                 <property name="layoutManager">
                     <bean parent="Uif-VerticalBoxLayout"/>
                 </property>
