@@ -110,8 +110,8 @@ When /^there is a second Academic Term that is not associated with any final exa
   @matrix_second_term = make FinalExamMatrix, :term_type => "Summer Term"
 end
 
-When /^there is a third Academic Term associated with a Final Exam matrix$/ do
-  @matrix_third_term = make FinalExamMatrix, :term_type => "Spring Term"
+When /^there is a second Academic Term associated with a Final Exam matrix$/ do
+  @matrix_second_term = make FinalExamMatrix, :term_type => "Spring Term"
 end
 
 When /^there is an Academic Half Term that is not associated with any final exam matrix$/ do
@@ -120,6 +120,16 @@ end
 
 When /^I associate the second Term with the Final Exam matrix of the initial Term$/ do
   @matrix_second_term.manage
+  on FEMatrixView do |page|
+    page.term_type_select.select @matrix_term.term_type
+    page.loading.wait_while_present
+    page.submit
+    page.loading.wait_while_present
+  end
+end
+
+When /^I associate the Half Term with the Final Exam matrix of the initial Term$/ do
+  @matrix_halfterm.manage
   on FEMatrixView do |page|
     page.term_type_select.select @matrix_term.term_type
     page.loading.wait_while_present
@@ -148,10 +158,10 @@ When /^I view the half term$/ do
   @matrix_halfterm.manage
 end
 
-When /^I associate the second Term with the Final Exam matrix of the third Term$/ do
-  @matrix_second_term.manage
+When /^I associate the Half Term with the Final Exam matrix of the third Term$/ do
+  @matrix_halfterm.manage
   on FEMatrixView do |page|
-    page.term_type_select.select @matrix_third_term.term_type
+    page.term_type_select.select @matrix_second_term.term_type
     page.loading.wait_while_present
     page.submit
     page.loading.wait_while_present
@@ -288,31 +298,49 @@ end
 
 Then /^the rules should be sorted on the Days and Time columns$/ do
   on FEMatrixView do |page|
-    table_text = page.standard_final_exam_table.text
-    table_text.should match /Day 1.*Day 2.*Day 3.*Day 4.*Day 5.*Day 6/m
-    day_one_text = []
-    day_one_text << page.standard_fe_target_row( "TH at 11:00 AM - 12:15 PM.").text
-    day_one_text << page.standard_fe_target_row( "MWF at 08:00 AM - 08:50 AM. Or MW at 08:00 AM - 09:15 AM.").text
-    table_text.should match /#{day_one_text[0]}.*#{day_one_text[1]}/m
-    day_six_text = []
-    day_six_text << page.standard_fe_target_row( "MWF at 10:00 AM - 10:50 AM. Or MW at 09:30 AM - 10:45 AM.").text
-    day_six_text << page.standard_fe_target_row( "TH at 03:30 PM - 04:45 PM.").text
-    table_text.should match /#{day_six_text[0]}.*#{day_six_text[1]}/m
-  end
-end
+    array_of_days = page.get_all_standard_fe_days
+    ordered_days = array_of_days.shift
+    array_of_days.each do |day|
+      ordered_days << "#{day}"
+    end
+    puts ordered_days
+    #for i in 1..6 do
+    i = 1
+      if i != 6
+        j = i + 1
+        ordered_days.should match /Day #{i}.*Day #{(j)}/m
+        ordered_days.should_not match /Day #{(j)}.*Day #{i}/m
+      end
 
-Then /^the rules should be sorted on the Days and Time columns in SA Time$/ do
-  on FEMatrixView do |page|
-    table_text = page.standard_final_exam_table.text
-    table_text.should match /Day 1.*Day 2.*Day 3.*Day 4.*Day 5.*Day 6/m
-    day_one_text = []
-    day_one_text << page.standard_fe_target_row( "TH at 06:00 AM - 07:15 AM.").text
-    day_one_text << page.standard_fe_target_row( "MWF at 03:00 AM - 03:50 AM. Or MW at 03:00 AM - 04:15 AM.").text
-    table_text.should match /#{day_one_text[0]}.*#{day_one_text[1]}/m
-    day_six_text = []
-    day_six_text << page.standard_fe_target_row( "MWF at 05:00 AM - 05:50 AM. Or MW at 04:30 AM - 05:45 AM.").text
-    day_six_text << page.standard_fe_target_row( "TH at 10:30 AM - 11:45 AM.").text
-    table_text.should match /#{day_six_text[0]}.*#{day_six_text[1]}/m
+      array_of_times = page.get_all_standard_fe_times_for_day( "Day #{i}")
+      #array_of_times.each do |time|
+      #  puts "Day #{i} - #{time}"
+      #end
+      first_time = array_of_times.shift
+      #puts first_time
+      if first_time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
+        first_start_time = DateTime.strptime($1, '%I:%M %p')
+      end
+      array_of_times.each do |time|
+        if time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
+          start_time = DateTime.strptime($1, '%I:%M %p')
+        end
+        #first_start_time.should
+        #puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\nDay #{i}\n#{first_time} >> #{first_start_time}\n#{time} >> #{start_time}\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      end
+    #end
+
+
+    #table_text = page.standard_final_exam_table.text
+    #table_text.should match /Day 1.*Day 2.*Day 3.*Day 4.*Day 5.*Day 6/m
+    #day_one_text = []
+    #day_one_text << page.standard_fe_target_row( "TH at 11:00 AM - 12:15 PM.").text
+    #day_one_text << page.standard_fe_target_row( "MWF at 08:00 AM - 08:50 AM. Or MW at 08:00 AM - 09:15 AM.").text
+    #table_text.should match /#{day_one_text[0]}.*#{day_one_text[1]}/m
+    #day_six_text = []
+    #day_six_text << page.standard_fe_target_row( "MWF at 10:00 AM - 10:50 AM. Or MW at 09:30 AM - 10:45 AM.").text
+    #day_six_text << page.standard_fe_target_row( "TH at 03:30 PM - 04:45 PM.").text
+    #table_text.should match /#{day_six_text[0]}.*#{day_six_text[1]}/m
   end
 end
 
@@ -330,14 +358,20 @@ end
 
 Then /^there is a message indicating that the final exam matrix is also used by the second term$/ do
   on FEMatrixView do |page|
-    page.info_validation_message_text.should == "Matrix is also linked to #{@matrix_second_term.term_type}."
+    page.info_validation_message_text.should match /Matrix is also linked to #{@matrix_second_term.term_type}\./
   end
 end
 
-Then /^there is no message indicating that the final exam matrix is also used by the second term$/ do
+Then /^there is a message indicating that the final exam matrix is also used by the half term$/ do
+  on FEMatrixView do |page|
+    page.info_validation_message_text.should == /Matrix is also linked to #{@matrix_halfterm.term_type}\./
+  end
+end
+
+Then /^there is no message indicating that the final exam matrix is also used by the half term$/ do
   on FEMatrixView do |page|
     if page.info_validation_message.exists?
-      page.info_validation_message_text.should_not == "Matrix is also linked to #{@matrix_second_term.term_type}."
+      page.info_validation_message_text.should_not == /Matrix is also linked to #{@matrix_halfterm.term_type}\./
     end
   end
 end

@@ -24,11 +24,11 @@ Feature: SA.FE1-2 Associate Final Exam Matrix with more than one term
   #FE1.2.EB3 (KSENROLL-9797)
   Scenario: Test that only one matrix can be assigned to a term
     Given there is an Academic Term associated with a Final Exam matrix
-    And there is a second Academic Term that is not associated with any final exam matrix
-    And there is a third Academic Term associated with a Final Exam matrix
-    And I associate the second Term with the Final Exam matrix of the initial Term
-    When I associate the second Term with the Final Exam matrix of the third Term
+    And there is a second Academic Term associated with a Final Exam matrix
+    And there is an Academic Half Term that is not associated with any final exam matrix
+    And I associate the Half Term with the Final Exam matrix of the initial Term
+    When I associate the Half Term with the Final Exam matrix of the third Term
     And I view the initial term
-    Then there is no message indicating that the final exam matrix is also used by the second term
-    When I view the third term
-    Then there is a message indicating that the final exam matrix is also used by the second term
+    Then there is no message indicating that the final exam matrix is also used by the half term
+    When I view the second term
+    Then there is a message indicating that the final exam matrix is also used by the half term
