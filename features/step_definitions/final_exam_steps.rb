@@ -134,6 +134,22 @@ When /^I have multiple Course Offerings each with a different Exam Offering in t
                     :delivery_format_list => delivery_format_list)
 end
 
+And /^I rollover the source term to a new academic term$/ do
+  @calendar_target = create AcademicCalendar, :year => @calendar.year.to_i + 1 #, :name => "TWj64w1q3e"
+  @term_target = make AcademicTerm, :term_year => @calendar_target.year
+  @calendar_target.add_term(@term_target)
+  @term_target.make_official
+
+  @manage_soc = make ManageSoc, :term_code => @term_target.term_code
+  @manage_soc.set_up_soc
+
+  @rollover = make Rollover, :target_term => @term_target.term_code ,
+                   :source_term => @term.term_code,
+                   :exp_success => false
+  @rollover.perform_rollover
+  @rollover.wait_for_rollover_to_complete
+end
+
 When /^I create multiple Course Offerings each with a different Exam Driver in the new term$/ do
   @co_list = []
   @co_list << (create CourseOffering, :term => @term.term_code, :course => "BSCI215")
