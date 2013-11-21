@@ -1,10 +1,10 @@
-# module = ks-api branch Path = enrollment/ks-api/branches/2.0.0-Mx revision = 58576
-ks-api::enrollment_ks-api_branches_2.0.0-Mx::990dac8415069afd0e33be03fe8667930db15b43
-# module = ks-core branch Path = enrollment/ks-core/trunk revision = 58576
-ks-core::enrollment_ks-core_trunk::1b6f973a85f8f555eb03c682f71bb91d48db2cc5
-# module = ks-lum branch Path = enrollment/ks-lum/trunk revision = 58576
-ks-lum::enrollment_ks-lum_trunk::3676605317e4dd4d88634f1108fe3c7cb56d9606
-# module = ks-enroll branch Path = enrollment/ks-enroll/trunk revision = 58576
-ks-enroll::enrollment_ks-enroll_trunk::cdc3286e576b7301878f50be57d16c8bc84d7096
-# module = ks-deployments branch Path = enrollment/ks-deployments/trunk revision = 58576
-ks-deployments::enrollment_ks-deployments_trunk::67897706ed770eb58196a285ed571e1eb07bf923
+# module = ks-api branch Path = enrollment/ks-api/tags/builds/ks-api-2.0/2.0.0-M9/build-581 revision = 60637
+ks-api::enrollment_ks-api_tags_builds_ks-api-2.0_2.0.0-M9_build-581::774703958851b8e159df539a63294b3d7284ca04
+# module = ks-core branch Path = enrollment/ks-core/tags/builds/ks-core-2.0/2.0.0-M9/build-581 revision = 60637
+ks-core::enrollment_ks-core_tags_builds_ks-core-2.0_2.0.0-M9_build-581::26b5dd83e9d73134a4875fdbe725db1fffaa88f5
+# module = ks-deployments branch Path = enrollment/ks-deployments/tags/builds/ks-deployments-2.0/2.0.0-M9/build-581 revision = 60637
+ks-deployments::enrollment_ks-deployments_tags_builds_ks-deployments-2.0_2.0.0-M9_build-581::3a9fe02666e9098d3cfa3b9489347c19d8112fad
+# module = ks-enroll branch Path = enrollment/ks-enroll/tags/builds/ks-enroll-1.0/1.0.0-M9/build-581 revision = 60637
+ks-enroll::enrollment_ks-enroll_tags_builds_ks-enroll-1.0_1.0.0-M9_build-581::9c44ace07ed30b53aa03d2e6d483a8c1f3a5785d
+# module = ks-lum branch Path = enrollment/ks-lum/tags/builds/ks-lum-2.0/2.0.0-M9/build-581 revision = 60637
+ks-lum::enrollment_ks-lum_tags_builds_ks-lum-2.0_2.0.0-M9_build-581::2edaed87d2dd201df19e62b5c525556421ea48b6
