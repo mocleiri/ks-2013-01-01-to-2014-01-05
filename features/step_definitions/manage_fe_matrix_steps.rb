@@ -304,31 +304,24 @@ Then /^the rules should be sorted on the Days and Time columns$/ do
       ordered_days << "#{day}"
     end
     puts ordered_days
-    #for i in 1..6 do
-    i = 1
+    for i in 1..6 do
       if i != 6
         j = i + 1
         ordered_days.should match /Day #{i}.*Day #{(j)}/m
         ordered_days.should_not match /Day #{(j)}.*Day #{i}/m
       end
 
-      array_of_times = page.get_all_standard_fe_times_for_day( "Day #{i}")
-      #array_of_times.each do |time|
-      #  puts "Day #{i} - #{time}"
+      #array_of_times = page.get_all_standard_fe_times_for_day( "Day #{i}")
+      #first_time = array_of_times.shift
+      #if first_time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
+      #  first_start_time = DateTime.strptime($1, '%I:%M %p')
       #end
-      first_time = array_of_times.shift
-      #puts first_time
-      if first_time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
-        first_start_time = DateTime.strptime($1, '%I:%M %p')
-      end
-      array_of_times.each do |time|
-        if time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
-          start_time = DateTime.strptime($1, '%I:%M %p')
-        end
-        #first_start_time.should
-        #puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\nDay #{i}\n#{first_time} >> #{first_start_time}\n#{time} >> #{start_time}\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-      end
-    #end
+      #array_of_times.each do |time|
+      #  if time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
+      #    start_time = DateTime.strptime($1, '%I:%M %p')
+      #  end
+      #end
+    end
 
 
     #table_text = page.standard_final_exam_table.text

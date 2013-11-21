@@ -33,7 +33,7 @@ Feature: SA.FE1-6 Manage the Final Exam Matrix so that FEs can be Scheduled in p
   Scenario: Test that the Days are sorted from beginning to end in the table
     Given there is an Academic Term associated with a Final Exam matrix
     When I view the Standard Final Exam rules on the Final Exam Matrix
-    Then the rules should be sorted on the Days and Time columns in SA Time
+    Then the rules should be sorted on the Days and Time columns
 
   #FE1.6.EB6 (KSENROLL-9796)
   Scenario: Test that a rule must have at least one rule statement for any Requested Exam Offering Scheduling Information
