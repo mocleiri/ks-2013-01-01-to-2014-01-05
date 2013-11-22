@@ -29,14 +29,12 @@ import org.kuali.student.r2.common.infc.RichText;
 public interface Proposal extends IdEntity {
 
     /**
-     * List of person identifiers. Structure should contain a proposerPerson OR
-     * a proposerOrg.
+     * List of person identifiers.
      */
     public List<String> getProposerPerson();
 
     /**
-     * List of organization identifiers. Structure should contain a
-     * proposerPerson OR a proposerOrg
+     * List of organization identifiers.
      */
     public List<String> getProposerOrg();
 
