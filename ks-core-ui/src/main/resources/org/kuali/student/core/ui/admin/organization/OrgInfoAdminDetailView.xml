@@ -55,7 +55,7 @@
 							p:actionParameters="selectedOrgId:@{orgInfo.id}" p:ajaxSubmit="false" />
 							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="delete" p:actionLabel="Delete" 
 							p:actionParameters="selectedOrgId:@{orgInfo.id}" p:ajaxSubmit="false" /> 
-							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="cancel" p:actionLabel="Cancel" 
+							<bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="cancel" p:actionLabel="Back" 
 							p:actionParameters="returnViewName:KS-OrgInfoSearch-View"/>
 						</list>
 					</property>

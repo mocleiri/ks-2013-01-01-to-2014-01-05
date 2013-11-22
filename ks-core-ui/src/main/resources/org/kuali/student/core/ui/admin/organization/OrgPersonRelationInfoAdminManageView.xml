@@ -8,7 +8,7 @@
 	
 	<bean id="KS-OrgPersonRelationInfoManage-View" parent="KS-Uif-FormView">
 		<property name="id" value="orgPersonRelationInfoManageView" />
-		<property name="headerText" value="PersonOrgRelationInfo" />
+		<property name="headerText" value="Organization Person Relation" />
 		<property name="formClass"	value="org.kuali.student.core.organization.ui.form.OrgPersonRelationInfoAdminSearchForm" />
 		<property name="viewHelperServiceClass" value="org.kuali.student.core.organization.ui.utils.OrganizationServiceHelper" />
 		<property name="renderHeader" value="false" />

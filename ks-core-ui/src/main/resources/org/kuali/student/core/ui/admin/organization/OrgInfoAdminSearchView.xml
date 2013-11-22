@@ -9,7 +9,7 @@
 
 
 	
-	<bean id="KS-OrgInfoSearch-View" parent="Uif-Page">
+	<bean id="KS-OrgInfoSearch-View" parent="Uif-Page" p:headerText="Organization Information Search">
 		<property name="items">
 			<list>
 				<ref bean="KS-OrgInfoSearch-CriteriaSection" />
@@ -17,13 +17,12 @@
 			</list>
 		</property>
 	</bean>
-	<bean id="KS-OrgInfoSearch-CriteriaSection" parent="Uif-HorizontalBoxSection">
+	<bean id="KS-OrgInfoSearch-CriteriaSection" parent="Uif-HorizontalBoxSection" >
         <property name="disclosure.render" value="false"/>
         <property name="style" value="margin-bottom:0;"/>
         <property name="items">
             <list>            	
                 <bean parent="Uif-GridSubSection">
-                <property name="headerText" value="Organization Information Search"/>
                 <property name="layoutManager.numberOfColumns" value="6"/>
                 <property name="layoutManager.applyDefaultCellWidths" value="false" />
                 <property name="style" value="margin-bottom:0;"/>
@@ -35,7 +34,7 @@
                                         <bean parent="Uif-InputField" p:propertyName="keywordSearch"
 										      p:label="Search By">
 										      <property name="control">
-										      	<bean parent="Uif-TextControl" p:watermarkText="Enter Department Name" />										      	
+										      	<bean parent="Uif-TextControl" p:watermarkText="Department Name" />										      	
 										      </property>
 										      <property name="suggest">
 										          <bean parent="Uif-Suggest" p:render="true" p:sourcePropertyName="longName"  p:style="width: 200px;" >
@@ -47,7 +46,7 @@
 										          </bean>
 									          </property>									          
 										</bean> 
-										<bean parent="Uif-InputField" p:propertyName="typeInfoKey" p:label="Select Type">
+										<bean parent="Uif-InputField" p:propertyName="typeInfoKey" p:label="Type">
 											<property name="control">
 			            						<bean parent="Uif-DropdownControl" p:style="width: 200px;"/>
 			          						</property>
@@ -55,7 +54,7 @@
 								            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgInfoTypeKeyValues"/>
 								          	</property>
 										</bean>
-										<bean parent="Uif-InputField" p:propertyName="stateInfoKey" p:label="Select State">
+										<bean parent="Uif-InputField" p:propertyName="stateInfoKey" p:label="State">
 											<property name="control">
 			            						<bean parent="Uif-DropdownControl" p:style="width: 200px;" />
 			          						</property>
@@ -63,7 +62,7 @@
 								            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgInfoStateKeyValues"/>
 								          	</property>
 										</bean>
-										<bean parent="Uif-InputField" p:propertyName="resultSize" p:width="auto" p:defaultValue="25">
+										<bean parent="Uif-InputField" p:propertyName="resultSize" p:label="Items Per Page" p:width="auto" p:defaultValue="25">
 								          <property name="control">
 								            <bean parent="Uif-DropdownControl" p:options-ref="result-size-options"/>
 								          </property>								          
@@ -101,7 +100,7 @@
         <property name="propertyName" value="OrgUIModel" />        
         <property name="layoutManager.renderSequenceField" value="false" />
         <property name="layoutManager.applyDefaultCellWidths" value="false" />
-        <property name="layoutManager.actionColumnPlacement" value="LEFT" />        
+        <property name="layoutManager.actionColumnPlacement" value="LEFT" />
         <property name="items">
             <list>               
                 <bean parent="Uif-DataField" p:propertyName="longName"  p:label="Name"/>		       	   
