@@ -841,13 +841,62 @@
           class="org.kuali.student.r1.core.proposal.dao.impl.ProposalDaoImpl">
         <property name="em" ref="coreEntityManager" />
     </bean>
+    
+  
+    <bean id="proposalCriteriaLookupService" class="org.kuali.student.r2.common.criteria.impl.CriteriaLookupServiceImpl">
+        <property name="criteriaLookupDao" ref="criterialookupDaoJpaCore"/>
+        <property name="predicateTransforms">
+            <list>
+                <ref bean="proposalLkeyword2LikeTransform"/>
+                <ref bean="proposalDescrTransform"/>
+                <ref bean="proposalRationaleTransform"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="proposalLkeyword2LikeTransform" class="org.kuali.student.r2.common.criteria.transform.Keyword2LikeTransform">
+        <property name="keywordAttribute" value="keywordSearch" />
+        <property name="likeAttributes">
+            <list>
+                <value>name</value>
+                <value>detailDesc</value>
+                <value>rationale</value>
+            </list>
+        </property>
+    </bean>
 
+    <bean id="proposerPersonAndOrgTransform" class="org.kuali.student.r2.common.criteria.transform.RenameTransform">
+        <property name="renameAttributes">
+            <map>
+                <entry key="proposerPerson" value="proposerPerson.personId"/>
+                <entry key="proposerOrg" value="proposerOrg.orgId"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="proposalDescrTransform" class="org.kuali.student.r2.common.criteria.transform.RenameTransform">
+        <property name="renameAttributes">
+            <map>
+                <entry key="descr.plain" value="detailDesc"/>
+                <entry key="descr.formatted" value="detailDesc"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="proposalRationaleTransform" class="org.kuali.student.r2.common.criteria.transform.RenameTransform">
+        <property name="renameAttributes">
+            <map>
+                <entry key="rationale.plain" value="rationale"/>
+                <entry key="rationale.formatted" value="rationale"/>
+            </map>
+        </property>
+    </bean>
+        
     <bean name="proposalServiceImpl"
           class="org.kuali.student.r1.core.proposal.service.impl.ProposalServiceImpl">
         <property name="proposalDao" ref="proposalDao"/>
         <property name="dictionaryServiceDelegate" ref="coreDictionaryService"/>
         <property name="searchManager" ref="proposalSearchManager"/>
         <property name="validatorFactory" ref="coreValidatorFactory"/>
+        <property name="proposalCriteriaLookupService" ref="proposalCriteriaLookupService"/>
     </bean>
 
     <bean id="proposalSearchableDao"

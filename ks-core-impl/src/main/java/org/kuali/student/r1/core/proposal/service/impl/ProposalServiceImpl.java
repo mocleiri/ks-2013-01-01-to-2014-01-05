@@ -15,6 +15,7 @@
 
 package org.kuali.student.r1.core.proposal.service.impl;
 
+import java.util.ArrayList;
 import org.kuali.student.r1.common.dictionary.dto.ObjectStructureDefinition;
 import org.kuali.student.r1.common.dictionary.service.DictionaryService;
 import org.kuali.student.r1.core.proposal.dao.ProposalDao;
@@ -32,8 +33,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebService;
 import java.util.List;
+import org.kuali.rice.core.api.criteria.GenericQueryResults;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.student.r2.common.criteria.CriteriaLookupService;
 import org.kuali.student.r2.common.dto.StatusInfo;
+import org.kuali.student.r2.core.organization.dto.OrgInfo;
+import org.kuali.student.r2.core.organization.model.OrgEntity;
 import org.kuali.student.r2.core.proposal.dto.ProposalInfo;
 import org.kuali.student.r2.core.proposal.service.ProposalService;
 
@@ -54,7 +59,8 @@ public class ProposalServiceImpl implements ProposalService {
 
     private SearchManager searchManager;
     private DictionaryService dictionaryServiceDelegate;
-    private ValidatorFactory validatorFactory;
+    private ValidatorFactory validatorFactory;    
+    private CriteriaLookupService proposalCriteriaLookupService;
     
     public void setSearchManager(SearchManager searchManager) {
         this.searchManager = searchManager;
@@ -62,6 +68,14 @@ public class ProposalServiceImpl implements ProposalService {
 
     public void setDictionaryServiceDelegate(DictionaryService dictionaryServiceDelegate) {
         this.dictionaryServiceDelegate = dictionaryServiceDelegate;
+    }
+
+    public CriteriaLookupService getProposalCriteriaLookupService() {
+        return proposalCriteriaLookupService;
+    }
+
+    public void setProposalCriteriaLookupService(CriteriaLookupService proposalCriteriaLookupService) {
+        this.proposalCriteriaLookupService = proposalCriteriaLookupService;
     }
     
     /**
@@ -297,13 +311,35 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public List<String> searchForProposalIds(QueryByCriteria criteria, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<String> searchForProposalIds(QueryByCriteria criteria, ContextInfo contextInfo) throws InvalidParameterException,
+            MissingParameterException,
+            OperationFailedException,
+            PermissionDeniedException {
+        List<String> results = new ArrayList<String>();
+        GenericQueryResults<Proposal> orgs = proposalCriteriaLookupService.lookup(Proposal.class, criteria);
+        if (null != orgs && orgs.getResults().size() > 0) {
+            for (Proposal prop : orgs.getResults()) {
+                results.add(prop.getId());
+            }
+        }
+        return results;
     }
 
     @Override
-    public List<ProposalInfo> searchForProposals(QueryByCriteria criteria, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    @Transactional(readOnly=true,noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
+    public List<ProposalInfo> searchForProposals(QueryByCriteria criteria, ContextInfo contextInfo) throws
+            InvalidParameterException,
+            MissingParameterException,
+            OperationFailedException,
+            PermissionDeniedException {
+        List<ProposalInfo> results = new ArrayList<ProposalInfo>();
+        GenericQueryResults<Proposal> proposals = proposalCriteriaLookupService.lookup(Proposal.class, criteria);
+        if (null != proposals && proposals.getResults().size() > 0) {
+            for (Proposal prop : proposals.getResults()) {
+                results.add(ProposalAssembler.toProposalInfo(prop));
+            }
+        }
+        return results;
     }
 
     
