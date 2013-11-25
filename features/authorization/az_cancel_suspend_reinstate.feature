@@ -1,4 +1,4 @@
-@pending @red_team
+@nightly @red_team
 Feature: EC.AZ for Cancel Suspend and Reinstate
 
   This feature incorporates CO 21.2, 22.2 and 23.5
