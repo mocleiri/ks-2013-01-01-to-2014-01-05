@@ -1,5 +1,7 @@
 class ManagePopulations < PopulationsBase
 
+  page_url "#{$test_site}/kr-krad/lookup?viewId=KS-Population-LookupView&methodToCall=start&dataObjectClassName=org.kuali.student.enrollment.class2.population.dto.PopulationWrapper&hideReturnLink=true&showMaintenanceLinks=true&viewName=Manage%20Populations"
+
   expected_element :keyword
 
   frame_element

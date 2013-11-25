@@ -16,17 +16,14 @@ module Workflows
   end
 
   def go_to_create_population
-     visit Enrollment do |page|
-      page.manage_populations
-    end
-    on ManagePopulations do |page|
+    visit ManagePopulations do |page|
       page.create_new
     end
   end
 
   def go_to_manage_population
-    visit Enrollment do |page|
-      page.manage_populations
+    visit ManagePopulations do |page|
+      #page.manage_populations
     end
   end
 
