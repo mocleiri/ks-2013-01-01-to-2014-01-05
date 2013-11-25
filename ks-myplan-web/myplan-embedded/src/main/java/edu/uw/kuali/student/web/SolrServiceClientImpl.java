@@ -9,6 +9,7 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.restlet.Client;
 import org.restlet.data.Protocol;
 import org.restlet.ext.net.HttpClientHelper;
+import org.springframework.util.CollectionUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
     }
 
     /**
-     * url: https://uwksdev01.cac.washington.edu/solr/myplan/select?q=section.id:"2013:2:CHEM:152:A"&sort=section.id%20asc&fl=section.data&wt=xml&indent=true&rows=9999
+     * url: https://uwksdev01.cac.washington.edu/solr/section/select?q=section.id:"2013:2:CHEM:152:A"&sort=section.id%20asc&fl=section.data&wt=xml&indent=true&rows=9999
      *
      * @param id
      * @return
@@ -60,14 +61,36 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
         params.set("sort", "section.id asc");
         params.set("rows", "9999");
         List<SolrDocument> documents = sendQuery(params);
-        if (documents != null && !documents.isEmpty()) {
+        if (!CollectionUtils.isEmpty(documents)) {
             return documents.get(0).getFieldValue("section.data").toString();
         }
         return null;
     }
 
     /**
-     * eg: https://uwksdev01.cac.washington.edu/solr/myplan/select?q=section.year:2013%20AND%20section.term:spring%20AND%20section.curriculum.abbreviation:CHEM%20AND%20section.course.number:152%20AND%20section.primary:true&sort=section.id%20asc&fl=section.data&wt=xml&indent=true&rows=9999
+     * Syllabus fetched for given Id
+     * url: http://localhost:9090/solr/section/select?q=section.id:%222013:4:ENGL:108:C%22%20AND%20section.syllabus:[1+TO+*]&fl=section.syllabus&wt=xml&indent=true
+     *
+     * @param id
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public String getSyllabusById(String id) throws ServiceException {
+        ModifiableSolrParams params = new ModifiableSolrParams();
+        params.set("q", "section.id:\"" + id + "\"" + "AND section.syllabus:[1 TO *]");
+        params.set("fl", "section.syllabus");
+        params.set("sort", "section.id asc");
+        params.set("rows", "9999");
+        List<SolrDocument> documents = sendQuery(params);
+        if (!CollectionUtils.isEmpty(documents)) {
+            return documents.get(0).getFieldValue("section.syllabus").toString();
+        }
+        return null;
+    }
+
+    /**
+     * eg: https://uwksdev01.cac.washington.edu/solr/section/select?q=section.year:2013%20AND%20section.term:spring%20AND%20section.curriculum.abbreviation:CHEM%20AND%20section.course.number:152%20AND%20section.primary:true&sort=section.id%20asc&fl=section.data&wt=xml&indent=true&rows=9999
      * returns xml response which has the
      *
      * @param year

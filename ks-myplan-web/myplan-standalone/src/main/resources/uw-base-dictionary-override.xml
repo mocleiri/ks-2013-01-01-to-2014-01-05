@@ -7,7 +7,7 @@
         <property name="value" value="regex:[A-Za-z0-9.,&gt;&lt;_\\/\-\?\+=(){}\[\];:'&quot;&amp;%$\^~`\*#@!|\t\n\r\xA0 ]*"/>
     </bean>
 
-    <bean id="uw.richTextInfo" parent="org.kuali.student.common.dto.RichTextInfo-parent">
+    <bean id="uw.richTextInfo" parent="org.kuali.student.r2.common.dto.RichTextInfo">
         <property name="attributes">
             <list>
                 <ref bean="uw.richTextInfo.formatted" />
