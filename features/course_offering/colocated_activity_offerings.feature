@@ -1,4 +1,4 @@
-@nightly
+@nightly @green_team
 Feature: WC.Colocated Activity Offerings
 
 Background:

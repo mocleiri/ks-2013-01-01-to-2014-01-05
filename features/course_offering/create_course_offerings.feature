@@ -1,4 +1,4 @@
-@nightly
+@nightly @red_team
 Feature: EC.Create Course Offerings
 Background:
   Given I am logged in as a Schedule Coordinator

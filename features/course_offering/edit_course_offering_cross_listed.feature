@@ -1,4 +1,4 @@
-@nightly
+@nightly @green_team
 Feature: WC.Create and remove cross-listings
 
     This feature contains 4 scenarios

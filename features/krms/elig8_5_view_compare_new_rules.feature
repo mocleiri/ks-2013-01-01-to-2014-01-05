@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG8-5 View and Compare the CLU and CO rule to a new AO rule where there was no CO rule
 
   Background:

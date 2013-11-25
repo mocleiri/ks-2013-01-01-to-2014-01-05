@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG8-4 Suppress the Copied rules on Activity Offering level
 
   Background:

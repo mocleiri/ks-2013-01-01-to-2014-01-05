@@ -1,4 +1,4 @@
-@nightly
+@nightly @green_team
 Feature: WC.Display Schedule of Classes rendered by AO cluster
 
   As an Admin I want to display a published schedule of classes ordered by

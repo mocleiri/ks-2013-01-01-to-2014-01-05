@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG8-10 Copy CO to new Term
 
   Background:

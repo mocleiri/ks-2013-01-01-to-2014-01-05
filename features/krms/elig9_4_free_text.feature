@@ -1,4 +1,4 @@
-@nightly
+@nightly  @blue_team
 Feature: SA.ELIG9-4 Free Text
 
   Background:

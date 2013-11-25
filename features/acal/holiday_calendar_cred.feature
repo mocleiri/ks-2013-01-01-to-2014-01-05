@@ -1,4 +1,4 @@
-@nightly
+@nightly @red_team
 Feature: EC.Holiday Calendar CRED
 
   Background:

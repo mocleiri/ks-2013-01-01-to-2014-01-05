@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.FE7-2 Exclude Non-Active Days for Scheduling of Exam Period
   FE 7.2: As a Central Administrator I want non active days within the exam period configured so that these days are
   not used in the scheduling of the Final Examination as exams are not written on Saturdays or Sundays

@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.FE3-6 View Exam Offerings table renedered depending on FE Driver
   FE 3.6 As a Central Administrator I want new exam offerings to be created if the exam driver changes after the
   bulk creation so that exam offerings are in sync with their drivers

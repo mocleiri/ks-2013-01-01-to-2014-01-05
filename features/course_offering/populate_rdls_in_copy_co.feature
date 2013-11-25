@@ -1,4 +1,4 @@
-@nightly
+@nightly @red_team
   Feature: EC.populate RDLs in copy CO to target term
 
   MSR 1.2: As Central Administrator, I want actual delivery logistics on AOs in a source term to be copied to

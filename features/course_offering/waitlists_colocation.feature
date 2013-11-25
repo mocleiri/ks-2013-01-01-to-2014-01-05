@@ -1,4 +1,4 @@
-@nightly
+@nightly @red_team
 Feature: EC.Waitlists Colocation
 
   WL 1.17 - As a Central Administrator I want colocated activities to utilize a single waitlist

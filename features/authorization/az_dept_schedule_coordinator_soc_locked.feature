@@ -1,4 +1,4 @@
-@nightly
+@nightly @red_team
 Feature: EC.AZ Dept Schedule Coordinator SOC state Locked
 
   Background:

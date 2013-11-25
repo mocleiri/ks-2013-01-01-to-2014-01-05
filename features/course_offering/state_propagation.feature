@@ -1,4 +1,4 @@
-@wip
+@wip @red_team
 Feature: EC.State Propagation
 
   Background:

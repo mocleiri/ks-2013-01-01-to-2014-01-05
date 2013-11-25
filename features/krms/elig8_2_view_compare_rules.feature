@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG8-2 View the Catalog and Course Offering rule
 
   Background:

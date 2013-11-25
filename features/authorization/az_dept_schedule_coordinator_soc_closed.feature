@@ -1,4 +1,4 @@
-@wip
+@wip @red_team
 Feature: EC.AZ Dept Schedule Coordinator SOC state Closed
 #TODO - cover list vs single CO view
   Background:

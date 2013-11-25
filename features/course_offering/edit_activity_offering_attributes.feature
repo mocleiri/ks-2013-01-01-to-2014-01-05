@@ -1,4 +1,4 @@
-@nightly
+@nightly @green_team
 Feature: WC.Edit Activity Offering Attributes
 
   Background:

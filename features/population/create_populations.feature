@@ -1,4 +1,4 @@
-@nightly
+@nightly @red_team
 Feature: EC.Create Populations
 
 In order to reserve seats in a course offering for a group of students 

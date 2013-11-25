@@ -1,4 +1,4 @@
-@nightly
+@nightly @red_team
 Feature: EC.Academic Calendar CRED
 
   Background:

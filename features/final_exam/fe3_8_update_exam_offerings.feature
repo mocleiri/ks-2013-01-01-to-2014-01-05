@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.FE3-8 Update Exam Offerings
   FE 3.8 As a Central Administrator I want exam offerings to be created if the course offering setting changes to
   "Final Exam" after the bulk creation so that exam offerings are appropriate to exam settings on the course offering

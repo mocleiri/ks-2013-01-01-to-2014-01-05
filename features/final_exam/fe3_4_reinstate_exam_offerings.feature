@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.FE3-4 Reinstate Activity Offering will reinstate the Exam Offerings as well
   FE 3.4 As a Central Adminstrator I want to reinstate exam offerings if I reinstate the governing course offering
   or activity offering bulk creation so that exam offerings are available

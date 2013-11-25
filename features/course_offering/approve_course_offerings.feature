@@ -1,4 +1,4 @@
-@nightly
+@nightly @green_team
 Feature: WC.Approve Course Offerings
 
   CO12.1: As a Departmental Administrator, I want to indicate that I have finished creating and editing all of the Course Offerings in my department

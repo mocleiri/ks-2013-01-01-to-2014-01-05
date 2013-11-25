@@ -1,4 +1,4 @@
-@nightly
+@nightly @green_team
 Feature: WC.Create Standard Time Slots
 
   As a Scheduling Coordinator, I want to create the Standard Time Slots for a particular Time Slot Type so that

@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG7-2 Delete all statements of CO copied from CLU
 
   Background:

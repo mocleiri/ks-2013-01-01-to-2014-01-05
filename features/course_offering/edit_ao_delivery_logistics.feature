@@ -1,4 +1,4 @@
-@nightly
+@nightly @green_team
 Feature: WC.Edit AO delivery logistics
 
   As a schedule coordinator, I want to edit the requested delivery logistics of an AO

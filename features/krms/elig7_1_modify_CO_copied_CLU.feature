@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG7-1 Modify CO copied from CLU
 
   Background:

@@ -1,4 +1,4 @@
-@draft
+@draft @green_team
 @bjg
 Feature: WC.Manage Delivery Logistics using non-standard Time Slots
 

@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG7-3 Adding CO to empty CLU
 
   Background:

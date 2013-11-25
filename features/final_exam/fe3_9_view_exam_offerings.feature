@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.FE3-9 View Exam Offerings
   FE 3.9: As a Central Administrator I want to view exam offerings so that I know their state and properties
 

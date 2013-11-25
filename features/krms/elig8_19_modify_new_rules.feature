@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG8-19 Modify the new rules on Activity Offering level
 
   Background:

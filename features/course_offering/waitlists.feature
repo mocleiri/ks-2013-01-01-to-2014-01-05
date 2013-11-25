@@ -1,4 +1,4 @@
-@nightly
+@nightly @red_team
 Feature: EC.Waitlists
 
   WL 1.3-14 As a Central Administrator I want to offer a waitlist for an activity offering so that students can queue for an open seat in a specific activity

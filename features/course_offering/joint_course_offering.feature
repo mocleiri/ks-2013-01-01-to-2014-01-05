@@ -1,4 +1,4 @@
-@draft @deprecated @KSENROLL-8286
+@draft @deprecated @KSENROLL-8286 @red_team
 Feature: EC.Jointly-defined Course Offering
 
   Background:

@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.FE1-6 Manage the Final Exam Matrix so that FEs can be Scheduled in predetermined ways
   FE 1.6: As a Central Administrator I want to create and manage the final exam matrix so that final examinations
   can be scheduled in predetermined ways

@@ -1,4 +1,4 @@
-@nightly
+@nightly @red_team
 Feature: EC.Search populations
 
 In order to avoid creating a duplicate population (alternate: In order to modify an existing population)

@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG7-4 Compare to Canonical
 
   Background:

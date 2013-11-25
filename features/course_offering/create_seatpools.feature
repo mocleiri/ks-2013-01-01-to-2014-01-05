@@ -1,4 +1,4 @@
-@nightly
+@nightly @red_team
 Feature: EC.Create Seatpools
 
 As an Administrator, I want to create one or more seat pools and add to my Activity Offering 

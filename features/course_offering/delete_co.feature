@@ -1,4 +1,4 @@
-@nightly
+@nightly @green_team
 Feature: WC.Delete COs and all associated AOs
 
   As a user, I want to be able to delete a course offering so that it will no longer be offered for the term.

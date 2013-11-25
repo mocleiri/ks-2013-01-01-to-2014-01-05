@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.FE3-12 View Exam Offerings table rendered depending on FE Driver
   FE 3-12 As a Central Administrator I want existing exam offerings to be Unscheduled and the records displayed
   if the exam driver changes changes to Course Offering or Activity Offering

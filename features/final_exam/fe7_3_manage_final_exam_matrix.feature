@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.FE7-3 Manage Final Exam Matrix
   FE 7.3: As a Central Administrator I want days within the exam period labelled so that they are identifiable for
   scheduling and publication purposes

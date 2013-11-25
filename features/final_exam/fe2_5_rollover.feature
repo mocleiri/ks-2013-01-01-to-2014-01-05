@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.FE2-5 Perform Simple Rollover
   FE 2.5: As a Central Administrator I want exam information to be copied in a rollover so that exam settings
   are retained session over session until modified

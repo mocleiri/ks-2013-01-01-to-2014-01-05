@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG8-1 Add or Replace rules to Activity Offering whether CO exists or not
 
   Background:

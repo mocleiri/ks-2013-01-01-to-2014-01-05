@@ -1,4 +1,4 @@
-@nightly
+@nightly @blue_team
 Feature: SA.ELIG9-10 Add Statement and Create Group
 
   Background:
