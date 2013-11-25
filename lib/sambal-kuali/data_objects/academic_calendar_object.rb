@@ -217,6 +217,18 @@ class AcademicCalendar
     end
     holiday_calendar_list << hcal_object
   end
+
+  def get_all_term_names_in_calendar
+    edit
+    on(EditAcademicCalendar).terms_tab
+    array = []
+    on EditAcademicTerms do |page|
+      page.acal_term_list_div.spans( class: "uif-headerText-span").each do |span|
+        array << span.text if span.parent.id =~ /term_section_line\d+_toggle/
+      end
+    end
+    return array
+  end
 end
 
 
@@ -441,40 +453,6 @@ class AcademicTerm
     end
     weekdays
   end
-
-  #def change_exam_start_date( start_date)
-  #  search
-  #  on(CalendarSearch).edit @term_name
-  #
-  #  on EditAcademicTerms do |page|
-  #    page.open_term_section @term_type
-  #    if page.add_exam_period_btn( @term_type).present?
-  #      page.add_exam_period @term_type
-  #      page.set_exam_start_date @term_type, @start_date
-  #      page.set_exam_end_date @term_type, @end_date
-  #      page.save
-  #    end
-  #    page.set_exam_start_date @term_type, start_date
-  #    page.save
-  #  end
-  #end
-  #
-  #def change_exam_end_date( end_date)
-  #  search
-  #  on(CalendarSearch).edit @term_name
-  #
-  #  on EditAcademicTerms do |page|
-  #    page.open_term_section @term_type
-  #    if page.add_exam_period_btn( @term_type).present?
-  #      page.add_exam_period @term_type
-  #      page.set_exam_start_date @term_type, @start_date
-  #      page.set_exam_end_date @term_type, @end_date
-  #      page.save
-  #    end
-  #    page.set_exam_end_date @term_type, end_date
-  #    page.save
-  #  end
-  #end
 
   def create_final_exam_period
     on EditAcademicTerms do |page|

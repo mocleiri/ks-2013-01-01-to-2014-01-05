@@ -10,9 +10,9 @@ Feature: SA.FE7-2 Exclude Non-Active Days for Scheduling of Exam Period
   #FE7.2.EB1 (KSENROLL-9792)
   Scenario: Test whether the exclude non-active day toggles are selected by default
     When I add an Exam Period to the term
-    Then the non-active days toggles should be selected by default
+    Then the Exclude Saturday and Exclude Sunday toggles should be selected by default
 
   #FE7.2.EB2 (KSENROLL-9792)
   Scenario: Test that when the non-active days are included and saved, that it retains this setting when the term is viewed
-    When I choose to include the non-active days in the term's Exam Period
-    Then the non-active days should still be included in the Exam Period when I return to view the term
+    When I uncheck the toggle for the Exclude Saturday or Exclude Sunday fields in the term's Exam Period and Save the data
+    Then the Exclude Saturday or Exclude Sunday fields should be unchecked and included in the Exam Period when I return to view the term

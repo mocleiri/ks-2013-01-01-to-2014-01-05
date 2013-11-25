@@ -3,6 +3,11 @@ When /^I edit a Standard Final Exam rule on the matrix$/ do
   @matrix.edit :defer_save => true, :defer_submit => true
 end
 
+When /^I edit a Common Final Exam rule on the matrix$/ do
+  @matrix = make FinalExamMatrix, :exam_type => "Common", :rule_requirements => "PHYS270"
+  @matrix.edit :defer_save => true, :defer_submit => true
+end
+
 When /^I open the Final Exam Matrix for ([^"]*)$/ do |term|
   @matrix = make FinalExamMatrix, :term_type => term
   @matrix.manage

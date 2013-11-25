@@ -228,6 +228,7 @@ class EditAcademicTerms < BasePage
   def final_exam_section( term_type)
     term_index = term_index_by_term_type( term_type)
     section = acal_term_list_div.div( id: "acal-term-examdates_line#{term_index}")
+    return section
   end
 
   def exam_start_date( term_type); final_exam_section( term_type).text_field( name: "termWrapperList[#{term_index_by_term_type( term_type)}].examdates[0].startDate"); end
@@ -261,13 +262,11 @@ class EditAcademicTerms < BasePage
 
   def exam_delete( term_type)
     loading.wait_while_present
-    term_index = term_index_by_term_type( term_type)
     exam_delete_link( term_type).click
   end
 
   def add_exam_period( term_type)
     loading.wait_while_present
-    term_index = term_index_by_term_type( term_type)
     add_exam_period_btn( term_type).click
   end
 

@@ -1,14 +1,14 @@
-When /^I change the final exam start date to be before the term start date and save$/ do
+When /^I change the final exam period start date to be before the term start date and save$/ do
   @term = make AcademicTerm, :term_name => "Fall", :term_year => "2012"
   @term.edit :change_exam_dates => true, :exam_start_date => "08/15/2012"
 end
 
-When /^I change the final exam end date to be after the term end date and save$/ do
+When /^I change the final exam period end date to be after the term end date and save$/ do
   @term = make AcademicTerm, :term_name => "Fall", :term_year => "2012"
   @term.edit :change_exam_dates => true, :exam_end_date => "12/20/2012"
 end
 
-When /^I add a final exam period within the dates of the fall term of the new academic calender and save$/ do
+When /^I add a final exam period to the new academic calender and save$/ do
   @calendar = create AcademicCalendar
 
   @term = make AcademicTerm, :term_year => @calendar.year, :start_date=>"08/20/#{@calendar.year}",
@@ -18,7 +18,7 @@ When /^I add a final exam period within the dates of the fall term of the new ac
   @term.create_final_exam_period
 end
 
-When /^I copy a newly created academic calender that has a defined final exam period$/ do
+When /^I copy a newly created academic calendar that has a defined final exam period$/ do
   @source_calendar = make AcademicCalendar
   @source_calendar.create
 
@@ -32,7 +32,7 @@ When /^I copy a newly created academic calender that has a defined final exam pe
   @calendar.copy_from @source_calendar.name
 end
 
-When /^I copy an existing academic calender that has a defined final exam period$/ do
+When /^I copy an existing academic calendar that has a defined final exam period$/ do
   @source_calendar = make AcademicCalendar, :name => "2012-2013 Academic Calendar"
 
   @term = make AcademicTerm
@@ -408,18 +408,18 @@ When /^I add an Exam Period to the term$/ do
   @term.edit :exam_period => true
 end
 
-When /^I choose to include the non-active days in the term's Exam Period$/ do
+When /^I uncheck the toggle for the Exclude Saturday or Exclude Sunday fields in the term's Exam Period and Save the data$/ do
   @term.edit :exam_period => true, :include_non_active_days => true
 end
 
-When /^I edit the Fall Term Exam Period to have less days than the Final Exam Matrix days$/ do
+When /^I edit the Fall Term Exam Period to have fewer days than the Final Exam Matrix days and I save the data$/ do
   @term = make AcademicTerm, :term_year => @calendar.year, :start_date=>"08/29/#{@calendar.year}",
                :end_date=>"12/10/#{@calendar.year}"
   @term.edit :exam_period => true, :change_exam_dates => true, :exam_start_date => "12/05/#{@calendar.year}",
              :exp_success=> false
 end
 
-When /^I edit the Fall Term Exam Period to have less days than the Final Exam Matrix days and include non-active days$/ do
+When /^I edit the Fall Term Exam Period to have less days than the Final Exam Matrix days not including Saturday and Sunday and then include these non-active days$/ do
   @term = make AcademicTerm, :term_year => @calendar.year, :start_date=>"08/29/#{@calendar.year}",
                    :end_date=>"12/10/#{@calendar.year}"
   @term.edit :exam_period => true, :include_non_active_days => true, :change_exam_dates => true,
@@ -507,7 +507,7 @@ When /^I suspend an Activity Offering for a CO with a standard final exam driven
   @activity_offering.suspend :navigate_to_page => false
 end
 
-Then /^a warning in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
+Then /^a warning in the Final Exam Period section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
   end
@@ -519,11 +519,11 @@ Then /^an error in the Final Exam section is displayed stating "([^"]*)"$/ do |e
   end
 end
 
-Then /^no error in the Final Exam section is displayed$/ do
+Then /^no error in the Final Exam section is displayed when I save the data$/ do
   on(EditAcademicTerms).exam_error_message( @term.term_type).present?.should be_false
 end
 
-Then /^the final exam for the Fall Term is listed when I view the Academic Calendar$/ do
+Then /^the final exam period for the Fall Term is listed when I view the Academic Calendar$/ do
   @calendar.search
 
   on CalendarSearch do |page|
@@ -538,9 +538,13 @@ Then /^the final exam for the Fall Term is listed when I view the Academic Calen
   end
 end
 
-Then /^there should be no final exam period$/ do
+Then /^there should be no final exam period for any term in the copy$/ do
+  all_terms = @calendar.get_all_term_names_in_calendar
   on EditAcademicTerms do |page|
-    page.final_exam_section( @term.term_type).text.should match /Final Exam Period\nAdd Final Exam Period/
+    all_terms.each do |term_name|
+      page.open_term_section(term_name)
+      page.final_exam_section( term_name).text.should match /Final Exam Period\nAdd Final Exam Period/
+    end
   end
 end
 
@@ -854,14 +858,14 @@ Then /^I expect a popup to appear with a displayed warning stating "([^"]*)"$/ d
   end
 end
 
-Then /^the non-active days toggles should be selected by default$/ do
+Then /^the Exclude Saturday and Exclude Sunday toggles should be selected by default$/ do
   on EditAcademicTerms do |page|
     page.exclude_saturday_toggle( @term.term_type).attribute_value('checked').should == "true"
     page.exclude_sunday_toggle( @term.term_type).attribute_value('checked').should == "true"
   end
 end
 
-Then /^the non-active days should still be included in the Exam Period when I return to view the term$/ do
+Then /^the Exclude Saturday or Exclude Sunday fields should be unchecked and included in the Exam Period when I return to view the term$/ do
   @term.search
   on(CalendarSearch).view @term.term_name
   on ViewAcademicTerms do |page|

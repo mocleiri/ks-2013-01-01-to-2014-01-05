@@ -10,6 +10,6 @@ class ManageFEMatrix < BasePage
 
   element(:term_type_select) { |b| b.fe_matrix_criteria_section.select( name: "type.key")}
   action(:term_type) { |b| b.term_type_select.select}
-  element(:show_btn) { |b| b.fe_matrix_criteria_section.button( text: "Show")}
+  element(:show_btn) { |b| b.fe_matrix_criteria_section.button( id: "show_button")}
   action(:show) { |b| b.show_btn.click; b.loading.wait_while_present}
 end
