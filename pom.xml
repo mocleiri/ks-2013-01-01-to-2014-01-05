@@ -31,6 +31,7 @@
         <kuali.student.enrollment.version>1.0.0-M7</kuali.student.enrollment.version>
         <slf4j.version>1.6.4</slf4j.version>
         <jax-ws.version>2.2.6</jax-ws.version>
+        <jaxb-impl.version>2.2.7</jaxb-impl.version>
         <stax-ex.version>1.4</stax-ex.version>
         <cglib.version>2.2.2</cglib.version>
         <tiles.version>2.2.2</tiles.version>
@@ -403,6 +404,12 @@
         </dependency-->
 
         <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${jaxb-impl.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
             <version>${cxf.version}</version>
@@ -460,12 +467,24 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-bindings-soap</artifactId>
             <version>${cxf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jaxb-impl</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-databinding-jaxb</artifactId>
             <version>${cxf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jaxb-impl</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -478,6 +497,12 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-core</artifactId>
             <version>${cxf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jaxb-impl</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -1179,6 +1204,10 @@
                     <artifactId>commons-codec</artifactId>
                     <groupId>commons-codec</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>jaxb-impl</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -1483,6 +1512,10 @@
                     <artifactId>cxf-rt-databinding-aegis</artifactId>
                     <groupId>org.apache.cxf</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>jaxb-impl</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -1490,6 +1523,12 @@
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-krms-impl</artifactId>
             <version>${kuali.rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jaxb-impl</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -1624,6 +1663,10 @@
                 <exclusion>
                     <artifactId>cxf-rt-databinding-aegis</artifactId>
                     <groupId>org.apache.cxf</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jaxb-impl</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1912,6 +1955,14 @@
                 <exclusion>
                     <artifactId>quartz</artifactId>
                     <groupId>org.quartz-scheduler</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jaxb-impl</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jaxb-impl</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
