@@ -210,8 +210,9 @@ class CourseOffering
     on(ManageCourseOfferings).edit_course_offering unless options[:edit_in_progress]
 
     #TODO change method name to 'edit'
-    if options[:suffix] != @suffix
-      #TODO:Add Suffix to edit method Course Offerings
+    if options[:suffix] != nil
+      on(CourseOfferingEdit).suffix.set options[:suffix]
+      @course = "#{@course[0..6]}#{options[:suffix]}"
     end
 
     if options[:grade_options] != nil
