@@ -39,6 +39,7 @@
 					<property name="items">
 						<list>
 							<ref bean="planner_lookup_wrapper" />
+							<ref bean="planner_menu_advisor" />
 							<ref bean="planner_menu_completed" />
 							<ref bean="planner_menu_cart" />
 							<ref bean="planner_menu_planned" />
@@ -90,6 +91,21 @@
 		<property name="validationMessages.render" value="false" />
 		<property name="onDocumentReadyScript"
 			value="ksapLoadPlannerItems('@{#ConfigProperties['ks.myplan.externalizable.images.url']}')" />
+	</bean>
+
+	<bean id="planner_menu_advisor" parent="Uif-VerticalBoxSubSection"
+		p:cssClasses="fl-container-150">
+		<property name="layoutManager.cssClasses">
+			<list merge="true">
+				<value>ks-plan-ContextMenu</value>
+			</list>
+		</property>
+		<property name="hidden" value="true" />
+		<property name="items">
+			<list>
+				<ref bean="planner_menu_course_summary" />
+			</list>
+		</property>
 	</bean>
 
 	<bean id="planner_menu_completed" parent="Uif-VerticalBoxSubSection"
@@ -387,8 +403,10 @@
 					<property name="validationMessages.render" value="false" />
 					<property name="items">
 						<list>
-							<bean parent="Uif-Message"
+							<bean parent="Uif-Message" p:render="@{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().isStudent()}"
 								p:messageText="Create your plan by finding and adding courses to any term" />
+							<bean parent="Uif-Message" p:render="@{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().isAdviser()}"
+								p:messageText="Viewing @{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().studentName}'s planner" />
 						</list>
 					</property>
 					<property name="cssClasses">
@@ -434,7 +452,7 @@
                   margin:0 @{20/T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getTermHelper().getNumberOfTermsInAcademicYear()}px;" />
         <property name="layoutManager.lineGroupPrototype.header.rightGroup">
             <bean parent="Uif-HeaderRightGroup" p:cssClasses="ks-plan-Bucket ks-plan-Bucket--secondary"
-                p:render="@{#line.buildAvailable}">
+                p:render="@{#line.buildAvailable and T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().isStudent()}">
                 <property name="items">
                     <list>
                         <bean parent="Uif-ActionLink" p:actionLabel="Build Schedule"
@@ -450,6 +468,7 @@
 					<list>
 						<bean id="planner_menu_edit_term_note" parent="Uif-ActionLink"
 							p:actionLabel="Edit term note" p:title="Edit Term Note"
+							p:render="@{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().isStudent()}"
 							p:cssClasses="ks-plan-TermNote-editLabel">
 							<property name="actionScript"
 								value="ksapPlannerOpenDialog('planner_edit_term_note','planner','startDialog', this, e);" />
@@ -650,7 +669,7 @@
 									</list>
 								</property>
 							</bean>
-							<bean parent="Uif-MessageField" p:render="@{#line.grade ne null}">
+							<bean parent="Uif-MessageField" p:render="@{#line.grade ne null and T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().isStudent()}">
 								<property name="messageText" value="@{#line.grade}" />
 								<property name="cssClasses">
 									<list merge="true">
@@ -947,6 +966,7 @@
 		<property name="items">
 			<list>
 				<bean parent="Uif-ActionLink" p:actionLabel="Add a course to plan"
+						p:render="@{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().isStudent()}"
 						p:actionScript="ksapPlannerOpenDialog('planner_add_course', 'planner', 'startDialog', this, e);">
 					<property name="dataAttributes">
 						<map>
