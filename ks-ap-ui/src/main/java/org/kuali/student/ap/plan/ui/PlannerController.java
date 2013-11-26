@@ -197,11 +197,18 @@ public class PlannerController extends UifControllerBase {
 		LearningPlan plan = PlanItemControllerHelper.getAuthorizedLearningPlan(form, request, response);
 		if (plan == null)
 			return null;
-
+		
 		UifFormBase uifForm = (UifFormBase) form;
 		super.start(uifForm, result, request, response);
 
 		String pageId = uifForm.getPageId();
+		
+		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()
+				&& !COURSE_SUMMARY_PAGE.equals(pageId)) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Advisor access denied " + pageId);
+			return null;
+		}
+		
 		boolean quickAdd = ADD_COURSE_PAGE.equals(pageId) || EDIT_TERM_NOTE_PAGE.equals(pageId);
 		if (quickAdd) {
 			String termId = form.getTermId();
@@ -245,6 +252,11 @@ public class PlannerController extends UifControllerBase {
 	public ModelAndView editTermNote(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
 			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Advisor access denied");
+			return null;
+		}
+		
 		LearningPlan plan = PlanItemControllerHelper.getAuthorizedLearningPlan(form, request, response);
 		if (plan == null)
 			return null;
@@ -359,6 +371,11 @@ public class PlannerController extends UifControllerBase {
 	public ModelAndView addPlanItem(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
+		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Advisor access denied");
+			return null;
+		}
+		
 		LearningPlan plan = PlanItemControllerHelper.getAuthorizedLearningPlan(form, request, response);
 		if (plan == null)
 			return null;
@@ -433,6 +450,11 @@ public class PlannerController extends UifControllerBase {
 	public ModelAndView copyCourse(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
 			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Advisor access denied");
+			return null;
+		}
+		
 		LearningPlan plan = PlanItemControllerHelper.getAuthorizedLearningPlan(form, request, response);
 		if (plan == null)
 			return null;
@@ -460,6 +482,11 @@ public class PlannerController extends UifControllerBase {
 	public ModelAndView editPlanItem(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
 			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Advisor access denied");
+			return null;
+		}
+		
 		String expectedTermId = form.getTermId();
 		boolean creditEdited = false;
 		boolean notesEdited = false;
@@ -554,6 +581,11 @@ public class PlannerController extends UifControllerBase {
 	public ModelAndView copyPlanItem(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
 			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Advisor access denied");
+			return null;
+		}
+		
 		LearningPlan plan = PlanItemControllerHelper.getAuthorizedLearningPlan(form, request, response);
 		if (plan == null)
 			return null;
@@ -586,6 +618,11 @@ public class PlannerController extends UifControllerBase {
 	public ModelAndView movePlanItem(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
 			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Advisor access denied");
+			return null;
+		}
+		
 		String expectedTermId = form.getTermId();
 		if (expectedTermId == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing term ID");
@@ -642,6 +679,11 @@ public class PlannerController extends UifControllerBase {
 	public ModelAndView deletePlanItem(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
 			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Advisor access denied");
+			return null;
+		}
+		
 		String expectedTermId = form.getTermId();
 		if (expectedTermId == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing term ID");
@@ -679,6 +721,11 @@ public class PlannerController extends UifControllerBase {
 	public ModelAndView updatePlanItemType(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
 			HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Advisor access denied");
+			return null;
+		}
+		
 		PlanItem planItem = PlanItemControllerHelper.getValidatedPlanItem(form, request, response);
 		if (planItem == null)
 			return null;

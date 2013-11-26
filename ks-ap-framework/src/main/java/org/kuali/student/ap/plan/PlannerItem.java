@@ -72,7 +72,7 @@ public class PlannerItem implements
 			setGrade(grade);
 		}
 
-		type = "completed";
+		type = KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser() ? "advisor" : "completed";
 	}
 
 	public PlannerItem(PlanItem planItem, Course course) {
@@ -114,25 +114,29 @@ public class PlannerItem implements
 		if (descr != null)
 			courseNote = descr.getPlain();
 
-		String typeKey = planItem.getTypeKey();
-		if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_CART.equals(typeKey)) {
-			type = "cart";
+		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
+			type = "advisor";
 			menuSuffix = "";
-		} else if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED
-				.equals(typeKey)) {
-			type = "planned";
-			if (campusCode != null
-					&& KsapFrameworkServiceLocator.getShoppingCartStrategy()
-							.isCartAvailable(termId, campusCode))
-				menuSuffix = "_cartavailable";
-			else
+		} else {
+			String typeKey = planItem.getTypeKey();
+			if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_CART.equals(typeKey)) {
+				type = "cart";
 				menuSuffix = "";
-		} else if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP.equals(typeKey)) {
-			type = "backup";
-			menuSuffix = "";
-		} else
-			throw new UnsupportedOperationException("Plan item type " + typeKey);
-
+			} else if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_PLANNED
+					.equals(typeKey)) {
+				type = "planned";
+				if (campusCode != null
+						&& KsapFrameworkServiceLocator.getShoppingCartStrategy()
+								.isCartAvailable(termId, campusCode))
+					menuSuffix = "_cartavailable";
+				else
+					menuSuffix = "";
+			} else if (PlanConstants.LEARNING_PLAN_ITEM_TYPE_BACKUP.equals(typeKey)) {
+				type = "backup";
+				menuSuffix = "";
+			} else
+				throw new UnsupportedOperationException("Plan item type " + typeKey);
+		}
 	}
 
 	public String getParentUniqueId() {

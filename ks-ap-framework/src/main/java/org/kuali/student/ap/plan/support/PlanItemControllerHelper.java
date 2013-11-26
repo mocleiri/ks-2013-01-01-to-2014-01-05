@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator;
 import org.kuali.student.ap.framework.context.PlanConstants;
 import org.kuali.student.ap.plan.PlanItemForm;
@@ -19,11 +20,6 @@ public final class PlanItemControllerHelper {
 	public static LearningPlan getAuthorizedLearningPlan(PlanItemForm form, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
 
-		if (KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser()) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, "Advisor access denied");
-			return null;
-		}
-
 		LearningPlan plan = form.getLearningPlan();
 		if (plan == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
@@ -32,9 +28,21 @@ public final class PlanItemControllerHelper {
 		}
 
 		String studentId = KsapFrameworkServiceLocator.getUserSessionHelper().getStudentId();
+		if (studentId == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					"Missing student ID " + form.getLearningPlanId());
+			return null;
+		}
+		
+		if (!KsapFrameworkServiceLocator.getUserSessionHelper().isAdviser() &&
+				!studentId.equals(GlobalVariables.getUserSession().getPrincipalId())) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, "Planner access denied");
+			return null;
+		}
+
 		if (!studentId.equals(plan.getStudentId())) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, request.getRemoteUser()
-					+ " is not allowed to update plan " + plan.getId());
+					+ " is not allowed to view or update plan " + plan.getId());
 			return null;
 		}
 

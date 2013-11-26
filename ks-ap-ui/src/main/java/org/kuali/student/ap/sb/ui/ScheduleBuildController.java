@@ -151,7 +151,7 @@ public class ScheduleBuildController extends UifControllerBase {
 			getDatePortion(untilDate); // adjusts cal
 			cal.add(Calendar.DATE,
 					Calendar.SUNDAY + 7 - cal.get(Calendar.DAY_OF_WEEK));
-			if (maxDate.after(cal.getTime()))
+			if (minDate.before(cal.getTime()) && maxDate.after(cal.getTime()))
 				breakDates.add(cal.getTime());
 			if (!maxDate.before(untilDate)
 					&& (lastUntilDate == null || (untilDate != null && lastUntilDate
