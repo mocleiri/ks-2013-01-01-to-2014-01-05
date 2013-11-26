@@ -7,29 +7,15 @@ Feature: SA.FE3-4 Reinstate Activity Offering will reinstate the Exam Offerings 
     Given I am logged in as admin
 
   #FE3.4.EB1 (KSENROLL-10322)
-  Scenario: Test that reinstating an AO does reinstate the EOs when the FE Driver is set to CO
-    Given I suspend an Activity Offering for a CO with a standard final exam driven by Course Offering
-    When I reinstate the activity offering
-    And I view the Exam Offerings for the Course Offering
-    Then the Exam Offerings for Course Offering should be in a Draft state
-
-  #FE3.4.EB2 (KSENROLL-10322)
-  Scenario: Test that suspending an AO does suspend the EO for that AO when the FE Driver is set to AO
+  Scenario: Test that a suspended AO does have an EO after it has been reinstated
     Given I suspend an Activity Offering for a CO with a standard final exam driven by Activity Offering
     When I reinstate the activity offering
     And I view the Exam Offerings for the Course Offering
-    Then the Exam Offering for Activity Offering should be in a Draft state
+    Then the Exam Offerings for each Activity Offering in the EO for AO table should be in a Draft state
 
-  #FE3.4.EB3 (KSENROLL-10322)
-  Scenario: Test that cancelling an AO does not effect the EOs when the FE Driver is set to CO
-    Given I cancel an Activity Offering for a CO with a standard final exam driven by Course Offering
-    When I reinstate the activity offering
-    And I view the Exam Offerings for the Course Offering
-    Then the Exam Offerings for Course Offering should be in a Draft state
-
-  #FE3.4.EB4 (KSENROLL-10322)
-  Scenario: Test that cancelling a lecture AO does not create an EO for that AO
+  #FE3.4.EB2 (KSENROLL-10322)
+  Scenario: Test that a canceled AO does have an EO after it has been reinstated
     Given I cancel an Activity Offering for a CO with a standard final exam driven by Activity Offering
     When I reinstate the activity offering
     And I view the Exam Offerings for the Course Offering
-    Then the Exam Offering for Activity Offering should be in a Draft state
+    Then the Exam Offerings for each Activity Offering in the EO for AO table should be in a Draft state

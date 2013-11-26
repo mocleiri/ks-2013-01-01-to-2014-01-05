@@ -8,8 +8,9 @@ Feature: SA.FE3-7 View Exam Offerings only when the Exam Period is set to Standa
     Given I am logged in as admin
 
   #FE3.7.EB1 (KSENROLL-9791)
-  Scenario: Test whether the View EO table is by Course Offering and that there is only one Exam Offering
-    When I view the Exam Offerings for an open CO with a standard final exam driven by Activity Offering
-    Then the 2 Exam Offerings for Activity Offering should be in a Draft state
-    And I view the Exam Offerings after updating the Final Exam to none
-    And there should be no Standard Exam tables present
+  @bug @KSENROLL-11057
+  Scenario: Test that EOs are deleted when the exam setting for a course changes from Standard Final Exam to No final Exam or Alternative final assessment
+    When I view the Exam Offerings for a CO in an Open SOC with a standard final exam driven by Activity Offering
+    Then the Exam Offerings for each Activity Offering in the EO for AO table should be in a Draft state
+    And I view the Exam Offerings after updating the Final Exam indicator to No final Exam
+    Then there should be no Exam Offering tables present

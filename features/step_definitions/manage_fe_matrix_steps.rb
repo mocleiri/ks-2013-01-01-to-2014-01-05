@@ -308,7 +308,6 @@ Then /^the rules should be sorted on the Days and Time columns$/ do
     array_of_days.each do |day|
       ordered_days << "#{day}"
     end
-    puts ordered_days
     for i in 1..6 do
       if i != 6
         j = i + 1
