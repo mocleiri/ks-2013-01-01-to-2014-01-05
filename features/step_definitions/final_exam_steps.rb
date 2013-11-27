@@ -332,6 +332,26 @@ When /^I view the Exam Offerings for a CO with two AOs and a standard final exam
   end
 end
 
+Given /^that the CO has two existing AOs and a standard final exam driven by Activity Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
+  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+                                 :final_exam_driver => "Final Exam Per Activity Offering",
+                                 :final_exam_activity => "Lecture"
+  @course_offering.save
+  @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
+end
+
+When /^I add two new AOs to the CO and then create a copy of the CO$/ do
+  @add_ao_one = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+  @add_ao_two = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
+
+  @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
 When /^I view the Exam Offerings for a CO with two new AOs and a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
   @course_offering.edit_offering :final_exam_type => "Standard final Exam",
@@ -406,6 +426,30 @@ When /^I view the Exam Offerings for a CO where the Course Offering Standard FE 
   end
 end
 
+Given /^that the CO is set to have exam offerings driven by CO$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL305")
+  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+                                 :final_exam_driver => "Final Exam Per Course Offering"
+  @course_offering.save
+end
+
+Given /^that the CO is set to have exam offerings driven by AO$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL305")
+  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+                                 :final_exam_driver => "Final Exam Per Activity Offering",
+                                 :final_exam_activity => "Lecture"
+  @course_offering.save
+end
+
+When /^I view the Exam Offerings for a CO where the Course Offering Standard FE setting is changed to No Final Exam$/ do
+  @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
+  @course_offering.save
+
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
 When /^I view the Exam Offerings for a CO where the Activity Offering Standard FE is changed to Alternate Final Exam$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
   @course_offering.edit_offering :final_exam_type => "Standard final Exam",
@@ -434,10 +478,58 @@ When /^I view the Exam Offerings for a CO where the Course Offering No FE is cha
   end
 end
 
+Given /^that the CO is set to have no exam offerings$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
+  @course_offering.save
+end
+
+When /^I view the Exam Offerings for a CO where the Course Offering No Standard final exam or assessment is changed to Standard Final Exam$/ do
+  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+                                 :final_exam_driver =>"Final Exam Per Course Offering"
+  @course_offering.save
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I view the Exam Offerings for a CO where the exam is changed to Standard Final Exam driven by Activity Offering$/ do
+  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+                                 :final_exam_driver =>"Final Exam Per Activity Offering",
+                                 :final_exam_activity => "Lecture"
+  @course_offering.save
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
 When /^I view the Exam Offerings after changing the Final Exam Driver to Course Offering$/ do
   @course_offering.manage
   @course_offering.edit_offering :final_exam_type => "Standard final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
+  @course_offering.save
+
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I view the Exam Offering after changing the Course Offering back to Standard FE and the Final Exam Driver to Course Offering$/ do
+  @course_offering.manage
+  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+                                 :final_exam_driver => "Final Exam Per Course Offering"
+  @course_offering.save
+
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings
+  end
+end
+
+When /^I view the Exam Offerings? after changing the Course Offering back to Standard FE and the Final Exam Driver to Activity Offering$/ do
+  @course_offering.manage
+  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+                                 :final_exam_driver => "Final Exam Per Activity Offering",
+                                 :final_exam_activity => "Lecture"
   @course_offering.save
 
   on ManageCourseOfferings do |page|
@@ -573,6 +665,24 @@ When /^I suspend an Activity Offering for a CO with a standard final exam driven
   @course_offering.save
   @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
   @activity_offering.suspend :navigate_to_page => false
+end
+
+When /^I suspend the Course Offering for a CO with a standard final exam driven by Course Offering$/ do
+
+end
+
+When /^I suspend all Activity Offerings for a CO with a standard final exam driven by Course Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+                                 :final_exam_driver => "Final Exam Per Course Offering"
+  @course_offering.save
+  #@activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  #@activity_offering.suspend :navigate_to_page => false
+  on ManageCourseOfferings do |page|
+    page.cluster_select_all_aos
+    page.suspend_ao
+    on(SuspendActivityOffering).suspend_activity
+  end
 end
 
 When /^I suspend an Activity Offering for a CO with a standard final exam driven by Activity Offering$/ do
@@ -854,6 +964,23 @@ Then /^the Exam Offerings for Course Offering should be in a ([^"]*) state$/ do 
   end
 end
 
+Then /^the EO in the Exam Offerings for Course Offering table should be in a ([^"]*) state$/ do |exp_state|
+  on ViewExamOfferings do |page|
+    page.table_header_text.should match /for Course Offering/
+    page.eo_by_co_status.should match /#{exp_state}/
+    page.eo_by_co_days.should == ""
+    page.eo_by_co_st_time.should == ""
+    page.eo_by_co_end_time.should == ""
+    page.eo_by_co_bldg.should == ""
+    page.eo_by_co_room.should == ""
+    page.count_no_of_eos_by_co.should == "1"
+  end
+end
+
+Then /^there should only be one EO in the Exam Offerings for Course Offering table$/ do
+  on(ViewExamOfferings).count_no_of_eos_by_co.should == "1"
+end
+
 Then /^the Exam Offerings for Course Offering in the EO for CO table should be in a ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
     page.table_header_text.should match /for Course Offering/
@@ -895,7 +1022,7 @@ end
 
 Then /^the Exam Offerings? for Activity Offering should be in a ([^"]*) state$/ do |exp_state|
   on ViewExamOfferings do |page|
-    page.ao_table_header_text.should match /for Activity Offering/
+    page.table_header_text.should match /for Activity Offering/
     array = page.return_array_of_ao_codes
     if array != nil
       array.each do |code|
@@ -904,7 +1031,8 @@ Then /^the Exam Offerings? for Activity Offering should be in a ([^"]*) state$/ 
         page.eo_by_ao_st_time(code).should == ""
         page.eo_by_ao_end_time(code).should == ""
         page.eo_by_ao_bldg(code).should == ""
-        page.eo_by_ao_room(code).should == ""     end
+        page.eo_by_ao_room(code).should == ""
+      end
       no_of_eos = array.length
     end
     array = page.return_array_of_ao_codes("CL Leftovers")
@@ -917,6 +1045,79 @@ Then /^the Exam Offerings? for Activity Offering should be in a ([^"]*) state$/ 
         page.eo_by_ao_bldg(code, "CL Leftovers").should == ""
         page.eo_by_ao_room(code, "CL Leftovers").should == ""
       end
+      no_of_eos = array.length
+    end
+    no_of_eos.should == 1
+  end
+end
+
+Then /^the EO for the suspended AO in the Exam Offering for Activity Offering table should be in a ([^"]*) state$/ do |exp_state|
+  on ViewExamOfferings do |page|
+    page.table_header_text.should match /for Activity Offering/
+    array = page.return_array_of_ao_codes
+    if array != nil
+      array.each do |code|
+        page.eo_by_ao_status(code).should match /#{exp_state}/
+        page.eo_by_ao_days(code).should == ""
+        page.eo_by_ao_st_time(code).should == ""
+        page.eo_by_ao_end_time(code).should == ""
+        page.eo_by_ao_bldg(code).should == ""
+        page.eo_by_ao_room(code).should == ""
+      end
+      no_of_eos = array.length
+    end
+    array = page.return_array_of_ao_codes("CL Leftovers")
+    if array != nil
+      array.each do |code|
+        page.eo_by_ao_status(code, "CL Leftovers").should match /#{exp_state}/
+        page.eo_by_ao_days(code, "CL Leftovers").should == ""
+        page.eo_by_ao_st_time(code, "CL Leftovers").should == ""
+        page.eo_by_ao_end_time(code, "CL Leftovers").should == ""
+        page.eo_by_ao_bldg(code, "CL Leftovers").should == ""
+        page.eo_by_ao_room(code, "CL Leftovers").should == ""
+      end
+      no_of_eos = array.length
+    end
+    no_of_eos.should == 1
+  end
+end
+
+Then /^the EOs in the Exam Offerings for Activity Offering table should be in a ([^"]*) state$/ do |exp_state|
+  on ViewExamOfferings do |page|
+    page.table_header_text.should match /for Activity Offering/
+    array = page.return_array_of_ao_codes
+    if array != nil
+      array.each do |code|
+        page.eo_by_ao_status(code).should match /#{exp_state}/
+        page.eo_by_ao_days(code).should == ""
+        page.eo_by_ao_st_time(code).should == ""
+        page.eo_by_ao_end_time(code).should == ""
+        page.eo_by_ao_bldg(code).should == ""
+        page.eo_by_ao_room(code).should == ""
+      end
+    end
+    array = page.return_array_of_ao_codes("CL Leftovers")
+    if array != nil
+      array.each do |code|
+        page.eo_by_ao_status(code, "CL Leftovers").should match /#{exp_state}/
+        page.eo_by_ao_days(code, "CL Leftovers").should == ""
+        page.eo_by_ao_st_time(code, "CL Leftovers").should == ""
+        page.eo_by_ao_end_time(code, "CL Leftovers").should == ""
+        page.eo_by_ao_bldg(code, "CL Leftovers").should == ""
+        page.eo_by_ao_room(code, "CL Leftovers").should == ""
+      end
+    end
+  end
+end
+
+Then /^there should be one EO for each AO of the course in the Exam Offering for Activity Offering table$/ do
+  on ViewExamOfferings do |page|
+    array = page.return_array_of_ao_codes
+    if array != nil
+      no_of_eos = array.length
+    end
+    array = page.return_array_of_ao_codes("CL Leftovers")
+    if array != nil
       no_of_eos = array.length
     end
     no_of_eos.should == 1
@@ -954,6 +1155,13 @@ Then /^the ([\d]*) Exam Offerings? for Activity Offering should be in a ([^"]*) 
 end
 
 Then /^there should be ([^"]*) Exam Offerings? by Activity Offering for the course$/ do |no_of_aos|
+  on ViewExamOfferings do |page|
+    array = page.return_array_of_ao_codes
+    array.length.should == no_of_aos.to_i
+  end
+end
+
+Then /^there should be ([\d]*) EOs in the Exam Offerings by Activity Offering table for the course$/ do |no_of_aos|
   on ViewExamOfferings do |page|
     array = page.return_array_of_ao_codes
     array.length.should == no_of_aos.to_i
@@ -999,6 +1207,24 @@ Then /^the Exam Offering listed in the EO for CO table should be in a ([^"]*) st
 end
 
 Then /^the Exam Offering table should be in a Canceled state$/ do
+  on ViewExamOfferings do |page|
+    page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
+  end
+end
+
+Then /^the EO in the Exam Offering by Course Offering table should be in a Canceled state$/ do
+  on ViewExamOfferings do |page|
+    page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings? for Course Offerings?/
+  end
+end
+
+Then /^the EO in the Exam Offering by Activity Offering table should be in a Canceled state$/ do
+  on ViewExamOfferings do |page|
+    page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
+  end
+end
+
+Then /^the header for the table should be labelled as Canceled$/ do
   on ViewExamOfferings do |page|
     page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
   end
