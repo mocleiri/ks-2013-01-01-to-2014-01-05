@@ -64,6 +64,8 @@ import org.kuali.student.r2.core.organization.service.OrganizationService;
 import org.kuali.student.r2.core.organization.service.OrganizationServiceDataLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -71,10 +73,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:org-test-with-mock-context.xml"})
-public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrganizationServiceImplConformanceBaseCrud
+@Transactional
+public abstract class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrganizationServiceImplConformanceBaseCrud
 {
 
     @Resource(name = "organizationDataLoader")
@@ -222,13 +222,11 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
         expected.setShortDescr(RichTextHelper.buildRichTextInfo("plain SHORT O descr", "formatted SHORT O descr"));
 		List<OrgCodeInfo> codes = new ArrayList<OrgCodeInfo>();
         OrgCodeInfo code = new OrgCodeInfo();
-        code.setId("1");
         code.setValue("code1");
         code.setTypeKey("key1");
         code.setStateKey("state1");
         codes.add(code);
         code = new OrgCodeInfo();
-        code.setId("2");
         code.setValue("code2");
         code.setTypeKey("key2");
         code.setStateKey("state2");
@@ -262,7 +260,7 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
         assertEquals(expected.getOrgCodes().size(), actual.getOrgCodes().size());
         Map<String, OrgCodeInfo> map = generateOrgCodeInfoMap(actual.getOrgCodes());
         for(OrgCodeInfo info : expected.getOrgCodes()) {
-            OrgCodeInfo info2 = map.get(info.getId());
+            OrgCodeInfo info2 = map.get(info.getValue());
             assertNotNull(info2);
             assertEquals(info.getTypeKey(), info2.getTypeKey());
             assertEquals(info.getStateKey(), info2.getStateKey());
@@ -275,7 +273,7 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
     private Map<String, OrgCodeInfo> generateOrgCodeInfoMap(List<OrgCodeInfo> list) {
         Map<String, OrgCodeInfo> map = new HashMap<String, OrgCodeInfo>();
         for(OrgCodeInfo info : list) {
-            map.put(info.getId(), info);
+            map.put(info.getValue(), info);
         }
         return map;
     }
@@ -296,11 +294,13 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
         code.setId("updated1");
         code.setValue("updatedCode1");
         code.setStateKey("updatedState1");
+        code.setTypeKey("updatedKey1");
         codes.add(code);
         code = new OrgCodeInfo();
         code.setId("updated2");
         code.setValue("updatedCode2");
         code.setStateKey("updatedState2");
+        code.setTypeKey("updatedKey2");
         codes.add(code);
         expected.setOrgCodes(codes);
 
@@ -330,7 +330,7 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
         assertEquals(expected.getOrgCodes().size(), actual.getOrgCodes().size());
         Map<String, OrgCodeInfo> map = generateOrgCodeInfoMap(actual.getOrgCodes());
         for(OrgCodeInfo info : expected.getOrgCodes()) {
-            OrgCodeInfo info2 = map.get(info.getId());
+            OrgCodeInfo info2 = map.get(info.getValue());
             assertNotNull(info2);
             assertEquals(info.getTypeKey(), info2.getTypeKey());
             assertEquals(info.getStateKey(), info2.getStateKey());
@@ -353,13 +353,13 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
         expected.setShortDescr(RichTextHelper.buildRichTextInfo("plain SHORT O updated descr", "formatted SHORT O updated descr"));
         List<OrgCodeInfo> codes = new ArrayList<OrgCodeInfo>();
         OrgCodeInfo code = new OrgCodeInfo();
-        code.setId("updated1");
         code.setValue("updatedCode1");
+        code.setTypeKey("updatedType1");
         code.setStateKey("updatedState1");
         codes.add(code);
         code = new OrgCodeInfo();
-        code.setId("updated2");
         code.setValue("updatedCode2");
+        code.setTypeKey("updatedType2");
         code.setStateKey("updatedState2");
         codes.add(code);
         expected.setOrgCodes(codes);
@@ -798,7 +798,7 @@ public class TestOrganizationServiceImplConformanceExtendedCrud extends TestOrga
 
         //org with multiple relations of different types.
         orgRelations = testService.getOrgOrgRelationsByOrg("4", contextInfo);
-        assertEquals(4, orgRelations.size());
+        assertEquals(6, orgRelations.size());
         info = getOrgOrgRelationInfoByRelatedOrgIdAndType("12", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE, orgRelations);
         validateOrgOrgRelation(info, "4", "12", OrganizationServiceDataLoader.ORG_RELATION_ACAD_COLLABORATES_WITH_TYPE);
         info = getOrgOrgRelationInfoByRelatedOrgIdAndType("7", OrganizationServiceDataLoader.ORG_RELATION_FIN_PARENT_TYPE, orgRelations);

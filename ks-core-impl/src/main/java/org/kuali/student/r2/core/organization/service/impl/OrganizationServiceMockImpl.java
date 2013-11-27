@@ -535,7 +535,7 @@ public class OrganizationServiceMockImpl implements MockService, OrganizationSer
     {
         List<OrgOrgRelationInfo> list = new ArrayList<OrgOrgRelationInfo> ();
         for (OrgOrgRelationInfo info: orgOrgRelationMap.values ()) {
-            if (orgId.equals(info.getOrgId())) {
+            if (orgId.equals(info.getOrgId()) || orgId.equals(info.getRelatedOrgId())) {
                 list.add (new OrgOrgRelationInfo(info));
             }
         }

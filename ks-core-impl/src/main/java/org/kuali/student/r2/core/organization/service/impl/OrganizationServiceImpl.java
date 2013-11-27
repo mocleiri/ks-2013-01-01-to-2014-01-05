@@ -247,9 +247,9 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
 
         OrgHierarchyEntity entity = new OrgHierarchyEntity(orgHierarchyInfo);
-        entity.setOrgHierarchyType(orgHierarchyTypeKey);
         entity.setEntityCreated(contextInfo);
         orgHierarchyDao.persist(entity);
+        orgHierarchyDao.getEm().flush();
         return entity.toDto();
     }
 
@@ -281,6 +281,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         entity.fromDto(orgHierarchyInfo);
         entity.setEntityUpdated(contextInfo);
         entity = orgHierarchyDao.merge(entity);
+        orgHierarchyDao.getEm().flush();
         return entity.toDto();
     }
 
@@ -369,7 +370,6 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
 
         OrgEntity entity = new OrgEntity(orgInfo);
-        entity.setOrgType(orgTypeKey);
         entity.setEntityCreated(contextInfo);
         if(entity.getId() == null) {
             entity.setId(UUIDHelper.genStringUUID());
@@ -381,6 +381,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
 
         orgDao.persist(entity);
+        orgDao.getEm().flush();
         return entity.toDto();
     }
 
@@ -415,6 +416,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             }
         }
         entity = orgDao.merge(entity);
+        orgDao.getEm().flush();
         return entity.toDto();
     }
 
@@ -597,12 +599,10 @@ public class OrganizationServiceImpl implements OrganizationService {
         getOrgsByIds(ids, contextInfo);
 
         OrgOrgRelationEntity entity = new OrgOrgRelationEntity(orgOrgRelationInfo);
-        entity.setOrgId(orgId);
-        entity.setRelatedOrgId(orgPeerId);
-        entity.setOrgOrgRelationType(orgOrgRelationTypeKey);
         entity.setEntityCreated(contextInfo);
 
         orgOrgRelationDao.persist(entity);
+        orgOrgRelationDao.getEm().flush();
         return entity.toDto();
     }
 
@@ -636,6 +636,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         entity.fromDto(orgOrgRelationInfo);
         entity.setEntityUpdated(contextInfo);
         entity = orgOrgRelationDao.merge(entity);
+        orgOrgRelationDao.getEm().flush();
         return entity.toDto();
     }
 
@@ -825,11 +826,9 @@ public class OrganizationServiceImpl implements OrganizationService {
         getOrg(orgId, contextInfo);
 
         OrgPersonRelationEntity entity = new OrgPersonRelationEntity(orgPersonRelationInfo);
-        entity.setOrgId(orgId);
-        entity.setPersonId(personId);
-        entity.setOrgPersonRelationType(orgPersonRelationTypeKey);
         entity.setEntityCreated(contextInfo);
         orgPersonRelationDao.persist(entity);
+        orgPersonRelationDao.getEm().flush();
         return entity.toDto();
     }
 
@@ -857,6 +856,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         entity.fromDto(orgPersonRelationInfo);
         entity.setEntityUpdated(contextInfo);
         entity = orgPersonRelationDao.merge(entity);
+        orgPersonRelationDao.getEm().flush();
         return entity.toDto();
     }
 
@@ -946,10 +946,9 @@ public class OrganizationServiceImpl implements OrganizationService {
         getOrg(orgId, contextInfo);
 
         OrgPositionRestrictionEntity entity = new OrgPositionRestrictionEntity(orgPositionRestrictionInfo);
-        entity.setOrgId(orgId);
-        entity.setOrgPersonRelationType(orgPersonRelationTypeKey);
         entity.setEntityCreated(contextInfo);
         orgPositionRestrictionDao.persist(entity);
+        orgPositionRestrictionDao.getEm().flush();
         return entity.toDto();
     }
 
@@ -975,6 +974,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         entity.fromDto(orgPositionRestrictionInfo);
         entity.setEntityUpdated(contextInfo);
         entity = orgPositionRestrictionDao.merge(entity);
+        orgPositionRestrictionDao.getEm().flush();
         return entity.toDto();
     }
 

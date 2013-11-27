@@ -216,6 +216,7 @@ public class OrganizationServiceDataLoader extends AbstractMockServicesAwareData
         info.setOrgId(orgId);
         info.setRelatedOrgId(relatedOrgId);
         info.setTypeKey(relationType);
+        info.setStateKey(ACTIVE_STATE);
 
         info.setEffectiveDate(dateFormat.parse("20090101"));
         info.setExpirationDate(dateFormat.parse("21001231"));
