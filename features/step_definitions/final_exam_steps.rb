@@ -723,11 +723,15 @@ end
 Then /^an error in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
   on EditAcademicTerms do |page|
     page.get_exam_error_message( @term.term_type).should match /#{exp_msg}/
+    page.cancel
   end
 end
 
 Then /^no error in the Final Exam section is displayed when I save the data$/ do
-  on(EditAcademicTerms).exam_error_message( @term.term_type).present?.should be_false
+  on EditAcademicTerms do |page|
+    page.exam_error_message( @term.term_type).present?.should be_false
+    page.cancel
+  end
 end
 
 Then /^the final exam period for the Fall Term is listed when I view the Academic Calendar$/ do
