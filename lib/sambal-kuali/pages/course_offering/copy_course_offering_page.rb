@@ -5,7 +5,8 @@ class CopyCourseOffering < BasePage
 
   expected_element :exclude_instructor
 
-  action(:create_copy) { |b| b.frm.button(id: "createFromCopy_btn").click; b.loading.wait_while_present(120) }
+  element(:create_copy_element) { |b| b.frm.button(id: "createFromCopy_btn") }
+  action(:create_copy) { |b| b.frm.create_copy_element.click; b.loading.wait_while_present(120) }
 
   element(:exclude_cancelled_aos) { |b| b.frm.label(text: /Exclude cancelled Activity Offerings/) }
   action(:select_exclude_cancelled_aos) { |b| b.exclude_cancelled_aos.wait_until_present; b.exclude_cancelled_aos.click }
