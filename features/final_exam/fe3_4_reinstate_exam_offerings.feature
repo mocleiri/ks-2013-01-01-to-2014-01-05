@@ -19,3 +19,18 @@ Feature: SA.FE3-4 Reinstate Activity Offering will reinstate the Exam Offerings 
     When I reinstate the activity offering
     And I view the Exam Offerings for the Course Offering
     Then the Exam Offerings for each Activity Offering in the EO for AO table should be in a Draft state
+
+  #FE3.4.EB3 (KSENROLL-10322)
+  Scenario: Test that cancelling an AO does not affect the EOs when the FE Driver is set to CO
+    Given there is more than one Activity Offering for the Course
+    And I cancel an Activity Offering for a CO with a standard final exam driven by Course Offering
+    When I view the Exam Offerings for the Course Offering
+    Then the Exam Offerings for Course Offering in the EO for CO table should be in a Draft state
+
+  #FE3.4.EB4 (KSENROLL-10322)
+  Scenario: Test that a canceled CO does have an EO after it has been reinstated
+    Given I cancel all Activity Offerings for a CO with a standard final exam driven by Course Offering
+    When I reinstate the one or more Activity offerings for the CO
+    And I view the Exam Offerings for the Course Offering
+    Then the Exam Offerings for Course Offering in the EO for CO table should be in a Draft state
+

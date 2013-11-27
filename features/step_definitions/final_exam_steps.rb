@@ -220,6 +220,12 @@ Given /^there is an exsiting CO with a Standard Final Exam option$/ do
   @activity_offering.edit :send_to_scheduler => true, :defer_save => false
 end
 
+Given /^that Activity Offerings exist for the selected Course Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
+  @activity_offering.edit :send_to_scheduler => true, :defer_save => false
+end
+
 When /^I create a Course Offering from an existing CO with a Standard Final Exam option$/ do
   @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
 end
@@ -614,12 +620,15 @@ When /^I cancel an Activity Offering for a CO with a standard final exam driven 
   @activity_offering.cancel :navigate_to_page => false
 end
 
-When /^I cancel a discussion Activity Offering for a CO with a standard final exam driven by Activity Offering$/ do
+Given /^that the Lecture AO that drives the exam is not in a cancelled state$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
   @course_offering.edit_offering :final_exam_type => "Standard final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
+end
+
+When /^I cancel a Discussion Activity Offering for a CO with a standard final exam driven by Activity Offering$/ do
   @activity_offering = make ActivityOffering, :code => "C", :parent_course_offering => @course_offering
   @activity_offering.cancel :navigate_to_page => false
 end
@@ -634,6 +643,14 @@ When /^I cancel all Activity Offerings for a CO with a standard final exam drive
       ao_cancel = make ActivityOffering, :code => code, :parent_course_offering => @course_offering
       ao_cancel.cancel :navigate_to_page => false
     end
+  end
+end
+
+When /^I reinstate the one or more Activity offerings for the CO$/ do
+  on ManageCourseOfferings do |page|
+    page.cluster_select_all_aos
+    page.reinstate_ao
+    on(ReinstateActivityOffering).reinstate_activity
   end
 end
 
@@ -676,8 +693,6 @@ When /^I suspend all Activity Offerings for a CO with a standard final exam driv
   @course_offering.edit_offering :final_exam_type => "Standard final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
-  #@activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
-  #@activity_offering.suspend :navigate_to_page => false
   on ManageCourseOfferings do |page|
     page.cluster_select_all_aos
     page.suspend_ao
@@ -1016,6 +1031,16 @@ Then /^the Exam Offerings for each Activity Offering in the EO for AO table shou
         page.eo_by_ao_bldg(code, "CL Leftovers").should == ""
         page.eo_by_ao_room(code, "CL Leftovers").should == ""
       end
+    end
+  end
+end
+
+Then /^the Exam Offering for Activity Offering should not be in a ([^"]*) state$/ do |exp_state|
+  on ViewExamOfferings do |page|
+    page.table_header_text.should match /for Activity Offering/
+    array = page.return_array_of_ao_codes
+    array.each do |code|
+      page.eo_by_ao_status(code).should_not match /#{exp_state}/
     end
   end
 end

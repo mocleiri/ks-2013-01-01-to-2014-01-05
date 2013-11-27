@@ -17,16 +17,14 @@ Feature: SA.FE3-2 View Exam Offerings for AO not created when no Activity Offeri
   #FE3.2.EB2 (KSENROLL-9536)
   Scenario: Test whether the Exam Offering is initially in Draft state when the exam driver is set to Course Offering
     Given there is an exsiting CO with a Standard Final Exam option
-    And I select Final Exam Per Course Offering as the Final Exam Driver and Update the Course Offering
-    When I create a Course Offering from an existing CO with a Standard Final Exam option
+    When I select Final Exam Per Course Offering as the Final Exam Driver and Update the Course Offering
     Then I should be able to select the View Exam Offerings link on the Manage CO page
     And see one Exam Offering for the Course Offering with a status of Draft
 
   #FE3.2.EB3 (KSENROLL-9536)
   Scenario: Test whether each Exam Offering is initially in Draft state when the exam driver is set to Activity Offering
-    Given there is an exsiting CO with a Standard Final Exam option
-    And I select Final Exam Per Activity Offering as the Final Exam Driver and Update the Course Offering
-    When I create a Course Offering from an existing CO with a Standard Final Exam option
+    Given that Activity Offerings exist for the selected Course Offering
+    When I select Final Exam Per Activity Offering as the Final Exam Driver and Update the Course Offering
     Then I should be able to select the View Exam Offerings link on the Manage CO page
     And see Exam Offerings for the each Activity Offering of the Course with a status of Draft
 
