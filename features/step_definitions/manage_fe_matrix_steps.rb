@@ -315,16 +315,16 @@ Then /^the rules should be sorted on the Days and Time columns$/ do
         ordered_days.should_not match /Day #{(j)}.*Day #{i}/m
       end
 
-      #array_of_times = page.get_all_standard_fe_times_for_day( "Day #{i}")
-      #first_time = array_of_times.shift
-      #if first_time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
-      #  first_start_time = DateTime.strptime($1, '%I:%M %p')
-      #end
-      #array_of_times.each do |time|
-      #  if time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
-      #    start_time = DateTime.strptime($1, '%I:%M %p')
-      #  end
-      #end
+      array_of_times = page.get_all_standard_fe_times_for_day( "Day #{i}")
+      first_time = array_of_times.shift
+      if first_time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
+        first_start_time = DateTime.strptime($1, '%I:%M %p')
+      end
+      array_of_times.each do |time|
+        if time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
+          start_time = DateTime.strptime($1, '%I:%M %p')
+        end
+      end
     end
 
 
