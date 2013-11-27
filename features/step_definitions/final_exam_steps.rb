@@ -68,8 +68,12 @@ When /^I create a Course Offering from an existing Course Offering with an alter
 end
 
 When /^I edit the Course Offering to have a Standard Final Exam$/ do
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
-                                 :final_exam_driver => "Final Exam Per Course Offering"
+  @course_offering.edit_offering :final_exam_type => "Standard final Exam"
+  @course_offering.save
+end
+
+And /^I select a Final Exam Driver option from the drop-down$/ do
+  @course_offering.edit_offering :final_exam_driver => "Final Exam Per Course Offering"
 end
 
 When /^I return to the Edit Co page for the course after updating the change$/ do

@@ -15,5 +15,6 @@ Feature: SA.FE2-6 Create CO with FE and then copy
   Scenario: Test whether a warning is displayed on the edit CO page that exam status differs from catalog
     When I create a Course Offering from an existing Course Offering with an alternate final assessment option
     And I edit the Course Offering to have a Standard Final Exam
+    And I select a Final Exam Driver option from the drop-down
     And I return to the Edit Co page for the course after updating the change
     Then a warning about the FE on the Edit CO page is displayed stating "Course exam data differs from Catalog."

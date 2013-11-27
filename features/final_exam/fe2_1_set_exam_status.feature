@@ -19,13 +19,15 @@ Feature: SA.FE2-1 Set Exam Status
   Scenario: Test whether a warning is displayed on the edit CO page that exam status differs from catalog
     When I create a Course Offering from catalog with an alternate final assessment option
     And I edit the Course Offering to have a Standard Final Exam
+    And I select a Final Exam Driver option from the drop-down
     And I return to the Edit Co page for the course after updating the change
     Then a warning about the FE on the Edit CO page is displayed stating "Course exam data differs from Catalog."
 
-  #FE2.1.EB3 (KSENROLL-9242)
+#FE2.1.EB3 (KSENROLL-9242)
   Scenario: Test whether the Final Exam data for a course changes depending on the chosen Final Exam indicator when there will be an exam
     Given that the catalog version of the course is set to have No final exam
     When I create a Course Offering from catalog in a term with a final exam period
     And I change the Final Exam indicator from No final exam or assessment to Standard final exam
     Then the Final Exam Driver should allow the user to pick Activity Offering or Course Offering as the exam driver
     And the Final Exam Driver Activity field should appear if Activity Offering is selected as the exam driver
+

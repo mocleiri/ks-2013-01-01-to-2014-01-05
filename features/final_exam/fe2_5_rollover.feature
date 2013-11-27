@@ -8,7 +8,7 @@ Feature: SA.FE2-5 Perform Simple Rollover
 
   #FE2.5.EB1 (KSENROLL-9532)
   Scenario: Test whether setting up exam offerings for COs and then performing a rollover retains the exam information
-    Given I create an Academic Calender and add an official term
+    Given I create an Academic Calendar and add an official term
     And I have created a Final Exam Period for the term in the newly created Academic Calendar
     When I have multiple Course Offerings each with a different Exam Offering in the source term
     And I rollover the source term to a new academic term
