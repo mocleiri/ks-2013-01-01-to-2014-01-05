@@ -121,15 +121,8 @@ class FEMatrixView < BasePage
   def get_all_standard_fe_times_for_day( day)
     array = []
     standard_final_exam_table.rows.each do |row|
-      #puts day if row.cells[EXAM_DAY].text == day
-      #puts row.text if row.cells[EXAM_DAY].text == day
-      #array << row.cells[EXAM_TIME].text if row.cells[EXAM_DAY].text == day
-      #puts "???????????????????????????????????" if row.cells[EXAM_DAY].text == day
-      #puts array if row.cells[EXAM_DAY].text == day
-      #puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" if row.cells[EXAM_DAY].text == day
-      array << "#{row.cells[EXAM_DAY].text}><#{row.cells[EXAM_TIME].text}"
+      array << "#{row.cells[EXAM_TIME].text}" if row.cells[EXAM_DAY].text == day
     end
-    puts array
     return array
   end
 end

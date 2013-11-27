@@ -29,7 +29,6 @@ Feature: SA.FE1-6 Manage the Final Exam Matrix so that FEs can be Scheduled in p
     Then I should be able to see the edited course rule in the Common Final Exam table
 
   #FE1.6.EB5 (KSENROLL-9796)
-  @bug @KSENROLL-10941
   Scenario: Test that the Days are sorted from beginning to end in the table
     Given there is an Academic Term associated with a Final Exam matrix
     When I view the Standard Final Exam rules on the Final Exam Matrix

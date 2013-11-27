@@ -324,6 +324,12 @@ Then /^the rules should be sorted on the Days and Time columns$/ do
         if time =~ /^(\d\d:\d\d [AP]M)-(\d\d:\d\d [AP]M)$/
           start_time = DateTime.strptime($1, '%I:%M %p')
         end
+        if first_start_time.to_s < start_time.to_s
+          true
+        else
+          false
+        end
+        first_start_time = start_time
       end
     end
 
