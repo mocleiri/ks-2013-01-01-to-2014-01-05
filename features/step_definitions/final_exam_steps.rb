@@ -79,9 +79,7 @@ end
 When /^I return to the Edit Co page for the course after updating the change$/ do
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
+  on(ManageCourseOfferings).edit_course_offering
 end
 
 When /^I create a Course Offering from an existing Course Offering with a standard final exam option$/ do
@@ -91,9 +89,7 @@ When /^I create a Course Offering from an existing Course Offering with a standa
   @activity_offering.edit :send_to_scheduler => true, :defer_save => false
 
   @course_offering_copy = create CourseOffering, :term=> @course_offering.term , :create_from_existing => @course_offering
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
+  on(ManageCourseOfferings).edit_course_offering
 end
 
 When /^I create a course offering for a subject with a standard final exam in my admin org$/ do
@@ -104,9 +100,7 @@ end
 When /^I edit a course offering with a standard final exm in my admin org$/ do
   @course_offering = make CourseOffering, :term=> "201301", :course=>"ENGL304"
   @course_offering.manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
+  on(ManageCourseOfferings).edit_course_offering
 end
 
 When /^I create an Academic Calendar and add an official term$/ do
@@ -213,9 +207,7 @@ When /^I view the Exam Offerings for a CO created from an existing CO with a sta
 
   @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 Given /^there is an exsiting CO with a Standard Final Exam option$/ do
@@ -302,9 +294,7 @@ When /^I view the Exam Offerings for a CO created from an existing CO with a sta
 
   @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I select Final Exam Per Activity Offering as the Final Exam Driver and Update the Course Offering$/ do
@@ -325,9 +315,7 @@ When /^I view the Exam Offerings for a CO created from an existing CO with multi
 
   @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings for a CO with two AOs and a standard final exam driven by Activity Offering$/ do
@@ -337,9 +325,7 @@ When /^I view the Exam Offerings for a CO with two AOs and a standard final exam
                                  :final_exam_activity => "Lecture"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 Given /^that the CO has two existing AOs and a standard final exam driven by Activity Offering$/ do
@@ -357,9 +343,8 @@ When /^I add two new AOs to the CO and then create a copy of the CO$/ do
   @add_ao_two = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
 
   @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings for a CO with two new AOs and a standard final exam driven by Activity Offering$/ do
@@ -375,9 +360,8 @@ When /^I view the Exam Offerings for a CO with two new AOs and a standard final 
   @add_ao_two = @course_offering.create_ao(make ActivityOffering, :format => "Lecture Only")
 
   @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I create a CO with two new AOs and then view the Exam Offerings where the CO has a standard final exam driven by Activity Offering$/ do
@@ -394,9 +378,7 @@ When /^I create a CO with two new AOs and then view the Exam Offerings where the
 
   @create_co = create CourseOffering, :term=> @course_offering.term, :create_from_existing => @course_offering
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings for a CO with a standard final exam driven by Course Offering$/ do
@@ -405,9 +387,7 @@ When /^I view the Exam Offerings for a CO with a standard final exam driven by C
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings for a CO in an Open SOC with a standard final exam driven by Activity Offering$/ do
@@ -417,9 +397,7 @@ When /^I view the Exam Offerings for a CO in an Open SOC with a standard final e
                                  :final_exam_activity => "Lecture"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings for a CO where the Course Offering Standard FE is changed to No Final Exam$/ do
@@ -431,9 +409,7 @@ When /^I view the Exam Offerings for a CO where the Course Offering Standard FE 
   @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 Given /^that the CO is set to have exam offerings driven by CO$/ do
@@ -455,9 +431,7 @@ When /^I view the Exam Offerings for a CO where the Course Offering Standard FE 
   @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings for a CO where the Activity Offering Standard FE is changed to Alternate Final Exam$/ do
@@ -470,9 +444,7 @@ When /^I view the Exam Offerings for a CO where the Activity Offering Standard F
   @course_offering.edit_offering :final_exam_type => "Alternate final assessment"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings for a CO where the Course Offering No FE is changed to Standard Final Exam$/ do
@@ -483,9 +455,8 @@ When /^I view the Exam Offerings for a CO where the Course Offering No FE is cha
   @course_offering.edit_offering :final_exam_type => "Standard final Exam",
                                  :final_exam_driver =>"Final Exam Per Course Offering"
   @course_offering.save
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 Given /^that the CO is set to have no exam offerings$/ do
@@ -498,9 +469,8 @@ When /^I view the Exam Offerings for a CO where the Course Offering No Standard 
   @course_offering.edit_offering :final_exam_type => "Standard final Exam",
                                  :final_exam_driver =>"Final Exam Per Course Offering"
   @course_offering.save
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings for a CO where the exam is changed to Standard Final Exam driven by Activity Offering$/ do
@@ -508,9 +478,8 @@ When /^I view the Exam Offerings for a CO where the exam is changed to Standard 
                                  :final_exam_driver =>"Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings after changing the Final Exam Driver to Course Offering$/ do
@@ -519,9 +488,7 @@ When /^I view the Exam Offerings after changing the Final Exam Driver to Course 
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offering after changing the Course Offering back to Standard FE and the Final Exam Driver to Course Offering$/ do
@@ -530,9 +497,7 @@ When /^I view the Exam Offering after changing the Course Offering back to Stand
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings? after changing the Course Offering back to Standard FE and the Final Exam Driver to Activity Offering$/ do
@@ -542,9 +507,7 @@ When /^I view the Exam Offerings? after changing the Course Offering back to Sta
                                  :final_exam_activity => "Lecture"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings after changing the Final Exam Driver to Activity Offering$/ do
@@ -554,19 +517,15 @@ When /^I view the Exam Offerings after changing the Final Exam Driver to Activit
                                  :final_exam_activity => "Lecture"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings after updating the Final Exam indicator to No final Exam$/ do
   @course_offering.manage
   @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
   @course_offering.save
-  sleep 5
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings for a CO created from catalog with a standard final exam driven by Course Offering$/ do
@@ -575,9 +534,7 @@ When /^I view the Exam Offerings for a CO created from catalog with a standard f
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I add an Exam Period to the term$/ do
@@ -654,8 +611,8 @@ When /^I reinstate the one or more Activity offerings for the CO$/ do
   on ManageCourseOfferings do |page|
     page.cluster_select_all_aos
     page.reinstate_ao
-    on(ReinstateActivityOffering).reinstate_activity
   end
+  on(ReinstateActivityOffering).reinstate_activity
 end
 
 When /^I cancel all Activity Offerings for a CO with a standard final exam driven by Activity Offering$/ do
@@ -674,9 +631,7 @@ When /^I cancel all Activity Offerings for a CO with a standard final exam drive
 end
 
 When /^I view the Exam Offerings for the Course Offering$/ do
-  on ManageCourseOfferings do |page|
-    page.view_exam_offerings
-  end
+  on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I suspend an Activity Offering for a CO with a standard final exam driven by Course Offering$/ do
@@ -715,9 +670,7 @@ When /^I suspend an Activity Offering for a CO with a standard final exam driven
 end
 
 Then /^a warning in the Final Exam Period section is displayed stating "([^"]*)"$/ do |exp_msg|
-  on EditAcademicTerms do |page|
-    page.get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
-  end
+  on(EditAcademicTerms).get_exam_warning_message( @term.term_type).should match /#{exp_msg}/
 end
 
 Then /^an error in the Final Exam section is displayed stating "([^"]*)"$/ do |exp_msg|
@@ -737,9 +690,7 @@ end
 Then /^the final exam period for the Fall Term is listed when I view the Academic Calendar$/ do
   @calendar.search
 
-  on CalendarSearch do |page|
-    page.view @calendar.name
-  end
+  on(CalendarSearch).view @calendar.name
 
   on ViewAcademicTerms do |page|
     page.go_to_terms_tab
@@ -827,9 +778,7 @@ Then /^the option to specify a Final Exam Driver should only be available for a 
 end
 
 Then /^a warning about the FE on the Edit CO page is displayed stating "([^"]*)"$/ do |exp_msg|
-  on CourseOfferingEdit do |page|
-    page.delivery_assessment_warning.should match /#{exp_msg}/
-  end
+  on(CourseOfferingEdit).delivery_assessment_warning.should match /#{exp_msg}/
 end
 
 Then /^the status of the Final Exam Driver should change to indicate the driver chosen for the Standard Final Exam$/ do
@@ -844,9 +793,7 @@ Then /^the status of the Final Exam Driver should change to indicate the driver 
 end
 
 Then /^the Final Exam Driver value should reflect the value selected in the Final Exam Driver field dropdown$/ do
-  on CreateCOFromCatalog do |page|
-    page.final_exam_driver_value.should == "Activity Offering"
-  end
+  on(CreateCOFromCatalog).final_exam_driver_value.should == "Activity Offering"
 end
 
 Then /^the Final Exam Driver Activity field should exist and be populated with the first activity type of the format offering$/ do
@@ -865,9 +812,7 @@ Then /^I should be able to edit and update the Final Exam status$/ do
 end
 
 Then /^the exam data for the newly created course offering should match that of the original$/ do
-  on CourseOfferingEdit do |page|
-    page.final_exam_driver_value_0.should == "Activity Offering"
-  end
+  on(CourseOfferingEdit).final_exam_driver_value_0.should == "Activity Offering"
 end
 
 Then /^the ability to access the Use Final Exam Matrix field should only be available for a course offering set to have a Standard Final Exam$/ do
@@ -910,38 +855,30 @@ Then /^all the exam settings and messages are retained after the rollover is com
   @test_co_list = []
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[0].course)
   @test_co_list[0].manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
+  on(ManageCourseOfferings).edit_course_offering
   on CourseOfferingEdit do |page|
     page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
     page.final_exam_driver_value_0.should == "No final exam for this offering"
   end
+
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[1].course)
   @test_co_list[1].manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
+  on(ManageCourseOfferings).edit_course_offering
   on CourseOfferingEdit do |page|
     page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
     page.final_exam_driver_value_0.should == "Alternate exam for this offering"
   end
+
+
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[2].course)
   @test_co_list[2].manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.final_exam_driver_value_0.should == "Activity Offering"
-  end
+  on(ManageCourseOfferings).edit_course_offering
+  on(CourseOfferingEdit).final_exam_driver_value_0.should == "Activity Offering"
+
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[3].course)
   @test_co_list[3].manage
-  on ManageCourseOfferings do |page|
-    page.edit_course_offering
-  end
-  on CourseOfferingEdit do |page|
-    page.final_exam_driver_value_0.should == "Course Offering"
-  end
+  on(ManageCourseOfferings).edit_course_offering
+  on(CourseOfferingEdit).final_exam_driver_value_0.should == "Course Offering"
 end
 
 Then /^all the Final Exam and Exam Driver data for the COs should be retained after the rollover is completed and Exam Offerings should be created in a state of Draft$/ do
@@ -953,18 +890,17 @@ Then /^all the Final Exam and Exam Driver data for the COs should be retained af
     page.table_header_text.should match /for Course Offering/
     page.eo_by_co_status.should match /Draft/
   end
+
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[1].course)
   @test_co_list[1].manage
   on(ManageCourseOfferings).view_exam_offerings
-  on ViewExamOfferings do |page|
-    page.table_header.exists?.should == false
-  end
+  on(ViewExamOfferings).table_header.exists?.should == false
+
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[2].course)
   @test_co_list[2].manage
   on(ManageCourseOfferings).view_exam_offerings
-  on ViewExamOfferings do |page|
-    page.eo_by_ao_status("A").should match /Draft/
-  end
+  on(ViewExamOfferings).eo_by_ao_status("A").should match /Draft/
+
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[3].course)
   @test_co_list[3].manage
   on(ManageCourseOfferings).view_exam_offerings
@@ -1234,55 +1170,37 @@ Then /^the Exclude Saturday or Exclude Sunday fields should be unchecked and inc
 end
 
 Then /^the Exam Offering listed in the EO for CO table should be in a ([^"]*) state$/ do |exp_msg|
-  on ViewExamOfferings do |page|
-    page.canceled_eo_table.rows[1].cells[0].text.should == exp_msg
-  end
+  on(ViewExamOfferings).canceled_eo_table.rows[1].cells[0].text.should == exp_msg
 end
 
 Then /^the Exam Offering table should be in a Canceled state$/ do
-  on ViewExamOfferings do |page|
-    page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
-  end
+  on(ViewExamOfferings).exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
 end
 
 Then /^the EO in the Exam Offering by Course Offering table should be in a Canceled state$/ do
-  on ViewExamOfferings do |page|
-    page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings? for Course Offerings?/
-  end
+  on(ViewExamOfferings).exam_offerings_page_section.text.should match /Cancelled Exam Offerings? for Course Offerings?/
 end
 
 Then /^the EO in the Exam Offering by Activity Offering table should be in a Canceled state$/ do
-  on ViewExamOfferings do |page|
-    page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
-  end
+  on(ViewExamOfferings).exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
 end
 
 Then /^the header for the table should be labelled as Canceled$/ do
-  on ViewExamOfferings do |page|
-    page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
-  end
+  on(ViewExamOfferings).exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
 end
 
 Then /^there should be an Activity Offering table header explaining that the Exam Offerings have been canceled$/ do
-  on ViewExamOfferings do |page|
-    page.exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
-  end
+  on(ViewExamOfferings).exam_offerings_page_section.text.should match /Cancelled Exam Offerings for Activity Offerings/
 end
 
 Then /^there should be no Exam Offering for Course Offering table present$/ do
-  on ViewExamOfferings do |page|
-    page.table_header_text.should_not match /for Course Offerings/
-  end
+  on(ViewExamOfferings).table_header_text.should_not match /for Course Offerings/
 end
 
 Then /^there should be no Exam Offering for Activity Offering table present$/ do
-  on ViewExamOfferings do |page|
-    page.table_header_text.should_not match /for Activity Offerings/
-  end
+  on(ViewExamOfferings).table_header_text.should_not match /for Activity Offerings/
 end
 
 Then /^the Exam Offering table for the canceled AO should also be in the same state$/ do
-  on ViewExamOfferings do |page|
-    page.canceled_eo_table.rows[1].text.should match /Canceled.*#{@activity_offering.code}/m
-  end
+  on(ViewExamOfferings).canceled_eo_table.rows[1].text.should match /Canceled.*#{@activity_offering.code}/m
 end
