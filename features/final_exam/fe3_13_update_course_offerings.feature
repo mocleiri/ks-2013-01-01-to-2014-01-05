@@ -16,7 +16,7 @@ Feature: SA.FE3-13 Update Exam Offerings
   #FE3.13.EB2(KSENROLL-9801)
   Scenario: Modify exam setting for Course Offering with Exam Driver to CO and confirm Exam Offering is in a Draft state
     Given that the CO is set to have no exam offerings
-    When I view the Exam Offerings for a CO where the Course Offering No Standard final exam or assessment is changed to Standard Final Exam
+    When I view the Exam Offerings for a CO where the Course Offering No Standard Final Exam or Assessment is changed to Standard Final Exam driven by Course Offering
     Then the EO in the Exam Offerings for Course Offering table should be in a Draft state
 
   #FE3.13.EB3(KSENROLL-9801)

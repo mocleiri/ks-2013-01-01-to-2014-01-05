@@ -19,7 +19,6 @@ Feature: SA.FE3-14 Suspending Course Offering will suspend the Exam Offerings as
     Then the EO for the suspended AO in the Exam Offering for Activity Offering table should be in a Suspended state
 
   #FE3.14.EB3 (KSENROLL-10324)
-  @draft
   Scenario: Test that suspending a CO does suspend the EOs when the FE Driver is set to CO
     When I suspend the Course Offering for a CO with a standard final exam driven by Course Offering
     And I view the Exam Offerings for the Course Offering

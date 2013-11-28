@@ -469,7 +469,7 @@ Given /^that the CO is set to have no exam offerings$/ do
   @course_offering.save
 end
 
-When /^I view the Exam Offerings for a CO where the Course Offering No Standard Final Exam or Assessment is changed to Standard Final Exam$/ do
+When /^I view the Exam Offerings for a CO where the Course Offering No Standard Final Exam or Assessment is changed to Standard Final Exam driven by Course Offering$/ do
   @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver =>"Final Exam Per Course Offering"
   @course_offering.save
@@ -648,7 +648,15 @@ When /^I suspend an Activity Offering for a CO with a standard final exam driven
 end
 
 When /^I suspend the Course Offering for a CO with a standard final exam driven by Course Offering$/ do
-
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
+                                 :final_exam_driver => "Final Exam Per Course Offering"
+  @course_offering.save
+  on ManageCourseOfferings do |page|
+    page.cluster_select_all_aos
+    page.suspend_ao
+    on(SuspendActivityOffering).suspend_activity
+  end
 end
 
 When /^I suspend all Activity Offerings for a CO with a standard final exam driven by Course Offering$/ do

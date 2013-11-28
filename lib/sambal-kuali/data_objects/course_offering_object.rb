@@ -254,13 +254,13 @@ class CourseOffering
     if options[:final_exam_type] != nil
       on CourseOfferingEdit do |page|
         case options[:final_exam_type]
-          when "Standard final Exam"
+          when "Standard Final Exam"
             page.final_exam_option_standard
             @final_exam_type = "STANDARD"
-          when "Alternate final assessment"
+          when "Alternate Final Assessment"
             page.final_exam_option_alternate
             @final_exam_type = "ALTERNATE"
-          when "No final exam or assessment"
+          when "No Final Exam or Assessment"
             page.final_exam_option_none
             @final_exam_type = "NONE"
         end
