@@ -7,16 +7,20 @@ Feature: SA.FE3-6 View Exam Offerings table renedered depending on FE Driver
     Given I am logged in as admin
 
   #FE3.6.EB1 (KSENROLL-9790)
-  Scenario: Test whether the View EO table is by Course Offering and that there is only one Exam Offering
+  Scenario: Verify that when the exam driver changes the correct EOs exist in the View EO table
+    Given that the SOC state is prior to Published
     When I view the Exam Offerings for a CO with a standard final exam driven by Course Offering
     Then the Exam Offerings for Course Offering in the EO for CO table should be in a Draft state
     When I view the Exam Offerings after changing the Final Exam Driver to Activity Offering
     Then the Exam Offerings for each Activity Offering in the EO for AO table should be in a Draft state
-    When I view the Exam Offerings after changing the Final Exam Driver to Course Offering
+    And there should be no Exam Offering for Course Offering table present
+    When I view the Exam Offerings after changing the Final Exam Driver back to Course Offering
     Then the Exam Offerings for Course Offering in the EO for CO table should be in a Draft state
+    And there should be no Exam Offering for Activity Offering table present
 
   #FE3.6.EB2 (KSENROLL-9876)
-  Scenario: Test whether the View EO table is by Course Offering when a delivery format Lecture is selected
-    When I create a Course Offering with standard final exam driven by Course Offering and "Lecture" as delivery format
+  Scenario: Verify that Cos with multiple Format Offerings have only one Exam Offering when the exam driver is by Course Offering
+    Given that a CO allows for multiple Format Offerings and has one existing format offering and a standard exam driven by Course Offering
+    When I edit the CO to add a second Format Offering
     And I view the Exam Offerings for the Course Offering
-    Then the Exam Offerings for Course Offering in the EO for CO table should be in a Draft state
+    Then there should only be one EO in the Exam Offerings for Course Offering table

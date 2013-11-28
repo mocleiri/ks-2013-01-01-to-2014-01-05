@@ -381,8 +381,12 @@ When /^I create a CO with two new AOs and then view the Exam Offerings where the
   on(ManageCourseOfferings).view_exam_offerings
 end
 
+Given /^that the SOC state is prior to Published$/ do
+  @term = "201301"
+end
+
 When /^I view the Exam Offerings for a CO with a standard final exam driven by Course Offering$/ do
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => @term, :course => "ENGL304")
   @course_offering.edit_offering :final_exam_type => "Standard final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
@@ -482,7 +486,7 @@ When /^I view the Exam Offerings for a CO where the exam is changed to Standard 
   on(ManageCourseOfferings).view_exam_offerings
 end
 
-When /^I view the Exam Offerings after changing the Final Exam Driver to Course Offering$/ do
+When /^I view the Exam Offerings after changing the Final Exam Driver (?:to|back to) Course Offering$/ do
   @course_offering.manage
   @course_offering.edit_offering :final_exam_type => "Standard final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
@@ -1089,7 +1093,7 @@ Then /^there should be one EO for each AO of the course in the Exam Offering for
     if array != nil
       no_of_eos = array.length
     end
-    no_of_eos.should == 1
+    no_of_eos.should >= 1
   end
 end
 
@@ -1203,4 +1207,14 @@ end
 
 Then /^the Exam Offering table for the canceled AO should also be in the same state$/ do
   on(ViewExamOfferings).canceled_eo_table.rows[1].text.should match /Canceled.*#{@activity_offering.code}/m
+end
+
+Given /^that a CO allows for multiple Format Offerings and has one existing format offering and a standard exam driven by Course Offering$/ do
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term=> "201208", :course => "ENGL304")
+end
+
+When /^I edit the CO to add a second Format Offering$/ do
+  on(ManageCourseOfferings).edit_course_offering
+  @course_offering.add_delivery_format :format => "Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture"
+  @course_offering.save
 end
