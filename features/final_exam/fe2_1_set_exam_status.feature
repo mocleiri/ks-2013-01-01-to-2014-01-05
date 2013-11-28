@@ -10,7 +10,7 @@ Feature: SA.FE2-1 Set Exam Status
   Scenario: Test whether the Final Exam data for a course changes depending on the chosen Final Exam indicator when there will be no exam
     Given that the catalog version of the course is set to have a standard final exam
     When I create a Course Offering from catalog in a term with a final exam period
-    And I change the Final Exam indicator from Standard final exam to Alternate final assessment or No final exam or assessment
+    And I change the Final Exam indicator from Standard Final Exam to Alternate Final Assessment or No Final Exam or Assessment
     Then the Final Exam Driver should not be Activity Offering or Course Offering
     And the Final Exam Driver Activity field should disappear
 
@@ -27,7 +27,7 @@ Feature: SA.FE2-1 Set Exam Status
   Scenario: Test whether the Final Exam data for a course changes depending on the chosen Final Exam indicator when there will be an exam
     Given that the catalog version of the course is set to have No final exam
     When I create a Course Offering from catalog in a term with a final exam period
-    And I change the Final Exam indicator from No final exam or assessment to Standard final exam
+    And I change the Final Exam indicator from No Final Exam or Assessment to Standard Final Exam
     Then the Final Exam Driver should allow the user to pick Activity Offering or Course Offering as the exam driver
     And the Final Exam Driver Activity field should appear if Activity Offering is selected as the exam driver
 

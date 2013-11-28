@@ -469,7 +469,7 @@ Given /^that the CO is set to have no exam offerings$/ do
   @course_offering.save
 end
 
-When /^I view the Exam Offerings for a CO where the Course Offering No Standard final exam or assessment is changed to Standard Final Exam$/ do
+When /^I view the Exam Offerings for a CO where the Course Offering No Standard Final Exam or Assessment is changed to Standard Final Exam$/ do
   @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver =>"Final Exam Per Course Offering"
   @course_offering.save
@@ -714,7 +714,7 @@ Then /^there should be no final exam period for any term in the copy$/ do
   end
 end
 
-When /^I change the Final Exam indicator from Standard final exam to Alternate Final Assessment or No Final Exam or Assessment$/ do
+When /^I change the Final Exam indicator from Standard Final Exam to Alternate Final Assessment or No Final Exam or Assessment$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_alternate
     page.final_exam_driver_value.should == "Alternate exam for this offering"
@@ -723,14 +723,14 @@ When /^I change the Final Exam indicator from Standard final exam to Alternate F
   end
 end
 
-When /^I change the Final Exam indicator from Alternate Final Assessment to Standard final exam$/ do
+When /^I change the Final Exam indicator from Alternate Final Assessment to Standard Final Exam$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_standard
     page.final_exam_driver_select "Final Exam Per Activity Offering"
   end
 end
 
-When /^I change the Final Exam indicator from No Final Exam or Assessment to Standard final exam$/ do
+When /^I change the Final Exam indicator from No Final Exam or Assessment to Standard Final Exam$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_standard
     page.final_exam_driver_select "Final Exam Per Course Offering"
