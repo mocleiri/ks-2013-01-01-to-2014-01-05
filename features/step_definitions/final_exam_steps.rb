@@ -68,7 +68,7 @@ When /^I create a Course Offering from an existing Course Offering with an alter
 end
 
 When /^I edit the Course Offering to have a Standard Final Exam$/ do
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam"
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam"
   @course_offering.save
 end
 
@@ -199,7 +199,7 @@ end
 
 When /^I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Course Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
   @activity_offering =  make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
@@ -227,7 +227,7 @@ When /^I create a Course Offering from an existing CO with a Standard Final Exam
 end
 
 When /^I select Final Exam Per Course Offering as the Final Exam Driver and Update the Course Offering$/ do
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 end
@@ -285,7 +285,7 @@ end
 
 When /^I view the Exam Offerings for a CO created from an existing CO with a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL305")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -298,7 +298,7 @@ When /^I view the Exam Offerings for a CO created from an existing CO with a sta
 end
 
 When /^I select Final Exam Per Activity Offering as the Final Exam Driver and Update the Course Offering$/ do
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -306,7 +306,7 @@ end
 
 When /^I view the Exam Offerings for a CO created from an existing CO with multiple AOs and a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "HIST110")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -320,7 +320,7 @@ end
 
 When /^I view the Exam Offerings for a CO with two AOs and a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -330,7 +330,7 @@ end
 
 Given /^that the CO has two existing AOs and a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -349,7 +349,7 @@ end
 
 When /^I view the Exam Offerings for a CO with two new AOs and a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -366,7 +366,7 @@ end
 
 When /^I create a CO with two new AOs and then view the Exam Offerings where the CO has a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL201")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -387,7 +387,7 @@ end
 
 When /^I view the Exam Offerings for a CO with a standard final exam driven by Course Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => @term, :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 
@@ -396,7 +396,7 @@ end
 
 When /^I view the Exam Offerings for a CO in an Open SOC with a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201301", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -406,11 +406,11 @@ end
 
 When /^I view the Exam Offerings for a CO where the Course Offering Standard FE is changed to No Final Exam$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL305")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 
-  @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
+  @course_offering.edit_offering :final_exam_type => "No Final Exam or Assessment"
   @course_offering.save
 
   on(ManageCourseOfferings).view_exam_offerings
@@ -418,21 +418,21 @@ end
 
 Given /^that the CO is set to have exam offerings driven by CO$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL305")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 end
 
 Given /^that the CO is set to have exam offerings driven by AO$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL305")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
 end
 
 When /^I view the Exam Offerings for a CO where the Course Offering Standard FE setting is changed to No Final Exam$/ do
-  @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
+  @course_offering.edit_offering :final_exam_type => "No Final Exam or Assessment"
   @course_offering.save
 
   on(ManageCourseOfferings).view_exam_offerings
@@ -440,12 +440,12 @@ end
 
 When /^I view the Exam Offerings for a CO where the Activity Offering Standard FE is changed to Alternate Final Exam$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
 
-  @course_offering.edit_offering :final_exam_type => "Alternate final assessment"
+  @course_offering.edit_offering :final_exam_type => "Alternate Final Assessment"
   @course_offering.save
 
   on(ManageCourseOfferings).view_exam_offerings
@@ -453,10 +453,10 @@ end
 
 When /^I view the Exam Offerings for a CO where the Course Offering No FE is changed to Standard Final Exam$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
+  @course_offering.edit_offering :final_exam_type => "No Final Exam or Assessment"
   @course_offering.save
 
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver =>"Final Exam Per Course Offering"
   @course_offering.save
 
@@ -465,12 +465,12 @@ end
 
 Given /^that the CO is set to have no exam offerings$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
+  @course_offering.edit_offering :final_exam_type => "No Final Exam or Assessment"
   @course_offering.save
 end
 
 When /^I view the Exam Offerings for a CO where the Course Offering No Standard final exam or assessment is changed to Standard Final Exam$/ do
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver =>"Final Exam Per Course Offering"
   @course_offering.save
 
@@ -478,7 +478,7 @@ When /^I view the Exam Offerings for a CO where the Course Offering No Standard 
 end
 
 When /^I view the Exam Offerings for a CO where the exam is changed to Standard Final Exam driven by Activity Offering$/ do
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver =>"Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -488,7 +488,7 @@ end
 
 When /^I view the Exam Offerings after changing the Final Exam Driver (?:to|back to) Course Offering$/ do
   @course_offering.manage
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 
@@ -497,7 +497,7 @@ end
 
 When /^I view the Exam Offering after changing the Course Offering back to Standard FE and the Final Exam Driver to Course Offering$/ do
   @course_offering.manage
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 
@@ -506,7 +506,7 @@ end
 
 When /^I view the Exam Offerings? after changing the Course Offering back to Standard FE and the Final Exam Driver to Activity Offering$/ do
   @course_offering.manage
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -516,7 +516,7 @@ end
 
 When /^I view the Exam Offerings after changing the Final Exam Driver to Activity Offering$/ do
   @course_offering.manage
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -526,7 +526,7 @@ end
 
 When /^I view the Exam Offerings after updating the Final Exam indicator to No final Exam$/ do
   @course_offering.manage
-  @course_offering.edit_offering :final_exam_type => "No final exam or assessment"
+  @course_offering.edit_offering :final_exam_type => "No Final Exam or Assessment"
   @course_offering.save
 
   on(ManageCourseOfferings).view_exam_offerings
@@ -534,7 +534,7 @@ end
 
 When /^I view the Exam Offerings for a CO created from catalog with a standard final exam driven by Course Offering$/ do
   @course_offering = create CourseOffering, :term => "201208", :course => "ENGL304"
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
 
@@ -568,7 +568,7 @@ When /^there is more than one Activity Offering for the Course$/ do
 end
 
 When /^I cancel an Activity Offering for a CO with a standard final exam driven by Course Offering$/ do
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
   @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
@@ -577,7 +577,7 @@ end
 
 When /^I cancel an Activity Offering for a CO with a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -587,7 +587,7 @@ end
 
 Given /^that the Lecture AO that drives the exam is not in a cancelled state$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -600,7 +600,7 @@ end
 
 When /^I cancel all Activity Offerings for a CO with a standard final exam driven by Course Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
   on ManageCourseOfferings do |page|
@@ -621,7 +621,7 @@ end
 
 When /^I cancel all Activity Offerings for a CO with a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
                                  :final_exam_activity => "Lecture"
   @course_offering.save
@@ -640,7 +640,7 @@ end
 
 When /^I suspend an Activity Offering for a CO with a standard final exam driven by Course Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                         :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
   @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
@@ -653,7 +653,7 @@ end
 
 When /^I suspend all Activity Offerings for a CO with a standard final exam driven by Course Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
   on ManageCourseOfferings do |page|
@@ -665,7 +665,7 @@ end
 
 When /^I suspend an Activity Offering for a CO with a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
-  @course_offering.edit_offering :final_exam_type => "Standard final Exam",
+  @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                         :final_exam_driver => "Final Exam Per Activity Offering",
                                         :final_exam_activity => "Lecture"
   @course_offering.save
@@ -714,7 +714,7 @@ Then /^there should be no final exam period for any term in the copy$/ do
   end
 end
 
-When /^I change the Final Exam indicator from Standard final exam to Alternate final assessment or No final exam or assessment$/ do
+When /^I change the Final Exam indicator from Standard final exam to Alternate Final Assessment or No Final Exam or Assessment$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_alternate
     page.final_exam_driver_value.should == "Alternate exam for this offering"
@@ -723,14 +723,14 @@ When /^I change the Final Exam indicator from Standard final exam to Alternate f
   end
 end
 
-When /^I change the Final Exam indicator from Alternate final assessment to Standard final exam$/ do
+When /^I change the Final Exam indicator from Alternate Final Assessment to Standard final exam$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_standard
     page.final_exam_driver_select "Final Exam Per Activity Offering"
   end
 end
 
-When /^I change the Final Exam indicator from No final exam or assessment to Standard final exam$/ do
+When /^I change the Final Exam indicator from No Final Exam or Assessment to Standard final exam$/ do
   on CreateCOFromCatalog do |page|
     page.final_exam_option_standard
     page.final_exam_driver_select "Final Exam Per Course Offering"
@@ -836,7 +836,7 @@ Then /^I should not be able to update the status of the final exam period$/ do
     page.final_exam_option_div.radio(value: "STANDARD").present?.should == false
     page.final_exam_option_div.radio(value: "ALTERNATE").present?.should == false
     page.final_exam_option_div.radio(value: "NONE").present?.should == false
-    page.span( id: "finalExamType_control").text.should == "Standard final Exam"
+    page.span( id: "finalExamType_control").text.should == "Standard Final Exam"
     page.cancel
   end
 end
@@ -851,7 +851,7 @@ Then /^I do not have access to the final exam status for the course offering fro
     page.final_exam_option_div.radio(value: "STANDARD").present?.should == false
     page.final_exam_option_div.radio(value: "ALTERNATE").present?.should == false
     page.final_exam_option_div.radio(value: "NONE").present?.should == false
-    page.span( id: "finalExamType_control").text.should == "Standard final Exam"
+    page.span( id: "finalExamType_control").text.should == "Standard Final Exam"
   end
 end
 
