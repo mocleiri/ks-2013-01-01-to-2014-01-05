@@ -23,7 +23,7 @@
         <property name="items">
             <list>            	
                 <bean parent="Uif-GridSubSection">
-                <property name="layoutManager.numberOfColumns" value="6"/>
+                <property name="layoutManager.numberOfColumns" value="2"/>
                 <property name="layoutManager.applyDefaultCellWidths" value="false" />
                 <property name="style" value="margin-bottom:0;"/>
                 <property name="items">
