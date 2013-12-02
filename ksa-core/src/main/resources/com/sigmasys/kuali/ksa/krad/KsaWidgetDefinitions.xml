@@ -344,12 +344,15 @@
                                             </property>
                                         </bean>
                                         <!-- Use this to display the combined account, bio, aging and alerts -->
-                                        <bean parent="Uif-LinkField" p:linkText="Transactions" p:target="_self"
-                                              p:align="center" p:width="10%"
-                                              p:href="transactionView?methodToCall=get&amp;pageId=ViewTransactions&amp;viewId=TransactionView&amp;userId=@{#line.id}"/>
                                         <bean parent="Uif-LinkField" p:linkText="Quick View" p:target="_self"
                                               p:align="center" p:width="10%"
                                               p:href="quickView?methodToCall=get&amp;viewId=QuickView&amp;userId=@{#line.id}"/>
+                                        <bean parent="Uif-LinkField" p:linkText="Roll Up Transactions" p:target="_self"
+                                              p:align="center" p:width="10%"
+                                              p:href="transactionView?methodToCall=get&amp;pageId=RollUpTransactions&amp;viewId=TransactionView&amp;userId=@{#line.id}"/>
+                                        <bean parent="Uif-LinkField" p:linkText="Running Balance" p:target="_self"
+                                              p:align="center" p:width="10%"
+                                              p:href="transactionView?methodToCall=get&amp;pageId=RunningBalanceTransactions&amp;viewId=TransactionView&amp;userId=@{#line.id}"/>
                                     </list>
                                 </property>
                             </bean>
