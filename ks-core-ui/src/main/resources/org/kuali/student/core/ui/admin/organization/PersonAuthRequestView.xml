@@ -55,7 +55,8 @@
 					           	 </property>								            	  
 							</bean>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="submittedForName" p:label="Request Authorization For" p:required="true">
+								p:propertyName="submittedForName" p:label="Request Authorization For" p:required="true"
+								p:defaultValue="@{submittedByName}">
 								 <property name="control">
 							      	<bean parent="Uif-TextControl" p:watermarkText="Enter Name" />										      	
 							     </property>											  
@@ -75,7 +76,7 @@
             						<bean parent="Uif-DropdownControl" p:size="5"/>
           						</property>
           						<property name="optionsFinder">
-					            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.OrgInfoNameKeyValues"/>
+					            	<bean class="org.kuali.student.core.organization.ui.lookup.keyvalues.DepartmentNameKeyValues"/>
 					          	</property>
 							</bean>							
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
@@ -85,7 +86,7 @@
           						</property>
 							</bean>							
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="proposalInfo.descr.plain" p:label="Notes" p:required="true">		
+								p:propertyName="proposalInfo.descr.plain" p:label="Notes" >		
 								<property name="control">
             						<bean parent="Uif-LargeTextAreaControl" />
           						</property>					

@@ -20,6 +20,8 @@ public class PersonAuthorizationForm extends UifFormBase {
 	private String forOrganizationName;	
 	private String forOrganizationId;	
 	private String requestedSince;
+	private String stateName;
+	private String typeName;
 	
 	private List<ProposalInfoModel> proposals;
 	
@@ -71,7 +73,18 @@ public class PersonAuthorizationForm extends UifFormBase {
 	public void setProposals(List<ProposalInfoModel> proposals) {
 		this.proposals = proposals;
 	}
-	
+	public String getStateName() {
+		return stateName;
+	}
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+	public String getTypeName() {
+		return typeName;
+	}
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
 	
 
 }

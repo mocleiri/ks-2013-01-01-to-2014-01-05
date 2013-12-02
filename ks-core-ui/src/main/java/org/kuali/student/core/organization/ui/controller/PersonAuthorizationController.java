@@ -1,6 +1,5 @@
 package org.kuali.student.core.organization.ui.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -27,9 +26,7 @@ import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.student.common.util.ContextBuilder;
-import org.kuali.student.core.organization.ui.form.OrgInfoAdminSearchForm;
 import org.kuali.student.core.organization.ui.form.PersonAuthorizationForm;
-import org.kuali.student.core.organization.ui.form.model.OrgUIModel;
 import org.kuali.student.core.organization.ui.form.model.ProposalInfoModel;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.MetaInfo;
@@ -38,8 +35,12 @@ import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.core.class1.state.service.StateService;
+import org.kuali.student.r2.core.class1.type.service.TypeService;
 import org.kuali.student.r2.core.constants.OrganizationServiceConstants;
 import org.kuali.student.r2.core.constants.ProposalServiceConstants;
+import org.kuali.student.r2.core.constants.StateServiceConstants;
+import org.kuali.student.r2.core.constants.TypeServiceConstants;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
 import org.kuali.student.r2.core.proposal.dto.ProposalInfo;
 import org.kuali.student.r2.core.proposal.service.ProposalService;
@@ -59,6 +60,9 @@ public class PersonAuthorizationController extends UifControllerBase {
 	private transient ProposalService proposalService;
 	private transient OrganizationService organizationService;
 	private transient PersonService personService;
+	private transient StateService stateService;
+	private transient TypeService typeService;
+	
 	List<ProposalInfoModel> uiProposals = new ArrayList<ProposalInfoModel>();
 	
 	{   
@@ -77,6 +81,8 @@ public class PersonAuthorizationController extends UifControllerBase {
 	public ModelAndView start(@ModelAttribute("KualiForm") UifFormBase form, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
 		PersonAuthorizationForm personAuthorizationForm = (PersonAuthorizationForm)form;
 		personAuthorizationForm.setSubmittedByName(GlobalVariables.getUserSession().getPerson().getName());
+		personAuthorizationForm.setProposalInfo(new ProposalInfo());
+		personAuthorizationForm.getProposalInfo().setEffectiveDate(Calendar.getInstance().getTime());
 		return super.start(form, result, request, response);
 	}
 	
@@ -93,7 +99,6 @@ public class PersonAuthorizationController extends UifControllerBase {
 			predicates.add(PredicateFactory.equal("meta.createId",getPersonId(searchForm.getSubmittedByName())));
 		}
 		if(!searchForm.getRequestedSince().equalsIgnoreCase("All")){
-			//SimpleDateFormat df = new SimpleDateFormat ("yyyy-MM-dd");
 			Calendar calendar = Calendar.getInstance();
 			
 			if(searchForm.getRequestedSince().equalsIgnoreCase("Day")){
@@ -122,7 +127,9 @@ public class PersonAuthorizationController extends UifControllerBase {
 			BeanUtils.copyProperties(uiProposal, proposal);
 			uiProposal.setSubmittedByName(getPersonName(proposal.getMeta().getCreateId()));
 			uiProposal.setSubmittedForName(getPersonName(proposal.getProposerPerson().get(0)));
-			uiProposal.setOrganizationName(getOrgName(proposal.getProposerOrg().get(0)));
+			uiProposal.setOrganizationName(getOrgName(proposal.getProposerOrg().get(0)));			
+			uiProposal.setStateName(getStateService().getState(proposal.getStateKey(), getContextInfo()).getName());
+			uiProposal.setTypeName(getTypeService().getType(proposal.getTypeKey(), getContextInfo()).getName());
 			uiProposals.add(uiProposal);
 		}
 		
@@ -143,6 +150,8 @@ public class PersonAuthorizationController extends UifControllerBase {
 				viewForm.setSubmittedByName(proposal.getSubmittedByName());
 				viewForm.setSubmittedForName(proposal.getSubmittedForName());
 				viewForm.setForOrganizationName(proposal.getOrganizationName());
+				viewForm.setStateName(proposal.getStateName());
+				viewForm.setTypeName(proposal.getTypeName());
 				break;
 			}
 		}
@@ -272,6 +281,32 @@ public class PersonAuthorizationController extends UifControllerBase {
         return this.personService;
     }
 	
+	public StateService getStateService() {
+		if (stateService == null)
+		{
+			QName qname = new QName(StateServiceConstants.NAMESPACE,StateServiceConstants.SERVICE_NAME_LOCAL_PART);
+			stateService = (StateService) GlobalResourceLoader.getService(qname);
+		}
+		return this.stateService;
+	}
+
+	public void setStateService(StateService stateService) {
+		this.stateService = stateService;
+	}
+
+	public TypeService getTypeService() {
+		if (typeService == null)
+		{
+			QName qname = new QName(TypeServiceConstants.NAMESPACE,TypeServiceConstants.SERVICE_NAME_LOCAL_PART);
+			typeService = (TypeService) GlobalResourceLoader.getService(qname);
+		}
+		return this.typeService;
+	}
+
+	public void setTypeService(TypeService typeService) {
+		this.typeService = typeService;
+	}
+
 	private ContextInfo getContextInfo() {
     	return ContextBuilder.loadContextInfo();
 	}

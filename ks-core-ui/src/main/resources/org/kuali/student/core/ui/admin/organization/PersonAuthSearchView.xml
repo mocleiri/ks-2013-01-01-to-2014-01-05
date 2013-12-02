@@ -141,7 +141,11 @@
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
 								p:propertyName="submittedForName" p:label="Request Authorization For" p:readOnly="true"/>					        
 							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
-								p:propertyName="forOrganizationName" p:label="Department" />							
+								p:propertyName="forOrganizationName" p:label="Department" />
+								<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="typeName" p:label="Type" />
+								<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="stateName" p:label="State" />							
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
 								p:propertyName="proposalInfo.effectiveDate" p:label="Requested Effective Date" p:readOnly="true"/>							
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
@@ -161,9 +165,9 @@
 							<bean parent="Uif-HorizontalFieldGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Approved" p:methodToCall="performApproval" p:actionParameters="action:approved"/>
-                                        <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Denied" p:methodToCall="performApproval" p:actionParameters="action:denied"/>
-                                        <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Clarification Required" p:methodToCall="performApproval" p:actionParameters="action:clarification"/>
+                                        <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Approve" p:methodToCall="performApproval" p:actionParameters="action:approved"/>
+                                        <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Deny" p:methodToCall="performApproval" p:actionParameters="action:denied"/>
+                                        <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Request Clarification" p:methodToCall="performApproval" p:actionParameters="action:clarification"/>
                                         <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Cancel" p:methodToCall="cancel" p:actionParameters="returnViewName:KS-Person-Auth-Search-View"/>
                                     </list>
                                 </property>
