@@ -235,8 +235,8 @@
                             <bean parent="Uif-VerticalBoxGroup">
                                 <property name="items">
                                     <list>
-                                        <bean parent="Uif-Link" p:linkText="Run Payment Application"
-                                              p:href="transactionView?methodToCall=paymentApplication&amp;pageId=ViewTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}&amp;refresh=quickView"/>
+                                        <bean parent="Uif-ActionLink" p:actionLabel="Run Payment Application" p:methodToCall="paymentApplication"
+                                              p:actionParameters="userId:@{account.id}" />
 
                                         <bean parent="Uif-Link" p:linkText="Details"
                                               p:href="transactionView?methodToCall=get&amp;pageId=ViewTransactions&amp;viewId=TransactionView&amp;userId=@{account.id}"/>

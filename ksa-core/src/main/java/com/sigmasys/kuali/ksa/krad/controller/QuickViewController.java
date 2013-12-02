@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.InformationService;
+import com.sigmasys.kuali.ksa.service.PaymentService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
@@ -41,6 +42,9 @@ public class QuickViewController extends GenericSearchController {
 
     @Autowired
     private InformationService informationService;
+
+    @Autowired
+    private PaymentService paymentService;
 
 
     /**
@@ -138,6 +142,23 @@ public class QuickViewController extends GenericSearchController {
 
         return getUIFModelAndView(form);
     }
+
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=paymentApplication")
+    public ModelAndView paymentApplication(@ModelAttribute("KualiForm") QuickViewForm form, HttpServletRequest request) {
+
+        String accountId = request.getParameter("actionParameters[userId]");
+
+        if (accountId != null && !accountId.trim().isEmpty()) {
+            paymentService.paymentApplication(accountId);
+
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Payments successfully applied");
+
+        }
+
+        populateForm(accountId, form);
+        return getUIFModelAndView(form);
+    }
+
 
     /**
      * Ageing debts.

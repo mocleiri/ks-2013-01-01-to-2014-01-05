@@ -374,35 +374,20 @@ public class TransactionController extends GenericSearchController {
      * @param form Kuali form instance
      * @return ModelAndView
      */
-    @RequestMapping(method = RequestMethod.GET, params = "methodToCall=paymentApplication")
+    @RequestMapping(method = RequestMethod.POST, params = "methodToCall=paymentApplication")
     public ModelAndView paymentApplication(@ModelAttribute("KualiForm") TransactionForm form, HttpServletRequest request) {
 
-        String accountId = request.getParameter("userId");
+        String accountId = request.getParameter("actionParameters[userId]");
 
         if (accountId != null && !accountId.trim().isEmpty()) {
             paymentService.paymentApplication(accountId);
 
-            form.setStatusMessage("Payments successfully applied");
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Payments successfully applied");
 
         }
 
-        Properties props = new Properties();
-        String refreshLocation = request.getParameter("refresh");
-        if (refreshLocation == null) {
-            refreshLocation = "transactionView";
-        }
-
-        if (refreshLocation.equals("quickView")) {
-            props.put("viewId", "QuickView");
-
-        } else {
-            props.put("pageId", "ViewTransactions");
-            props.put("viewId", "TransactionView");
-        }
-        props.put("methodToCall", "get");
-        props.put("userId", accountId);
-
-        return performRedirect(form, refreshLocation, props);
+        populateForm(form);
+        return getUIFModelAndView(form);
     }
 
     /**
