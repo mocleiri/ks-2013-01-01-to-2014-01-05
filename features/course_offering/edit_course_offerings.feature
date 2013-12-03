@@ -34,7 +34,7 @@ Feature: WC.Edit Course Offerings
     When I edit a course offering with multiple format types
     And I select a final exam type of "No final exam or assessment"
     And I change the delivery format options
-    Then I can submit and the course offering is updated
+    Then after I submit the course offering exam options and delivery format are updated
 
   #KSENROLL-1503.2
   @smoke_test

@@ -41,7 +41,7 @@ And /^I remove a cross-listed Course Offering$/ do
   #on(ManageCourseOfferings).edit_course_offering
   @cross_listed_co.edit_offering :cross_listed => false
   @cross_listed_co.save
-  #on(CourseOfferingEdit).submit
+  #on(CourseOfferingCreateEdit).submit
 end
 
 
@@ -75,7 +75,7 @@ Then /^the owner course offering is not indicated as cross-listed with the alias
   on ManageCourseOfferings do |page|
     page.edit_course_offering
   end
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.cross_listed_co_check_box.set?.should == false
   end
 end
@@ -91,7 +91,7 @@ Then /^the alias is indicated as cross-listed with the owner CO$/ do
   end
 
 Then /^the edit page (should|should not) indicate a cross-listing$/ do |condition|
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     if(condition == 'should not')
       puts 'Testing for crosslisting label not present'
       page.cross_listed_as_label.should_not be_present

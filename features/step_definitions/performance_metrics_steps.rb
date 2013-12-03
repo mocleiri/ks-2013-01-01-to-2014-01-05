@@ -241,7 +241,7 @@ When /^I edit the course offering for performance$/ do
 end
 
 When /^I save the course change$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     if page.waitlist_checkbox.set?
       page.waitlist_checkbox.clear
     else
@@ -300,9 +300,9 @@ When /^I create a basic course offering$/ do
       page.alert.cancel
     end
   end
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.suffix.set random_alphanums.strip
-    page.add_random_delivery_format
+    create DeliveryFormat
     @performance_test.start
     page.create_offering
     @performance_test.end
@@ -318,10 +318,10 @@ When /^I create a jointly defined course offering$/ do
     page.catalogue_course_code.set "ENGL316"
     page.continue
   end
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.suffix.set random_alphanums.strip
     page.create_new_joint_defined_course_row_1
-    page.add_random_delivery_format
+    create DeliveryFormat
     @performance_test.start
     page.create_offering
     @performance_test.end

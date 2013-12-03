@@ -14,12 +14,6 @@ Feature: WC.Create and remove cross-listings
   #   1) Remove cross-listing, check owner CO to see that checkbox is clear and cross-listed message is absent
   #   --------------------------------------------------------------------------------------------------------
   Scenario: Remove cross-listing confirm owner
-      STEPS TO MANUALLY REPRODUCE:
-          1) Create a cross-listed CO and set the cross-listed checkbox, then clear the cross-listed checkbox.
-          2) Make sure the checkbox is not set.
-          3) Manage and edit the owner course offering
-          4) Make sure it does not specify "Crosslisted as:"
-
     When I create a cross-listed Course Offering
     And I remove a cross-listed Course Offering
     And I edit the course offering

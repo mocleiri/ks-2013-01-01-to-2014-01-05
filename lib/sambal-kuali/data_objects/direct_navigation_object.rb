@@ -37,7 +37,7 @@ class DirectNavigation
       page.edit_course_offering
     end
     @edit_course_offering = @browser.url
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.cancel
     end
 

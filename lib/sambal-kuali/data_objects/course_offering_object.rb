@@ -150,7 +150,7 @@ class CourseOffering
         page.continue
       end
 
-      on CreateCOFromCatalog do |page|
+      on CourseOfferingCreateEdit do |page|
         @suffix = random_alphanums(3).upcase if @suffix == ""
         page.suffix.set @suffix
         @course = "#{@course}#{@suffix}"
@@ -170,8 +170,8 @@ class CourseOffering
         end
 
         #need to specify which row dfl is being created on, which is 1 greater than the current iteration
-        @delivery_format_list.each_with_index do |dfl, index|
-          dfl.create(index + 1)
+        @delivery_format_list.each_with_index do |dfl|
+          dfl.create
         end
         if @waitlist.nil?  #if waitlist is nil, means use default
           @waitlist = page.has_waitlist?
@@ -192,7 +192,7 @@ class CourseOffering
     # TODO: this is hardcoded to create joint-co from row-1;
     # needs to be parameterized using the @joint_co_to_create
     # variable
-    on CreateCOFromCatalog do |page|
+    on CourseOfferingCreateEdit do |page|
       page.create_new_joint_defined_course_row_1
       page.create_new_joint_defined_course_row_2
     end
@@ -211,12 +211,12 @@ class CourseOffering
 
     #TODO change method name to 'edit'
     if options[:suffix] != nil
-      on(CourseOfferingEdit).suffix.set options[:suffix]
+      on(CourseOfferingCreateEdit).suffix.set options[:suffix]
       @course = "#{@course[0..6]}#{options[:suffix]}"
     end
 
     if options[:grade_options] != nil
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         page.set_grading_option(options[:grade_options])
         @grade_options = options[:grade_options]
       end
@@ -227,9 +227,9 @@ class CourseOffering
     end
 
     if options[:waitlist].nil?
-      @waitlist = on(CourseOfferingEdit).has_waitlist?
+      @waitlist = on(CourseOfferingCreateEdit).has_waitlist?
     else
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         if options[:waitlist]
           page.waitlist_on
         else
@@ -241,7 +241,7 @@ class CourseOffering
     end
 
     if options[:honors_flag] != nil
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         if options[:honors_flag] == "YES"
           page.honors_flag.set
         else
@@ -252,7 +252,7 @@ class CourseOffering
     end
 
     if options[:final_exam_type] != nil
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         case options[:final_exam_type]
           when "Standard Final Exam"
             page.final_exam_option_standard
@@ -268,20 +268,22 @@ class CourseOffering
     end
 
     if options[:delivery_format_list] != nil
-      delivery_obj = make DeliveryFormat
-      delivery_obj.edit_random_delivery_formats
-      @delivery_format_list << delivery_obj
+      options[:delivery_format_list].each do |delivery_obj|
+        @delivery_format_list.each do |existing_dl|
+          existing_dl.update_delivery_format(delivery_obj) if existing_dl.format == delivery_obj.format
+        end
+      end
     end
 
     if options[:grade_format] != nil
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         page.select_grade_roster_level(options[:grade_format])
       end
       @grade_format = options[:grade_format]
     end
 
     if options[:pass_fail_flag] != nil
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         if options[:pass_fail_flag]
           page.pass_fail_checkbox.set
         else
@@ -293,7 +295,7 @@ class CourseOffering
     end
 
     if options[:audit_flag] != nil
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         if options[:audit_flag]
           page.audit_checkbox.set
         else
@@ -306,7 +308,7 @@ class CourseOffering
 
     if options[:credit_type] != nil
       @credit_type = options[:credit_type]
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         if options[:credit_type] == "fixed"
           page.select_fixed_credit_option
         elsif options[:credit_type] == "multiple"
@@ -317,33 +319,33 @@ class CourseOffering
 
     if options[:fixed_credit_count] != nil
       @fixed_credit_count = options[:fixed_credit_count]
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         page.select_fixed_credits(@fixed_credit_count)
       end
     end
 
     if options[:multiple_credit_list] != nil
       @multiple_credit_list = options[:multiple_credit_list]
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         @multiple_credit_list.each do |credits, checked|
           if checked
-            page.set_multiple_credit_count(credits)
+            page.set_multiple_credit_checkbox(credits)
           else
-            page.clear_multiple_credit_count(credits)
+            page.clear_multiple_credit_checkbox(credits)
           end
         end
       end
     end
 
     if options[:final_exam_driver] != nil
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         page.final_exam_driver_select(options[:final_exam_driver])
       end
       @final_exam_driver = options[:final_exam_driver]
     end
 
     if options[:final_exam_activity] != nil
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         page.select_final_exam_activity(options[:final_exam_activity])
       end
       @final_exam_activity = options[:final_exam_activity]
@@ -351,7 +353,7 @@ class CourseOffering
 
     if options[:affiliated_person_list] != nil
       options[:affiliated_person_list].values.each do |person|
-        on CourseOfferingEdit do |page|
+        on CourseOfferingCreateEdit do |page|
           page.lookup_person
         end
         on PersonnelLookup do |page|
@@ -359,7 +361,7 @@ class CourseOffering
           page.search
           page.return_value(person.id)
         end
-        on CourseOfferingEdit do |page|
+        on CourseOfferingCreateEdit do |page|
           page.add_affiliation.select(person.affiliation)
           page.add_personnel
         end
@@ -369,11 +371,11 @@ class CourseOffering
     if options[:affiliated_org_list] != nil
       options[:affiliated_org_list].values.each do |org|
 
-        on CourseOfferingEdit do |page|
+        on CourseOfferingCreateEdit do |page|
           page.add_org
         end
 
-        on CourseOfferingEdit do |page|
+        on CourseOfferingCreateEdit do |page|
           page.lookup_org_new
         end
 
@@ -386,56 +388,56 @@ class CourseOffering
     end
 
     if options[:cross_listed] != nil
-      on CourseOfferingEdit do |page|
+      on CourseOfferingCreateEdit do |page|
         options[:cross_listed] ? page.cross_listed_co_set : page.cross_listed_co_clear
       end
     end
   end
 
   def save
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.submit
     end
   end
 
   def save_progress
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.save_progress
     end
   end
 
   def cancel
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.cancel
     end
   end
 
   def cancel_and_continue
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.navigation_cancel_and_continue
     end
   end
 
   def save_and_continue
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.navigation_save_and_continue
     end
   end
 
   def edit_previous_co
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.edit_previous_co
     end
   end
   
   def edit_next_co
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.edit_next_co
     end
   end
   
   def edit_arbitrary_co
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.edit_relatedCos_dropdown_list.options[10].select
     end
   end
@@ -704,7 +706,7 @@ class CourseOffering
 # the new format added to the list and the new list passed on the options hash to course_offering.edit_offering
 
  def add_delivery_format (opts)
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.delivery_format_add
       delivery_format = make DeliveryFormat,
                              :format => opts[:format],
@@ -718,7 +720,7 @@ class CourseOffering
 # the format deleted from the list and the new list passed on the options hash to course_offering.edit_offering
 
   def delete_delivery_format (format)
-    on CourseOfferingEdit do |page|
+    on CourseOfferingCreateEdit do |page|
       page.delete_delivery_format(format)
     end
   end
@@ -1054,17 +1056,6 @@ class CourseOffering
     retVal
   end
 
-  #TODO: this method is not used
-  #
-  #def cross_listed_co_data(co_code)
-  #  retVal = nil
-  #  on ManageCourseOfferings do |page|
-  #    retVal = page.course_title
-  #  end
-  #
-  #  retVal
-  #end
-
   # add/create an ao_cluster to the CourseOffering
   # @example
   #  @course_offering.add_ao_cluster(ao_cluster_object)
@@ -1159,18 +1150,6 @@ class CourseOffering
   end
   private :create_co_copy
 
-
-  #TODO:  see  KSENROLL-7232, need to be fixed with delete_co.feature refactoring - add rdoc when complete
-  def total_co_list(course_code)
-    go_to_manage_course_offerings
-    on ManageCourseOfferings do |page|
-      page.term.set @term
-      page.input_code.set course_code
-      page.show
-    end
-    on(ManageCourseOfferingList).co_list
-  end
-
   # deletes a list of COs from the subject-code view using the toolbar
   #
   # @example
@@ -1237,21 +1216,6 @@ class CourseOffering
     formatted_credits_list
   end
 
-  # merged with delete_co
-  #def delete_co_warning_message(args={})
-  #
-  #  co_code_list = args[:code_list]
-  #  on ManageCourseOfferingList do |page|
-  #    page.select_cos(co_code_list)
-  #    page.delete_cos
-  #  end
-  #  on DeleteCourseOffering do |page|
-  #    delete_warning = page.delete_warning_message
-  #    page.cancel_delete
-  #    return delete_warning
-  #  end
-  #end
-
   def full_ao_list
     #TODO - required for existing validations
   end
@@ -1311,65 +1275,61 @@ class DeliveryFormat
 
     defaults = {
         :format => "random",
-        :grade_format => "",
-        :final_exam_activity => "",
+        :grade_format => "Course Offering",
+        :final_exam_activity => "Lecture",
         :final_exam_driver => ""
     }
     options = defaults.merge(opts)
     set_options(options)
   end
 
-  def create(row)
+  def create
+    on CourseOfferingCreateEdit do |page|
+      if ! page.new_format_select.present?
+        page.add_format
+      end
+    end
+
     if @format == "random" then
-      select_random_delivery_formats
+      set_random_delivery_formats
     else
-      on CreateCOFromCatalog do |page|
-        page.target_format_select(row, @format)
-        if @format == "Lab"
-          @format = "Lab Only"
-        end
-        if @format == "Lecture"
-          @format = "Lecture Only"
-        end
-        page.target_grade_roster_level_select(row, @grade_format)
-        page.target_final_exam_activity_select(row, @final_exam_activity) if @final_exam_driver == "Activity Offering"
-        page.add_format if page.add_format_btn.present?
-        #add button not present if there is only one choice of Format
+      on CourseOfferingCreateEdit do |page|
+        page.new_format_select.select(@format)
+        page.new_grade_roster_level_select.select(@grade_format)
+        page.new_final_exam_activity_select.select(@final_exam_activity)
       end
     end
+    standardize_format_values
   end
 
-  def select_random_delivery_formats
-    on CreateCOFromCatalog do  |page|
-      selected_options = page.add_random_delivery_format
-      if selected_options[:del_format] == "Lab"
-        @format = "Lab Only"
-      elsif selected_options[:del_format] == "Lecture"
-        @format = "Lecture Only"
-      #elsif selected_options[:del_format] == "Discussion/Lecture"
-      #  @format = "Lecture/Discussion"
-      else
-        @format = selected_options[:del_format]
-      end
+  def set_random_delivery_formats
+    on CourseOfferingCreateEdit do  |page|
+      @format = page.select_random_option(page.new_format_select)
+      @grade_format = page.select_random_option(page.new_grade_roster_level_select)
+      @final_exam_activity = page.select_random_option(page.new_final_exam_activity_select) if page.new_final_exam_activity_select.present?
+    end
+    standardize_format_values
+  end
 
-      if selected_options[:grade_format] == "Course"
-        @grade_format = "Course Offering"
-      else
-        @grade_format = selected_options[:grade_format]
-      end
-
-      @final_exam_activity = selected_options[:final_exam_activity]
-      return selected_options
+  def standardize_format_values
+    if @format == "Lab"
+      @format = "Lab Only"
+    elsif @format == "Lecture"
+      @format = "Lecture Only"
+    end
+    if @grade_format == "Course"
+      @grade_format = "Course Offering"
+    else
     end
   end
+  private  :standardize_format_values
 
-  def edit_random_delivery_formats
-    on CourseOfferingEdit do |page|
-      selected_options = page.edit_random_delivery_format
-      @format = selected_options[:del_format]
-      @grade_format = selected_options[:grade_format]
-      @final_exam_activity = selected_options[:final_exam_activity]
-      return selected_options
+  def update_delivery_format(delivery_format_obj)
+    on CourseOfferingCreateEdit do |page|
+      page.edit_grade_roster_level(@format,delivery_format_obj.grade_format)
+      @grade_format = delivery_format_obj.grade_format
+      page.edit_final_exam_activity(@format,delivery_format_obj.final_exam_activity)
+      @final_exam_activity = delivery_format_obj.final_exam_activity
     end
   end
 

@@ -47,7 +47,7 @@ end
 When /^the second user gets a VersionMismatchError$/ do
   @browser = @browser2
 
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     #add verify error message
     true.should == false
   end

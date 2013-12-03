@@ -544,7 +544,7 @@ When /^I deactivate waitlists at the course offering level for one of the activi
   @ao_list[0].parent_course_offering.search_by_subjectcode
   on(ManageCourseOfferingList).edit @ao_list[0].parent_course_offering.course
   @ao_list[0].parent_course_offering.edit_offering :waitlist => false, :edit_in_progress => true
-  on(CourseOfferingEdit).submit
+  on(CourseOfferingCreateEdit).submit
 end
 
 Then /^waitlists is deactived for both activity offerings$/ do

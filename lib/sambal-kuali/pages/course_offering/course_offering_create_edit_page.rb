@@ -1,14 +1,18 @@
-class CourseOfferingEdit < BasePage
+class CourseOfferingCreateEdit < BasePage
 
   wrapper_elements
   validation_elements
   frame_element
 
-  expected_element :term_label_div
+  expected_element :suffix
 
   action(:submit) { |b| b.frm.button(text: "Update").click; b.loading.wait_while_present }
   action(:save_progress) { |b| b.frm.button(text: "Save Progress").click; b.loading.wait_while_present }
-  action(:cancel) { |b| b.frm.link(id: "COEdit_CancelLink").click; b.loading.wait_while_present }
+  #action(:cancel) { |b| b.frm.link(id: "COEdit_CancelLink").click; b.loading.wait_while_present }
+
+  element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter", index: 1) }
+  action(:create_offering) { |b| b.frm.button(id: "createUpdateFromCatalog_btn").click; b.loading.wait_while_present }
+  action(:cancel) { |b| b.sticky_footer_div.link(text: "Cancel").click; b.loading.wait_while_present }
 
   # CO-navigation carousel (and confirmation dialog)
   element(:edit_previous_co_link) { |b| b.frm.link(id: "edit_co_prev") }
@@ -22,29 +26,41 @@ class CourseOfferingEdit < BasePage
 
   element(:term_label_div) { |b| b.frm.div(data_label: "Term") }
 
-  element(:course_code_element) { |b| b.frm.div(id: "u5") } #persistent id required
+  value(:target_term) { |b| b.frm.div(data_label: "Term").span.text }
+  value(:course_code_element) { |b| b.frm.div(data_label: "Course Code").span }
   value(:course_code) { |b| b.frm.course_code_element.text() }
+
   element(:suffix) { |b| b.frm.div(data_label: "Course Number Suffix").text_field }
 
+  element(:grading_reg_opts_div) { |b| b.frm.div(id: "KS-GradingAndRegOptions") }
   element(:grading_option_div) { |b| b.frm.div(id: "gradingOptionId") }
   action(:set_grading_option) { |option,b| b.frm.radio(value: "kuali.resultComponent.grade.#{option.downcase}").click() }
+  element(:grading_letter) { |b| b.grading_reg_opts_div.radio(text: "Letter") }
 
   element(:registration_opts_div) { |b| b.frm.div(data_label: "Student Registration Options").parent }
   element(:pass_fail_checkbox) { |b| b.registration_opts_div.checkbox(name: "document.newMaintainableObject.dataObject.passFailStudentRegOpts") }
   element(:audit_checkbox) { |b| b.registration_opts_div.checkbox(name: "document.newMaintainableObject.dataObject.auditStudentRegOpts") }
 
   element(:credit_type_option_fixed) { |b| b.frm.radio(id: "KS-CourseOfferingEdit-CreditType_OptionTypeSelector_control_0") }
-  element(:credit_type_option_multiple) { |b| b.frm.radio(id: "KS-CourseOfferingEdit-CreditType_OptionTypeSelector_control_1") }
-  #TODO: needs to be dynamic
-  element(:multiple_credit_checkbox_1_0) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"1.0") }
-  element(:multiple_credit_checkbox_1_5) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"1.5") }
-  element(:multiple_credit_checkbox_2_0) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"2.0") }
-  element(:multiple_credit_checkbox_2_5) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"2.5") }
-  element(:multiple_credit_checkbox_3_0) { |b| b.frm.checkbox(:name => "document.newMaintainableObject.dataObject.creditOption.credits", :value=>"3.0") }
+
   element(:credits) { |b| b.frm.div(data_label: "Credits").text_field() }
   element(:fixed_credit_select_menu) { |b| b.frm.select(id: "KS-CourseOfferingEdit-CreditType_OptionTypeFixed_control") }
   action(:select_fixed_credit_option) { |b| b.credit_type_option_fixed.set() }
+
+  element(:credit_type_option_multiple) { |b| b.frm.radio(id: "KS-CourseOfferingEdit-CreditType_OptionTypeSelector_control_1") }
   action(:select_multiple_credit_option) { |b| b.credit_type_option_multiple.set() }
+
+  def multiple_credit_checkbox(credit_value)
+    checkbox(name: "document.newMaintainableObject.dataObject.creditOption.credits", value: "#{credit_value}")
+  end
+
+  def set_multiple_credit_checkbox(credit_value)
+    multiple_credit_checkbox(credit_value).set
+  end
+
+  def clear_multiple_credit_checkbox(credit_value)
+    multiple_credit_checkbox(credit_value).clear
+  end
 
   element(:delivery_assessment_section) { |b| b.frm.div( id: "delivery_and_assessment") }
   value(:delivery_assessment_warning) { |b| b.delivery_assessment_section.li( class: "uif-warningMessageItem").text}
@@ -63,48 +79,73 @@ class CourseOfferingEdit < BasePage
 #TODO: need element for AZ
   action(:final_exam_driver_select) { |driver,b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control").select driver; b.loading.wait_while_present }
 
-  element(:delivery_formats_table) { |b| b.frm.div(id: "KS-CourseOffering-FormatOfferingSubSection").table }
+  element(:use_exam_matrix_div) { |b| b.frm.div(id: "finalExamMatrix")}
+  element(:use_exam_matrix_checkbox) { |b| b.use_exam_matrix_div.checkbox}
+
+  action(:set_exam_matrix) { |b| b.use_exam_matrix_checkbox.set }
+  action(:clear_exam_matrix) { |b| b.use_exam_matrix_checkbox.clear }
+  def check_final_exam_matrix( use_final_exam_matrix)
+    if use_final_exam_matrix
+      set_exam_matrix
+    else
+      clear_exam_matrix
+    end
+  end
+
+  element(:delivery_formats_table) { |b| b.frm.div(id: "KS-CourseOffering-FormatOfferingSubSection").table() }
   FORMAT_COLUMN = 0
   GRADE_ROSTER_LEVEL_COLUMN = 1
   FINAL_EXAM_DRIVER_COLUMN = 2
   FINAL_EXAM_ACTIVITY_COLUMN = 3
   ACTIONS_COLUMN = 4
 
-  element(:select_format_type_div) {|b| b.frm.div(id: "KS-CourseOffering-FormatOfferingSubSection") }
-  element(:select_format_type_add) {|b| b.select_format_type_div.select(index: 0) }
-  element(:select_grade_roster_level_add) {|b| b.select_format_type_div.select(index: 1) }
-  element(:select_final_exam_activity_add) {|b| b.select_format_type_div.select(index: 2) }
-  element(:delivery_format_add_element) {|b| b.button(id: "KS-CourseOffering-FormatOfferingSubSection_add")  }
-  action(:delivery_format_add) {|b| b.delivery_format_add_element.click; b.loading.wait_while_present   }
-  #TODO: need to look up row by key value
-  element(:delivery_format_delete_element_0)  { |b| b.link(id: "KS-CourseOffering-FormatOfferingSubSection_del_line0") }
-  element(:delivery_format_delete_element_1)  { |b| b.link(id: "KS-CourseOffering-FormatOfferingSubSection_del_line1") }
-  action(:delivery_format_delete_0) {|b| b.delivery_format_delete_element_0.click; b.loading.wait_while_present   }
-  action(:delivery_format_delete_1) {|b| b.delivery_format_delete_element_1.click; b.loading.wait_while_present   }
-  value(:final_exam_driver_value_0) { |b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_DRIVER_COLUMN].text}
-  value(:final_exam_driver_value_1) { |b| b.delivery_formats_table.rows[2].cells[FINAL_EXAM_DRIVER_COLUMN].text}
+  #work for the newest row, ie when adding
+  element(:new_format_select) {|b| b.delivery_formats_table.rows[-2].cells[FORMAT_COLUMN].select }
+  element(:new_grade_roster_level_select) {|b| b.delivery_formats_table.rows[-2].cells[GRADE_ROSTER_LEVEL_COLUMN].select }
+  element(:new_final_exam_activity_select)  {|b| b.delivery_formats_table.rows[-2].cells[FINAL_EXAM_ACTIVITY_COLUMN].select }
+  element(:new_delivery_format_delete)  {|b| b.delivery_formats_table.rows[-2].cells[ACTIONS_COLUMN].link(text: "Delete") }
+
+  element(:add_format_btn) { |b| b.frm.button(id: "KS-CourseOffering-FormatOfferingSubSection_add")}
+  action(:add_format) { |b| b.add_format_btn.click; b.loading.wait_while_present }
+  #end elements for adding delivery format
+
+  value(:final_exam_driver_value) { |b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_DRIVER_COLUMN].text}
+  element(:final_exam_activity_options) { |b| b.delivery_formats_table.rows[1].cells[FINAL_EXAM_ACTIVITY_COLUMN].select()} #TODO: make format row aware
+  value(:final_exam_activity_value) { |b| b.final_exam_activity_options.selected_options[0].text}   #TODO: make format row aware
+
+  def set_delivery_format_(format)
+    if new_format_select.include? format
+      format_select.select format
+    else
+      raise "Option #{format} not in format select"
+    end
+  end
+
+  def set_grade_roster_level(grade_format)
+      new_grade_roster_level_select.select grade_format
+  end
+
+  def set_final_exam_activity(final_exam_activity)
+     new_final_exam_activity_select.select final_exam_activity
+  end
+
+  def edit_grade_roster_level(format,grade_format)
+    delivery_format_row(format).cells[GRADE_ROSTER_LEVEL_COLUMN].select().select(grade_format)
+  end
+
+  def edit_final_exam_activity(format,final_exam_activity)
+    delivery_format_row(format).cells[FINAL_EXAM_ACTIVITY_COLUMN].select().select(final_exam_activity)
+  end
 
   def delivery_format_row(format)
     delivery_formats_table.rows[1..-1].each do |row|
       return row if row.cells[FORMAT_COLUMN].text == format
     end
+    return nil
   end
 
   def delete_delivery_format(format)
     delivery_format_row(format).cells[ACTIONS_COLUMN].link(text: "Delete").click
-  end
-
-  def edit_random_delivery_format
-    selected_options = {:del_format => delivery_formats_table.rows[2].cells[FORMAT_COLUMN].text, :grade_format => select_random_option(delivery_formats_table[2].cells[GRADE_ROSTER_LEVEL_COLUMN]), :final_exam_activity => select_random_option(delivery_formats_table[2].cells[FINAL_EXAM_ACTIVITY_COLUMN])}
-    return selected_options
-  end
-
-  def select_delivery_format (row, format, format_selectable = true)
-    if (format_selectable)
-      delivery_formats_table.rows[row].cells[FORMAT_COLUMN].select().select(format.format)
-    end
-    delivery_formats_table.rows[row].cells[GRADE_ROSTER_LEVEL_COLUMN].select().select(format.grade_format)
-    #delivery_formats_table.rows[row].cells[FINAL_EXAM_ACTIVITY_COLUMN].select().select(format.final_exam_activity)
   end
 
   def select_random_option(sel_list)
@@ -112,52 +153,11 @@ class CourseOfferingEdit < BasePage
     if options != []
       options.delete_if{|a| a.index("Select") != nil or  a == "" }
       sel_opt = rand(options.length)
-      sel_list.select().select(options[sel_opt])
+      sel_list.select(options[sel_opt])
       return options[sel_opt]
     end
   end
 
-  def grade_roster_level(format)
-    delivery_format_row(format).cells[GRADE_ROSTER_LEVEL_COLUMN].select().selected_options[0].text
-  end
-
-  def select_grade_roster_level(format)
-    delivery_format_row(format).cells[GRADE_ROSTER_LEVEL_COLUMN].select().select(format)
-  end
-
-  def final_exam_activity(format)
-    delivery_format_row(format).cells[FINAL_EXAM_ACTIVITY_COLUMN].text
-  end
-
-  def select_final_exam_activity(format)
-    row = delivery_formats_table.row(text: /#{Regexp.escape(format)}/)
-    row.cells[FINAL_EXAM_ACTIVITY_COLUMN].select().select(format)
-  end
-
-  def select_fixed_credits(credits)
-    fixed_credit_select_menu.select(credits)
-  end
-  #TODO: should not need case stmt here
-  def set_multiple_credit_count(credits)
-    case credits
-      when "1.0" then multiple_credit_checkbox_1_0.set
-      when "1.5" then multiple_credit_checkbox_1_5.set
-      when "2.0" then multiple_credit_checkbox_2_0.set
-      when "2.5" then multiple_credit_checkbox_2_5.set
-      when "3.0" then multiple_credit_checkbox_3_0.set
-    end
-  end
-  #TODO: should not need case stmt here
-  def clear_multiple_credit_count(credits)
-    case credits
-      when "1.0" then multiple_credit_checkbox_1_0.clear
-      when "1.5" then multiple_credit_checkbox_1_5.clear
-      when "2.0" then multiple_credit_checkbox_2_0.clear
-      when "2.5" then multiple_credit_checkbox_2_5.clear
-      when "3.0" then multiple_credit_checkbox_3_0.clear
-    end
-  end
-  
   element(:waitlist_div)  { |b| b.frm.div(id: "KS-CourseOfferingEdit-HasWaitlist") }
   element(:waitlist_checkbox) { |b| b.waitlist_div.checkbox() }
   value(:has_waitlist?) { |b| b.waitlist_checkbox.value == "on" }

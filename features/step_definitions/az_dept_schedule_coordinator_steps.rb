@@ -328,7 +328,7 @@ Then /^I have access to create the course offering from catalog$/ do
     page.choose_from_catalog
     page.continue
   end
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.suffix.present?.should == true
     page.cancel
   end
@@ -399,76 +399,88 @@ When /^I edit an existing course offering$/ do
 end
 
 Then /^I have access to edit the grading options$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.grading_option_div.radio.present?.should be_true
   end
 end
 
 Then /^I have access to edit the course code suffix$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.suffix.present?.should be_true
   end
 end
 
 Then /^I have access to edit the registration options$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.registration_opts_div.checkbox.enabled?.should be_true
   end
 end
 
 Then /^I have access to edit the credit type$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.credit_type_option_fixed.enabled?.should be_true
   end
 end
 
-Then /^I have access to edit the format type$/ do
-  on CourseOfferingEdit do |page|
-    page.select_format_type_add.enabled?.should be_true
+Then /^I have access to edit the delivery format type$/ do
+  on CourseOfferingCreateEdit do |page|
+    if page.add_format_btn.present?
+      page.add_format_btn.enabled?.should be_true
+      page.new_grade_roster_level_select.enabled?.should be_true
+      page.new_final_exam_activity_select.enabled?.should be_true
+      page.new_delivery_format_delete.enabled?.should be_true
+    else #this is the case when only one format offering is possible
+      page.new_delivery_format_delete.click
+      page.add_format
+      page.new_format_select.select "Lecture"
+      page.new_grade_roster_level_select.enabled?.should be_true
+      page.new_final_exam_activity_select.enabled?.should be_true
+    end
+
     #page.select_grade_roster_level_add.enabled?.should be_true - need to select type first
     #page.delivery_format_add_element.enabled?.should be_true - need to select type first
   end
 end
 
-Then /^I do not have access to edit the format type$/ do
-  on CourseOfferingEdit do |page|
-    page.select_format_type_add.present?.should be_false
-    page.select_grade_roster_level_add.present?.should be_false
+Then /^I do not have access to edit the delivery format type$/ do
+  on CourseOfferingCreateEdit do |page|
+    page.delivery_format_add_element.present?.should be_false
+    #TODO: page.select_grade_roster_level_add.present?.should be_false
     page.delivery_format_add_element.present?.should be_false
   end
 end
 
 Then /^I have access to edit the waitlists flag$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.waitlist_checkbox.enabled?.should be_true
   end
 end
 
 Then /^I have access to edit the affiliated personnel$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.add_personnel_button_element.enabled?.should be_true
   end
 end
 
 Then /^I have access to edit the administrating org$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.add_org_button.enabled?.should be_true
   end
 end
 
 Then /^I have access to edit the CO honors flag$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.honors_flag.enabled?.should be_true
   end
 end
 
 Then /^I do not have access to edit the final exam type$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_option_div.radio.present?.should be_false
   end
 end
 #Then /^I have access to edit the $/ do
-#  on CourseOfferingEdit do |page|
+#  on CourseOfferingCreateEdit do |page|
 #    page..present?.should be_true
 #  end
 #end
@@ -576,6 +588,10 @@ And /^Cancel the Activity Offering Edit to avoid a dirty page warning$/ do
   on ActivityOfferingMaintenance do |page|
     page.cancel
   end
+end
+
+And /^test cleanup - Cancel the Course Offering Edit$/ do
+  on(CourseOfferingCreateEdit).cancel
 end
 
 Then /^I do not have access to edit activity offerings$/ do

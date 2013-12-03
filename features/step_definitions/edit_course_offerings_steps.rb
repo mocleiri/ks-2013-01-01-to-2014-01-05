@@ -20,7 +20,12 @@ When /^I can return to search using the cancel button$/ do
 end
 
 When /^I edit a course offering with multiple format types$/ do
-  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"CHEM132")
+  @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL271")
+  existing_delivery_format =  make DeliveryFormat,
+                                   :format=>"Lecture Only",
+                                   :grade_format => "Course Offering",
+                                   :final_exam_activity => "Lecture"
+  @course_offering.delivery_format_list[0] = existing_delivery_format
   @course_offering.manage
   @course_offering.edit_offering
 end
@@ -87,9 +92,13 @@ Then /^I can submit and the credit values are changed$/ do
 end
 
 When /^I change the delivery format options$/ do
-  delivery_format_list = {}
-  delivery_format_list[0] = make DeliveryFormat, :format=>"Lab Only"
-  @course_offering.edit_offering :delivery_format_list => delivery_format_list, :edit_in_progress => true
+  updated_delivery_format = []
+  updated_delivery_format[0] =  make DeliveryFormat,
+                                   :format=>"Lecture Only",
+                                   :grade_format => "Lecture",
+                                   :final_exam_activity => "Lecture"
+
+  @course_offering.edit_offering :delivery_format_list => updated_delivery_format, :edit_in_progress => true
 end
 
 And /^I add a delivery format option$/ do
@@ -97,7 +106,7 @@ And /^I add a delivery format option$/ do
 end
 
 And /^I add a delivery format option of Discussion Lecture$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.delivery_format_add
     delivery_format = make DeliveryFormat,
                            :format => "Discussion/Lecture",
@@ -113,7 +122,7 @@ And /^I modify a delivery format option$/ do
                          :format => "Lecture",
                          :grade_format => "Lecture",
                          :final_exam_activity => "Lecture"
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.select_delivery_format(1, delivery_format, false)
   end
 end
@@ -123,6 +132,8 @@ Then /^I delete the added delivery format option$/ do
   @course_offering.edit_offering
   @course_offering.delete_delivery_format("Lecture Only")
 end
+
+
 Then /^I can submit and the course offering is updated$/ do
   @course_offering.save
 
@@ -135,10 +146,33 @@ Then /^I can submit and the course offering is updated$/ do
   @course_offering.view_course_details
 
   on CourseOfferingInquiry do  |page|
-    page.registration_options.should == @course_offering.reg_options
+    #page.registration_options.should == @course_offering.reg_options
     page.final_exam_type.should == @course_offering.final_exam_type
     page.waitlist_state.should == @course_offering.waitlist
     page.honors_flag.should == @course_offering.honors_flag
+    page.close
+  end
+end
+
+Then /^after I submit the course offering exam options and delivery format are updated$/ do
+  @course_offering.save
+
+  #validate the success-growl is being shown
+  on ManageCourseOfferings do |page|
+    page.growl_text.should include "#{@course_offering.course} was successfully updated"
+  end
+
+  @course_offering.search_by_subjectcode
+  @course_offering.view_course_details
+
+  on CourseOfferingInquiry do  |page|
+    page.final_exam_type.should == @course_offering.final_exam_type
+
+    @course_offering.delivery_format_list.each do |del_format|
+      page.get_grade_roster_level(del_format.format).should == del_format.grade_format
+      page.get_final_exam_activity(del_format.format).should == del_format.final_exam_activity
+    end
+
     page.close
   end
 end
@@ -213,7 +247,7 @@ end
 Then /^the changes of the affiliated person are persisted$/ do
   @course_offering.manage
   @course_offering.edit_offering
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.personnel_id.value.should == "admin"
     page.personnel_name.value.should == "admin, admin"
     page.personnel_affiliation.value.should == "kuali.lpr.type.instructor.main"

@@ -12,12 +12,13 @@ Feature: EC.AZ Dept Schedule Coordinator SOC state Final Edits
     And I have access to edit the grading options
     And I have access to edit the registration options
     And I have access to edit the credit type
-    And I do not have access to edit the format type
+    And I have access to edit the delivery format type
     And I have access to edit the waitlists flag
     And I have access to edit the affiliated personnel
     And I have access to edit the administrating org
     And I have access to edit the CO honors flag
     But I do not have access to edit the final exam type
+    * test cleanup - Cancel the Course Offering Edit
 
 
   Scenario: AZ 4.1A/Full_final_edits.1 Validate Department Schedule Coordinator access to a course offering in their admin org (single CO view)

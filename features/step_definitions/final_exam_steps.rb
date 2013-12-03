@@ -23,7 +23,7 @@ When /^I copy a newly created academic calendar that has a defined final exam pe
   @source_calendar.create
 
   @term = make AcademicTerm, :term_year => @source_calendar.year, :start_date=>"09/20/#{@source_calendar.year}",
-                             :end_date=>"12/10/#{@source_calendar.year}"
+               :end_date=>"12/10/#{@source_calendar.year}"
   @source_calendar.add_term @term
 
   @term.create_final_exam_period
@@ -119,17 +119,17 @@ end
 When /^I have multiple Course Offerings each with a different Exam Offering in the source term$/ do
   @co_list = []
   @co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS603",
-                   :final_exam_type => "NONE")
+                      :final_exam_type => "NONE")
   @co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS603",
-                   :final_exam_type => "ALTERNATE")
+                      :final_exam_type => "ALTERNATE")
   @co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS603",
-                     :final_exam_driver => "Final Exam Per Activity Offering")
+                      :final_exam_driver => "Final Exam Per Activity Offering")
 
   delivery_format_list = []
   delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering",
                                 :final_exam_driver => "Course Offering")
   @co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS603", @use_final_exam_matrix => false,
-                    :delivery_format_list => delivery_format_list)
+                      :delivery_format_list => delivery_format_list)
 end
 
 And /^I rollover the source term to a new academic term$/ do
@@ -157,10 +157,10 @@ When /^I create multiple Course Offerings each with a different Exam Driver in t
   end
 
   @co_list << (create CourseOffering, :term => @term.term_code, :course => "ENGL301",
-                     :final_exam_driver => "Final Exam Per Activity Offering")
+                      :final_exam_driver => "Final Exam Per Activity Offering")
 
   @co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS272",
-                     :final_exam_driver => "Final Exam Per Activity Offering")
+                      :final_exam_driver => "Final Exam Per Activity Offering")
   @ao = @co_list[2].create_ao(make ActivityOffering, :format => "Lecture Only")
 
   @co_list << (create CourseOffering, :term => @term.term_code, :course => "CHEM611")
@@ -558,7 +558,7 @@ end
 
 When /^I edit the Fall Term Exam Period to have less days than the Final Exam Matrix days not including Saturday and Sunday and then include these non-active days$/ do
   @term = make AcademicTerm, :term_year => @calendar.year, :start_date=>"08/29/#{@calendar.year}",
-                   :end_date=>"12/10/#{@calendar.year}"
+               :end_date=>"12/10/#{@calendar.year}"
   @term.edit :exam_period => true, :include_non_active_days => true, :change_exam_dates => true,
              :exam_start_date => "12/05/#{@calendar.year}", :exp_success=> true
 end
@@ -641,7 +641,7 @@ end
 When /^I suspend an Activity Offering for a CO with a standard final exam driven by Course Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
   @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
-                                        :final_exam_driver => "Final Exam Per Course Offering"
+                                 :final_exam_driver => "Final Exam Per Course Offering"
   @course_offering.save
   @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
   @activity_offering.suspend :navigate_to_page => false
@@ -674,8 +674,8 @@ end
 When /^I suspend an Activity Offering for a CO with a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
   @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
-                                        :final_exam_driver => "Final Exam Per Activity Offering",
-                                        :final_exam_activity => "Lecture"
+                                 :final_exam_driver => "Final Exam Per Activity Offering",
+                                 :final_exam_activity => "Lecture"
   @course_offering.save
   @activity_offering = make ActivityOffering, :code => "A", :parent_course_offering => @course_offering
   @activity_offering.suspend :navigate_to_page => false
@@ -723,7 +723,7 @@ Then /^there should be no final exam period for any term in the copy$/ do
 end
 
 When /^I change the Final Exam indicator from Standard Final Exam to Alternate Final Assessment or No Final Exam or Assessment$/ do
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_option_alternate
     page.final_exam_driver_value.should == "Alternate exam for this offering"
     page.final_exam_option_none
@@ -732,28 +732,28 @@ When /^I change the Final Exam indicator from Standard Final Exam to Alternate F
 end
 
 When /^I change the Final Exam indicator from Alternate Final Assessment to Standard Final Exam$/ do
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_option_standard
     page.final_exam_driver_select "Final Exam Per Activity Offering"
   end
 end
 
 When /^I change the Final Exam indicator from No Final Exam or Assessment to Standard Final Exam$/ do
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_option_standard
     page.final_exam_driver_select "Final Exam Per Course Offering"
   end
 end
 
 Then /^the Final Exam Driver should not be Activity Offering or Course Offering$/ do
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_driver_value.should_not == "Activity Offering"
     page.final_exam_driver_value.should_not == "Course Offering"
   end
 end
 
 Then /^the Final Exam Driver Activity field should disappear$/ do
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     exam_driver_activity_label = page.delivery_formats_table.rows[0].cells[3].text
     exam_driver_activity_label.should_not match /FINAL EXAM DRIVER ACTIVITY/
     page.cancel
@@ -761,14 +761,14 @@ Then /^the Final Exam Driver Activity field should disappear$/ do
 end
 
 Then /^the Final Exam Driver should allow the user to pick Activity Offering or Course Offering as the exam driver$/ do
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_driver_div.select.option(value: /ActivityOffering/).text.should == "Final Exam Per Activity Offering"
     page.final_exam_driver_div.select.option(value: /CourseOffering/).text.should == "Final Exam Per Course Offering"
   end
 end
 
 Then /^the Final Exam Driver Activity field should appear if Activity Offering is selected as the exam driver$/ do
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     exam_driver_activity_label = page.delivery_formats_table.rows[0].cells[3].text
     exam_driver_activity_label.should match /FINAL EXAM DRIVER ACTIVITY/
     page.final_exam_driver_select "Final Exam Per Activity Offering"
@@ -778,7 +778,7 @@ Then /^the Final Exam Driver Activity field should appear if Activity Offering i
 end
 
 Then /^the option to specify a Final Exam Driver should only be available for a course offering with a Standard Final Exam option selected$/ do
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_option_standard
     page.final_exam_driver_div.present?.should == true
     page.final_exam_option_alternate
@@ -790,11 +790,11 @@ Then /^the option to specify a Final Exam Driver should only be available for a 
 end
 
 Then /^a warning about the FE on the Edit CO page is displayed stating "([^"]*)"$/ do |exp_msg|
-  on(CourseOfferingEdit).delivery_assessment_warning.should match /#{exp_msg}/
+  on(CourseOfferingCreateEdit).delivery_assessment_warning.should match /#{exp_msg}/
 end
 
 Then /^the status of the Final Exam Driver should change to indicate the driver chosen for the Standard Final Exam$/ do
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_option_standard
     page.final_exam_driver_select "Final Exam Per Activity Offering"
     page.final_exam_driver_value.should == "Activity Offering"
@@ -805,18 +805,18 @@ Then /^the status of the Final Exam Driver should change to indicate the driver 
 end
 
 Then /^the Final Exam Driver value should reflect the value selected in the Final Exam Driver field dropdown$/ do
-  on(CreateCOFromCatalog).final_exam_driver_value.should == "Activity Offering"
+  on(CourseOfferingCreateEdit).final_exam_driver_value.should == "Activity Offering"
 end
 
 Then /^the Final Exam Driver Activity field should exist and be populated with the first activity type of the format offering$/ do
-  on CreateCOFromCatalog do |page|
-    page.fe_activity_lecture_value.should == "Lecture"
+  on CourseOfferingCreateEdit do |page|
+    page.final_exam_activity_value.should == "Lecture"
     page.cancel
   end
 end
 
 Then /^I should be able to edit and update the Final Exam status$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_option_none
     page.final_exam_driver_value_0.should == "No final exam for this offering"
     page.submit
@@ -824,11 +824,11 @@ Then /^I should be able to edit and update the Final Exam status$/ do
 end
 
 Then /^the exam data for the newly created course offering should match that of the original$/ do
-  on(CourseOfferingEdit).final_exam_driver_value_0.should == "Activity Offering"
+  on(CourseOfferingCreateEdit).final_exam_driver_value_0.should == "Activity Offering"
 end
 
 Then /^the ability to access the Use Final Exam Matrix field should only be available for a course offering set to have a Standard Final Exam$/ do
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_option_standard
     page.use_exam_matrix_div.present?.should == true
     page.final_exam_option_alternate
@@ -840,7 +840,7 @@ Then /^the ability to access the Use Final Exam Matrix field should only be avai
 end
 
 Then /^I should not be able to update the status of the final exam period$/ do
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_option_div.radio(value: "STANDARD").present?.should == false
     page.final_exam_option_div.radio(value: "ALTERNATE").present?.should == false
     page.final_exam_option_div.radio(value: "NONE").present?.should == false
@@ -855,7 +855,7 @@ Then /^I do not have access to the final exam status for the course offering fro
     page.continue
   end
 
-  on CreateCOFromCatalog do |page|
+  on CourseOfferingCreateEdit do |page|
     page.final_exam_option_div.radio(value: "STANDARD").present?.should == false
     page.final_exam_option_div.radio(value: "ALTERNATE").present?.should == false
     page.final_exam_option_div.radio(value: "NONE").present?.should == false
@@ -868,7 +868,7 @@ Then /^all the exam settings and messages are retained after the rollover is com
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[0].course)
   @test_co_list[0].manage
   on(ManageCourseOfferings).edit_course_offering
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
     page.final_exam_driver_value_0.should == "No final exam for this offering"
   end
@@ -876,7 +876,7 @@ Then /^all the exam settings and messages are retained after the rollover is com
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[1].course)
   @test_co_list[1].manage
   on(ManageCourseOfferings).edit_course_offering
-  on CourseOfferingEdit do |page|
+  on CourseOfferingCreateEdit do |page|
     page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
     page.final_exam_driver_value_0.should == "Alternate exam for this offering"
   end
@@ -885,12 +885,12 @@ Then /^all the exam settings and messages are retained after the rollover is com
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[2].course)
   @test_co_list[2].manage
   on(ManageCourseOfferings).edit_course_offering
-  on(CourseOfferingEdit).final_exam_driver_value_0.should == "Activity Offering"
+  on(CourseOfferingCreateEdit).final_exam_driver_value_0.should == "Activity Offering"
 
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[3].course)
   @test_co_list[3].manage
   on(ManageCourseOfferings).edit_course_offering
-  on(CourseOfferingEdit).final_exam_driver_value_0.should == "Course Offering"
+  on(CourseOfferingCreateEdit).final_exam_driver_value_0.should == "Course Offering"
 end
 
 Then /^all the Final Exam and Exam Driver data for the COs should be retained after the rollover is completed and Exam Offerings should be created in a state of Draft$/ do
