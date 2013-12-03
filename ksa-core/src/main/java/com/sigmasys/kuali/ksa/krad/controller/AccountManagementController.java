@@ -368,7 +368,6 @@ public class AccountManagementController extends GenericSearchController {
 
         // Set the properties:
         account.setId(id);
-        account.setEntityId(id);
         account.setCreationDate(new Date());
         account.setCreatorId(userSessionManager.getUserId());
         account.setKimAccount(isKimAccount);

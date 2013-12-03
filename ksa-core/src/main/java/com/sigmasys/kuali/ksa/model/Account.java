@@ -30,11 +30,6 @@ public abstract class Account implements Identifiable, KeyPairAware {
     protected String id;
 
     /**
-     * Entity ID
-     */
-    protected String entityId;
-
-    /**
      * Creator ID
      */
     protected String creatorId;
@@ -124,15 +119,6 @@ public abstract class Account implements Identifiable, KeyPairAware {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    @Column(name = "ENTITY_ID", length = 45)
-    public String getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(String entityId) {
-        this.entityId = entityId;
     }
 
     @Column(name = "CREATOR_ID", length = 45)

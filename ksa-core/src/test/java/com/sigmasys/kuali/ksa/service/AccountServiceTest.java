@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {ServiceTestSuite.TEST_KSA_CONTEXT})
 public class AccountServiceTest extends AbstractServiceTest {
@@ -65,7 +66,7 @@ public class AccountServiceTest extends AbstractServiceTest {
         Account account = accountService.getOrCreateAccount("admin1");
 
         Assert.notNull(account);
-        Assert.notNull(account.getEntityId());
+        Assert.notNull(account.getId());
 
         PersonService personService = KimApiServiceLocator.getPersonService();
 
@@ -74,9 +75,9 @@ public class AccountServiceTest extends AbstractServiceTest {
         Person person = personService.getPersonByPrincipalName("admin1");
 
         Assert.notNull(person);
-        Assert.notNull(person.getEntityId());
+        Assert.notNull(person.getPrincipalName());
 
-        Assert.isTrue(account.getEntityId().equals(person.getEntityId()));
+        Assert.isTrue(account.getId().equals(person.getPrincipalName()));
 
         // Add more assertions when we have some test data
     }
@@ -87,7 +88,7 @@ public class AccountServiceTest extends AbstractServiceTest {
         Account account = accountService.getOrCreateAccount("admin1");
 
         Assert.notNull(account);
-        Assert.notNull(account.getEntityId());
+        Assert.notNull(account.getId());
 
         account = accountService.getFullAccount(account.getId());
 

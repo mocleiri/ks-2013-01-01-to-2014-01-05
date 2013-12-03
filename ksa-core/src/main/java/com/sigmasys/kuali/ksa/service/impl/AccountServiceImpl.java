@@ -737,7 +737,6 @@ public class AccountServiceImpl extends GenericPersistenceService implements Acc
             account.setCreationDate(creationDate);
 
             account.setAbleToAuthenticate(true);
-            account.setEntityId(person.getEntityId());
             account.setKimAccount(true);
             account.setBlockingEnabled(true);
             account.setCreditLimit(new BigDecimal(0.0));
