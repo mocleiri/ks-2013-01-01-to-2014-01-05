@@ -42,6 +42,9 @@
         <cxf.version>2.5.10</cxf.version>
         <quartz.version>1.8.6</quartz.version>
         <joda.time.version>1.1.1</joda.time.version>
+        <commons.lang.version>2.6</commons.lang.version>
+        <commons.logging.version>1.1.1</commons.logging.version>
+        <jstl.version>1.2</jstl.version>
         <junit.version>4.10</junit.version>
         <oracle.version>11.2.0.3</oracle.version>
         <oracle.artifactId>ojdbc6</oracle.artifactId>
@@ -1051,13 +1054,13 @@
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
+            <version>${commons.logging.version}</version>
         </dependency>
 
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <version>${commons.lang.version}</version>
         </dependency>
 
         <!-- Pom dependencies for impl specific jars -->
@@ -1998,7 +2001,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>1.2</version>
+            <version>${jstl.version}</version>
         </dependency>
 
     </dependencies>
