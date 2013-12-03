@@ -20,7 +20,7 @@ Feature: EC.Waitlists Colocation
     Then all three colocated activity offerings have the same waitlist configuration
 
   Scenario:  WL 1.17.3 Verify waitlist configuration copied during rollover for colocated activity offerings
-    Given I create an Academic Calender and add an official term
+    Given I create an Academic Calendar and add an official term
     And I create three course offerings with one activity offering in each with waitlists enabled
     And I colocate the three activity offerings (shared enrolment)
     And I make changes to the default waitlist configuration for one of the activity offerings

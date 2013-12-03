@@ -64,7 +64,7 @@ Feature: EC.Waitlists
     Then the allow hold list option is successfully updated
 
   Scenario: WL 1.12 Verify waitlist configuration copied during rollover
-    Given I create an Academic Calender and add an official term
+    Given I create an Academic Calendar and add an official term
     And I create a course and activity offering with waitlists enabled
     And I make changes to the default waitlist configuration for the activity offering
     And I create a course and activity offering with waitlists disabled
