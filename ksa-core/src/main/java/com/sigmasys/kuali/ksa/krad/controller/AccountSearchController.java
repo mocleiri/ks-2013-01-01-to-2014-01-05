@@ -74,8 +74,9 @@ public class AccountSearchController extends AccountManagementController {
       * Populates the specified form for a Search Person Account page.
       */
     private void populateForSearchPersonAccount(AdminForm form) {
+
         // Populate for New Person Account first:
-        populateForNewPersonAccount(form, true);
+        populateForNewPersonAccount(form);
 
         // Add additional Search specific info:
         AccountSearchInformationHolder accountSearchInfo = new AccountSearchInformationHolder();

@@ -7,7 +7,6 @@ import com.sigmasys.kuali.ksa.service.AuditableEntityService;
 import com.sigmasys.kuali.ksa.service.PersistenceService;
 import com.sigmasys.kuali.ksa.service.UserPreferenceService;
 import com.sigmasys.kuali.ksa.service.UserSessionManager;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.util.GlobalVariables;
@@ -24,6 +23,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
+
+
+// TODO - Implement a correct logic for new account creation
 
 @Controller
 @RequestMapping(value = "/accountManagement")
@@ -60,7 +62,7 @@ public class AccountManagementController extends GenericSearchController {
     public ModelAndView newPersonAccount(@ModelAttribute("KualiForm") AdminForm form) {
 
         // Populate the form:
-        populateForNewPersonAccount(form, false);
+        populateForNewPersonAccount(form);
 
         return getUIFModelAndView(form);
     }
@@ -86,45 +88,48 @@ public class AccountManagementController extends GenericSearchController {
     /**
      * Handles saving of a new account.
      *
-     * @param form    AdminForm
-     * @param request HttpServletRequest
+     * @param form AdminForm
      * @return ModelAndView
      */
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=saveNewPersonAccount")
-    public ModelAndView saveNewPersonAccount(@ModelAttribute("KualiForm") AdminForm form, HttpServletRequest request) {
+    public ModelAndView saveNewPersonAccount(@ModelAttribute("KualiForm") AdminForm form) {
 
         // Get the objects to be persisted:
         Account account = setUpAccountFromForm(form);
+
+
         AccountProtectedInfo accountProtectedInfo = form.getAccountInfo().getAccountProtectedInfo();
         List<UserPreference> userPreferences = form.getAccountInfo().getUserPreferences();
         String accountId = account.getId();
 
         String statusTypeIdString = form.getAccountStatusTypeId();
         AccountStatusType statusType = null;
-        if(statusTypeIdString != null && !"".equals(statusTypeIdString)) {
+        if (statusTypeIdString != null && !"".equals(statusTypeIdString)) {
             try {
                 Long statusTypeId = Long.valueOf(statusTypeIdString);
                 statusType = auditableEntityService.getAuditableEntity(statusTypeId, AccountStatusType.class);
-            } catch(Throwable e) {
+            } catch (Throwable e) {
                 GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
             }
         }
+
         account.setStatusType(statusType);
 
-        if(account.getOrgName() != null) {
+        if (account.getOrgName() != null) {
             persistenceService.persistEntity(account.getOrgName());
         }
+
 
         // Persist the objects:
         persistenceService.persistEntity(account);
 
         String bankTypeIdString = form.getAccountBankTypeId();
         BankType bankType = null;
-        if(bankTypeIdString != null && !"".equals(bankTypeIdString)) {
+        if (bankTypeIdString != null && !"".equals(bankTypeIdString)) {
             try {
                 Long bankTypeId = Long.valueOf(bankTypeIdString);
                 bankType = auditableEntityService.getAuditableEntity(bankTypeId, BankType.class);
-            } catch(Throwable e) {
+            } catch (Throwable e) {
                 GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
             }
         }
@@ -132,11 +137,11 @@ public class AccountManagementController extends GenericSearchController {
 
         String taxTypeIdString = form.getAccountTaxTypeId();
         TaxType taxType = null;
-        if(taxTypeIdString != null && !"".equals(taxTypeIdString)) {
+        if (taxTypeIdString != null && !"".equals(taxTypeIdString)) {
             try {
                 Long taxTypeId = Long.valueOf(taxTypeIdString);
                 taxType = auditableEntityService.getAuditableEntity(taxTypeId, TaxType.class);
-            } catch(Throwable e) {
+            } catch (Throwable e) {
                 GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
             }
         }
@@ -144,11 +149,11 @@ public class AccountManagementController extends GenericSearchController {
 
         String identityTypeString = form.getAccountIdentityTypeId();
         IdentityType identityType = null;
-        if(identityTypeString != null && !"".equals(identityTypeString)) {
+        if (identityTypeString != null && !"".equals(identityTypeString)) {
             try {
                 Long identityTypeId = Long.valueOf(identityTypeString);
                 identityType = auditableEntityService.getAuditableEntity(identityTypeId, IdentityType.class);
-            } catch(Throwable e) {
+            } catch (Throwable e) {
                 GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
             }
         }
@@ -202,7 +207,7 @@ public class AccountManagementController extends GenericSearchController {
       * Populates the given form for a New Person Account page.
       */
     @SuppressWarnings("serial")
-    protected void populateForNewPersonAccount(AdminForm form, boolean addBlankOption) {
+    protected void populateForNewPersonAccount(AdminForm form) {
 
         // Create a new AccountInformationHolder object:
         AccountInformationHolder accountInfo = new AccountInformationHolder();
@@ -259,23 +264,23 @@ public class AccountManagementController extends GenericSearchController {
         accountInfo.setAccountType(getAccountType(account).getId());
 
         AccountStatusType statusType = account.getStatusType();
-        if(statusType != null && statusType.getId() != null) {
+        if (statusType != null && statusType.getId() != null) {
             form.setAccountStatusTypeId(statusType.getId().toString());
         }
 
-        if(accountProtectedInfo != null) {
+        if (accountProtectedInfo != null) {
             BankType bankType = accountProtectedInfo.getBankType();
-            if(bankType != null && bankType.getId() != null) {
+            if (bankType != null && bankType.getId() != null) {
                 form.setAccountBankTypeId(bankType.getId().toString());
             }
 
             TaxType taxType = accountProtectedInfo.getTaxType();
-            if(taxType != null && taxType.getId() != null) {
+            if (taxType != null && taxType.getId() != null) {
                 form.setAccountTaxTypeId(taxType.getId().toString());
             }
 
             IdentityType identityType = accountProtectedInfo.getIdentityType();
-            if(identityType != null && identityType.getId() != null) {
+            if (identityType != null && identityType.getId() != null) {
                 form.setAccountIdentityTypeId(identityType.getId().toString());
             }
 
@@ -331,9 +336,6 @@ public class AccountManagementController extends GenericSearchController {
                 // Copy properties from the form stored Account to the new one:
                 BeanUtils.copyProperties(formAccount, newAccount);
 
-                // For new accounts, set up account id and auditable information:
-                setAccountIdAndAuditableInfo(newAccount);
-
                 if (formAccount instanceof ChargeableAccount && newAccount instanceof ChargeableAccount) {
                     LatePeriod existingLatePeriod =
                             auditableEntityService.getAuditableEntity(((ChargeableAccount) formAccount).getLatePeriod().getId(), LatePeriod.class);
@@ -357,19 +359,5 @@ public class AccountManagementController extends GenericSearchController {
         return resultAccount;
     }
 
-    /*
-      * If a new Account, sets up account ID and Auditable entries.
-      */
-    private void setAccountIdAndAuditableInfo(Account account) {
-        // TODO: Determine what to do about the account ID:
-        String id = RandomStringUtils.randomAlphabetic(8);
-        // TODO: Figure out what to do with KIM IDs!
-        boolean isKimAccount = false;
 
-        // Set the properties:
-        account.setId(id);
-        account.setCreationDate(new Date());
-        account.setCreatorId(userSessionManager.getUserId());
-        account.setKimAccount(isKimAccount);
-    }
 }
