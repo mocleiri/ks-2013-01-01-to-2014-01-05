@@ -102,4 +102,3 @@ drop table KSSA_TRANSFER_TYPE cascade constraints;
 drop table KSSA_UI_STRING cascade constraints;
 drop table KSSA_USER_PREF cascade constraints;
 drop table KSSA_XML cascade constraints;
-drop table KSSA_SEQUENCE_TABLE cascade constraints;
