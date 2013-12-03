@@ -5,13 +5,11 @@ import com.sigmasys.kuali.ksa.annotation.Auditable;
 import javax.persistence.*;
 
 /**
- * Account protected information
+ * Account protected information.
  * <p/>
  * <p/>
  *
  * @author Michael Ivanov
- *         Date: 1/22/12
- *         Time: 3:47 PM
  */
 @Auditable
 @Entity
