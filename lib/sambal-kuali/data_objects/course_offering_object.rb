@@ -705,15 +705,9 @@ class CourseOffering
 # TEMPORARY - This will eventually be replaced by a call to course_offering.delivery_format_list,
 # the new format added to the list and the new list passed on the options hash to course_offering.edit_offering
 
- def add_delivery_format (opts)
-    on CourseOfferingCreateEdit do |page|
-      page.delivery_format_add
-      delivery_format = make DeliveryFormat,
-                             :format => opts[:format],
-                             :grade_format => opts[:grade_format],
-                             :final_exam_activity => opts[:final_exam_activity]
-      page.select_delivery_format(2,delivery_format)
-    end
+ def add_delivery_format (delivery_format_obj)
+   delivery_format_obj.create
+   @delivery_format_list <<  delivery_format_obj
   end
 
 # TEMPORARY - This will eventually be replaced by a call to course_offering.delivery_format_list,

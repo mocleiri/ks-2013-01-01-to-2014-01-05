@@ -47,6 +47,10 @@ class CourseOfferingCreateEdit < BasePage
   element(:fixed_credit_select_menu) { |b| b.frm.select(id: "KS-CourseOfferingEdit-CreditType_OptionTypeFixed_control") }
   action(:select_fixed_credit_option) { |b| b.credit_type_option_fixed.set() }
 
+  def select_fixed_credits(credits)
+    fixed_credit_select_menu.select(credits)
+  end
+
   element(:credit_type_option_multiple) { |b| b.frm.radio(id: "KS-CourseOfferingEdit-CreditType_OptionTypeSelector_control_1") }
   action(:select_multiple_credit_option) { |b| b.credit_type_option_multiple.set() }
 

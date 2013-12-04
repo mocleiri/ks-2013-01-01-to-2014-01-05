@@ -32,6 +32,11 @@ end
 
 When /^I edit a course offering with 2 format types$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL271")
+  existing_delivery_format =  make DeliveryFormat,
+                                   :format=>"Lecture Only",
+                                   :grade_format => "Course Offering",
+                                   :final_exam_activity => "Lecture"
+  @course_offering.delivery_format_list[0] = existing_delivery_format
   @course_offering.manage
   @course_offering.edit_offering
 end
@@ -47,6 +52,11 @@ end
 
 When /^I edit a course offering with multiple delivery format types$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :course=>"ENGL222")
+  existing_delivery_format =  make DeliveryFormat,
+                                   :format=>"Lecture/Discussion",
+                                   :grade_format => "Course Offering",
+                                   :final_exam_activity => "Lecture"
+  @course_offering.delivery_format_list[0] = existing_delivery_format
   @course_offering.manage
   @course_offering.edit_offering
 end
@@ -78,6 +88,7 @@ Then /^I can submit and the credit options are changed$/ do
   @course_offering.view_course_details
   on CourseOfferingInquiry do  |page|
     page.course_credit_count.should == @course_offering.fixed_credit_count
+    page.close
   end
 end
 
@@ -88,6 +99,7 @@ Then /^I can submit and the credit values are changed$/ do
 
   on CourseOfferingInquiry do  |page|
     page.course_credit_count.should == @course_offering.formatted_multiple_credits_list
+    page.close
   end
 end
 
@@ -102,29 +114,29 @@ When /^I change the delivery format options$/ do
 end
 
 And /^I add a delivery format option$/ do
-  @course_offering.add_delivery_format :format => "Lecture", :grade_format => "Lecture", :final_exam_activity => "Lecture"
-end
-
-And /^I add a delivery format option of Discussion Lecture$/ do
-  on CourseOfferingCreateEdit do |page|
-    page.delivery_format_add
-    delivery_format = make DeliveryFormat,
-                           :format => "Discussion/Lecture",
-                           :grade_format => "Course Offering"
-                           #:grade_format => "Course Offering",
-                           #:final_exam_activity => "Discussion"
-    page.select_delivery_format(2,delivery_format)
-  end
-end
-
-And /^I modify a delivery format option$/ do
   delivery_format = make DeliveryFormat,
                          :format => "Lecture",
                          :grade_format => "Lecture",
                          :final_exam_activity => "Lecture"
-  on CourseOfferingCreateEdit do |page|
-    page.select_delivery_format(1, delivery_format, false)
-  end
+  @course_offering.add_delivery_format delivery_format
+end
+
+And /^I add a delivery format option of Discussion Lecture$/ do
+  delivery_format = make DeliveryFormat,
+                         :format => "Discussion/Lecture",
+                         :grade_format => "Course Offering",
+                         :final_exam_activity => "Lecture"
+  @course_offering.add_delivery_format delivery_format
+end
+
+And /^I modify a delivery format option$/ do
+  updated_delivery_format = []
+  updated_delivery_format[0] =  make DeliveryFormat,
+                                     :format=>"Lecture/Discussion",
+                                     :grade_format => "Lecture",
+                                     :final_exam_activity => "Lecture"
+
+  @course_offering.edit_offering :delivery_format_list => updated_delivery_format, :edit_in_progress => true
 end
 
 Then /^I delete the added delivery format option$/ do
@@ -183,6 +195,7 @@ Then /^I can submit and the registration options are changed$/ do
   @course_offering.view_course_details
   on CourseOfferingInquiry do  |page|
     page.registration_options.should == @course_offering.reg_options
+    page.close
   end
 end
 
@@ -194,6 +207,7 @@ Then /^I can submit and the delivery formats are updated$/ do
          page.get_delivery_format("Lecture Only").should == "Lecture Only"
          page.get_grade_roster_level("Lecture Only").should == "Lecture"
          page.get_final_exam_activity("Lecture Only").should == "Lecture"
+         page.close
   end
 end
 
@@ -205,6 +219,7 @@ Then /^I can submit and the modified delivery formats are updated$/ do
          page.get_delivery_format("Lecture/Discussion").should == "Lecture/Discussion"
          page.get_grade_roster_level("Lecture/Discussion").should == "Lecture"
          #page.get_final_exam_activity("Lecture/Discussion").should == "Lecture"
+         page.close
   end
 end
 
@@ -214,6 +229,7 @@ Then /^I can submit and the added delivery format is not present$/ do
   @course_offering.view_course_details
   on CourseOfferingInquiry do  |page|
     page.delivery_format_row("Lecture Only").should == nil
+    page.close
   end
 
 end
@@ -324,6 +340,7 @@ Then /^I can verify that the Honors Course setting is (set|not set)$/ do |should
   @course_offering.view_course_details
   on CourseOfferingInquiry do |page|
     page.honors_flag.should == honors_flag
+    page.close
   end
 end
 
@@ -337,5 +354,6 @@ Then /^I? ?can verify that the grading option is changed$/ do
   @course_offering.view_course_details
   on CourseOfferingInquiry do |page|
     page.grading_options.should include @course_offering.grade_options
+    page.close
   end
 end
