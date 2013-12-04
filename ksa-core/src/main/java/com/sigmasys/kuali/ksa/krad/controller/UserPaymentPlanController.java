@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.UserPaymentPlanForm;
+import com.sigmasys.kuali.ksa.krad.model.PaymentBillingPlanModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.Account;
@@ -132,20 +133,28 @@ public class UserPaymentPlanController extends GenericSearchController {
     @RequestMapping(method = RequestMethod.POST, params = "methodToCall=addPaymentBillingPlan")
     public ModelAndView addPaymentBillingPlan(@ModelAttribute("KualiForm") UserPaymentPlanForm form) {
         String planString = form.getAddPlanName();
-        Long planId = Long.parseLong(planString);
 
         BigDecimal maxRequested = form.getMaxRequestedAmount();
 
         String userId = form.getAccount().getId();
 
-        PaymentBillingPlan plan = paymentBillingService.getPaymentBillingPlan(planId);
+        List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlansByNamePattern(planString);
 
-        if (plan != null) {
-            try {
-                paymentBillingService.executePaymentBilling(planId, userId, maxRequested, new Date());
-            } catch(RuntimeException e) {
-                GlobalVariables.getMessageMap().putError(ADD_THIRD_PARTY_FIELD, RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
-            }
+        if(plans == null || plans.size() == 0) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, planString + " did not match any plan names");
+            return getUIFModelAndView(form);
+        } else if(plans.size() > 1) {
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "More than one plan matches the name '" + planString + "'");
+            return getUIFModelAndView(form);
+        }
+
+        PaymentBillingPlan plan = plans.get(0);
+
+        try {
+            paymentBillingService.executePaymentBilling(plan.getId(), userId, maxRequested, new Date());
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, userId + " added to plan " + plan.getName());
+        } catch(RuntimeException e) {
+            GlobalVariables.getMessageMap().putError(ADD_THIRD_PARTY_FIELD, RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
         }
 
         populateFormForPaymentBilling(form);
@@ -197,11 +206,13 @@ public class UserPaymentPlanController extends GenericSearchController {
 
         String userId = form.getAccount().getId();
 
-        paymentBillingService.executePaymentBilling(planId, userId, plan.getMaxAmount(), new Date());
+        try {
+            paymentBillingService.executePaymentBilling(planId, userId, plan.getMaxAmount(), new Date());
 
-
-        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan re-executed");
-
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan re-executed");
+        } catch(IllegalStateException e) {
+            GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+        }
         populateFormForPaymentBilling(form);
 
         return getUIFModelAndView(form);
@@ -296,7 +307,16 @@ public class UserPaymentPlanController extends GenericSearchController {
 
         List<PaymentBillingPlan> paymentPlans = paymentBillingService.getPaymentBillingPlansByAccountId(userId);
 
-        form.setPaymentBillingPlans(paymentPlans);
+        List<PaymentBillingPlanModel> paymentPlanModels = new ArrayList<PaymentBillingPlanModel>();
+
+        for(PaymentBillingPlan plan : paymentPlans) {
+            PaymentBillingPlanModel model = new PaymentBillingPlanModel();
+            model.setParent(plan);
+            paymentPlanModels.add(model);
+        }
+
+
+        form.setPaymentBillingPlans(paymentPlanModels);
     }
 
 }

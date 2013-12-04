@@ -381,7 +381,7 @@ public abstract class AbstractViewModel extends UifFormBase {
         return paymentBillingPlans;
     }
 
-    public void setPaymentBillingPlansForTooltip(List<PaymentBillingPlan> thirdPartyPlans) {
+    public void setPaymentBillingPlansForTooltip(List<PaymentBillingPlan> paymentBillingPlans) {
         this.paymentBillingPlans = paymentBillingPlans;
     }
 

@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.krad.model.PaymentBillingPlanModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 
@@ -20,7 +21,7 @@ public class UserPaymentPlanForm extends AbstractViewModel {
 
     private List<ThirdPartyMemberModel> thirdPartyMembers;
 
-    private List<PaymentBillingPlan> paymentBillingPlans;
+    private List<PaymentBillingPlanModel> paymentBillingPlans;
 
     public String getAddPlanName() {
         return addPlanName;
@@ -49,11 +50,11 @@ public class UserPaymentPlanForm extends AbstractViewModel {
         this.maxRequestedAmount = maxRequestedAmount;
     }
 
-    public List<PaymentBillingPlan> getPaymentBillingPlans() {
+    public List<PaymentBillingPlanModel> getPaymentBillingPlans() {
         return paymentBillingPlans;
     }
 
-    public void setPaymentBillingPlans(List<PaymentBillingPlan> paymentBillingPlans) {
+    public void setPaymentBillingPlans(List<PaymentBillingPlanModel> paymentBillingPlans) {
         this.paymentBillingPlans = paymentBillingPlans;
     }
 }
