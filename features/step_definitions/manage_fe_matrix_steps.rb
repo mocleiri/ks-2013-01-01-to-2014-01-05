@@ -355,14 +355,14 @@ end
 
 Then /^there is a message indicating that the final exam matrix is also used by the half term$/ do
   on FEMatrixView do |page|
-    page.info_validation_message_text.should == /Matrix is also linked to #{@matrix_halfterm.term_type}\./
+    page.info_validation_message_text.should match /Matrix is also linked to #{@matrix_halfterm.term_type}\./
   end
 end
 
 Then /^there is no message indicating that the final exam matrix is also used by the half term$/ do
   on FEMatrixView do |page|
     if page.info_validation_message.exists?
-      page.info_validation_message_text.should_not == /Matrix is also linked to #{@matrix_halfterm.term_type}\./
+      page.info_validation_message_text.should_not match /Matrix is also linked to #{@matrix_halfterm.term_type}\./
     end
   end
 end
