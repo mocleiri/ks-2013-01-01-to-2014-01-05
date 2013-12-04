@@ -41,6 +41,7 @@ Background:
     When I copy one of the colocated activity offerings
     Then the activity offering copy is added to the colocated set
 
+   @bug @KSENROLL-11145
   Scenario: CCO 2.13 Successfully rollover a course offering with colocated Activity Offerings
     Given I create an Academic Calendar and add an official term
     And I create three Course Offerings with colocated AOs in the new term
