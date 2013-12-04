@@ -71,7 +71,7 @@
     <bean id="quickViewSection" parent="Uif-VerticalBoxSection" p:width="80%">
         <property name="items">
             <list>
-                <ref bean="biographicInformationGroup"/>
+                <ref bean="userHeaderGroup"/>
                 <bean parent="Uif-HorizontalBoxGroup">
                     <property name="items">
                         <list>
@@ -258,7 +258,16 @@
     ********************************************************************************************************************
     -->
 
-    <bean id="biographicInformationGroup" parent="Uif-VerticalBoxGroup">
+    <bean id="userHeaderGroup" parent="Uif-HorizontalBoxGroup">
+        <property name="items">
+            <list>
+                <ref bean="biographicInformationGroup"/>
+                <ref bean="schoolSpecificInformationGroup"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="biographicInformationGroup" parent="Uif-VerticalBoxGroup" p:style="width: 67%;">
         <property name="cssClasses">
             <list merge="true">
                 <value>ksa-group-border</value>
@@ -317,6 +326,44 @@
                                     </list>
                                 </property>
                             </bean>
+
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="schoolSpecificInformationGroup" parent="Uif-VerticalBoxGroup"  p:style="width: 30%; margin-right: 0px;">
+        <property name="cssClasses">
+            <list merge="true">
+                <value>ksa-group-border</value>
+            </list>
+        </property>
+        <property name="items">
+            <list>
+                <bean parent="Uif-HorizontalBoxGroup">
+                    <property name="cssClasses">
+                        <list merge="true">
+                            <value>ksa-quickview-section-header</value>
+                        </list>
+                    </property>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-MessageField" p:messageText="My School Information"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="Uif-HorizontalBoxGroup">
+                    <property name="cssClasses">
+                        <list merge="true">
+                            <value>ksa-group-content</value>
+                        </list>
+                    </property>
+                    <property name="readOnly" value="true"/>
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-MessageField" p:messageText="Custom information from my school&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;"/>
 
                         </list>
                     </property>
