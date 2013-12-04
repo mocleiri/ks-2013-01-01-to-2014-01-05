@@ -5,7 +5,6 @@ Feature: EC.AZ Dept Schedule Coordinator SOC state Open
     Given I am logged in as a Department Schedule Coordinator
     And I am working on a term in "Open" SOC state
 
-  @bug @KSENROLL-11088
   Scenario: AZ 6.2/Full_open.8 Verify Department Schedule Coordinator Carol edit course offering details(in admin org) for a term with SOC State Open
     When I edit a course offering in my admin org that has multiple credit types
     Then I have access to edit the course code suffix
