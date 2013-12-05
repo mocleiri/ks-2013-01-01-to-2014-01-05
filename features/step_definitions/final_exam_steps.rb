@@ -762,8 +762,8 @@ end
 
 Then /^the Final Exam Driver should allow the user to pick Activity Offering or Course Offering as the exam driver$/ do
   on CourseOfferingCreateEdit do |page|
-    page.final_exam_driver_div.select.option(value: /ActivityOffering/).text.should == "Final Exam Per Activity Offering"
-    page.final_exam_driver_div.select.option(value: /CourseOffering/).text.should == "Final Exam Per Course Offering"
+    page.final_exam_driver_element.option(value: /ActivityOffering/).text.should == "Final Exam Per Activity Offering"
+    page.final_exam_driver_element.option(value: /CourseOffering/).text.should == "Final Exam Per Course Offering"
   end
 end
 

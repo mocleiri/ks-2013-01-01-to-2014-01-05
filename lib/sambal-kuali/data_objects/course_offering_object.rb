@@ -169,10 +169,11 @@ class CourseOffering
           page.final_exam_option_none
         end
 
-        #need to specify which row dfl is being created on, which is 1 greater than the current iteration
-        @delivery_format_list.each_with_index do |dfl|
+        @delivery_format_list.each_with_index do |dfl,index|
+          on(CourseOfferingCreateEdit).add_format if index > 0  #update default df row on first iteration
           dfl.create
         end
+
         if @waitlist.nil?  #if waitlist is nil, means use default
           @waitlist = page.has_waitlist?
         elsif  !@waitlist
@@ -1290,7 +1291,7 @@ class DeliveryFormat
       on CourseOfferingCreateEdit do |page|
         page.new_format_select.select(@format)
         page.new_grade_roster_level_select.select(@grade_format)
-        page.new_final_exam_activity_select.select(@final_exam_activity)
+        page.new_final_exam_activity_select.select(@final_exam_activity) if page.new_final_exam_activity_select.present?
       end
     end
     standardize_format_values

@@ -79,8 +79,9 @@ class CourseOfferingCreateEdit < BasePage
   element(:cross_listed_co_check_box) { |b| b.checkbox(id: "KS-COEditListed-Checkbox-Group_control_0") }
   action(:cross_listed_co_set) {|b| b.cross_listed_co_check_box.set; b.loading.wait_while_present   }
   action(:cross_listed_co_clear) {|b| b.cross_listed_co_check_box.clear; b.loading.wait_while_present   }
-#TODO: need element for AZ
-  action(:final_exam_driver_select) { |driver,b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control").select driver; b.loading.wait_while_present }
+
+  element(:final_exam_driver_element) { |b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control") }
+  action(:final_exam_driver_select) { |driver,b| b.final_exam_driver_element.select driver; b.loading.wait_while_present }
 
   element(:use_exam_matrix_div) { |b| b.frm.div(id: "finalExamMatrix")}
   element(:use_exam_matrix_checkbox) { |b| b.use_exam_matrix_div.checkbox}
