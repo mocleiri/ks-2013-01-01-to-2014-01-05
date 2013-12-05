@@ -424,6 +424,23 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
     }
 
     /**
+     * Retrieves all PaymentBillingTransferDetail by Account ID from the persistent store.
+     *
+     * @param accountId Account ID
+     * @return List of PaymentBillingTransferDetail instances
+     */
+    @Override
+    @PermissionsAllowed(Permission.READ_THIRD_PARTY_TRANSFER_DETAIL)
+    public List<PaymentBillingTransferDetail> getPaymentBillingTransferDetails(String accountId) {
+
+        Query query = em.createQuery(TRANSFER_DETAIL_SELECT + " where dca.id = :accountId");
+
+        query.setParameter("accountId", accountId);
+
+        return query.getResultList();
+    }
+
+    /**
      * Reverses a payment billing transfer specified by PaymentBillingTransferDetail ID.
      *
      * @param transferDetailId PaymentBillingTransferDetail ID

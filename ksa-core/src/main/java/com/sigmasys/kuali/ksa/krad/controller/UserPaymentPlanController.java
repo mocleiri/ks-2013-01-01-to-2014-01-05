@@ -1,12 +1,12 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.UserPaymentPlanForm;
-import com.sigmasys.kuali.ksa.krad.model.PaymentBillingPlanModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.TransactionTransfer;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyTransferDetail;
@@ -204,6 +204,12 @@ public class UserPaymentPlanController extends GenericSearchController {
 
         PaymentBillingPlan plan = paymentBillingService.getPaymentBillingPlan(planId);
 
+        if(plan == null) {
+            String errorMessage = planIdString + " is not a valid Payment Billing Plan";
+            GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
+            return getUIFModelAndView(form);
+        }
+
         String userId = form.getAccount().getId();
 
         try {
@@ -305,18 +311,9 @@ public class UserPaymentPlanController extends GenericSearchController {
 
         AccountUtils.populateTransactionHeading(form, userId);
 
-        List<PaymentBillingPlan> paymentPlans = paymentBillingService.getPaymentBillingPlansByAccountId(userId);
+        List<PaymentBillingTransferDetail> transferDetails = paymentBillingService.getPaymentBillingTransferDetails(userId);
 
-        List<PaymentBillingPlanModel> paymentPlanModels = new ArrayList<PaymentBillingPlanModel>();
-
-        for(PaymentBillingPlan plan : paymentPlans) {
-            PaymentBillingPlanModel model = new PaymentBillingPlanModel();
-            model.setParent(plan);
-            paymentPlanModels.add(model);
-        }
-
-
-        form.setPaymentBillingPlans(paymentPlanModels);
+        form.setPaymentBillingTransferDetails(transferDetails);
     }
 
 }

@@ -304,11 +304,11 @@
         <property name="headerText" value="Plans"/>
         <property name="items">
             <list>
-                <bean parent="Uif-Message" p:messageText="No plans for selected user" p:render="@{paymentBillingPlans.size() == 0}"/>
+                <bean parent="Uif-Message" p:messageText="No plans for selected user" p:render="@{paymentBillingTransferDetails.size() == 0}"/>
                 <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:width="85%">
                     <property name="readOnly" value="true"/>
-                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan"/>
-                    <property name="propertyName" value="paymentBillingPlans"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail"/>
+                    <property name="propertyName" value="paymentBillingTransferDetails"/>
                     <property name="layoutManager.sequencePropertyName" value="name"/>
                     <property name="layoutManager.richTable.render" value="true"/>
                     <property name="layoutManager.renderSequenceField" value="false"/>
@@ -322,10 +322,13 @@
 
                     <property name="items">
                         <list>
-                            <bean parent="Uif-InputField" p:label="Name of Plan" p:propertyName="code"/>
+                            <bean parent="Uif-InputField" p:label="Initiation Date" p:propertyName="initiationDate"/>
+                            <bean parent="Uif-InputField" p:label="Name of Plan" p:propertyName="plan.code"/>
                             <bean parent="Uif-InputField" p:label="Maximum Requested Amount" p:propertyName="maxAmount"/>
-                            <bean parent="Uif-InputField" p:label="Flat Charge" p:propertyName="parent.flatFeeAmount"/>
-                            <bean parent="Uif-InputField" p:label="Variable Charge" p:propertyName="parent.variableFeeAmount"/>
+                            <bean parent="Uif-InputField" p:label="Actual Plan Amount" p:propertyName="planAmount"/>
+                            <bean parent="Uif-InputField" p:label="Flat Charge" p:propertyName="flatFeeCharge.amount"/>
+                            <bean parent="Uif-InputField" p:label="Variable Charge" p:propertyName="variableFeeCharge.amount"/>
+                            <bean parent="Uif-MessageField" p:label="Status" p:messageText="@{#line.chargeStatus.toString()}"/>
 
                             <bean parent="Uif-HorizontalFieldGroup" p:label="Actions">
                                 <property name="items">
@@ -337,38 +340,38 @@
                                             <property name="hidden" value="true"/>
                                             <property name="items">
                                                 <list>
-                                                    <bean parent="Uif-InputField" p:propertyName="name"/>
-                                                    <bean parent="Uif-InputField" p:propertyName="code"/>
-                                                    <!--<bean parent="Uif-InputField" p:label="Member" p:propertyName="account.compositeDefaultPersonName"/>-->
+                                                    <bean parent="Uif-InputField" p:propertyName="plan.name"/>
+                                                    <bean parent="Uif-InputField" p:propertyName="plan.code"/>
+                                                    <!--<bean parent="Uif-InputField" p:label="Member" p:propertyName="directChargeAccount.compositeDefaultPersonName"/>-->
                                                     <bean parent="Uif-MessageField" p:label="Please Note" p:labelPlacement="TOP"
                                                           p:messageText="If any of the original settings for this Payment Billing Plan have&lt;br&gt;changed since this account was enrolled then the new settings&lt;br&gt;(percentages, schedule of payments, etc.) will apply upon&lt;br&gt;re-execution of the plan."/>
 
                                                     <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="reexecutePaymentBillingPlan" p:actionLabel="Re-execute Plan"
-                                                          p:actionParameters="planId:@{#line.parent.id}" p:preSubmitCall="jQuery.fancybox.close(); return true;"/>
+                                                          p:actionParameters="planId:@{#line.plan.id}" p:preSubmitCall="jQuery.fancybox.close(); return true;"/>
                                                 </list>
                                             </property>
                                         </bean>
-                                        <!--
+
                                         <bean parent="Uif-ImageField" p:source="../images/delete.png" p:style="cursor:pointer;" p:altText="Reverse the Payment Billing Plan" p:title=""
-                                              p:onClickScript="showLightboxComponent('reversePBLightbox@{#lineSuffix}');" p:render="@{#line.transferDetailId > 0}"/>
+                                              p:onClickScript="showLightboxComponent('reversePBLightbox@{#lineSuffix}');"/>
                                         <bean id="reversePBLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
                                             <property name="headerText" value="Reverse the Payment Billing Plan"/>
                                             <property name="hidden" value="true"/>
                                             <property name="items">
                                                 <list>
-                                                    <bean parent="Uif-InputField" p:propertyName="name"/>
-                                                    <bean parent="Uif-InputField" p:propertyName="code"/>
-                                                    <bean parent="Uif-InputField" p:label="Member" p:propertyName="account.compositeDefaultPersonName"/>
+                                                    <bean parent="Uif-InputField" p:propertyName="plan.name"/>
+                                                    <bean parent="Uif-InputField" p:propertyName="plan.code"/>
+                                                    <!--<bean parent="Uif-InputField" p:label="Member" p:propertyName="directChargeAccount.compositeDefaultPersonName"/>-->
                                                     <bean parent="Uif-MessageField" p:label="Mandatory Memo" p:labelPlacement="TOP"
                                                           p:messageText="Please describe why the Payment Billing Plan is being reversed"/>
-                                                    <bean parent="Uif-InputField" p:propertyName="memo.text" p:readOnly="false"/>
+                                                    <!--<bean parent="Uif-InputField" p:propertyName="#form.changeMemo.text" p:readOnly="false"/>-->
 
                                                     <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="reversePaymentBillingPlan" p:actionLabel="Reverse Plan"
-                                                          p:actionParameters="transferDetailId:@{#line.transferDetailId}" p:preSubmitCall="jQuery.fancybox.close(); return true;"/>
+                                                          p:actionParameters="transferDetailId:@{#line.id}" p:preSubmitCall="jQuery.fancybox.close(); return true;"/>
                                                 </list>
                                             </property>
                                         </bean>
-                                        -->
+
                                     </list>
                                 </property>
                             </bean>

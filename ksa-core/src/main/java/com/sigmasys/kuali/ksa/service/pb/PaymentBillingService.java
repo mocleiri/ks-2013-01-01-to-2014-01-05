@@ -140,6 +140,14 @@ public interface PaymentBillingService {
      */
     PaymentBillingTransferDetail getPaymentBillingTransferDetail(Long transferDetailId);
 
+    /**
+     * Retrieves all PaymentBillingTransferDetail by Account ID from the persistent store.
+     *
+     * @param accountId Account ID
+     * @return List of PaymentBillingTransferDetail instances
+     */
+    List<PaymentBillingTransferDetail> getPaymentBillingTransferDetails(String accountId);
+
 
     /**
      * Reverses a payment billing transfer specified by PaymentBillingTransferDetail ID.

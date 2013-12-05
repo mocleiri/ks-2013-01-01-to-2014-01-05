@@ -1,8 +1,9 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
-import com.sigmasys.kuali.ksa.krad.model.PaymentBillingPlanModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
+import com.sigmasys.kuali.ksa.model.Memo;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,7 +22,11 @@ public class UserPaymentPlanForm extends AbstractViewModel {
 
     private List<ThirdPartyMemberModel> thirdPartyMembers;
 
-    private List<PaymentBillingPlanModel> paymentBillingPlans;
+    private List<PaymentBillingPlan> paymentBillingPlans;
+
+    private List<PaymentBillingTransferDetail> paymentBillingTransferDetails;
+
+    private Memo changeMemo;
 
     public String getAddPlanName() {
         return addPlanName;
@@ -50,11 +55,36 @@ public class UserPaymentPlanForm extends AbstractViewModel {
         this.maxRequestedAmount = maxRequestedAmount;
     }
 
-    public List<PaymentBillingPlanModel> getPaymentBillingPlans() {
+    public List<PaymentBillingPlan> getPaymentBillingPlans() {
+        if(paymentBillingPlans == null) {
+            paymentBillingPlans = new ArrayList<PaymentBillingPlan>();
+        }
         return paymentBillingPlans;
     }
 
-    public void setPaymentBillingPlans(List<PaymentBillingPlanModel> paymentBillingPlans) {
+    public void setPaymentBillingPlans(List<PaymentBillingPlan> paymentBillingPlans) {
         this.paymentBillingPlans = paymentBillingPlans;
+    }
+
+    public List<PaymentBillingTransferDetail> getPaymentBillingTransferDetails() {
+        if(paymentBillingTransferDetails == null) {
+            paymentBillingTransferDetails = new ArrayList<PaymentBillingTransferDetail>();
+        }
+        return paymentBillingTransferDetails;
+    }
+
+    public void setPaymentBillingTransferDetails(List<PaymentBillingTransferDetail> paymentBillingTransferDetails) {
+        this.paymentBillingTransferDetails = paymentBillingTransferDetails;
+    }
+
+    public Memo getChangeMemo() {
+        if(changeMemo == null) {
+            changeMemo = new Memo();
+        }
+        return changeMemo;
+    }
+
+    public void setChangeMemo(Memo changeMemo) {
+        this.changeMemo = changeMemo;
     }
 }
