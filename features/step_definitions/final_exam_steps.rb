@@ -818,13 +818,13 @@ end
 Then /^I should be able to edit and update the Final Exam status$/ do
   on CourseOfferingCreateEdit do |page|
     page.final_exam_option_none
-    page.final_exam_driver_value_0.should == "No final exam for this offering"
+    page.final_exam_driver_value.should == "No final exam for this offering"
     page.submit
   end
 end
 
 Then /^the exam data for the newly created course offering should match that of the original$/ do
-  on(CourseOfferingCreateEdit).final_exam_driver_value_0.should == "Activity Offering"
+  on(CourseOfferingCreateEdit).final_exam_driver_value.should == "Activity Offering"
 end
 
 Then /^the ability to access the Use Final Exam Matrix field should only be available for a course offering set to have a Standard Final Exam$/ do
@@ -870,7 +870,7 @@ Then /^all the exam settings and messages are retained after the rollover is com
   on(ManageCourseOfferings).edit_course_offering
   on CourseOfferingCreateEdit do |page|
     page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
-    page.final_exam_driver_value_0.should == "No final exam for this offering"
+    page.final_exam_driver_value.should == "No final exam for this offering"
   end
 
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[1].course)
@@ -878,19 +878,19 @@ Then /^all the exam settings and messages are retained after the rollover is com
   on(ManageCourseOfferings).edit_course_offering
   on CourseOfferingCreateEdit do |page|
     page.delivery_assessment_warning.should == "Course exam data differs from Catalog."
-    page.final_exam_driver_value_0.should == "Alternate exam for this offering"
+    page.final_exam_driver_value.should == "Alternate exam for this offering"
   end
 
 
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[2].course)
   @test_co_list[2].manage
   on(ManageCourseOfferings).edit_course_offering
-  on(CourseOfferingCreateEdit).final_exam_driver_value_0.should == "Activity Offering"
+  on(CourseOfferingCreateEdit).final_exam_driver_value.should == "Activity Offering"
 
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[3].course)
   @test_co_list[3].manage
   on(ManageCourseOfferings).edit_course_offering
-  on(CourseOfferingCreateEdit).final_exam_driver_value_0.should == "Course Offering"
+  on(CourseOfferingCreateEdit).final_exam_driver_value.should == "Course Offering"
 end
 
 Then /^all the Final Exam and Exam Driver data for the COs should be retained after the rollover is completed and Exam Offerings should be created in a state of Draft$/ do

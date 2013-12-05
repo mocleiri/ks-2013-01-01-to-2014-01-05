@@ -66,8 +66,7 @@ class CourseOfferingCreateEdit < BasePage
     multiple_credit_checkbox(credit_value).clear
   end
 
-  element(:delivery_assessment_section) { |b| b.frm.div( id: "delivery_and_assessment") }
-  value(:delivery_assessment_warning) { |b| b.delivery_assessment_section.li( class: "uif-warningMessageItem").text}
+  value(:delivery_assessment_warning) { |b| b.error_list.li( class: "uif-warningMessageItem").text}
 
   element(:final_exam_option_div) { |b| b.frm.div(id: "finalExamType") }
   #TODO:: need elements for AZ here
