@@ -144,6 +144,24 @@ public interface BrmFeeManagementService {
      */
     boolean compareSignupOperation(String signupOperations, BrmContext context);
 
+    /**
+     * Compares the number of FeeManagementSignup objects to the given number.
+     *
+     * @param numberOfSignups Number of FeeManagementSignup objects in the current FeeManagementSession
+     * @param context         BRM context
+     * @return boolean value
+     */
+    boolean compareNumberOfSignups(int numberOfSignups, BrmContext context);
+
+    /**
+     * Compares the number of units to the given number.
+     *
+     * @param numberOfUnits Number of units
+     * @param context       BRM context
+     * @return boolean value
+     */
+    boolean compareNumberOfUnits(int numberOfUnits, BrmContext context);
+
     // TODO
 
 }
