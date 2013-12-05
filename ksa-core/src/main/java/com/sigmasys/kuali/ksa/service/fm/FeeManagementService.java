@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author Sergey Godunov
  */
-@Url(RateService.SERVICE_URL)
+@Url(FeeManagementService.SERVICE_URL)
 @WebService(serviceName = FeeManagementService.SERVICE_NAME, portName = FeeManagementService.PORT_NAME,
         targetNamespace = Constants.WS_NAMESPACE)
 public interface FeeManagementService {

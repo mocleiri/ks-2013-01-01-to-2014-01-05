@@ -3,7 +3,11 @@
 # Commonly used DSL definitions
 
 [keyword][]and = &&
-[keyword][]equals = ==
+[keyword][]eq = ==
+[keyword][]lt = <
+[keyword][]gt = >
+[keyword][]lte = <=
+[keyword][]gte = >=
 
 # LHS definitions
 
