@@ -3,15 +3,15 @@ class ViewAcademicCalendar < BasePage
   frame_element
   wrapper_elements
 
-  expected_element :acal_subsection_div
+  expected_element :acal_overview_div
 
   action(:go_to_calendar_tab) { |b| b.frm.a(id: "ui-id-1").click; b.loading.wait_while_present}
   action(:go_to_terms_tab) { |b| b.frm.a(id: "ui-id-2").click; b.loading.wait_while_present}
 
-  element(:acal_subsection_div) { |b| b.frm.div(id: "KS-AcademicCalendar-MetaSubSection") }
-  value(:acal_name) { |b| b.acal_subsection_div.div(data_label: "Academic Calendar Name").span(index: 1).text }
-  value(:acal_start_date) { |b| b.acal_subsection_div.div(data_label: "Start Date").span(index: 1).text }
-  value(:acal_end_date) { |b| b.acal_subsection_div.div(data_label: "End Date").span(index: 1).text }
+  element(:acal_overview_div) { |b| b.frm.div(id: "KS-AcademicCalendar-AcalOverview") }
+  value(:acal_name) { |b| b.frm.div(id: "AcalHeaderViewId").text }
+  value(:acal_start_date) { |b| b.frm.div(id: "academicCalendarStartDate").text }
+  value(:acal_end_date) { |b| b.frm.div(id: "academicCalendarEndDate").text }
 
   element(:event_type) { |b| b.frm.select(name: "newCollectionLines['events'].eventTypeKey") }
   element(:event_start_date) { |b| b.frm.text_field(name: "newCollectionLines['events'].startDate") }
