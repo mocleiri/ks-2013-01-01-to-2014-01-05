@@ -780,11 +780,11 @@ end
 Then /^the option to specify a Final Exam Driver should only be available for a course offering with a Standard Final Exam option selected$/ do
   on CourseOfferingCreateEdit do |page|
     page.final_exam_option_standard
-    page.final_exam_driver_div.present?.should == true
+    page.final_exam_driver_element.present?.should == true
     page.final_exam_option_alternate
-    page.final_exam_driver_div.present?.should == false
+    page.final_exam_driver_element.present?.should == false
     page.final_exam_option_none
-    page.final_exam_driver_div.present?.should == false
+    page.final_exam_driver_element.present?.should == false
     page.create_offering
   end
 end
