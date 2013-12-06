@@ -402,9 +402,12 @@ end
 
 When /^I view the Exam Offerings for a CO in an Open SOC with a standard final exam driven by Activity Offering$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201301", :course => "ENGL304")
+  delivery_format_list = []
+  delivery_format_list[0] = make DeliveryFormat, :format => "Lecture Only", :grade_format => "Course Offering", :final_exam_activity => "Lecture"
+
   @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
-                                 :final_exam_activity => "Lecture"
+                                 :delivery_format_list => delivery_format_list
   @course_offering.save
 
   on(ManageCourseOfferings).view_exam_offerings
@@ -541,7 +544,7 @@ When /^I view the Exam Offerings after updating the Final Exam indicator to No f
   @course_offering.edit_offering :final_exam_type => "No Final Exam or Assessment"
   @course_offering.save
 
-  on(ManageCourseOfferings).view_exam_offerings
+  #on(ManageCourseOfferings).view_exam_offerings
 end
 
 When /^I view the Exam Offerings for a CO created from catalog with a standard final exam driven by Course Offering$/ do
@@ -1161,11 +1164,14 @@ Then /^there should be ([\d]*) EOs in the Exam Offerings by Activity Offering ta
   end
 end
 
-Then /^there should be no Exam Offering tables present$/ do
-  on ViewExamOfferings do |page|
-    page.exam_offerings_page_section.text.should_not match /^Exam Offerings for Course Offering/
-    page.exam_offerings_page_section.text.should_not match /^Exam Offerings for Activity Offering/
+Then /^there should be no View Exam Offering option present$/ do
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings_link.present?.should == false
   end
+  #on ViewExamOfferings do |page|
+  #  page.exam_offerings_page_section.text.should_not match /^Exam Offerings for Course Offering/
+  #  page.exam_offerings_page_section.text.should_not match /^Exam Offerings for Activity Offering/
+  #end
 end
 
 Then /^I expect a popup to appear with a displayed warning stating "([^"]*)"$/ do |exp_msg|
