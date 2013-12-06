@@ -1,5 +1,6 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.krad.model.RateTypeModel;
 import com.sigmasys.kuali.ksa.model.fm.RateType;
 
 import java.util.List;
@@ -16,19 +17,24 @@ public class RateTypeForm extends AbstractViewModel {
     /**
      * A List of all RateType objects.
      */
-    private List<RateType> rateTypes;
+    private List<RateTypeModel> rateTypes;
 
     /**
      * Search String to find RateTypes using wildcards.
      */
     private String searchString;
 
+    /**
+     * Error message.
+     */
+    private String errorMessage;
 
-    public List<RateType> getRateTypes() {
+
+    public List<RateTypeModel> getRateTypes() {
         return rateTypes;
     }
 
-    public void setRateTypes(List<RateType> rateTypes) {
+    public void setRateTypes(List<RateTypeModel> rateTypes) {
         this.rateTypes = rateTypes;
     }
 
@@ -38,5 +44,13 @@ public class RateTypeForm extends AbstractViewModel {
 
     public void setSearchString(String searchString) {
         this.searchString = searchString;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }
