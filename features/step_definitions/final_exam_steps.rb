@@ -1244,6 +1244,7 @@ end
 
 When /^I edit the CO to add a second Format Offering$/ do
   on(ManageCourseOfferings).edit_course_offering
-  @course_offering.add_delivery_format :format => "Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture"
+  delivery_format = make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering", :final_exam_activity => "Lecture"
+  @course_offering.add_delivery_format delivery_format
   @course_offering.save
 end
