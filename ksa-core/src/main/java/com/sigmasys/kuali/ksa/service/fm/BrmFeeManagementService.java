@@ -142,25 +142,73 @@ public interface BrmFeeManagementService {
      * @param context          BRM context
      * @return boolean value
      */
-    boolean compareSignupOperation(String signupOperations, BrmContext context);
+    boolean compareSignupOperations(String signupOperations, BrmContext context);
+
+    /**
+     * Compares the FeeManagementSignup effective date to the given date.
+     *
+     * @param date     Date in "MM/dd/yyyy"format
+     * @param operator Relational operator. For example, "==" or "!="
+     * @param context  BRM context
+     * @return boolean value
+     */
+    boolean compareSignupEffectiveDate(String date, String operator, BrmContext context);
 
     /**
      * Compares the number of FeeManagementSignup objects to the given number.
      *
-     * @param numberOfSignups Number of FeeManagementSignup objects in the current FeeManagementSession
-     * @param context         BRM context
+     * @param numberOfSignups  Number of FeeManagementSignup objects in the current FeeManagementSession
+     * @param rateCodes        List of Rate codes separated by ","
+     * @param rateTypeCodes    List of RateType codes separated by ","
+     * @param signupOperations List of signup operation values separated by ","
+     * @param operator         Relational operator. For example, "==" or "!="
+     * @param context          BRM context
      * @return boolean value
      */
-    boolean compareNumberOfSignups(int numberOfSignups, BrmContext context);
+    boolean compareNumberOfSignups(int numberOfSignups, String rateCodes, String rateTypeCodes,
+                                   String signupOperations, String operator, BrmContext context);
 
     /**
      * Compares the number of units to the given number.
      *
-     * @param numberOfUnits Number of units
+     * @param numberOfUnits    Number of units in the current FeeManagementSession
+     * @param rateCodes        List of Rate codes separated by ","
+     * @param rateTypeCodes    List of RateType codes separated by ","
+     * @param signupOperations List of signup operation values separated by ","
+     * @param operator         Relational operator. For example, "==" or "!="
+     * @param context          BRM context
+     * @return boolean value
+     */
+    boolean compareNumberOfUnits(int numberOfUnits, String rateCodes, String rateTypeCodes,
+                                 String signupOperations, String operator, BrmContext context);
+
+    /**
+     * Checks if the signup has rates specified by the codes.
+     *
+     * @param rateCodes List of Rate codes separated by ","
+     * @param context   BRM context
+     * @return boolean value
+     */
+    boolean signupHasRates(String rateCodes, BrmContext context);
+
+    /**
+     * Checks if the signup has rate types specified by the codes.
+     *
+     * @param rateTypeCodes List of RateType codes separated by ","
      * @param context       BRM context
      * @return boolean value
      */
-    boolean compareNumberOfUnits(int numberOfUnits, BrmContext context);
+    boolean signupHasRateTypes(String rateTypeCodes, BrmContext context);
+
+    /**
+     * Checks if the signup has rate catalogs specified by the codes.
+     *
+     * @param rateCatalogCodes List of RateCatalog codes separated by ","
+     * @param context          BRM context
+     * @return boolean value
+     */
+    boolean signupHasRateCatalogs(String rateCatalogCodes, BrmContext context);
+
 
     // TODO
 
