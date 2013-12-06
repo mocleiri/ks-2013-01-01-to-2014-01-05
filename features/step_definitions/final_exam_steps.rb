@@ -446,10 +446,13 @@ end
 
 When /^I view the Exam Offerings for a CO where the Activity Offering Standard FE is changed to Alternate Final Exam$/ do
   @course_offering = create CourseOffering, :create_by_copy=>(make CourseOffering, :term => "201208", :course => "ENGL304")
+  delivery_format_list = []
+  delivery_format_list[0] = make DeliveryFormat, :format => "Lecture/Discussion", :grade_format => "Course Offering", :final_exam_activity => "Lecture"
+
   @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
-                                 :final_exam_activity => "Lecture"
-  @course_offering.save
+                                 :delivery_format_list => delivery_format_list
+   @course_offering.save
 
   @course_offering.edit_offering :final_exam_type => "Alternate Final Assessment"
   @course_offering.save
@@ -512,9 +515,12 @@ end
 
 When /^I view the Exam Offerings? after changing the Course Offering back to Standard FE and the Final Exam Driver to Activity Offering$/ do
   @course_offering.manage
+  delivery_format_list = []
+  delivery_format_list[0] = make DeliveryFormat, :format => "Lecture Only", :grade_format => "Course Offering", :final_exam_activity => "Lecture"
+
   @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
-                                 :final_exam_activity => "Lecture"
+                                 :delivery_format_list => delivery_format_list
   @course_offering.save
 
   on(ManageCourseOfferings).view_exam_offerings
