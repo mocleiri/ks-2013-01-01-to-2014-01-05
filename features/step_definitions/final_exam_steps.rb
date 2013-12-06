@@ -531,9 +531,12 @@ end
 
 When /^I view the Exam Offerings after changing the Final Exam Driver to Activity Offering$/ do
   @course_offering.manage
+  delivery_format_list = []
+  delivery_format_list[0] = make DeliveryFormat, :format => "Lecture/Discussion", :grade_format => "Course Offering", :final_exam_activity => "Lecture"
+
   @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
                                  :final_exam_driver => "Final Exam Per Activity Offering",
-                                 :final_exam_activity => "Lecture"
+                                 :delivery_format_list => delivery_format_list
   @course_offering.save
 
   on(ManageCourseOfferings).view_exam_offerings
