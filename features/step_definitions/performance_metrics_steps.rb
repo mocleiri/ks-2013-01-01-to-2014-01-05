@@ -288,6 +288,21 @@ When /^I click copy for a large course offering$/ do
   end
 end
 
+When /^I click copy for a medium course offering$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set "201301"
+    page.input_code.set "ENGL241"
+    page.perf_show
+  end
+  on ManageCourseOfferingList do |page|
+    @performance_test.start
+    page.copy "ENGL241"
+    @performance_test.end
+  end
+end
+
 
 When /^I create a basic course offering$/ do
   @performance_test = make PerformanceTest
@@ -341,6 +356,19 @@ When /^I edit a large Activity Offering for performance$/ do
   end
 end
 
+When /^I edit a medium Activity Offering for performance$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set "201301"
+    page.input_code.set "ENGL241A"
+    page.perf_show
+    @performance_test.start
+    page.edit "A"
+    @performance_test.end
+  end
+end
+
 When /^I copy a large Activity Offering for performance$/ do
   @performance_test = make PerformanceTest
   go_to_manage_course_offerings
@@ -354,12 +382,54 @@ When /^I copy a large Activity Offering for performance$/ do
   end
 end
 
-When /^I add Delivery Logistics and save$/ do
+When /^I copy a medium Activity Offering for performance$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set "201301"
+    page.input_code.set "ENGL241"
+    page.perf_show
+    @performance_test.start
+    page.copy "A"
+    @performance_test.end
+  end
+end
+
+When /^I add Delivery Logistics to a large activity offering and save$/ do
   @performance_test = make PerformanceTest
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set "201301"
     page.input_code.set "ENGL101A"
+    page.perf_show
+    page.edit "A"
+  end
+
+  on ActivityOfferingMaintenance do |page|
+    page.add_days.set "MWF"
+    page.add_start_time.click
+    page.add_start_time.set "10:00 AM"
+    page.add_start_time.fire_event "onblur"
+    page.add_end_time.click
+    page.loading.wait_while_present
+    page.add_end_time.set "11:00 AM"
+    page.add_facility.click
+    page.loading.wait_while_present
+    page.add_facility.set "IPT"
+    page.add_room.set "1116"
+    page.add_new_delivery_logistics
+    @performance_test.start
+    page.save
+    @performance_test.end
+  end
+end
+
+When /^I add Delivery Logistics to a medium activity offering and save$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set "201301"
+    page.input_code.set "ENGL241A"
     page.perf_show
     page.edit "A"
   end
@@ -412,6 +482,18 @@ When /^I search for a large course by course code to delete$/ do
   on ManageCourseOfferings do |page|
     page.term.set "201301"
     page.input_code.set "ENGL101H"
+    @performance_test.start
+    page.perf_show
+    @performance_test.end
+  end
+end
+
+When /^I search for a medium course by course code to delete$/ do
+  @performance_test = make PerformanceTest
+  go_to_manage_course_offerings
+  on ManageCourseOfferings do |page|
+    page.term.set "201301"
+    page.input_code.set "ENGL241"
     @performance_test.start
     page.perf_show
     @performance_test.end

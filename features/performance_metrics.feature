@@ -55,28 +55,53 @@ Feature: Performance.Metrics
     When I create a basic course offering
     Then the transaction takes less than "3" seconds
 
-  Scenario: Delete Course Offering
-    When I search for a large course by course code to delete
-    And I delete the course offering
-    Then the transaction takes less than "3" seconds
-
-  Scenario: Copy Course Offering
+  Scenario: Large Copy Course Offering
     When I click copy for a large course offering
     Then the transaction takes less than "3" seconds
     And I copy a course offering
     Then the transaction takes less than "3" seconds
 
-  Scenario: Edit Activity Offering
+  Scenario: Large Delete Course Offering
+    When I search for a large course by course code to delete
+    And I delete the course offering
+    Then the transaction takes less than "3" seconds
+
+  Scenario: Large Edit Activity Offering
     When I edit a large Activity Offering for performance
     Then the transaction takes less than "3" seconds
 
-  Scenario: Copy Activity Offering
+  Scenario: Large Copy Activity Offering
     When I copy a large Activity Offering for performance
     Then the transaction takes less than "3" seconds
 
-  Scenario: Add Delivery Logistics
-    When I add Delivery Logistics and save
+  Scenario: Large Add Delivery Logistics
+    When I add Delivery Logistics to a large activity offering and save
     Then the transaction takes less than "3" seconds
+
+#being Medium
+  Scenario: Medium Copy Course Offering
+    When I click copy for a medium course offering
+    Then the transaction takes less than "3" seconds
+    And I copy a course offering
+    Then the transaction takes less than "3" seconds
+
+  Scenario: Medium Delete Course Offering
+    When I search for a medium course by course code to delete
+    And I delete the course offering
+    Then the transaction takes less than "3" seconds
+
+  Scenario: Medium Edit Activity Offering
+    When I edit a medium Activity Offering for performance
+    Then the transaction takes less than "3" seconds
+
+  Scenario: Medium Copy Activity Offering
+    When I copy a medium Activity Offering for performance
+    Then the transaction takes less than "3" seconds
+
+  Scenario: Medium Add Delivery Logistics
+    When I add Delivery Logistics to a medium activity offering and save
+    Then the transaction takes less than "3" seconds
+#end Medium
 
   Scenario: Manage SOC
     When I search for a SOC
