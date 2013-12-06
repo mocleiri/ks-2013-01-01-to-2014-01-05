@@ -140,3 +140,15 @@ When /^I add (standard|ad hoc) RDLs for an AO$/ do |tsType|
   end
   @activity_offering.save
 end
+
+When /^I check the "approved for non-standard time slots" flag$/ do
+  @activity_offering.edit :allow_non_std_timeslots => true, :defer_save => false
+end
+
+Then /^the "approved for non-standard time slots" flag is set$/ do
+  @activity_offering.edit
+  on ActivityOfferingMaintenance do |page|
+    page.view_requested_delivery_logistics
+    page.non_std_ts_checkbox.should be_checked
+  end
+end

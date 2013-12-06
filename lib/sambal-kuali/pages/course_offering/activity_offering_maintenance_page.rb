@@ -90,6 +90,9 @@ class ActivityOfferingMaintenance < BasePage
   LOGISTICS_ACTION_COLUMN = 7
 
   element(:add_logistics_div) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-New") }
+  element(:non_std_ts_checkbox) { |b| b.checkbox(id: "isApprovedForNonStandardTimeSlots_control") }
+  action(:approve_non_std_ts) { |b| b.non_std_ts_checkbox.set }
+  action(:disallow_non_std_ts) { |b| b.non_std_ts_checkbox.clear }
   element(:add_tba){ |b|b.add_logistics_div.div(data_label: "TBA").checkbox()}
   element(:add_days) { |b| b.add_logistics_div.div(data_label: "Days").text_field() }
   element(:add_start_time) { |b| b.add_logistics_div.div(data_label: "Start Time").text_field() }

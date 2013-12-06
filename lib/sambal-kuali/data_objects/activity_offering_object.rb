@@ -309,6 +309,7 @@ class ActivityOffering
     edit_subterm options
     edit_colocation options
     edit_max_enrollment_no_colocation options
+    edit_non_std_timeslots options
     edit_requested_delivery_logistics options
     edit_course_url options
     edit_evaluation options
@@ -415,6 +416,21 @@ class ActivityOffering
     end
   end #END: edit_max_enrollment_no_colocation
   private :edit_max_enrollment_no_colocation
+
+  def edit_non_std_timeslots opts={}
+    if opts[:allow_non_std_timeslots].nil?
+      return nil
+    end
+    on ActivityOfferingMaintenance do |page|
+      page.view_requested_delivery_logistics
+      if opts[:allow_non_std_timeslots]
+        page.approve_non_std_ts
+      else
+        page.disallow_non_std_ts
+      end
+    end
+  end
+  private :edit_non_std_timeslots
 
   def edit_requested_delivery_logistics opts={}
 
