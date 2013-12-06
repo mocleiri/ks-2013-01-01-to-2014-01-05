@@ -20,8 +20,12 @@ class CourseOfferingCreateEdit < BasePage
   element(:edit_next_co_link) { |b| b.frm.link(id: "edit_co_next") }
   action(:edit_next_co) { |b| b.edit_next_co_link.click; b.loading.wait_while_present }
   element(:navigation_confirmation_dialog) { |b| b.div(id: "CourseOfferingEdit-NavigationConfirmation") }
-  action(:navigation_save_and_continue) { |b| b.navigation_confirmation_dialog.button(id: "edit_co_save_and_continue").click; b.loading.wait_while_present }
-  action(:navigation_cancel_and_continue) { |b| b.navigation_confirmation_dialog.button(id: "edit_co_cancel").click; b.loading.wait_while_present }
+
+  element(:nav_save_and_continue_element) { |b| b.navigation_confirmation_dialog.button(id: "edit_co_save_and_continue") }
+  action(:navigation_save_and_continue) { |b| b.nav_save_and_continue_element.wait_until_present; b.nav_save_and_continue_element.click; b.loading.wait_while_present }
+
+  element(:nav_cancel_and_continue_element) { |b| b.navigation_confirmation_dialog.button(id: "edit_co_cancel") }
+  action(:navigation_cancel_and_continue) { |b| b.nav_cancel_and_continue_element.wait_until_present; b.nav_cancel_and_continue_element.click; b.loading.wait_while_present }
   element(:edit_relatedCos_dropdown_list) { |b| b.frm.select(id: "edit_co_select_control") }
 
   element(:term_label_div) { |b| b.frm.div(data_label: "Term") }
