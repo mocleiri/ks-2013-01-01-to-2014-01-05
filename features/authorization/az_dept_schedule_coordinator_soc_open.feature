@@ -76,7 +76,6 @@ Feature: EC.AZ Dept Schedule Coordinator SOC state Open
     Then I have access to delete the course offering
   #TODO not yet implemented - access to offered suspended and cancelled states
 
-  @bug @KSENROLL-7423
   Scenario: AZ 5.1B/Full_open.4A Department Schedule Coordinator Carol has access to delete Co's (not in admin org) in SOC state Open
     Given there is a "Planned" course offering not in my admin org
     When I list the course offerings for that subject code
@@ -108,7 +107,6 @@ Feature: EC.AZ Dept Schedule Coordinator SOC state Open
     And I have access to approve an activity offering
     #TODO - approve step needs to be more specific re: AO status approved vs draft
 
-  @bug @KSENROLL-9601
   Scenario: AZ 5.1A/Full_open.7 Department Schedule Coordinator Carol has limited access to delete AOs in a Open State
     Given there is a "Draft" course offering in my admin org
     Then I have access to delete an activity offering in "Draft" status for the course offering

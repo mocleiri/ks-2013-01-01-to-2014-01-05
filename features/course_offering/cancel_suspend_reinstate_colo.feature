@@ -29,7 +29,6 @@ Feature: EC.Cancel Suspend Reinstate Colocated AOs
     When I copy the activity offering
     Then the activity offering copy is in draft status
 
-  @bug @KSENROLL-9870
   Scenario: CO 21.1F: CSR Verify Course and Activity Offerings in a rollover source term are changed to draft status in the rollover target term
     Given a new academic term has course and activity offerings in canceled and suspended status
     When I rollover the term to a new academic term

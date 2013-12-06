@@ -15,7 +15,6 @@ Feature: SA.FE2-1 Set Exam Status
     And the Final Exam Driver Activity field should disappear
 
   #FE2.1.EB2 (KSENROLL-9242)
-  @bug @KSENROLL-11001
   Scenario: Test whether a warning is displayed on the edit CO page that exam status differs from catalog
     When I create a Course Offering from catalog with an alternate final assessment option
     And I edit the Course Offering to have a Standard Final Exam

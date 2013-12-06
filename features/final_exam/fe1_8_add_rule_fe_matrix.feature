@@ -8,7 +8,6 @@ Feature: SA.FE1-8 Add new rule to the Final Exam Matrix
     Given I am logged in as admin
 
   #FE1.8.EB1 (KSENROLL-9799)
-  @bug @KSENROLL-10692
   Scenario: Test whether location data can be added to a Common Final Exam rule in the FE Matrix
     When I add a Common Final Exam course rule to the Final Exam Matrix
     And I add Building and Room location data to the Requested Exam Offering Delivery Logistic information

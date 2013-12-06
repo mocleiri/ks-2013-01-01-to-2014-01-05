@@ -34,7 +34,6 @@ Feature: WC.Edit Activity Offering Attributes
     And I submit the AO changes
     Then the deleted Personnel line should not be present
 
-  @bug @KSENROLL-11087
   Scenario: Edit Activity Offering Personnel attributes
     When I change Personnel attributes
     And I submit the AO changes
