@@ -590,7 +590,7 @@ When /^I view the Exam Offerings for a CO created from catalog with a standard f
   delivery_format_list[0] = make DeliveryFormat, :format => "Lecture Only", :grade_format => "Course Offering", :final_exam_activity => "Lecture"
 
   @course_offering.edit_offering :final_exam_type => "Standard Final Exam",
-                                 :final_exam_driver => "Final Exam Per Activity Offering",
+                                 :final_exam_driver => "Final Exam Per Course Offering",
                                  :delivery_format_list => delivery_format_list
   @course_offering.save
 
