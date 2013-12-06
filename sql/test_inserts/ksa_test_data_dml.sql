@@ -1587,3 +1587,20 @@ insert into kssa_cash_limit_event_trans values (1, 6);
 insert into kssa_cash_limit_event values(2, 'user1', 20000, 'admin', sysdate-40, 'Y', sysdate-30, 30000, 'Stewart Gilligan Griffin', sysdate-20, '111111111, 2222222222, 343424', 'Q', null);
 insert into kssa_cash_limit_event_trans values (2, 7);
 insert into kssa_cash_limit_event_trans values (2, 8);
+
+-- Rate types
+insert into kssa_rate_type (id, code, creation_date, creator_id, description, editor_id, last_update, name)
+values (1, 'fee.ao.credits.fixed', sysdate, 'admin', 'A fee calculated by multiplying the number of credits in an activity offering by a fee. Example: A  3 credit activity offering is multiplied by 5(USD) resulting in a final fee of 15(USD).', 'admin', sysdate, 'Fixed price per credit fee');
+
+insert into kssa_rate_type (id, code, creation_date, creator_id, description, editor_id, last_update, name)
+values (2, 'fee.ao.credits.flexible', sysdate, 'admin', 'Lorem ipsum dolor sit amet. Duis aute irure dolor in reprehenderit in voluptate', 'admin', sysdate, 'Flexible price per credit fee');
+
+insert into kssa_rate_type (id, code, creation_date, creator_id, description, editor_id, last_update, name)
+values (3, 'fee.ao.course', sysdate, 'admin', 'Consectetur adipisicing elit. Duis aute irure dolor in reprehenderit in voluptate', 'admin', sysdate, 'Flat per course fee');
+
+insert into kssa_rate_type (id, code, creation_date, creator_id, description, editor_id, last_update, name)
+values (4, 'fee.ao.annual', sysdate, 'admin', 'Ut enim ad minim veniam. Duis aute irure dolor in reprehenderit in voluptate', 'admin', sysdate, 'Flat annual fee');
+
+insert into kssa_rate_type (id, code, creation_date, creator_id, description, editor_id, last_update, name)
+values (5, 'fee.ao.once', sysdate, 'admin', 'Duis aute irure dolor in reprehenderit in voluptate. Duis aute irure dolor in reprehenderit in voluptate', 'admin', sysdate, 'Flat one time fee');
+
