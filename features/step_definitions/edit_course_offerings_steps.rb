@@ -238,10 +238,6 @@ Then /^I can submit the edited course offering$/ do
   @course_offering.save
 end
 
-When /^a final exam driver of "([^"]*)"$/ do |final_driver|
-    @course_offering.edit_offering :final_exam_activity => final_driver
-end
-
 Then /^I edit the same course offering$/ do
   @course_offering.manage
   @course_offering.edit_offering
