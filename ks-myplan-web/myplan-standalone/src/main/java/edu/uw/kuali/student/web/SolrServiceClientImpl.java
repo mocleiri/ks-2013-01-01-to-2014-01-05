@@ -36,7 +36,7 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
 
     public SolrServiceClientImpl(String baseUrl) {
         setSolrBaseUrl(baseUrl);
-        setServer(new HttpSolrServer(baseUrl));
+        //setServer(new HttpSolrServer(baseUrl));
     }
 
     public SolrServer getServer() {
