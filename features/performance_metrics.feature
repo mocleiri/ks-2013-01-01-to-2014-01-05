@@ -34,28 +34,6 @@ Feature: Performance.Metrics
     When I start a blank Holiday Calendar
     And I create a new Holiday Calendar
     Then the transaction takes less than "3" seconds
-#
-#   Scenario: Population Search and Edit
-#     When  I search for an existing population
-#     Then the transaction takes less than "3" seconds
-#     And I edit the population
-#     Then the transaction takes less than "3" seconds
-#     And  I update a field and save the population
-#     Then the transaction takes less than "3" seconds
-#
-#   Scenario: Population Create
-#     When I create a new populations
-#     Then the transaction takes less than "3" seconds
-#     And I save the population
-#     Then the transaction takes less than "3" seconds
-#
-#  Scenario: Registration Windows Search and Edit
-#    When I search for a registration Window
-#    Then the transaction takes less than "3" seconds
-#    And I select all registration periods
-#    Then the transaction takes less than "3" seconds
-#    And I add a registration window and save
-#    Then the transaction takes less than "3" seconds
 
   Scenario: Search Course Offering by Subject 100+
     When I search for a course by the "ENGL" subject code
@@ -78,26 +56,22 @@ Feature: Performance.Metrics
     Then the transaction takes less than "3" seconds
 
   Scenario: Delete Course Offering
-    When I search for a course by course code to delete
+    When I search for a large course by course code to delete
     And I delete the course offering
     Then the transaction takes less than "3" seconds
 
   Scenario: Copy Course Offering
-    When I click copy for a course offering
+    When I click copy for a large course offering
     Then the transaction takes less than "3" seconds
     And I copy a course offering
     Then the transaction takes less than "3" seconds
 
-#  Scenario: Create a Jointly Defined Course Offering
-#    When I create a jointly defined course offering
-#    Then the transaction takes less than "3" seconds
-
   Scenario: Edit Activity Offering
-    When I edit an Activity Offering for performance
+    When I edit a large Activity Offering for performance
     Then the transaction takes less than "3" seconds
 
   Scenario: Copy Activity Offering
-    When I copy an Activity Offering for performance
+    When I copy a large Activity Offering for performance
     Then the transaction takes less than "3" seconds
 
   Scenario: Add Delivery Logistics

@@ -273,7 +273,7 @@ When /^I copy a course offering$/ do
   end
 end
 
-When /^I click copy for a course offering$/ do
+When /^I click copy for a large course offering$/ do
   @performance_test = make PerformanceTest
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
@@ -328,12 +328,12 @@ When /^I create a jointly defined course offering$/ do
   end
 end
 
-When /^I edit an Activity Offering for performance$/ do
+When /^I edit a large Activity Offering for performance$/ do
   @performance_test = make PerformanceTest
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set "201301"
-    page.input_code.set "ENGL250"
+    page.input_code.set "ENGL101A"
     page.perf_show
     @performance_test.start
     page.edit "A"
@@ -341,7 +341,7 @@ When /^I edit an Activity Offering for performance$/ do
   end
 end
 
-When /^I copy an Activity Offering for performance$/ do
+When /^I copy a large Activity Offering for performance$/ do
   @performance_test = make PerformanceTest
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
@@ -406,7 +406,7 @@ When /^I search for a course by the "([^"]*)" subject code$/ do |subj|
   end
 end
 
-When /^I search for a course by course code to delete$/ do
+When /^I search for a large course by course code to delete$/ do
   @performance_test = make PerformanceTest
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
