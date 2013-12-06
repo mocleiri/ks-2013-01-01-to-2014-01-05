@@ -141,7 +141,7 @@
         <property name="headerText" value="Optional Actions"/>
         <property name="items">
             <list>
-                <bean parent="Uif-ActionLink" p:actionLabel="Run Payment Application" p:methodToCall="paymentApplication"
+                <bean parent="Uif-ActionLink" p:actionLabel="Run Payment Application" p:methodToCall="paymentApplication" p:style="display: inline;"
                       p:actionParameters="userId:@{account.id}" />
             </list>
         </property>
