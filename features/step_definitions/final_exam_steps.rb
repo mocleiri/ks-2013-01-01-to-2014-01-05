@@ -150,20 +150,33 @@ end
 
 When /^I create multiple Course Offerings each with a different Exam Driver in the new term$/ do
   @co_list = []
-  @co_list << (create CourseOffering, :term => @term.term_code, :course => "BSCI215")
-  @ao_list = []
-  for i in 1..5
-    @ao_list << @co_list[0].create_ao(make ActivityOffering, :format => "Lecture Only")
-  end
+  delivery_format_list = []
+  delivery_format_list << (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering",
+                                :final_exam_driver => "Course Offering")
+  course_offering = create CourseOffering, :term => @term.term_code,
+                           :course => "BSCI215",
+                           :delivery_format_list => delivery_format_list,
+                           :final_exam_driver => "Final Exam Per Course Offering"
 
-  @co_list << (create CourseOffering, :term => @term.term_code, :course => "ENGL301",
-                      :final_exam_driver => "Final Exam Per Activity Offering")
+  @co_list << course_offering
+
+  @co_list[0].create_ao(make ActivityOffering, :format => "Lecture Only")
+
+  course_offering = create CourseOffering, :term => @term.term_code,
+                           :course => "ENGL301",
+                           :final_exam_driver => "Final Exam Per Activity Offering"
+  @co_list << course_offering
+
+  delivery_format_list[0] = (make DeliveryFormat, :format => "Lecture", :grade_format => "Course Offering",
+                                  :final_exam_driver => "Lecture")
 
   @co_list << (create CourseOffering, :term => @term.term_code, :course => "PHYS272",
+                      :delivery_format_list => delivery_format_list,
                       :final_exam_driver => "Final Exam Per Activity Offering")
-  @ao = @co_list[2].create_ao(make ActivityOffering, :format => "Lecture Only")
+  @co_list[2].create_ao(make ActivityOffering, :format => "Lecture Only")
 
-  @co_list << (create CourseOffering, :term => @term.term_code, :course => "CHEM611")
+  @co_list << (create CourseOffering, :term => @term.term_code, :course => "CHEM611",
+                      :final_exam_driver => "Final Exam Per Course Offering")
 end
 
 When /^I rollover the term to a new academic term that has no exam period$/ do
@@ -962,8 +975,9 @@ Then /^all the Final Exam and Exam Driver data for the COs should be retained af
 
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[1].course)
   @test_co_list[1].manage
-  on(ManageCourseOfferings).view_exam_offerings
-  on(ViewExamOfferings).table_header.exists?.should == false
+  on ManageCourseOfferings do |page|
+    page.view_exam_offerings_link.present?.should == false
+  end
 
   @test_co_list << (make CourseOffering, :term => @term_target.term_code, :course => @co_list[2].course)
   @test_co_list[2].manage
