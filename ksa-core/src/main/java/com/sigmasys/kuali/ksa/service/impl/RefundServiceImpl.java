@@ -900,7 +900,7 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     /**
      * Returns all Refunds linked to the Account with the given ID and which fall in the specified date range.
      *
-     * @param userId   Account which Refunds to find.
+     * @param accountId   Account which Refunds to find.
      * @param dateFrom Start of the date range.
      * @param dateTo   End of the date range.
      * @return List of Refunds in the date range for the given Account.
@@ -908,38 +908,38 @@ public class RefundServiceImpl extends GenericPersistenceService implements Refu
     @Override
     @Transactional(readOnly = true)
     @PermissionsAllowed(Permission.READ_REFUND)
-    public List<Refund> getAccountRefunds(String userId, Date dateFrom, Date dateTo) {
+    public List<Refund> getAccountRefunds(String accountId, Date dateFrom, Date dateTo) {
 
         Set<String> accountIds = new HashSet<String>(1);
 
-        accountIds.add(userId);
+        accountIds.add(accountId);
 
-        return getAccountsRefunds(accountIds, dateFrom, dateTo);
+        return getAccountRefunds(accountIds, dateFrom, dateTo);
     }
 
     /**
      * Returns Refunds for all specified Accounts.
      *
-     * @param accounts Account IDs for which to return Refunds.
+     * @param accountIds Account IDs for which to return Refunds.
      * @return Refunds for the given Accounts.
      */
     @Override
     @PermissionsAllowed(Permission.READ_REFUND)
-    public List<Refund> getAccountsRefunds(Set<String> accounts) {
-        return getAccountsRefunds(accounts, null, null);
+    public List<Refund> getAccountRefunds(Set<String> accountIds) {
+        return getAccountRefunds(accountIds, null, null);
     }
 
     /**
      * Returns Refunds for all specified Accounts and date range.
      *
-     * @param accountIds Accounts for which to return Refunds.
+     * @param accountIds Account IDs for which to return Refunds.
      * @param dateFrom   Start of the date range.
      * @param dateTo     End of the date range.
      * @return Refunds for the given Accounts.
      */
     @Override
     @PermissionsAllowed(Permission.READ_REFUND)
-    public List<Refund> getAccountsRefunds(Set<String> accountIds, Date dateFrom, Date dateTo) {
+    public List<Refund> getAccountRefunds(Set<String> accountIds, Date dateFrom, Date dateTo) {
 
         if (CollectionUtils.isEmpty(accountIds)) {
             String errMsg = "Account IDs are required";

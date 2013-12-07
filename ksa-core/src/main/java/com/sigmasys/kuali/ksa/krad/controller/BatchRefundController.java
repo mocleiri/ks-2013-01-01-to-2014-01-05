@@ -373,7 +373,7 @@ public class BatchRefundController extends GenericSearchController {
         if ((filterAccountIds != null) && !filterAccountIds.isEmpty()) {
 
             // Get Refunds for the selected Account IDs:
-            List<Refund> refunds = refundService.getAccountsRefunds(filterAccountIds, dateFrom, dateTo);
+            List<Refund> refunds = refundService.getAccountRefunds(filterAccountIds, dateFrom, dateTo);
 
             if (refunds != null) {
 

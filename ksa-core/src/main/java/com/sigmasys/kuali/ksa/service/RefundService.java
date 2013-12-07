@@ -290,12 +290,12 @@ public interface RefundService {
     /**
      * Returns all Refunds linked to the Account with the given ID and which fall in the specified date range.
      *
-     * @param userId   Account which Refunds to find.
-     * @param dateFrom Start of the date range.
-     * @param dateTo   End of the date range.
+     * @param accountId Account which Refunds to find.
+     * @param dateFrom  Start of the date range.
+     * @param dateTo    End of the date range.
      * @return List of Refunds in the date range for the given Account.
      */
-    List<Refund> getAccountRefunds(String userId, Date dateFrom, Date dateTo);
+    List<Refund> getAccountRefunds(String accountId, Date dateFrom, Date dateTo);
 
     /**
      * Returns all Refunds belonging to the same group with the specified Group ID (UUID).
@@ -308,18 +308,18 @@ public interface RefundService {
     /**
      * Returns Refunds for all specified Accounts.
      *
-     * @param accounts Accounts for which to return Refunds.
+     * @param accountIds Accounts for which to return Refunds.
      * @return Refunds for the given Accounts.
      */
-    List<Refund> getAccountsRefunds(Set<String> accounts);
+    List<Refund> getAccountRefunds(Set<String> accountIds);
 
     /**
      * Returns Refunds for all specified Accounts and date range.
      *
-     * @param accounts Accounts for which to return Refunds.
-     * @param dateFrom Start of the date range.
-     * @param dateTo   End of the date range.
+     * @param accountIds Account IDs for which to return Refunds.
+     * @param dateFrom   Start of the date range.
+     * @param dateTo     End of the date range.
      * @return Refunds for the given Accounts.
      */
-    List<Refund> getAccountsRefunds(Set<String> accounts, Date dateFrom, Date dateTo);
+    List<Refund> getAccountRefunds(Set<String> accountIds, Date dateFrom, Date dateTo);
 }

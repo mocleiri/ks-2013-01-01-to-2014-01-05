@@ -40,6 +40,8 @@ public class FeeManagementSession implements Identifiable, KeyPairAware {
 
     private Set<KeyPair> keyPairs;
 
+    private Set<FeeManagementSignup> signups;
+
     private FeeManagementSessionStatus status;
 
     private String statusCode;
@@ -129,7 +131,7 @@ public class FeeManagementSession implements Identifiable, KeyPairAware {
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_QUEUED")
     public Boolean isQueued() {
-        return (isQueued != null) ? isQueued : false;
+        return isQueued != null ? isQueued : false;
     }
 
     public void setQueued(Boolean queued) {
@@ -179,6 +181,16 @@ public class FeeManagementSession implements Identifiable, KeyPairAware {
 
     public void setKeyPairs(Set<KeyPair> keyPairs) {
         this.keyPairs = keyPairs;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "FM_SESSION_ID_FK")
+    public Set<FeeManagementSignup> getSignups() {
+        return signups;
+    }
+
+    public void setSignups(Set<FeeManagementSignup> signups) {
+        this.signups = signups;
     }
 
     @Column(name = "STATUS", length = 2)

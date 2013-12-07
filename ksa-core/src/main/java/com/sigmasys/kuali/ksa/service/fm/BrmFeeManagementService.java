@@ -65,7 +65,7 @@ public interface BrmFeeManagementService {
      * @param context  BRM context
      * @return true if the KeyPair's value satisfies the given value and relational operator, false - otherwise.
      */
-    boolean compareRateKeyPair(String key, String value, String operator, BrmContext context);
+    boolean compareSignupRateKeyPair(String key, String value, String operator, BrmContext context);
 
     /**
      * Sets an Account KeyPair specified by "key" and "value".
@@ -181,6 +181,22 @@ public interface BrmFeeManagementService {
      */
     boolean compareNumberOfUnits(int numberOfUnits, String rateCodes, String rateTypeCodes,
                                  String signupOperations, String operator, BrmContext context);
+
+    /**
+     * Checks if the current signup in the context is taken.
+     *
+     * @param context BRM context
+     * @return boolean value
+     */
+    boolean signupIsTaken(BrmContext context);
+
+    /**
+     * Checks if the current signup in the context is complete.
+     *
+     * @param context BRM context
+     * @return boolean value
+     */
+    boolean signupIsComplete(BrmContext context);
 
     /**
      * Checks if the signup has rates specified by the codes.

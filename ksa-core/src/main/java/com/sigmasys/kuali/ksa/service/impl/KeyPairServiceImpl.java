@@ -205,4 +205,56 @@ public class KeyPairServiceImpl extends GenericPersistenceService implements Key
         throw new IllegalStateException(errMsg);
     }
 
+    /**
+     * Retrieves the list of key pairs by key.
+     *
+     * @param entity KeyPairAware instance
+     * @param key    KeyPair key
+     * @return list of KeyPairAware objects
+     */
+    @Override
+    public <T extends KeyPairAware> List<KeyPair> getKeyPairsByKey(T entity, String key) {
+
+        List<KeyPair> foundKeyPairs = new LinkedList<KeyPair>();
+
+        Set<KeyPair> keyPairs = entity.getKeyPairs();
+
+        if (CollectionUtils.isNotEmpty(keyPairs)) {
+            for (KeyPair keyPair : keyPairs) {
+                if (keyPair.getKey().equals(key)) {
+                    foundKeyPairs.add(keyPair);
+                }
+            }
+
+        }
+
+        return foundKeyPairs;
+    }
+
+    /**
+     * Returns true if the key pair exists and false if it does not.
+     *
+     * @param entity KeyPairAware instance
+     * @param key    KeyPair key
+     * @param value  KeyPair value
+     * @return true if the kay pair exists, otherwise false.
+     */
+    @Override
+    public <T extends KeyPairAware> boolean keyPairExists(T entity, String key, String value) {
+
+        Set<KeyPair> keyPairs = entity.getKeyPairs();
+
+        if (CollectionUtils.isNotEmpty(keyPairs)) {
+            for (KeyPair keyPair : keyPairs) {
+                if (keyPair.getKey().equals(key) && keyPair.getValue().equals(value)) {
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+
 }

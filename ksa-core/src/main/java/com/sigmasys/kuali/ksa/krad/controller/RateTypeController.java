@@ -4,7 +4,7 @@ import com.sigmasys.kuali.ksa.krad.form.RateTypeForm;
 import com.sigmasys.kuali.ksa.krad.model.RateTypeModel;
 import com.sigmasys.kuali.ksa.model.fm.RateType;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
-import com.sigmasys.kuali.ksa.util.NumberUtils;
+import com.sigmasys.kuali.ksa.util.CommonUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -24,15 +24,15 @@ import java.util.List;
 
 /**
  * Controller to serve requests from the "Rate Types" page.
- * User: Sergey
- * Date: 12/4/13
- * Time: 10:37 PM
+ *
+ * @author Sergey Godunov
  */
 @Controller
 @RequestMapping(value = "/rateTypeView")
 public class RateTypeController extends GenericSearchController {
 
     private static final Log logger = LogFactory.getLog(RateTypeController.class);
+
 
     @Autowired
     private RateService rateService;
@@ -49,7 +49,7 @@ public class RateTypeController extends GenericSearchController {
     /**
      * Invoked to display the initial page. Loads all RateType objects.
      *
-     * @param form  The form object.
+     * @param form The form object.
      * @return Model And View.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=displayInitialPage")
@@ -64,9 +64,9 @@ public class RateTypeController extends GenericSearchController {
     /**
      * Invoked when the "Delete" icon next to a Rate Type is pressed.
      *
-     * @param form          The form object.
-     * @param rateTypeId    ID of a RateType to delete.
-     * @return  Model And View.
+     * @param form       The form object.
+     * @param rateTypeId ID of a RateType to delete.
+     * @return Model And View.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=deleteRateType")
     public ModelAndView deleteRateType(@ModelAttribute("KualiForm") RateTypeForm form,
@@ -101,8 +101,8 @@ public class RateTypeController extends GenericSearchController {
     /**
      * Invoked to save or update the selected RateType when the "Save" icon is pressed.
      *
-     * @param form          The form object.
-     * @param rateTypeId    ID of a Rate Type to update. If <code>null</code>, then it's a new RateType
+     * @param form       The form object.
+     * @param rateTypeId ID of a Rate Type to update. If <code>null</code>, then it's a new RateType
      * @return Model and View.
      */
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, params = "methodToCall=saveRateType")
@@ -174,7 +174,7 @@ public class RateTypeController extends GenericSearchController {
     /**
      * Refreshes the data model and sets on the form object.
      *
-     * @param form  The form object.
+     * @param form The form object.
      */
     private void refreshDataModel(RateTypeForm form) {
 
@@ -200,9 +200,9 @@ public class RateTypeController extends GenericSearchController {
     /**
      * Finds a RateTypeModel with the given RateType ID in the form's list of RateTypeModels.
      *
-     * @param form              Form object containing RateTypes.
-     * @param rateTypeId        ID of a RateType to locate.
-     * @param removeFromList    Whether to remove the located RateTypeModel from the list.
+     * @param form           Form object containing RateTypes.
+     * @param rateTypeId     ID of a RateType to locate.
+     * @param removeFromList Whether to remove the located RateTypeModel from the list.
      * @return The RateType found or <code>null</code> if none found.
      */
     private RateTypeModel findRateTypeModel(RateTypeForm form, Long rateTypeId, boolean removeFromList) {
@@ -210,13 +210,13 @@ public class RateTypeController extends GenericSearchController {
         // Find the RateType with the given ID and delete it. Skip the rest:
         if (CollectionUtils.isNotEmpty(form.getRateTypes())) {
 
-            for (Iterator<RateTypeModel> itRateTypeModels = form.getRateTypes().iterator(); itRateTypeModels.hasNext();) {
+            for (Iterator<RateTypeModel> itRateTypeModels = form.getRateTypes().iterator(); itRateTypeModels.hasNext(); ) {
 
                 // Get the next RateTypeModel
                 RateTypeModel rateTypeModel = itRateTypeModels.next();
 
                 // Compare the ID to find a match:
-                if (NumberUtils.nullSafeCompare(rateTypeModel.getId(), rateTypeId) == 0) {
+                if (CommonUtils.nullSafeCompare(rateTypeModel.getId(), rateTypeId) == 0) {
 
                     // Optionally, remove the RateTypeModel from the list:
                     if (removeFromList) {

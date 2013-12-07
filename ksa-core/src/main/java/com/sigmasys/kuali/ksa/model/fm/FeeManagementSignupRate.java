@@ -22,6 +22,8 @@ public class FeeManagementSignupRate implements Identifiable {
 
     private Rate rate;
 
+    private Boolean isComplete;
+
 
     @Id
     @Column(name = "ID", nullable = false, updatable = false)
@@ -37,7 +39,7 @@ public class FeeManagementSignupRate implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FM_SIGNUP_ID_FK")
+    @JoinColumn(name = "FM_SIGNUP_ID_FK", nullable = false)
     public FeeManagementSignup getSignup() {
         return signup;
     }
@@ -47,12 +49,22 @@ public class FeeManagementSignupRate implements Identifiable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RATE_ID_FK")
+    @JoinColumn(name = "RATE_ID_FK", nullable = false)
     public Rate getRate() {
         return rate;
     }
 
     public void setRate(Rate rate) {
         this.rate = rate;
+    }
+
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_COMPLETE")
+    public Boolean isComplete() {
+        return isComplete != null ? isComplete : false;
+    }
+
+    public void setComplete(Boolean complete) {
+        isComplete = complete;
     }
 }

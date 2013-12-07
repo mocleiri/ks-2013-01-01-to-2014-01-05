@@ -35,11 +35,15 @@ public class FeeManagementSignup implements Identifiable, KeyPairAware {
 
     private Boolean isComplete;
 
+    private Boolean isTaken;
+
     private Date creationDate;
 
     private Date effectiveDate;
 
     private Set<KeyPair> keyPairs;
+
+    private Set<FeeManagementSignupRate> signupRates;
 
     private FeeManagementSignupOperation operation;
 
@@ -121,6 +125,16 @@ public class FeeManagementSignup implements Identifiable, KeyPairAware {
         isComplete = complete;
     }
 
+    @org.hibernate.annotations.Type(type = "yes_no")
+    @Column(name = "IS_TAKEN")
+    public Boolean isTaken() {
+        return isTaken != null ? isTaken : false;
+    }
+
+    public void setTaken(Boolean taken) {
+        isTaken = taken;
+    }
+
     @Column(name = "CREATION_DATE")
     public Date getCreationDate() {
         return creationDate;
@@ -155,6 +169,16 @@ public class FeeManagementSignup implements Identifiable, KeyPairAware {
 
     public void setKeyPairs(Set<KeyPair> keyPairs) {
         this.keyPairs = keyPairs;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "FM_SIGNUP_ID_FK")
+    public Set<FeeManagementSignupRate> getSignupRates() {
+        return signupRates;
+    }
+
+    public void setSignupRates(Set<FeeManagementSignupRate> signupRates) {
+        this.signupRates = signupRates;
     }
 
     @Column(name = "OPERATION", length = 2)

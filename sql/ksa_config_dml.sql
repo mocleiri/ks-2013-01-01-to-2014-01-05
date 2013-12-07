@@ -76,7 +76,7 @@ insert into KSSA_CONFIG (NAME, VALUE) values ('kfs.balance.type.code', 'TR');
 insert into KSSA_CONFIG (NAME, VALUE) values ('kfs.document.type.code', 'JV');
 -- TODO: figure out what the correct 'kfs.object.type.code' value should be
 insert into KSSA_CONFIG (NAME, VALUE) values ('kfs.object.type.code', '');
-insert into KSSA_CONFIG (NAME, VALUE) values ('kfs.origination.code', 'KS');
+insert into KSSA_CONFIG (NAME, VALUE) values ('kfs.origination.code', 'BR');
 insert into KSSA_CONFIG (NAME, VALUE) values ('kfs.transaction.gl.entry.description', 'KSA General Ledger Transaction');
 
 -- KSA Transaction settings

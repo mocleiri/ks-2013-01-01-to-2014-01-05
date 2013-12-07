@@ -206,4 +206,24 @@ public class CommonUtils {
     }
 
 
+    /**
+     * Performs null-safe comparison of two Comparable objects.
+     *
+     * @param object1 First Object to compare.
+     * @param object2 Second Object to compare.
+     * @return 0, 1 or -1.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Comparable> int nullSafeCompare(T object1, T object2) {
+        if (object1 != null && object2 != null) {
+            return object1.compareTo(object2);
+        } else if (object1 != null) {
+            return 1;
+        } else if (object2 != null) {
+            return -1;
+        } else { // both are null
+            return 0;
+        }
+    }
+
 }

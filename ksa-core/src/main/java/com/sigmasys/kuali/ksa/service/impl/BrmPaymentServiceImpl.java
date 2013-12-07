@@ -5,12 +5,10 @@ import com.sigmasys.kuali.ksa.service.BrmPaymentService;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
 import com.sigmasys.kuali.ksa.service.PaymentService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
-import com.sigmasys.kuali.ksa.service.aop.AbstractMethodInterceptor;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
+import com.sigmasys.kuali.ksa.service.brm.BrmMethodInterceptor;
 import com.sigmasys.kuali.ksa.util.TransactionUtils;
 import org.aopalliance.aop.Advice;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,7 +50,7 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
 
 
     /**
-     * Adds AOP advice to the current instance.
+     * Adds an AOP proxy to the current instance.
      */
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -62,38 +59,7 @@ public class BrmPaymentServiceImpl extends GenericPersistenceService implements 
         if (advices == null) {
             advices = new LinkedList<Advice>();
         }
-        MethodInterceptor methodInterceptor = new AbstractMethodInterceptor(this) {
-            @Override
-            public Object invoke(MethodInvocation invocation) throws Throwable {
-                Method method = invocation.getMethod();
-                int brmContextIndex = Arrays.asList(method.getParameterTypes()).indexOf(BrmContext.class);
-                if (brmContextIndex >= 0) {
-                    List<Object> arguments = Arrays.asList(invocation.getArguments());
-                    if (brmContextIndex < arguments.size()) {
-                        Object contextObject = arguments.get(brmContextIndex);
-                        if (contextObject == null) {
-                            String errMsg = "BRM context cannot be null";
-                            logger.error(errMsg);
-                            throw new IllegalArgumentException(errMsg);
-                        }
-                        BrmContext context = (BrmContext) contextObject;
-                        if (context.getAccount() == null) {
-                            String errMsg = "Account is required in BRM context";
-                            logger.error(errMsg);
-                            throw new IllegalArgumentException(errMsg);
-                        }
-                        logger.debug("BrmContext: Account ID = " + context.getAccount().getId());
-                        if (context.getAttributes() == null) {
-                            String errMsg = "BRM context parameters map cannot be null";
-                            logger.error(errMsg);
-                            throw new IllegalArgumentException(errMsg);
-                        }
-                    }
-                }
-                return super.invoke(invocation);
-            }
-        };
-        advices.add(methodInterceptor);
+        advices.add(new BrmMethodInterceptor(this));
         return advices;
     }
 

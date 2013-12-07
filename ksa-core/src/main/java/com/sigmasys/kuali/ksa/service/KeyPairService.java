@@ -80,4 +80,24 @@ public interface KeyPairService {
      */
     <T extends KeyPairAware> T updateKeyPair(T entity, Long keyPairId, String key, String value);
 
+    /**
+     * Retrieves the list of key pairs by key.
+     *
+     * @param entity KeyPairAware instance
+     * @param key    KeyPair key
+     * @return list of KeyPairAware objects
+     */
+    <T extends KeyPairAware> List<KeyPair> getKeyPairsByKey(T entity, String key);
+
+    /**
+     * Returns true if the key pair exists and false if it does not.
+     *
+     * @param entity KeyPairAware instance
+     * @param key    KeyPair key
+     * @param value  KeyPair value
+     * @return true if the kay pair exists, otherwise false.
+     */
+    <T extends KeyPairAware> boolean keyPairExists(T entity, String key, String value);
+
+
 }
