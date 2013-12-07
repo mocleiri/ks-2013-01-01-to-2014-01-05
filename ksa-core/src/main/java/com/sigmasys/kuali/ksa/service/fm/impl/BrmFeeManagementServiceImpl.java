@@ -1,8 +1,8 @@
 package com.sigmasys.kuali.ksa.service.fm.impl;
 
-import com.sigmasys.kuali.ksa.model.KeyPair;
-import com.sigmasys.kuali.ksa.model.KeyPairAware;
+import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.fm.*;
+import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.KeyPairService;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmMethodInterceptor;
@@ -53,6 +53,9 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     @Autowired
     private KeyPairService keyPairService;
 
+    @Autowired
+    private InformationService informationService;
+
 
     /**
      * Adds an AOP proxy to the current instance.
@@ -68,7 +71,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         return advices;
     }
 
-    private <T extends Comparable<Object>> boolean compareObjects(T object1, T object2, String operator) {
+    private <T extends Comparable<T>> boolean compareObjects(T object1, T object2, String operator) {
 
         if (EQUAL_OPERATOR.equals(operator)) {
             return object1.compareTo(object2) == 0;
@@ -293,8 +296,13 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean compareAccountType(String accountTypeCode, String operator, BrmContext context) {
-        //TODO
-        return false;
+        AccountType accountType = context.getAccount().getAccountType();
+        if (accountType == null) {
+            String errMsg = "AccountType cannot be null";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+        return compareObjects(accountType.getCode(), accountTypeCode, operator);
     }
 
     /**
@@ -307,8 +315,13 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean compareAccountStatus(String accountStatusCode, String operator, BrmContext context) {
-        // TODO
-        return false;
+        AccountStatusType statusType = context.getAccount().getStatusType();
+        if (statusType == null) {
+            String errMsg = "AccountStatusType cannot be null";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+        return compareObjects(statusType.getCode(), accountStatusCode, operator);
     }
 
     /**
@@ -321,8 +334,14 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean compareSessionAtp(String atpId, String operator, BrmContext context) {
-        // TODO
-        return false;
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        String sessionAtpId = session.getAtpId();
+        if (sessionAtpId == null) {
+            String errMsg = "FeeManagementSession ATP ID cannot be null";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+        return compareObjects(sessionAtpId, atpId, operator);
     }
 
     /**
@@ -336,7 +355,17 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean accountHasFlag(String flagTypeCode, int severity, String operator, BrmContext context) {
-        // TODO
+        List<Flag> flags = informationService.getFlags(context.getAccount().getId());
+        if (CollectionUtils.isNotEmpty(flags)) {
+            for (Flag flag : flags) {
+                if (flag.getType().getCode().equals(flagTypeCode)) {
+                    Integer flagSeverity = flag.getSeverity();
+                    if (flagSeverity != null && compareObjects(flagSeverity, severity, operator)) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
