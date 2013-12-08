@@ -4,9 +4,11 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.KeyPairService;
+import com.sigmasys.kuali.ksa.service.atp.AtpService;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmMethodInterceptor;
 import com.sigmasys.kuali.ksa.service.fm.BrmFeeManagementService;
+import com.sigmasys.kuali.ksa.service.hold.HoldService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.util.CommonUtils;
 import org.aopalliance.aop.Advice;
@@ -20,6 +22,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +40,9 @@ import java.util.Set;
 public class BrmFeeManagementServiceImpl extends GenericPersistenceService implements BrmFeeManagementService {
 
     private static final Log logger = LogFactory.getLog(BrmFeeManagementServiceImpl.class);
+
+    // Default multi-value delimiter
+    private static final String MULTI_VALUE_DELIMITER = ",";
 
     // Relational operators
     private static final String EQUAL_OPERATOR = "=";
@@ -55,6 +62,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
     @Autowired
     private InformationService informationService;
+
+    @Autowired
+    private HoldService holdService;
+
+    @Autowired
+    private AtpService atpService;
 
 
     /**
@@ -238,6 +251,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                     }
                 }
             }
+            return false;
         }
 
         FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
@@ -378,7 +392,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean accountHasAppliedHold(String holdIssueName, BrmContext context) {
-        // TODO
+        List<String> holdIssueNames = holdService.getHoldIssueNamesByUserId(holdIssueName);
+        if (CollectionUtils.isNotEmpty(holdIssueNames)) {
+            if (holdIssueNames.contains(holdIssueName)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -392,7 +411,35 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean compareSignupOperations(String signupOperations, BrmContext context) {
-        // TODO
+
+        List<String> operationValues = CommonUtils.split(signupOperations, MULTI_VALUE_DELIMITER);
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            FeeManagementSignupOperation signupOperation = signup.getOperation();
+            if (signupOperation != null) {
+                if (operationValues.contains(signupOperation.name())) {
+                    return true;
+                }
+            }
+        }
+
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups = session.getSignups();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+            for (FeeManagementSignup fmSignup : signups) {
+                FeeManagementSignupOperation signupOperation = fmSignup.getOperation();
+                if (signupOperation != null) {
+                    if (operationValues.contains(signupOperation.name())) {
+                        return true;
+                    }
+                }
+            }
+        }
+
         return false;
     }
 
@@ -407,8 +454,35 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean compareSignupEffectiveDate(String date, String operator, BrmContext context) {
-        // TODO
-        return false;
+
+        try {
+
+            Date dateValue = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse(date);
+
+            FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+            if (signup != null) {
+                return compareObjects(signup.getEffectiveDate(), dateValue, operator);
+            }
+
+            FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+            Set<FeeManagementSignup> signups = session.getSignups();
+
+            if (CollectionUtils.isNotEmpty(signups)) {
+                for (FeeManagementSignup fmSignup : signups) {
+                    if (compareObjects(fmSignup.getEffectiveDate(), dateValue, operator)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
 

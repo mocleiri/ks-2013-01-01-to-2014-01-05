@@ -1,6 +1,7 @@
 package com.sigmasys.kuali.ksa.util;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -224,6 +225,23 @@ public class CommonUtils {
         } else { // both are null
             return 0;
         }
+    }
+
+    public static List<String> split(String values, String separator) {
+
+        if (StringUtils.isEmpty(values)) {
+            return Collections.emptyList();
+        }
+
+        String[] valueArray = values.split(separator);
+
+        List<String> valueList = new ArrayList<String>(valueArray.length);
+
+        for (String stringValue : valueArray) {
+            valueList.add(stringValue.trim());
+        }
+
+        return valueList;
     }
 
 }
