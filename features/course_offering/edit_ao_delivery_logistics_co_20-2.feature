@@ -1,5 +1,5 @@
 @nightly @green_team
-Feature: WC.Edit AO delivery logistics
+Feature: WC.Edit AO delivery logistics for "Needs Approval" institutional configuration
 
   As a schedule coordinator or department schedule coordinator, I want to edit the requested delivery
   logistics of an AO and then confirm that those changes are saved
