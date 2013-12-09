@@ -28,6 +28,7 @@ import org.kuali.student.r2.common.util.RichTextHelper;
 import org.kuali.student.r2.common.util.date.DateFormatters;
 import org.kuali.student.r2.core.acal.dto.AcademicCalendarInfo;
 import org.kuali.student.r2.core.acal.dto.AcalEventInfo;
+import org.kuali.student.r2.core.acal.dto.ExamPeriodInfo;
 import org.kuali.student.r2.core.acal.dto.HolidayCalendarInfo;
 import org.kuali.student.r2.core.acal.dto.HolidayInfo;
 import org.kuali.student.r2.core.acal.dto.KeyDateInfo;
@@ -173,6 +174,30 @@ public class TestAcademicCalendarServiceImpl {
         return stateService.createState(orig.getLifecycleKey(), orig.getKey(), orig, callContext);
     }
 
+    private ExamPeriodInfo populateExamPeriod (){
+        String examPeriodId = null;
+        ExamPeriodInfo examPeriodInfo = new ExamPeriodInfo();
+        examPeriodInfo.setId(examPeriodId);
+        examPeriodInfo.setName("testCreate");
+        
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2005);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        examPeriodInfo.setStartDate(cal.getTime());
+        cal.set(Calendar.YEAR, 2006);
+        examPeriodInfo.setEndDate(cal.getTime());
+        
+        examPeriodInfo.setStateKey(AtpServiceConstants.ATP_DRAFT_STATE_KEY);
+        examPeriodInfo.setTypeKey(AtpServiceConstants.ATP_EXAM_PERIOD_TYPE_KEY);
+        RichTextInfo descr = new RichTextInfo();
+        descr.setPlain("Test");
+        examPeriodInfo.setDescr(descr);
+        return examPeriodInfo;
+    }
+    
     private void cleanupStateTestData( String state ) {
         try {
             stateService.deleteState( state, callContext );
@@ -228,7 +253,6 @@ public class TestAcademicCalendarServiceImpl {
 
     // Ignored until KSENROLL-4206 is resolved, since the validator will not work until then
     @Test
-    @Ignore
     public void testValidateAcademicCalendar() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
         AcademicCalendarInfo acal = new AcademicCalendarInfo();
         acal.setId("testAcalId1");
@@ -954,6 +978,78 @@ public class TestAcademicCalendarServiceImpl {
             kdIds.add(kd.getId());
         }
         assertTrue(kdIds.contains(keyDateId));
+    }
+
+    @Test
+    public void testCRUDExamPeriod() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException,
+            PermissionDeniedException, DoesNotExistException, ReadOnlyException {
+        
+        ExamPeriodInfo examPeriodInfo = populateExamPeriod();
+        String examPeriodId = examPeriodInfo.getId();
+
+        try {
+            //Create
+            ExamPeriodInfo created = acalService.createExamPeriod("termRelationTestingTerm1", examPeriodInfo, callContext);
+            assertNotNull(created);
+            examPeriodId = created.getId();
+            assertNotNull(examPeriodId);
+            assertEquals("testCreate", created.getName());
+
+            //Get
+            ExamPeriodInfo retrieved = acalService.getExamPeriod(examPeriodId, callContext);
+            assertNotNull(retrieved);
+            assertEquals(examPeriodId, retrieved.getId());
+            assertEquals("testCreate", retrieved.getName());
+
+            //Update
+            retrieved.setName("testCreate_updated");
+            ExamPeriodInfo retrievedUpdated = acalService.updateExamPeriod(examPeriodId, retrieved, callContext);
+            assertNotNull(retrievedUpdated);
+            assertEquals(examPeriodId, retrievedUpdated.getId());
+            assertEquals("testCreate_updated", retrievedUpdated.getName());
+
+            //Delete
+            StatusInfo ret = acalService.deleteExamPeriod(examPeriodId, callContext);
+            assertTrue(ret.getIsSuccess());
+      } catch (Exception ex) {
+            fail("exception from service call :" + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testExamPeriodTerm() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException,
+                PermissionDeniedException, DoesNotExistException, ReadOnlyException {
+
+        ExamPeriodInfo examPeriodInfo = populateExamPeriod();
+
+        try {
+            //Create ExamPeriod
+            ExamPeriodInfo createdExam = acalService.createExamPeriod("termRelationTestingTerm1", examPeriodInfo, callContext);
+            //Create Term
+            TermInfo term = new TermInfo();
+            term.setName("testNewTerm");
+            term.setStateKey(AtpServiceConstants.ATP_DRAFT_STATE_KEY);
+            term.setTypeKey(AtpServiceConstants.ATP_FALL_TYPE_KEY);
+            populateRequiredFields(term);
+            term.setStartDate(new Date(term.getStartDate().getTime()));
+            TermInfo createdTerm = acalService.createTerm(AtpServiceConstants.ATP_FALL_TYPE_KEY, term, callContext);
+
+            //Add
+            StatusInfo ret = acalService.addExamPeriodToTerm(createdTerm.getId(), createdExam.getId(), callContext);
+            assertTrue(ret.getIsSuccess());
+
+            //Get
+            List<ExamPeriodInfo> examPeriodInfos = acalService.getExamPeriodsForTerm(createdTerm.getId(),callContext);
+            assertNotNull(examPeriodInfos);
+            assertEquals("Number of examPeriodInfos returned not as expected.", 1, examPeriodInfos.size());
+
+            //Get exam types by term type
+            List<TypeInfo> examTypes = acalService.getExamPeriodTypesForTermType(createdTerm.getTypeKey(),callContext);
+            assertNotNull(examTypes);
+
+        } catch (Exception ex) {
+            fail("exception from service call :" + ex.getMessage());
+        }
     }
 
     @Test

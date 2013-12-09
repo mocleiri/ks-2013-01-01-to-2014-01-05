@@ -15,10 +15,13 @@
 
 package org.kuali.student.r2.core.scheduling.service.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kuali.rice.core.api.criteria.Predicate;
+import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.student.r2.common.criteria.CriteriaLookupService;
@@ -37,8 +40,10 @@ import org.kuali.student.r2.common.exceptions.ReadOnlyException;
 import org.kuali.student.r2.common.util.RichTextHelper;
 import org.kuali.student.r2.core.atp.service.AtpService;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
+import org.kuali.student.r2.core.class1.type.dto.TypeTypeRelationInfo;
 import org.kuali.student.r2.core.class1.type.service.TypeService;
 import org.kuali.student.r2.core.constants.RoomServiceConstants;
+import org.kuali.student.r2.core.constants.TypeServiceConstants;
 import org.kuali.student.r2.core.room.service.RoomService;
 import org.kuali.student.r2.core.scheduling.SchedulingServiceDataLoader;
 import org.kuali.student.r2.core.scheduling.constants.SchedulingServiceConstants;
@@ -51,15 +56,18 @@ import org.kuali.student.r2.core.scheduling.dto.ScheduleRequestSetInfo;
 import org.kuali.student.r2.core.scheduling.dto.TimeSlotInfo;
 import org.kuali.student.r2.core.scheduling.infc.TimeSlot;
 import org.kuali.student.r2.core.scheduling.service.SchedulingService;
+import org.kuali.student.r2.core.scheduling.util.SchedulingServiceUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.jws.WebParam;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -99,10 +107,15 @@ public class TestSchedulingServiceImpl {
     public static String principalId = "123";
     public ContextInfo contextInfo = null;
 
+    private String scheduleRequestInfoId, scheduleRequestComponentInfoId, scheduleRequestInfoName, scheduleRequestSetInfoId;
+    private String scheduleRequestInfoId2, scheduleRequestComponentInfoId2, scheduleRequestInfoName2,requestType;
+
+
     @Before
     public void setUp() {
         contextInfo = new ContextInfo();
         contextInfo.setPrincipalId(principalId);
+        initScheduleRequestByRefObj();
         try {
             loadData();
         } catch (Exception ex) {
@@ -110,33 +123,106 @@ public class TestSchedulingServiceImpl {
         }
     }
 
-     private void loadData() throws InvalidParameterException, DataValidationErrorException, MissingParameterException, AlreadyExistsException, DoesNotExistException, ReadOnlyException, PermissionDeniedException, OperationFailedException {
+    public void initScheduleRequestByRefObj() {
+
+        requestType =  SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST;
+
+        scheduleRequestInfoId = "ScheduleRequestsByRefObject-Id1";
+        scheduleRequestComponentInfoId = "scheduleRequest-ComponentInfoId1";
+        scheduleRequestInfoName = "testGetScheduleRequestByRefObject";
+
+        scheduleRequestSetInfoId = "ScheduleRequestsByRefObject-srs-Id1";
+
+        // create a ScheduleRequestInfo 2
+        scheduleRequestInfoId2 = "ScheduleRequestsByRefObject-Id2";
+        scheduleRequestComponentInfoId2 = "scheduleRequest-ComponentInfoId2";
+        scheduleRequestInfoName2 = "testGetScheduleRequestByRefObject2";
+
+    }
+
+    private void loadData() throws InvalidParameterException, DataValidationErrorException, MissingParameterException, AlreadyExistsException, DoesNotExistException, ReadOnlyException, PermissionDeniedException, OperationFailedException {
+        createTypeData();
         SchedulingServiceDataLoader loader = new SchedulingServiceDataLoader(this.schedulingService);
         loader.setAtpService(atpService);
         loader.setRoomService(roomService);
+        loader.loadData();
+    }
 
-        TypeInfo info =  createTypeInfo(SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST, "testType", "This is a test", SchedulingServiceConstants.REF_OBJECT_URI_SCHEDULE_REQUEST);
+    private void createTypeData() throws PermissionDeniedException, OperationFailedException, InvalidParameterException, ReadOnlyException, MissingParameterException, DataValidationErrorException, DoesNotExistException {
+
+        TypeInfo info =  createTypeInfo(requestType, "testType", "This is a test", SchedulingServiceConstants.REF_OBJECT_URI_SCHEDULE_REQUEST);
+
         try {
-            typeService.createType(info.getKey(), info, contextInfo);
+           typeService.createType(info.getKey(), info, contextInfo);
         } catch (AlreadyExistsException e) {
-            throw new DataValidationErrorException(e);
+           throw new DataValidationErrorException(e);
         }
 
-        info =  createTypeInfo(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD, "testType", "This is a test", SchedulingServiceConstants.REF_OBJECT_URI_SCHEDULE_TIME_SLOT);
+        info =  createTypeInfo(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_FALL,
+               "Fall Full", "Fall Full Time Slot for testing", SchedulingServiceConstants.REF_OBJECT_URI_SCHEDULE_TIME_SLOT);
         try {
-            typeService.createType(info.getKey(), info, contextInfo);
+           typeService.createType(info.getKey(), info, contextInfo);
         } catch (AlreadyExistsException e) {
-            throw new DataValidationErrorException(e);
+           throw new DataValidationErrorException(e);
         }
 
-         info =  createTypeInfo(SchedulingServiceConstants.SCHEDULE_TYPE_SCHEDULE, "testType", "This is a test", SchedulingServiceConstants.REF_OBJECT_URI_SCHEDULE);
-         try {
-             typeService.createType(info.getKey(), info, contextInfo);
-         } catch (AlreadyExistsException e) {
-             throw new DataValidationErrorException(e);
-         }
+        info =  createTypeInfo(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_SPRING,
+               "Spring Full", "Spring Full Time Slot for testing", SchedulingServiceConstants.REF_OBJECT_URI_SCHEDULE_TIME_SLOT);
+        try {
+           typeService.createType(info.getKey(), info, contextInfo);
+        } catch (AlreadyExistsException e) {
+           throw new DataValidationErrorException(e);
+        }
 
-         loader.loadData();
+        info =  createTypeInfo(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_ADHOC,
+               "Ad Hoc",  "Ad Hoc Time Slot for testing", SchedulingServiceConstants.REF_OBJECT_URI_SCHEDULE_TIME_SLOT);
+        try {
+           typeService.createType(info.getKey(), info, contextInfo);
+        } catch (AlreadyExistsException e) {
+           throw new DataValidationErrorException(e);
+        }
+
+        info =  createTypeInfo(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_TBA,
+               "TBA", "TBA Time Slot for testing", SchedulingServiceConstants.REF_OBJECT_URI_SCHEDULE_TIME_SLOT);
+        try {
+           typeService.createType(info.getKey(), info, contextInfo);
+        } catch (AlreadyExistsException e) {
+           throw new DataValidationErrorException(e);
+        }
+
+        info =  createTypeInfo(SchedulingServiceConstants.SCHEDULE_TYPE_SCHEDULE, "testType", "This is a test", SchedulingServiceConstants.REF_OBJECT_URI_SCHEDULE);
+        try {
+           typeService.createType(info.getKey(), info, contextInfo);
+        } catch (AlreadyExistsException e) {
+           throw new DataValidationErrorException(e);
+        }
+
+        // Create type type relationships.
+        String tsGroupingType = SchedulingServiceConstants.TIME_SLOT_TYPE_GROUPING;
+        String ttRelationGroupType = TypeServiceConstants.TYPE_TYPE_RELATION_GROUP_TYPE_KEY;
+        String fallTsType = SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_FALL;
+        String springTsType = SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_SPRING;
+        String adHocTsType = SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_ADHOC;
+        String tbaTsType = SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_TBA;
+
+        TypeTypeRelationInfo typeTypeRelationInfo = createTypeTypeRelationInfo(tsGroupingType, fallTsType, ttRelationGroupType);
+        typeService.createTypeTypeRelation(ttRelationGroupType, tsGroupingType, fallTsType, typeTypeRelationInfo, contextInfo);
+        typeTypeRelationInfo = createTypeTypeRelationInfo(tsGroupingType, springTsType , ttRelationGroupType);
+        typeService.createTypeTypeRelation(ttRelationGroupType, tsGroupingType, springTsType, typeTypeRelationInfo, contextInfo);
+        typeTypeRelationInfo = createTypeTypeRelationInfo(tsGroupingType, adHocTsType, ttRelationGroupType);
+        typeService.createTypeTypeRelation(ttRelationGroupType, tsGroupingType, adHocTsType, typeTypeRelationInfo, contextInfo);
+        typeTypeRelationInfo = createTypeTypeRelationInfo(tsGroupingType, tbaTsType , ttRelationGroupType);
+        typeService.createTypeTypeRelation(ttRelationGroupType, tsGroupingType, tbaTsType, typeTypeRelationInfo, contextInfo);
+    }
+
+    private TypeTypeRelationInfo createTypeTypeRelationInfo(String ownerTypeKey, String relatedTypeKey, String typeTypeTypeKey) {
+        TypeTypeRelationInfo typeTypeRelationInfo = new TypeTypeRelationInfo();
+        typeTypeRelationInfo.setStateKey(TypeServiceConstants.TYPE_TYPE_RELATION_ACTIVE_STATE_KEY);
+        typeTypeRelationInfo.setTypeKey(typeTypeTypeKey);
+        typeTypeRelationInfo.setOwnerTypeKey(ownerTypeKey);
+        typeTypeRelationInfo.setRelatedTypeKey(relatedTypeKey);
+        typeTypeRelationInfo.setRank(1);
+        return typeTypeRelationInfo;
     }
 
     private TypeInfo createTypeInfo(String typeKey, String typeName, String descr, String refObjectUri) {
@@ -148,7 +234,6 @@ public class TestSchedulingServiceImpl {
         type.setEffectiveDate(new Date());
         return type;
     }
-
 
     public SchedulingService getSchedulingService() {
         return schedulingService;
@@ -190,15 +275,16 @@ public class TestSchedulingServiceImpl {
 
     @Test
     public void testgetTimeSlot() throws Exception {
-        // test get by id for all records
+        // test get by id
         for (int i = 1; i<= 16; i++) {
-            TimeSlot ts = schedulingService.getTimeSlot("" + i, contextInfo);
+            int tsId = 100 + i;
+            TimeSlot ts = schedulingService.getTimeSlot("ts" + tsId, contextInfo);
             assertNotNull(ts);
-            assertEquals("" + i, ts.getId());
+            assertEquals("ts" + tsId, ts.getId());
         }
 
         // test specific records - 2
-        TimeSlot ts = schedulingService.getTimeSlot("2", contextInfo);
+        TimeSlot ts = schedulingService.getTimeSlot("ts102", contextInfo);
         List<Integer> dow = ts.getWeekdays();
         // should contain Monday, Wednesday, Friday
         assertTrue(dow.contains(Calendar.MONDAY));
@@ -211,7 +297,7 @@ public class TestSchedulingServiceImpl {
         assertEquals(ts.getEndTime().getMilliSeconds(), SchedulingServiceDataLoader.END_TIME_MILLIS_9_10_AM);
 
         // test specific records - 3
-        ts = schedulingService.getTimeSlot("3", contextInfo);
+        ts = schedulingService.getTimeSlot("ts103", contextInfo);
         dow = ts.getWeekdays();
         // should not contain Monday, Wednesday, Friday
         assertFalse(dow.contains(Calendar.MONDAY));
@@ -224,7 +310,7 @@ public class TestSchedulingServiceImpl {
         assertEquals(ts.getEndTime().getMilliSeconds(), SchedulingServiceDataLoader.END_TIME_MILLIS_8_50_AM);
 
         // test specific records - 10
-        ts = schedulingService.getTimeSlot("10", contextInfo);
+        ts = schedulingService.getTimeSlot("ts110", contextInfo);
         dow = ts.getWeekdays();
         // should contain Monday, Wednesday, Friday
         assertTrue(dow.contains(Calendar.MONDAY));
@@ -238,11 +324,94 @@ public class TestSchedulingServiceImpl {
     }
 
     @Test
+    public void testGetScheduleRequestsByRefObjects() throws Exception {
+
+        String refObjectType= "ScheduleRequestsByRefObject-AO-type";
+        List<String> refObjectIds = new ArrayList<String>();
+        refObjectIds.add("ScheduleRequestsByRefObject-ao-Id1");
+        refObjectIds.add("ScheduleRequestsByRefObject-ao-Id2");
+        refObjectIds.add("Ao1");
+        refObjectIds.add("Ao2");
+
+        ScheduleRequestSetInfo scheduleRequestSetInfo = SchedulingServiceDataLoader.setupScheduleRequestSetInfo(scheduleRequestSetInfoId,
+                refObjectIds,
+                refObjectType,
+                false,
+                8);
+
+        ScheduleRequestSetInfo retSRSInfo = schedulingService.createScheduleRequestSet(SchedulingServiceConstants.SCHEDULE_REQUEST_SET_TYPE_SCHEDULE_REQUEST_SET,
+                refObjectType, scheduleRequestSetInfo, contextInfo);
+        // create a ScheduleRequestInfo 1
+        ScheduleRequestInfo scheduleRequestInfo = SchedulingServiceDataLoader.setupScheduleRequestInfo(scheduleRequestInfoId,
+                scheduleRequestComponentInfoId, null, scheduleRequestSetInfoId, scheduleRequestInfoName);
+
+        ScheduleRequestInfo returnInfo  = schedulingService.createScheduleRequest(requestType,
+                scheduleRequestInfo,  contextInfo);
+
+        // creation success
+        assertNotNull(returnInfo);
+
+        // create a ScheduleRequestInfo 2
+        ScheduleRequestInfo scheduleRequestInfo2 = SchedulingServiceDataLoader.setupScheduleRequestInfo(scheduleRequestInfoId2,
+                scheduleRequestComponentInfoId2, null, scheduleRequestSetInfoId, scheduleRequestInfoName2);
+
+        ScheduleRequestInfo returnInfo2  = schedulingService.createScheduleRequest(requestType,
+                scheduleRequestInfo2,  contextInfo);
+
+        // creation success
+        assertNotNull(returnInfo2);
+
+        List<ScheduleRequestInfo> scheduleRequestInfos = schedulingService.getScheduleRequestsByRefObjects(refObjectType,refObjectIds,contextInfo);
+
+        assertNotNull(scheduleRequestInfos);
+        assertTrue(!scheduleRequestInfos.isEmpty());
+    }
+
+    @Test
+    public void testCanUpdateTimeSlotRDL() throws Exception {
+
+        //// RDL Test
+        scheduleRequestInfoId = "testCanUpdateTimeSlot-Id1";
+        String scheduleRequestSetInfoId = "testCanUpdateTimeSlot-scheduleRequestInfoId";
+        String scheduleRequestComponentInfoId = "testCanUpdateTimeSlot-ComponentInfoId";
+        String scheduleRequestInfoName = "testCanUpdateTimeSlot";
+        ScheduleRequestInfo scheduleRequestInfo = SchedulingServiceDataLoader.setupScheduleRequestInfo(scheduleRequestInfoId,
+                scheduleRequestComponentInfoId, null, scheduleRequestSetInfoId, scheduleRequestInfoName);
+        String timeSlotId = scheduleRequestInfo.getScheduleRequestComponents().get(0).getTimeSlotIds().get(0);
+
+        ScheduleRequestInfo returnInfo  = schedulingService.createScheduleRequest(
+                requestType,
+                scheduleRequestInfo, contextInfo);
+        assertNotNull(returnInfo);
+
+        assertFalse(schedulingService.canUpdateTimeSlot(timeSlotId, contextInfo));
+        assertTrue(schedulingService.canUpdateTimeSlot("nonexistentRdltimeslotid", contextInfo));
+    }
+
+    @Test
+    public void testCanUpdateTimeSlotADL() throws Exception {
+        //// ADL Test
+        String scheduleId = "testCanUpdateTimeSlot-Id1";
+        String atpId = SchedulingServiceDataLoader.ATP_ID;
+        String roomId = "testCanUpdateTimeSlot-room1";
+
+        ScheduleInfo scheduleInfo = SchedulingServiceDataLoader.setupScheduleInfo(scheduleId,atpId, false, roomId);
+
+        ScheduleInfo returnedInfo = schedulingService.createSchedule(scheduleInfo.getTypeKey(), scheduleInfo, contextInfo);
+        assertNotNull(returnedInfo);
+
+        String timeSlotId = scheduleInfo.getScheduleComponents().get(0).getTimeSlotIds().get(0);
+        assertFalse(schedulingService.canUpdateTimeSlot(timeSlotId, contextInfo));
+        assertTrue(schedulingService.canUpdateTimeSlot("nonexistentAdltimeslotid", contextInfo));
+
+    }
+
+    @Test
     public void testgetTimeSlotIdsByType() throws Exception {
-        List<String> l_actoff = schedulingService.getTimeSlotIdsByType(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD, contextInfo);
-        assertEquals(18, l_actoff.size());
-        assertTrue(l_actoff.contains("1"));
-        assertTrue(l_actoff.contains("16"));
+        List<String> l_actoff = schedulingService.getTimeSlotIdsByType(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_FALL, contextInfo);
+        assertEquals(22, l_actoff.size());
+        assertTrue(l_actoff.contains("ts101"));
+        assertTrue(l_actoff.contains("ts116"));
 
         List l_final = schedulingService.getTimeSlotIdsByType(SchedulingServiceConstants.TIME_SLOT_TYPE_EXAM, contextInfo);
         assertEquals(0, l_final.size());
@@ -252,8 +421,8 @@ public class TestSchedulingServiceImpl {
     public void testgetTimeSlotsByIds() throws Exception {
         // test case: all valid ids
         List<String> valid_ids = new ArrayList<String>();
-        valid_ids.add("2");
-        valid_ids.add("15");
+        valid_ids.add("ts102");
+        valid_ids.add("ts115");
         List<TimeSlotInfo> l_valid_ts = schedulingService.getTimeSlotsByIds(valid_ids, contextInfo);
         assertEquals(2, valid_ids.size());
 
@@ -261,7 +430,7 @@ public class TestSchedulingServiceImpl {
         // ensure the list has only time slots with ids 2 and 15
         for(TimeSlotInfo ts : l_valid_ts) {
             assertTrue(valid_ids.contains(ts.getId()));
-            if(ts.getId().equals("2")) {
+            if(ts.getId().equals("ts102")) {
                 ts2 = ts;
             }
             else {
@@ -269,7 +438,7 @@ public class TestSchedulingServiceImpl {
             }
         }
 
-        assertEquals("2", ts2.getId());
+        assertEquals("ts102", ts2.getId());
         List<Integer> dow = ts2.getWeekdays();
         // should contain Monday, Wednesday, Friday
         assertTrue(dow.contains(Calendar.MONDAY));
@@ -281,7 +450,7 @@ public class TestSchedulingServiceImpl {
         assertEquals(ts2.getStartTime().getMilliSeconds(), SchedulingServiceDataLoader.START_TIME_MILLIS_8_00_AM);
         assertEquals(ts2.getEndTime().getMilliSeconds(), SchedulingServiceDataLoader.END_TIME_MILLIS_9_10_AM);
 
-        assertEquals("15", ts15.getId());
+        assertEquals("ts115", ts15.getId());
         dow = ts15.getWeekdays();
         // should not contain Monday, Wednesday, Friday
         assertFalse(dow.contains(Calendar.MONDAY));
@@ -295,8 +464,8 @@ public class TestSchedulingServiceImpl {
 
         // test case: all invalid ids
         List<String> invalid_ids = new ArrayList<String>();
-        invalid_ids.add("100");
-        invalid_ids.add("300");
+        invalid_ids.add("bad1");
+        invalid_ids.add("bad2");
         try {
             schedulingService.getTimeSlotsByIds(invalid_ids, contextInfo);
             fail("Should not be here - test invalid_ids");
@@ -305,8 +474,8 @@ public class TestSchedulingServiceImpl {
 
         // test case: mixture of valid and invalid
         List<String> mix_ids = new ArrayList<String>();
-        mix_ids.add("10");
-        mix_ids.add("1000");
+        mix_ids.add("ts110");
+        mix_ids.add("bad1");
         try {
             schedulingService.getTimeSlotsByIds(mix_ids, contextInfo);
             fail("Should not be here - test mix_ids");
@@ -316,7 +485,7 @@ public class TestSchedulingServiceImpl {
 
     @Test
     public void getValidDaysOfWeekByTimeSlotType() throws Exception {
-        List<Integer> valid_days_act_off = schedulingService.getValidDaysOfWeekByTimeSlotType(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD, contextInfo);
+        List<Integer> valid_days_act_off = schedulingService.getValidDaysOfWeekByTimeSlotType(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_FALL, contextInfo);
         // should return days Monday through Saturday
         assertTrue(valid_days_act_off.contains(Calendar.MONDAY));
         assertTrue(valid_days_act_off.contains(Calendar.TUESDAY));
@@ -338,17 +507,18 @@ public class TestSchedulingServiceImpl {
     }
 
     @Test
-    public void testgetTimeSlotsByDaysAndStartTime () throws Exception {
-        // should return records 3 and 4
+    public void testgetTimeSlotsByDaysAndStartTime() throws Exception {
+        // should return records ts103, ts5, ts104
         List<Integer> dow = new ArrayList<Integer>();
         dow.add(Calendar.TUESDAY);
         dow.add(Calendar.THURSDAY);
         TimeOfDayInfo startTime = new TimeOfDayInfo();
         startTime.setMilliSeconds(SchedulingServiceDataLoader.START_TIME_MILLIS_8_00_AM);
-        List<TimeSlotInfo> tsi = schedulingService.getTimeSlotsByDaysAndStartTime(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD, dow, startTime, contextInfo);
-        assertEquals(2, tsi.size());
+        List<TimeSlotInfo> tsi = schedulingService
+            .getTimeSlotsByDaysAndStartTime(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_FALL, dow, startTime, contextInfo);
+        assertEquals(3, tsi.size());
 
-        assertEquals("3", tsi.get(0).getId());
+        assertEquals("ts103", tsi.get(0).getId());
         TimeSlot ts = tsi.get(0);
         List<Integer> ts_dow = ts.getWeekdays();
         // should not contain Monday, Wednesday, Friday
@@ -360,7 +530,7 @@ public class TestSchedulingServiceImpl {
         assertTrue(ts_dow.contains(Calendar.THURSDAY));
         assertEquals(ts.getStartTime().getMilliSeconds(), SchedulingServiceDataLoader.START_TIME_MILLIS_8_00_AM);
 
-        assertEquals("4", tsi.get(1).getId());
+        assertEquals("ts5", tsi.get(1).getId());
         ts = tsi.get(1);
         ts_dow = ts.getWeekdays();
         // should not contain Monday, Wednesday, Friday
@@ -372,11 +542,22 @@ public class TestSchedulingServiceImpl {
         assertTrue(ts_dow.contains(Calendar.THURSDAY));
         assertEquals(ts.getStartTime().getMilliSeconds(), SchedulingServiceDataLoader.START_TIME_MILLIS_8_00_AM);
 
+        assertEquals("ts104", tsi.get(2).getId());
+        ts = tsi.get(2);
+        ts_dow = ts.getWeekdays();
+        // should not contain Monday, Wednesday, Friday
+        assertFalse(ts_dow.contains(Calendar.MONDAY));
+        assertFalse(ts_dow.contains(Calendar.WEDNESDAY));
+        assertFalse(ts_dow.contains(Calendar.FRIDAY));
+        // should contain Tuesday or Thursday
+        assertTrue(ts_dow.contains(Calendar.TUESDAY));
+        assertTrue(ts_dow.contains(Calendar.THURSDAY));
+        assertEquals(ts.getStartTime().getMilliSeconds(), SchedulingServiceDataLoader.START_TIME_MILLIS_8_00_AM);
     }
 
     @Test
-    public void testgetTimeSlotsByDaysAndStartTimeAndEndTime () throws Exception {
-        // should return record 3
+    public void testgetTimeSlotsByDaysAndStartTimeAndEndTime() throws Exception {
+        // should return record ts103
         List<Integer> dow = new ArrayList<Integer>();
         dow.add(Calendar.TUESDAY);
         dow.add(Calendar.THURSDAY);
@@ -384,9 +565,10 @@ public class TestSchedulingServiceImpl {
         startTime.setMilliSeconds(SchedulingServiceDataLoader.START_TIME_MILLIS_8_00_AM);
         TimeOfDayInfo endTime = new TimeOfDayInfo();
         endTime.setMilliSeconds(SchedulingServiceDataLoader.END_TIME_MILLIS_8_50_AM);
-        List<TimeSlotInfo> tsi = schedulingService.getTimeSlotsByDaysAndStartTimeAndEndTime(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD, dow, startTime, endTime, contextInfo);
+        List<TimeSlotInfo> tsi = schedulingService
+            .getTimeSlotsByDaysAndStartTimeAndEndTime(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_FALL, dow, startTime, endTime, contextInfo);
         assertEquals(1, tsi.size());
-        assertEquals("3", tsi.get(0).getId());
+        assertEquals("ts103", tsi.get(0).getId());
         TimeSlot ts = tsi.get(0);
         List<Integer> ts_dow = ts.getWeekdays();
         // should not contain Monday, Wednesday, Friday
@@ -408,9 +590,9 @@ public class TestSchedulingServiceImpl {
         startTime.setMilliSeconds(SchedulingServiceDataLoader.START_TIME_MILLIS_1_00_PM);
         endTime = new TimeOfDayInfo();
         endTime.setMilliSeconds(SchedulingServiceDataLoader.END_TIME_MILLIS_2_10_PM);
-        tsi = schedulingService.getTimeSlotsByDaysAndStartTimeAndEndTime(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD, dow, startTime, endTime, contextInfo);
+        tsi = schedulingService.getTimeSlotsByDaysAndStartTimeAndEndTime(SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_FALL, dow, startTime, endTime, contextInfo);
         assertEquals(1, tsi.size());
-        assertEquals("10", tsi.get(0).getId());
+        assertEquals("ts110", tsi.get(0).getId());
         ts = tsi.get(0);
         ts_dow = ts.getWeekdays();
         // should contain Monday, Wednesday, Friday
@@ -422,7 +604,6 @@ public class TestSchedulingServiceImpl {
         assertFalse(ts_dow.contains(Calendar.THURSDAY));
         assertEquals(ts.getStartTime().getMilliSeconds(), SchedulingServiceDataLoader.START_TIME_MILLIS_1_00_PM);
         assertEquals(ts.getEndTime().getMilliSeconds(), SchedulingServiceDataLoader.END_TIME_MILLIS_2_10_PM);
-
     }
 
     @Test
@@ -442,7 +623,7 @@ public class TestSchedulingServiceImpl {
     @Test
     public void testCreateScheduleRequest () throws Exception {
         String scheduleId = "schId";
-        String scheduleRequestInfoId = "createScheduleRequest-infoId";
+        scheduleRequestInfoId = "createScheduleRequest-infoId";
         String scheduleRequestSetInfoId = "scheduleRequest-scheduleRequestInfoId";
         String scheduleRequestComponentInfoId = "scheduleRequest-ComponentInfoId";
         String scheduleRequestInfoName = "testCreateScheduleRequest";
@@ -463,7 +644,7 @@ public class TestSchedulingServiceImpl {
         scheduleRequestInfo.setAttributes(attributes);
 
         ScheduleRequestInfo returnInfo  = schedulingService.createScheduleRequest(
-                SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST,
+                requestType,
                 scheduleRequestInfo,  contextInfo);
 
         // returnInfo should not be null
@@ -493,7 +674,7 @@ public class TestSchedulingServiceImpl {
     public void testUpdateScheduleRequest () throws Exception {
 
         // create a ScheduleRequestInfo
-        String scheduleRequestInfoId = "updateScheduleRequest-infoId";
+        scheduleRequestInfoId = "updateScheduleRequest-infoId";
         String scheduleRequestSetInfoId = "scheduleRequest-scheduleRequestInfoId";
         String scheduleRequestComponentInfoId = "scheduleRequest-ComponentInfoId";
         String scheduleRequestInfoName = "testCreateScheduleRequest";
@@ -501,7 +682,7 @@ public class TestSchedulingServiceImpl {
                 scheduleRequestComponentInfoId, null, scheduleRequestSetInfoId, scheduleRequestInfoName);
 
         ScheduleRequestInfo returnInfo  = schedulingService.createScheduleRequest(
-                SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST,
+                requestType,
                 scheduleRequestInfo,  contextInfo);
 
         // creation success
@@ -543,7 +724,7 @@ public class TestSchedulingServiceImpl {
     public void testdeleteScheduleRequest () throws Exception {
 
         // create a ScheduleRequestInfo
-        String scheduleRequestInfoId = "testdeleteScheduleRequest-Id";
+        scheduleRequestInfoId = "testdeleteScheduleRequest-Id";
         String scheduleRequestSetInfoId = "scheduleRequest-scheduleRequestInfoId";
         String scheduleRequestComponentInfoId = "scheduleRequest-ComponentInfoId";
         String scheduleRequestInfoName = "testDeleteScheduleRequest";
@@ -551,7 +732,7 @@ public class TestSchedulingServiceImpl {
                 scheduleRequestComponentInfoId, null, scheduleRequestSetInfoId, scheduleRequestInfoName);
 
         ScheduleRequestInfo returnInfo  = schedulingService.createScheduleRequest(
-                SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST,
+                requestType,
                 scheduleRequestInfo,  contextInfo);
 
         // creation success
@@ -566,7 +747,7 @@ public class TestSchedulingServiceImpl {
     @Test
     public void testgetScheduleRequest () throws Exception {
         // create a ScheduleRequestInfo
-        String scheduleRequestInfoId = "testGetScheduleRequest-Id";
+        scheduleRequestInfoId = "testGetScheduleRequest-Id";
         String scheduleRequestSetInfoId = "scheduleRequest-scheduleRequestInfoId";
         String scheduleRequestComponentInfoId = "scheduleRequest-ComponentInfoId";
         String scheduleRequestInfoName = "testGetScheduleRequest";
@@ -579,7 +760,7 @@ public class TestSchedulingServiceImpl {
         }
 
         ScheduleRequestInfo returnInfo  = schedulingService.createScheduleRequest(
-                SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST,
+                requestType,
                 scheduleRequestInfo, contextInfo);
 
         // creation success
@@ -604,7 +785,7 @@ public class TestSchedulingServiceImpl {
     @Test
     public void testgetScheduleRequestsByIds () throws Exception {
         // create a ScheduleRequestInfo
-        String scheduleRequestInfoId = "testGetScheduleRequestsByIds-Id1";
+        scheduleRequestInfoId = "testGetScheduleRequestsByIds-Id1";
         String scheduleRequestSetInfoId = "scheduleRequest-scheduleRequestInfoId1";
         String scheduleRequestComponentInfoId = "scheduleRequest-ComponentInfoId1";
         String scheduleRequestInfoName = "testGetScheduleRequestsByIds";
@@ -612,7 +793,7 @@ public class TestSchedulingServiceImpl {
                 scheduleRequestComponentInfoId, null, scheduleRequestSetInfoId, scheduleRequestInfoName);
 
         ScheduleRequestInfo returnInfo  = schedulingService.createScheduleRequest(
-                SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST,
+                requestType,
                 scheduleRequestInfo,  contextInfo);
 
         // creation success
@@ -627,7 +808,7 @@ public class TestSchedulingServiceImpl {
                 scheduleRequestComponentInfoId2, null, scheduleRequestSetInfoId2, scheduleRequestInfoName2);
 
         returnInfo  = schedulingService.createScheduleRequest(
-                SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST,
+                requestType,
                 scheduleRequestInfo2,  contextInfo);
 
         // creation success
@@ -675,10 +856,9 @@ public class TestSchedulingServiceImpl {
 
     @Test
     public void testgetScheduleRequestIdsByType() throws Exception {
-        String requestType =  SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST;
 
         // create a ScheduleRequestInfo
-        String scheduleRequestInfoId = "getScheduleRequestIdsByType-Id1";
+        scheduleRequestInfoId = "getScheduleRequestIdsByType-Id1";
         String scheduleRequestComponentInfoId = "scheduleRequest-ComponentInfoId";
         String scheduleRequestInfoName = "testGetScheduleRequestsByType";
         ScheduleRequestInfo scheduleRequestInfo = SchedulingServiceDataLoader.setupScheduleRequestInfo(scheduleRequestInfoId,
@@ -720,7 +900,6 @@ public class TestSchedulingServiceImpl {
 
     @Test
     public void testgetScheduleRequestsByRefObject () throws Exception {
-        String requestType =  SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST;
 
         // create a ScheduleRequestSetInfo
 
@@ -741,9 +920,6 @@ public class TestSchedulingServiceImpl {
         ScheduleRequestSetInfo retSRSInfo = schedulingService.createScheduleRequestSet(SchedulingServiceConstants.SCHEDULE_REQUEST_SET_TYPE_SCHEDULE_REQUEST_SET,
                 refObjectType, scheduleRequestSetInfo, contextInfo);
         // create a ScheduleRequestInfo 1
-        String scheduleRequestInfoId = "ScheduleRequestsByRefObject-Id1";
-        String scheduleRequestComponentInfoId = "scheduleRequest-ComponentInfoId1";
-        String scheduleRequestInfoName = "testGetScheduleRequestByRefObject";
         ScheduleRequestInfo scheduleRequestInfo = SchedulingServiceDataLoader.setupScheduleRequestInfo(scheduleRequestInfoId,
                 scheduleRequestComponentInfoId, null, scheduleRequestSetInfoId, scheduleRequestInfoName);
 
@@ -754,9 +930,6 @@ public class TestSchedulingServiceImpl {
         assertNotNull(returnInfo);
 
         // create a ScheduleRequestInfo 2
-        String scheduleRequestInfoId2 = "ScheduleRequestsByRefObject-Id2";
-        String scheduleRequestComponentInfoId2 = "scheduleRequest-ComponentInfoId2";
-        String scheduleRequestInfoName2 = "testGetScheduleRequestByRefObject2";
         ScheduleRequestInfo scheduleRequestInfo2 = SchedulingServiceDataLoader.setupScheduleRequestInfo(scheduleRequestInfoId2,
                 scheduleRequestComponentInfoId2, null, scheduleRequestSetInfoId, scheduleRequestInfoName2);
 
@@ -865,8 +1038,116 @@ public class TestSchedulingServiceImpl {
     }
 
     @Test
+    public void testSearchForTimeSlotIds() throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
+
+        String fallFull = SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_FALL;
+        String springFull = SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_SPRING;
+
+
+        //  Search for TimeSlots of type Fall Full.
+        QueryByCriteria.Builder qbcBuilder = QueryByCriteria.Builder.create();
+        qbcBuilder.setPredicates(
+            PredicateFactory.in("timeSlotType", fallFull)
+        );
+
+        QueryByCriteria criteria = qbcBuilder.build();
+        //  Put the result collection into another collection so that it can be sorted.
+        List<String> timeSlotIds = new ArrayList<String>(schedulingService.searchForTimeSlotIds(criteria, contextInfo));
+        assertEquals(22, timeSlotIds.size());
+        Collections.sort(timeSlotIds);
+        assertEquals("toDelete", timeSlotIds.get(0));
+        assertEquals("ts6", timeSlotIds.get(21));
+
+        //  Search for TimeSlots of type Fall or Spring Full and days MWF
+        String days = "MWF";
+        String terms[] = {fallFull, springFull};
+        qbcBuilder = QueryByCriteria.Builder.create();
+        qbcBuilder.setPredicates(
+                PredicateFactory.and(
+                        PredicateFactory.in("timeSlotType", terms),
+                        PredicateFactory.equal("weekdays", days)
+                )
+        );
+        criteria = qbcBuilder.build();
+        timeSlotIds = new ArrayList<String>(schedulingService.searchForTimeSlotIds(criteria, contextInfo));
+        assertEquals(12, timeSlotIds.size());
+        Collections.sort(timeSlotIds);
+        assertEquals("toDelete", timeSlotIds.get(0));
+        assertEquals("ts8", timeSlotIds.get(11));
+
+    }
+
+    @Test
+    public void testSearchForTimeSlots() throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
+
+        String fallFull = SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_FALL;
+        String springFull = SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_SPRING;
+
+
+        //  Search for TimeSlots of type Fall Full.
+        QueryByCriteria.Builder qbcBuilder = QueryByCriteria.Builder.create();
+        qbcBuilder.setPredicates(
+            PredicateFactory.in("timeSlotType", fallFull)
+        );
+
+        QueryByCriteria criteria = qbcBuilder.build();
+        List<TimeSlotInfo> timeSlotInfos = schedulingService.searchForTimeSlots(criteria, contextInfo);
+        assertEquals(22, timeSlotInfos.size());
+        for (TimeSlotInfo ts : timeSlotInfos) {
+            assertEquals(fallFull, ts.getTypeKey());
+        }
+
+        //  Search for TimeSlots of type Fall or Spring Full and days MWF
+        String days = "MWF";
+        String terms[] = {fallFull, springFull};
+        qbcBuilder = QueryByCriteria.Builder.create();
+        qbcBuilder.setPredicates(
+            PredicateFactory.and(
+                    PredicateFactory.in("timeSlotType", terms),
+                    PredicateFactory.equal("weekdays", days)
+            )
+        );
+        criteria = qbcBuilder.build();
+        timeSlotInfos = schedulingService.searchForTimeSlots(criteria, contextInfo);
+        assertEquals(12, timeSlotInfos.size());
+        for (TimeSlotInfo ts : timeSlotInfos) {
+            assertTrue(StringUtils.equals(fallFull, ts.getTypeKey())
+                    || StringUtils.equals(springFull, ts.getTypeKey()));
+            assertEquals(days, SchedulingServiceUtil.weekdaysList2WeekdaysString(ts.getWeekdays()));
+        }
+    }
+
+    /**
+     * This one can be combined with testSearchForTimeSlots() once the issue has been addressed.
+     * TODO: KSENROLL-10246
+     */
+    @Ignore
+    @Test
+    public void testSearchForTimeSlotsParamValueDoesNotMatchForLongBug() throws MissingParameterException, InvalidParameterException, OperationFailedException, PermissionDeniedException {
+        String fallFull = SchedulingServiceConstants.TIME_SLOT_TYPE_ACTIVITY_OFFERING_STANDARD_FULLTERM_FALL;
+        String days = "MWF";
+
+        //  Search for TimeSlots of type Fall Full and days MWF, and start time 8am
+        QueryByCriteria.Builder qbcBuilder = QueryByCriteria.Builder.create();
+        qbcBuilder.setPredicates(
+            PredicateFactory.and(
+                    PredicateFactory.equal("timeSlotType", fallFull),
+                    PredicateFactory.equal("weekdays", days),
+                    PredicateFactory.equal("startTimeMillis", SchedulingServiceDataLoader.START_TIME_MILLIS_8_00_AM)
+            )
+        );
+        QueryByCriteria criteria = qbcBuilder.build();
+        List<TimeSlotInfo> timeSlotInfos = schedulingService.searchForTimeSlots(criteria, contextInfo);
+        assertEquals(3, timeSlotInfos.size());
+        for (TimeSlotInfo ts : timeSlotInfos) {
+            assertEquals(fallFull, ts.getTypeKey());
+            assertEquals(days, SchedulingServiceUtil.weekdaysList2WeekdaysString(ts.getWeekdays()));
+            assertEquals(SchedulingServiceDataLoader.START_TIME_MILLIS_8_00_AM, ts.getStartTime().getMilliSeconds());
+        }
+    }
+
+    @Test
     public void testgetScheduleRequestDisplay () throws Exception {
-        String requestType =  SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST;
 
         // create a ScheduleRequestInfo
         String scheduleRequestInfoId = "ScheduleRequestsByRefObject-Id1";
@@ -908,7 +1189,6 @@ public class TestSchedulingServiceImpl {
 
     @Test
     public void testgetScheduleRequestDisplaysByIds()  throws Exception {
-        String requestType =  SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST;
 
         // create a ScheduleRequestInfo
         String scheduleRequestInfoId = "ScheduleRequestsByRefObject-Id1";
@@ -953,12 +1233,10 @@ public class TestSchedulingServiceImpl {
             assertTrue(displayInfo.getScheduleRequestComponentDisplays().get(0).getRooms().size() > 0);
             assertTrue(displayInfo.getScheduleRequestComponentDisplays().get(0).getOrgs().size() > 0);
         }
-
     }
 
     @Test
     public void searchForScheduleRequestDisplays() throws Exception {
-        String requestType =  SchedulingServiceConstants.SCHEDULE_REQUEST_TYPE_SCHEDULE_REQUEST;
 
         // create a ScheduleRequestInfo
         String scheduleRequestInfoId = "ScheduleRequestsByRefObject-Id1";
@@ -1010,7 +1288,6 @@ public class TestSchedulingServiceImpl {
             assertTrue(displayInfo.getScheduleRequestComponentDisplays().get(0).getRooms().size() > 0);
             assertTrue(displayInfo.getScheduleRequestComponentDisplays().get(0).getOrgs().size() > 0);
         }
-
     }
 
     @Test

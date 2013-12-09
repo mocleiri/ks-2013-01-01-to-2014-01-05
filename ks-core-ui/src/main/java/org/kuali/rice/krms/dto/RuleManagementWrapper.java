@@ -15,6 +15,7 @@
  */
 package org.kuali.rice.krms.dto;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.util.tree.Tree;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.rice.krms.tree.node.CompareTreeNode;
@@ -35,6 +36,7 @@ public class RuleManagementWrapper extends UifFormBase {
 
     private List<AgendaEditor> agendas;
     private RuleEditor ruleEditor;
+    private AgendaEditor agendaEditor;
 
     private Tree<CompareTreeNode, String> compareTree;
 
@@ -72,6 +74,14 @@ public class RuleManagementWrapper extends UifFormBase {
         this.ruleEditor = ruleEditor;
     }
 
+    public AgendaEditor getAgendaEditor() {
+        return agendaEditor;
+    }
+
+    public void setAgendaEditor(AgendaEditor agendaEditor) {
+        this.agendaEditor = agendaEditor;
+    }
+
     public Tree<RuleEditorTreeNode, String> getEditTree() {
         return this.getRuleEditor().getEditTree();
     }
@@ -93,6 +103,9 @@ public class RuleManagementWrapper extends UifFormBase {
     }
 
     public String getSelectedKey() {
+        if(this.getRuleEditor() == null) {
+            return StringUtils.EMPTY;
+        }
         return this.getRuleEditor().getSelectedKey();
     }
 
@@ -101,6 +114,9 @@ public class RuleManagementWrapper extends UifFormBase {
     }
 
     public String getCutKey() {
+        if(this.getRuleEditor() == null) {
+            return StringUtils.EMPTY;
+        }
         return this.getRuleEditor().getCutKey();
     }
 
@@ -109,6 +125,9 @@ public class RuleManagementWrapper extends UifFormBase {
     }
 
     public String getCopyKey() {
+        if(this.getRuleEditor() == null) {
+            return StringUtils.EMPTY;
+        }
         return this.getRuleEditor().getCopyKey();
     }
 
@@ -117,6 +136,9 @@ public class RuleManagementWrapper extends UifFormBase {
     }
 
     public String getLogicArea() {
+        if(this.getRuleEditor() == null) {
+            return StringUtils.EMPTY;
+        }
         return this.getRuleEditor().getLogicArea();
     }
 

@@ -791,6 +791,7 @@ public class SchedulingServiceMockImpl implements SchedulingService, MockService
         if (copy.getId() == null) {
             copy.setId(UUIDHelper.genStringUUID());
         }
+        copy.setName("1");//Default code. (implementation uses TimeSlotCodeGenerator to generate one)
         copy.setMeta(newMeta(contextInfo));
         timeSlotMap.put(copy.getId(), copy);
         return new TimeSlotInfo(copy);
@@ -836,6 +837,33 @@ public class SchedulingServiceMockImpl implements SchedulingService, MockService
     }
 
     @Override
+    public Boolean canUpdateTimeSlot(String timeSlotId, ContextInfo contextInfo)
+            throws InvalidParameterException,
+            MissingParameterException,
+            OperationFailedException,
+            PermissionDeniedException {
+
+        for(ScheduleRequestInfo scheduleRequestInfo : scheduleRequestMap.values()) {
+            for (ScheduleRequestComponentInfo scheduleRequestComponentInfo : scheduleRequestInfo.getScheduleRequestComponents()) {
+                if(scheduleRequestComponentInfo.getTimeSlotIds().contains(timeSlotId)) {
+                    return Boolean.FALSE;
+                }
+            }
+        }
+
+        for(ScheduleInfo scheduleInfo : scheduleMap.values()) {
+            for(ScheduleComponentInfo scheduleComponentInfo : scheduleInfo.getScheduleComponents()) {
+                if(scheduleComponentInfo.getTimeSlotIds().contains(timeSlotId)) {
+                    return Boolean.FALSE;
+                }
+            }
+        }
+
+        return Boolean.TRUE;
+    }
+
+
+    @Override
     public StatusInfo submitScheduleBatch(String scheduleBatchId, ContextInfo contextInfo)
             throws DoesNotExistException
             ,InvalidParameterException
@@ -878,16 +906,6 @@ public class SchedulingServiceMockImpl implements SchedulingService, MockService
             }
         }
         return days;
-    }
-
-    @Override
-    public List<ScheduleBatchInfo> getScheduleBatchesForScheduleTransaction(String scheduleTransactionId, ContextInfo contextInfo)
-            throws InvalidParameterException
-            ,MissingParameterException
-            ,OperationFailedException
-            ,PermissionDeniedException
-    {
-        throw new OperationFailedException ("getScheduleBatchesForScheduleTransaction has not been implemented");
     }
 
     @Override

@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class //TODO ...
+ * This class extends ViewHelperServiceImpl to provide additional controller layer logic for the kitchen sink
  *
  * @author Kuali Student Team
  */
@@ -57,7 +57,9 @@ public class KitchenSinkHelper extends ViewHelperServiceImpl {
                 List<TermInfo> termInfoList = new ArrayList();
                 termInfoList = getAcademicCalendarService().getTermsByCode(termCode, getContextInfo());
                 if (termInfoList.size() > 0) {
-                    termInfo = termInfoList.get(0);
+                    //Code Changed for JIRA-9075 - SONAR Critical issues - Use get(0) with caution - 5
+                    int firstTermInfo = 0;
+                    termInfo = termInfoList.get(firstTermInfo);
                 }
                 // NOTE: should check to make sure length is not more than one, and throw an error if it is
                 //GlobalVariables.getMessageMap().putError("field", MessageKeyString, messageParameter);

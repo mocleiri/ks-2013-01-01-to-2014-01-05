@@ -17,15 +17,14 @@ package org.kuali.student.r2.core.scheduling.model;
 
 import org.kuali.student.r1.common.entity.KSEntityConstants;
 import org.kuali.student.r2.common.assembler.TransformUtility;
-import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.dto.TimeOfDayInfo;
 import org.kuali.student.r2.common.entity.AttributeOwner;
 import org.kuali.student.r2.common.entity.MetaEntity;
 import org.kuali.student.r2.common.infc.Attribute;
 import org.kuali.student.r2.common.util.RichTextHelper;
-import org.kuali.student.r2.core.scheduling.util.SchedulingServiceUtil;
 import org.kuali.student.r2.core.scheduling.dto.TimeSlotInfo;
 import org.kuali.student.r2.core.scheduling.infc.TimeSlot;
+import org.kuali.student.r2.core.scheduling.util.SchedulingServiceUtil;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -48,7 +47,8 @@ import java.util.Set;
 @NamedQueries({
         @NamedQuery(name = "TimeSlotEntity.GetByTimeSlotType", query = "select timeSlot from TimeSlotEntity timeSlot where timeSlot.timeSlotType = :timeSlotType"),
         @NamedQuery(name = "TimeSlotEntity.GetByTimeSlotTypeDaysAndStartTime", query = "select timeSlot from TimeSlotEntity timeSlot where timeSlot.timeSlotType = :timeSlotType and timeSlot.weekdays = :weekdays and timeSlot.startTimeMillis = :startTimeMillis"),
-        @NamedQuery(name = "TimeSlotEntity.GetByTimeSlotTypeDaysStartTimeAndEndTime", query = "select timeSlot from TimeSlotEntity timeSlot where timeSlot.timeSlotType = :timeSlotType and timeSlot.weekdays = :weekdays and timeSlot.startTimeMillis = :startTimeMillis and timeSlot.endTimeMillis = :endTimeMillis")})
+        @NamedQuery(name = "TimeSlotEntity.GetByTimeSlotTypeDaysStartTimeAndEndTime", query = "select timeSlot from TimeSlotEntity timeSlot where timeSlot.timeSlotType = :timeSlotType and timeSlot.weekdays = :weekdays and timeSlot.startTimeMillis = :startTimeMillis and timeSlot.endTimeMillis = :endTimeMillis"),
+        @NamedQuery(name = "TimeSlotEntity.getCurrentMaxTimeSlotCode", query = "select max(name) from TimeSlotEntity timeSlot")})
 
 
 public class TimeSlotEntity extends MetaEntity implements AttributeOwner<TimeSlotAttributeEntity> {
@@ -93,6 +93,7 @@ public class TimeSlotEntity extends MetaEntity implements AttributeOwner<TimeSlo
 
     public void fromDto(TimeSlot timeSlot) {
         setTimeSlotState(timeSlot.getStateKey());
+        setTimeSlotType(timeSlot.getTypeKey());
         setName(timeSlot.getName());
         setWeekdays(SchedulingServiceUtil.weekdaysList2WeekdaysString(timeSlot.getWeekdays()));
         if(timeSlot.getStartTime() != null) {

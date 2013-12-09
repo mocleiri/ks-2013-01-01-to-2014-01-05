@@ -59,7 +59,7 @@ limitations under the License.
             <map>
                 <entry key="selected" value="0"/>
                 <entry key="select"
-                       value="function(event, ui) {ajaxCallOnTabSelect(event, ui, 'KRMS-RuleEditor-TreeGroup', 'KRMS-EditWithLogic-EditGroup');}"/>
+                       value="function(event, ui) {ajaxCallOnTabSelect(event, ui, 'KRMS-RuleEditor-TreeGroup', 'KRMS-EditWithLogic-EditGroup', 'refreshLogicArea', 'KRMS-LogicArea-InputField');}"/>
             </map>
         </property>
     </bean>
@@ -98,31 +98,21 @@ limitations under the License.
 
     <bean id="KRMS-VerticalBoxSubSection" parent="Uif-VerticalBoxSubSection">
         <property name="header">
-            <bean parent="Uif-SubSectionHeader">
-                <property name="cssClasses">
-                    <list merge="true">
-                        <value>krms-rulesubsection</value>
-                    </list>
-                </property>
+            <bean parent="Uif-SubSectionHeader" p:additionalCssClasses="krms-rulesubsection">
             </bean>
         </property>
     </bean>
 
     <bean id="KRMS-VerticalBoxSection" parent="Uif-VerticalBoxSection">
         <property name="header">
-            <bean parent="Uif-SectionHeader">
-                <property name="cssClasses">
-                    <list merge="true">
-                        <value>krms-rulesection</value>
-                    </list>
-                </property>
+            <bean parent="Uif-SectionHeader" p:additionalCssClasses="krms-rulesection">
             </bean>
         </property>
     </bean>
 
     <!-- View only Tree -->
     <bean id="KRMS-Tree-parent" parent="Uif-Tree">
-        <property name="template" value="/ks-enroll/WEB-INF/ftl/rulePreviewTree.ftl"/>
+        <property name="template" value="/ks-common/WEB-INF/ftl/rulePreviewTree.ftl"/>
         <property name="templateName" value="uif_rulePreviewTree"/>
         <property name="templateOptions">
             <map>
@@ -133,8 +123,8 @@ limitations under the License.
     </bean>
     <bean id="KRMS-Tree" parent="KRMS-Tree-parent"/>
 
-    <bean id="KRMS-Tree-Section-parent" parent="Uif-TreeSection">
-        <property name="template" value="/ks-enroll/WEB-INF/ftl/ruleTreeGroup.ftl"/>
+    <bean id="KRMS-Tree-Section-parent" parent="Uif-TreeSection" class="org.kuali.rice.krms.util.ViewTreeGroup">
+        <property name="template" value="/ks-common/WEB-INF/ftl/ruleTreeGroup.ftl"/>
         <property name="templateName" value="uif_ruleTreeGroup"/>
         <property name="tree">
             <bean parent="KRMS-Tree"/>
@@ -142,7 +132,7 @@ limitations under the License.
     </bean>
     <bean id="KRMS-Tree-Section" parent="KRMS-Tree-Section-parent"/>
 
-    <bean id="KRMS-ViewTree-Section-parent" parent="KRMS-Tree-Section" class="org.kuali.rice.krms.util.ViewTreeGroup">
+    <bean id="KRMS-ViewTree-Section-parent" parent="KRMS-Tree-Section" p:additionalCssClasses="krms-ruleViewTreeSection">
         <property name="defaultNodePrototype">
             <bean class="org.kuali.rice.krad.uif.container.NodePrototype">
                 <property name="labelPrototype">
@@ -156,31 +146,17 @@ limitations under the License.
         <property name="layoutManager">
             <bean parent="Uif-GridLayoutBase"/>
         </property>
-        <property name="cssClasses">
-            <list merge="true">
-                <value>krms-ruleViewTreeSection</value>
-            </list>
-        </property>
     </bean>
+
     <bean id="KRMS-ViewTree-Section" parent="KRMS-ViewTree-Section-parent"/>
 
-    <bean id="KRMS-ListItems-DataGroup-parent" parent="Uif-StackedCollectionGroup" p:style="width: 400px; padding: 0;">
+    <bean id="KRMS-ListItems-DataGroup-parent" parent="Uif-StackedCollectionGroup" p:style="width: 600px; padding: 0;">
         <property name="layoutManager">
-            <bean parent="Uif-StackedCollectionLayout-WithBoxItems">
+            <bean parent="Uif-StackedCollectionLayout-WithBoxItems" p:additionalCssClasses="krms-stackedCollectionLayout">
                 <property name="lineGroupPrototype">
-                    <bean parent="Uif-CollectionHorizontalBoxItem">
-                        <property name="cssClasses">
-                            <list merge="true">
-                                <value>krms-stackedPreviewItem</value>
-                            </list>
-                        </property>
+                    <bean parent="Uif-CollectionHorizontalBoxItem" p:additionalCssClasses="krms-stackedPreviewItem">
                         <property name="renderFooter" value="false"/>
                     </bean>
-                </property>
-                <property name="cssClasses">
-                    <list merge="true">
-                        <value>krms-stackedCollectionLayout</value>
-                    </list>
                 </property>
             </bean>
         </property>
@@ -220,9 +196,9 @@ limitations under the License.
                         <property name="items">
                             <list>
                                 <bean parent="Uif-MessageField" p:messageText="@{#np.firstElement}"
-                                      p:style="display: table-cell; width: 350px; margin: 1px;"/>
+                                      p:style="display: table-cell; width: @{#np.width}px;"/>
                                 <bean parent="Uif-MessageField" p:messageText="@{#np.secondElement}"
-                                      p:style="display: table-cell; width: 350px; margin: 1px;"/>
+                                      p:style="display: table-cell; width: @{#np.width}px; margin-left: @{350-#np.width}px;"/>
                             </list>
                         </property>
                     </bean>
@@ -261,7 +237,7 @@ limitations under the License.
     </bean>
     <bean id="KRMS-CompareRule" parent="KRMS-CompareRule-parent"/>
 
-    <bean id="KRMS-PreviewTree-Section-parent" parent="KRMS-Tree-Section" >
+    <bean id="KRMS-PreviewTree-Section-parent" parent="KRMS-Tree-Section" p:additionalCssClasses="krms-ruleViewTreeSection">
         <property name="propertyName" value="previewTree"/>
         <property name="defaultNodePrototype">
             <bean class="org.kuali.rice.krad.uif.container.NodePrototype">
@@ -273,12 +249,8 @@ limitations under the License.
                 </property>
             </bean>
         </property>
-        <property name="cssClasses">
-            <list merge="true">
-                <value>krms-ruleViewTreeSection</value>
-            </list>
-        </property>
     </bean>
+
     <bean id="KRMS-PreviewTree-Section" parent="KRMS-PreviewTree-Section-parent"/>
 
     <bean id="KRMS-PreviewPrototype-BoxGroup" parent="Uif-VerticalBoxGroup">
@@ -290,23 +262,19 @@ limitations under the License.
         </property>
     </bean>
 
-    <bean id="KRMS-PrototypeHeader-BoxGroup" parent="Uif-HorizontalBoxGroup" p:render="@{#np.data != null}">
+    <bean id="KRMS-PrototypeHeader-BoxGroup" parent="Uif-HorizontalBoxGroup" p:render="@{#np.data != null}"
+          p:additionalCssClasses="krms-editVerticalBox">
         <property name="items">
             <list>
                 <bean parent="Uif-MessageField" p:messageText="@{#np.data}"/>
                 <bean parent="Uif-SpaceField"/>
-                <bean parent="Uif-ActionLink" p:actionLabel="edit" p:align="right" p:methodToCall="getSelectedKey">
+                <bean parent="KS-Uif-ActionLink" p:actionLabel="edit" p:align="right" p:methodToCall="getSelectedKey">
                     <property name="additionalSubmitData" value="selectedKey:@{#np.key != null ? #np.key : -1}"/>
                     <property name="toolTip">
                         <bean parent="Uif-TooltipFocus" p:onMouseHover="true"
                               p:tooltipContent="Edit Prerequisite Rule"/>
                     </property>
                 </bean>
-            </list>
-        </property>
-        <property name="cssClasses">
-            <list merge="true">
-                <value>krms-editVerticalBox</value>
             </list>
         </property>
     </bean>
