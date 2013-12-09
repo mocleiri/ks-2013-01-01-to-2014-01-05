@@ -77,17 +77,17 @@ public class MeetingDetailsPropertyEditor extends PropertyEditorSupport {
 							+ "</span>");
 				}
 
-				if (!building.equals("NOC") && !building.startsWith("*")
-						&& campus.equalsIgnoreCase("seattle")) {
-					temp.append("<span class='meetingbuilding'><a href='http://uw.edu/maps/?"
-							+ building
-							+ "' target='_blank'>"
-							+ building
-							+ "</a></span>");
-				} else {
-					temp.append("<span class='meetingbuilding'>" + building
-							+ "</span>");
-				}
+//				if (!building.equals("NOC") && !building.startsWith("*")
+//						&& campus.equalsIgnoreCase("seattle")) {
+//					temp.append("<span class='meetingbuilding'><a href='http://uw.edu/maps/?"
+//							+ building
+//							+ "' target='_blank'>"
+//							+ building
+//							+ "</a></span>");
+//				} else {
+//					temp.append("<span class='meetingbuilding'>" + building
+//							+ "</span>");
+//				}
 
 				temp.append("<span class='meetingroom'>" + room + "</span>");
 
