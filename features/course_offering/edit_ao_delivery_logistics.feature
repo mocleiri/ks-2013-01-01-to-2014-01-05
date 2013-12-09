@@ -16,8 +16,8 @@ Feature: WC.Edit AO delivery logistics
     When I add standard RDLs for an AO
     Then the AO's delivery logistics shows the new schedule
 
-  Scenario: Add ad hoc RDLs for an AO
-    When I add ad hoc RDLs for an AO
+  Scenario: Add non-standard RDLs for an AO
+    When I add non-standard RDLs for an AO
     Then the AO's delivery logistics shows the new schedule
 
   Scenario: Add an RDL using incomplete logistics - times only
