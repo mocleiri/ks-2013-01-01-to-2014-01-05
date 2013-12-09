@@ -1107,18 +1107,24 @@ class DeliveryLogistics
         end
 
         if @end_time != nil then
-          page.add_end_time.click
-          sleep 1
-          page.loading.wait_while_present
-          if @std_ts then
-            page.add_end_time.set @end_time.to_s[0]
+          if @dsc then
+            page.end_time_select.click
+            sleep 1
             page.loading.wait_while_present
-            hr,min = @end_time.split(":")
-            if hr.length == 1 then
-              hr="0"+hr
-            end
-            page.select_end_time("#{hr}:#{min} #{@end_time_ampm.upcase}")
+            page.end_time_select.select("#{@end_time} #{@end_time_ampm.upcase}")
           else
+            page.add_end_time.click
+            sleep 1
+            page.loading.wait_while_present
+            if @std_ts then
+              page.add_end_time.set @end_time.to_s[0]
+              page.loading.wait_while_present
+              hr,min = @end_time.split(":")
+              if hr.length == 1 then
+                hr="0"+hr
+              end
+              page.select_end_time("#{hr}:#{min} #{@end_time_ampm.upcase}")
+            end
             page.add_end_time.set @end_time + " " + @end_time_ampm
           end
         end

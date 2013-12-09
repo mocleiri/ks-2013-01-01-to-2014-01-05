@@ -97,8 +97,11 @@ class ActivityOfferingMaintenance < BasePage
   element(:add_days) { |b| b.add_logistics_div.div(data_label: "Days").text_field() }
   element(:add_start_time) { |b| b.add_logistics_div.div(data_label: "Start Time").text_field() }
   element(:add_start_time_ampm) { |b| b.add_logistics_div.select(name: "document.newMaintainableObject.dataObject.newScheduleRequest.startTimeAMPM") }
+  # text field
   element(:add_end_time) { |b| b.add_logistics_div.div(data_label: "End Time").text_field() }
   element(:add_end_time_ampm) { |b| b.add_logistics_div.select(name: "document.newMaintainableObject.dataObject.newScheduleRequest.endTimeAMPM") }
+  # select box
+  element(:end_time_select) { |b| b.select(id: "rdl_endtime_control") }
   element(:add_facility) { |b| b.add_logistics_div.div(data_label: "Facility").text_field() }
   action(:lookup_facility) { |b| b.add_logistics_div.div(data_label: "Facility").button().click; b.loading.wait_while_present }
   element(:add_room) { |b| b.add_logistics_div.div(data_label: "Room").text_field() }
