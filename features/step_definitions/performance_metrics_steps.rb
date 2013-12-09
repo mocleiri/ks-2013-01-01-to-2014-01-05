@@ -293,7 +293,7 @@ When /^I click copy for a medium course offering$/ do
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set "201301"
-    page.input_code.set "ENGL241"
+    page.input_code.set "ENGL24"
     page.perf_show
   end
   on ManageCourseOfferingList do |page|
