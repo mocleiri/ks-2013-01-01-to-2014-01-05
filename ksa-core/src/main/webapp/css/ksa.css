@@ -104,5 +104,23 @@
  }
 
  .tab-navigation-block {
-    width: 98%;
+    width: 100%;
+     background-color: #ccc;
+ }
+
+ .tab-navigation-block li {
+     border-left: 1px solid #000;
+     border-right: 1px solid #000;
+     background-color: #666;
+ }
+
+ .tab-navigation-block li a {
+     color: #ccc;
+ }
+
+ .ui-helper-reset {
+     margin-left: -20px;
+     background-color: #999;
+     font-size: 1.1em;
+     font-weight: bold;
  }
