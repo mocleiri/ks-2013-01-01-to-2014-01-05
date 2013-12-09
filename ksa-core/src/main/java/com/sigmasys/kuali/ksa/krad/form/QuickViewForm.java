@@ -252,6 +252,9 @@ public class QuickViewForm extends AbstractViewModel {
         } else if (i instanceof Flag) {
             return "flag";
         } else if (i instanceof Memo) {
+            if(((Memo)i).getPreviousMemo() != null) {
+                return "follow-up_memo";
+            }
             return "memo";
         }
         return "";
