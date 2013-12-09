@@ -361,7 +361,7 @@ When /^I edit a medium Activity Offering for performance$/ do
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set "201301"
-    page.input_code.set "ENGL241A"
+    page.input_code.set "ENGL241"
     page.perf_show
     @performance_test.start
     page.edit "A"
@@ -429,7 +429,7 @@ When /^I add Delivery Logistics to a medium activity offering and save$/ do
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set "201301"
-    page.input_code.set "ENGL241A"
+    page.input_code.set "ENGL241"
     page.perf_show
     page.edit "A"
   end
@@ -493,7 +493,7 @@ When /^I search for a medium course by course code to delete$/ do
   go_to_manage_course_offerings
   on ManageCourseOfferings do |page|
     page.term.set "201301"
-    page.input_code.set "ENGL241"
+    page.input_code.set "ENGL241A"
     @performance_test.start
     page.perf_show
     @performance_test.end
