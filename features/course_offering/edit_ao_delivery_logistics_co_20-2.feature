@@ -20,3 +20,14 @@ Feature: WC.Edit AO delivery logistics
     When I add RDLs for an AO as a DSC
     Then the AO's delivery logistics shows the new schedule
 
+  #CO 20.2 (KSENROLL-10318)
+  @draft
+  Scenario: As DSC, add schedule request with non-std time slots allowed
+    Given I am logged in as a Schedule Coordinator
+    And I am editing an AO with RDLs in an open term
+    Then I check the "approved for non-standard time slots" flag
+    Given I am logged in as a Department Schedule Coordinator
+    And I edit the Activity Offering with non-standard time slots approved
+    When I add non-standard RDLs for an AO
+    Then the AO's delivery logistics shows the new schedule
+

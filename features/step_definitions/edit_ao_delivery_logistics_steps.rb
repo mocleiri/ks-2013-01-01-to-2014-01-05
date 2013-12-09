@@ -159,3 +159,7 @@ Then /^the "approved for non-standard time slots" flag is set$/ do
     page.non_std_ts_checkbox.should be_checked
   end
 end
+
+And(/^I edit the Activity Offering with non-standard time slots approved$/) do
+  @activity_offering.parent_course_offering.manage_and_init
+end
