@@ -431,6 +431,7 @@ Then /^I have access to edit the delivery format type$/ do
       page.new_delivery_format_delete.enabled?.should be_true
     else #this is the case when only one format offering is possible
       page.new_delivery_format_delete.click
+      page.add_format_btn.wait_until_present
       page.add_format
       page.new_format_select.select "Lecture"
       page.new_grade_roster_level_select.enabled?.should be_true
