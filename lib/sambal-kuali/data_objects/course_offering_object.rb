@@ -1282,6 +1282,7 @@ class DeliveryFormat
     else
       on CourseOfferingCreateEdit do |page|
         page.new_format_select.select(@format)
+        page.new_grade_roster_level_select.wait_until_present
         page.new_grade_roster_level_select.select(@grade_format)
         page.new_final_exam_activity_select.select(@final_exam_activity) if page.new_final_exam_activity_select.present?
       end
@@ -1292,6 +1293,7 @@ class DeliveryFormat
   def set_random_delivery_formats
     on CourseOfferingCreateEdit do  |page|
       @format = page.select_random_option(page.new_format_select)
+      page.new_grade_roster_level_select.wait_until_present
       @grade_format = page.select_random_option(page.new_grade_roster_level_select)
       @final_exam_activity = page.select_random_option(page.new_final_exam_activity_select) if page.new_final_exam_activity_select.present?
     end
