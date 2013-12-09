@@ -678,13 +678,15 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
 				if (LuiServiceConstants.LUI_AO_STATE_OFFERED_KEY.equals(activity.getStateKey())) {
 					Building building = scdi.getBuilding();
-					if (building != null) {
+					if (building != null && building.getDescr() != null) {
 						meeting.setCampus(building.getCampusKey());
-						meeting.setBuilding(building.getBuildingCode());
+					//	meeting.setBuilding(building.getBuildingCode());
+						meeting.setBuilding(building.getDescr().getPlain());
 					}
 					Room roomInfo = scdi.getRoom();
-					if (roomInfo != null) {
-						meeting.setRoom(roomInfo.getRoomCode());
+					if (roomInfo != null && roomInfo.getDescr() != null ) {
+					//	meeting.setRoom(roomInfo.getRoomCode());
+						meeting.setRoom(roomInfo.getDescr().getPlain());
 					}
 				}
 
