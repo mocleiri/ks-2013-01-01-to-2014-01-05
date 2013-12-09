@@ -13,6 +13,7 @@ import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.util.CommonUtils;
 import org.aopalliance.aop.Advice;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -23,10 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Pattern;
 
 
 /**
@@ -150,6 +149,133 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             throw new IllegalStateException(errMsg);
         }
         return variable;
+    }
+
+    public Set<FeeManagementSignup> filterSessionSignups(Collection<FeeManagementSignup> signups,
+                                                         String rateCodes,
+                                                         String rateTypeCodes,
+                                                         String rateCatalogCodes,
+                                                         String signupOperations) {
+
+        Set<FeeManagementSignup> filteredSignups = new HashSet<FeeManagementSignup>();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+
+            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+            List<String> operationValues = CommonUtils.split(signupOperations, MULTI_VALUE_DELIMITER);
+
+            Set<FeeManagementSignup> rateCodeSignups = new HashSet<FeeManagementSignup>();
+            Set<FeeManagementSignup> rateTypeCodeSignups = new HashSet<FeeManagementSignup>();
+            Set<FeeManagementSignup> rateCatalogCodeSignups = new HashSet<FeeManagementSignup>();
+            Set<FeeManagementSignup> operationSignups = new HashSet<FeeManagementSignup>();
+
+            for (FeeManagementSignup signup : signups) {
+
+                Set<FeeManagementSignupRate> signupRates = signup.getSignupRates();
+
+                boolean signupAdded = false;
+
+                for (String rateTypeCode : rateTypeCodeValues) {
+                    for (FeeManagementSignupRate signupRate : signupRates) {
+                        RateType rateType = signupRate.getRate().getRateType();
+                        if (Pattern.compile(rateTypeCode).matcher(rateType.getCode()).matches()) {
+                            rateTypeCodeSignups.add(signup);
+                            signupAdded = true;
+                            break;
+                        }
+                    }
+                    if (signupAdded) {
+                        break;
+                    }
+                }
+
+                signupAdded = false;
+
+                for (String rateCode : rateCodeValues) {
+                    for (FeeManagementSignupRate signupRate : signupRates) {
+                        Rate rate = signupRate.getRate();
+                        if (Pattern.compile(rateCode).matcher(rate.getCode()).matches()) {
+                            rateCodeSignups.add(signup);
+                            signupAdded = true;
+                            break;
+                        }
+                    }
+                    if (signupAdded) {
+                        break;
+                    }
+                }
+
+                signupAdded = false;
+
+                for (String catalogCode : rateCatalogCodeValues) {
+                    for (FeeManagementSignupRate signupRate : signupRates) {
+                        Rate rate = signupRate.getRate();
+                        RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+                        if (Pattern.compile(catalogCode).matcher(rateCatalog.getCode()).matches()) {
+                            rateCatalogCodeSignups.add(signup);
+                            signupAdded = true;
+                            break;
+                        }
+                    }
+                    if (signupAdded) {
+                        break;
+                    }
+                }
+
+                FeeManagementSignupOperation signupOperation = signup.getOperation();
+
+                if (signupOperation != null) {
+                    for (String operation : operationValues) {
+                        if (operation.equals(signupOperation.name())) {
+                            operationSignups.add(signup);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            Collection intersection = null;
+
+            if (StringUtils.isNotEmpty(rateCodes)) {
+                intersection = CollectionUtils.intersection(signups, rateCodeSignups);
+            }
+
+            if (StringUtils.isNotEmpty(rateTypeCodes)) {
+                if (intersection != null) {
+                    intersection = CollectionUtils.intersection(intersection, rateTypeCodeSignups);
+                } else {
+                    intersection = rateTypeCodeSignups;
+                }
+
+            }
+
+            if (StringUtils.isNotEmpty(rateCatalogCodes)) {
+                if (intersection != null) {
+                    intersection = CollectionUtils.intersection(intersection, rateCatalogCodeSignups);
+                } else {
+                    intersection = rateCatalogCodeSignups;
+                }
+            }
+
+
+            if (StringUtils.isNotEmpty(signupOperations)) {
+                if (intersection != null) {
+                    intersection = CollectionUtils.intersection(intersection, operationSignups);
+                } else {
+                    intersection = operationSignups;
+                }
+            }
+
+            if (intersection != null) {
+                for (Object signupRef : intersection) {
+                    filteredSignups.add((FeeManagementSignup) signupRef);
+                }
+            }
+        }
+
+        return filteredSignups;
     }
 
     /**
@@ -500,8 +626,13 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     @Override
     public boolean compareNumberOfSignups(int numberOfSignups, String rateCodes, String rateTypeCodes,
                                           String signupOperations, String operator, BrmContext context) {
-        // TODO
-        return false;
+
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups =
+                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations);
+
+        return compareObjects(signups.size(), numberOfSignups, operator);
     }
 
     /**
@@ -518,8 +649,26 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     @Override
     public boolean compareNumberOfUnits(int numberOfUnits, String rateCodes, String rateTypeCodes,
                                         String signupOperations, String operator, BrmContext context) {
-        // TODO
-        return false;
+
+        int signupUnits = 0;
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+        if (signup != null) {
+            return compareObjects(signup.getUnit() != null ? signup.getUnit() : signupUnits, numberOfUnits, operator);
+        }
+
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups =
+                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations);
+
+        for (FeeManagementSignup fmSignup : signups) {
+            if (fmSignup.getUnit() != null) {
+                signupUnits++;
+            }
+        }
+
+        return compareObjects(signupUnits, numberOfUnits, operator);
     }
 
 
@@ -531,7 +680,26 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean signupIsTaken(BrmContext context) {
-        // TODO
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            return signup.isTaken();
+        }
+
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        Set<FeeManagementSignup> signups = session.getSignups();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+            for (FeeManagementSignup fmSignup : signups) {
+                if (!fmSignup.isTaken()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         return false;
     }
 
@@ -543,7 +711,26 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean signupIsComplete(BrmContext context) {
-        // TODO
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            return signup.isComplete();
+        }
+
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        Set<FeeManagementSignup> signups = session.getSignups();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+            for (FeeManagementSignup fmSignup : signups) {
+                if (!fmSignup.isComplete()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         return false;
     }
 
@@ -557,8 +744,15 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean signupHasRates(String rateCodes, BrmContext context) {
-        // TODO
-        return false;
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+        if (signup != null) {
+            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), rateCodes, null, null, null));
+        }
+
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), rateCodes, null, null, null));
     }
 
     /**
@@ -570,8 +764,16 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean signupHasRateTypes(String rateTypeCodes, BrmContext context) {
-        // TODO
-        return false;
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, rateTypeCodes, null, null));
+        }
+
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, rateTypeCodes, null, null));
     }
 
     /**
@@ -583,8 +785,16 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean signupHasRateCatalogs(String rateCatalogCodes, BrmContext context) {
-        // TODO
-        return false;
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, null, rateCatalogCodes, null));
+        }
+
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, null, rateCatalogCodes, null));
     }
 
 

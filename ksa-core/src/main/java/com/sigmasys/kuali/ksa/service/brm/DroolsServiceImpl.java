@@ -51,6 +51,10 @@ public class DroolsServiceImpl implements BrmService {
     @Autowired
     private BrmPersistenceService brmPersistenceService;
 
+    @Autowired
+    private LoggingAgendaEventListener loggingAgendaEventListener;
+
+
     private Resource dslResource;
 
     // Map of <DRL file name, KnowledgeBase> objects
@@ -128,6 +132,7 @@ public class DroolsServiceImpl implements BrmService {
     private <T extends BrmContext> T fireRules(KnowledgeBase knowledgeBase, T droolsContext) {
         try {
             StatelessKnowledgeSession session = knowledgeBase.newStatelessKnowledgeSession();
+            session.addEventListener(loggingAgendaEventListener);
             Map<String, Object> globalParams = droolsContext.getGlobalVariables();
             if (globalParams != null) {
                 for (Map.Entry<String, Object> entry : globalParams.entrySet()) {
