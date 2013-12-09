@@ -1798,6 +1798,10 @@
         <search:desc>List of distinct course Codes</search:desc>
         <search:resultColumns>
             <ref bean="lu.resultColumn.cluOfficialIdentifier.cluCode" />
+            <ref bean="lu.resultColumn.luOptionalShortName"/>
+            <ref bean="lu.resultColumn.luOptionalLongName"/>
+            <ref bean="lu.resultColumn.luOptionalDescr"/>
+            <ref bean="lu.resultColumn.cluId" />
         </search:resultColumns>
     </search:searchResultTypeInfo>
 
@@ -1823,10 +1827,12 @@
         <search:name>Course Code criteria</search:name>
         <search:desc>Course code criteria</search:desc>
         <search:queryParams>
-            <ref bean="lu.queryParam.startsWith.cluCode" />
+            <ref bean="lu.queryParam.luOptionalCode" />
             <ref bean="lu.queryParam.luOptionalType" />
             <ref bean="lu.queryParam.luOptionalGreaterThanEqualExpirDate" />
             <ref bean="lu.queryParam.luOptionalLessThanEqualEffectDate" />
+            <ref bean="lu.queryParam.luOptionalLongName" />
+            <ref bean="lu.queryParam.luOptionalState" />
         </search:queryParams>
     </search:searchCriteriaTypeInfo>
 
@@ -1835,8 +1841,14 @@
 		<property name="sourceMap">
 			<map>
                 <entry key="lu.search.courseCodes">
-                    <value>SELECT DISTINCT clu.officialIdentifier.code FROM Clu clu
-                        WHERE clu.officialIdentifier.code like :lu_queryParam_startsWith_cluCode || '%'</value>
+                    <value>SELECT DISTINCT clu.officialIdentifier.code,
+                            officialIdentifier.shortName,
+                            officialIdentifier.longName,
+                            cludesc.plain,
+                            clu.id
+                        FROM Clu clu
+                        LEFT JOIN clu.officialIdentifier officialIdentifier
+                        LEFT JOIN clu.descr cludesc</value>
                 </entry>
 
                 <entry key="lu.search.relatedTypes">

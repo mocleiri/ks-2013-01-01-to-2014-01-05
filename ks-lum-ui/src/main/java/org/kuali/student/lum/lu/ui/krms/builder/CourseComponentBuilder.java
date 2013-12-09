@@ -49,12 +49,11 @@ import java.util.Map;
 /**
  * @author Kuali Student Team
  */
-public class CourseComponentBuilder implements ComponentBuilder<LUPropositionEditor> {
+public class CourseComponentBuilder extends CluComponentBuilder {
 
     private final static Logger LOG = Logger.getLogger(CourseComponentBuilder.class);
 
     private CourseService courseService;
-    private CluService cluService;
     private AcademicCalendarService acalService = null;
     private SearchService searchService = null;
 
@@ -144,22 +143,19 @@ public class CourseComponentBuilder implements ComponentBuilder<LUPropositionEdi
         QueryByCriteria.Builder qbcBuilder = QueryByCriteria.Builder.create();
         qbcBuilder.setPredicates(PredicateFactory.equal("atpCode", termCode));
 
-        List<TermInfo> terms = null;
         try {
-            terms = getAcalService().searchForTerms(qbcBuilder.build(), ContextUtils.getContextInfo());
+            int firstTerm = 0;
+            List<TermInfo> terms = getAcalService().searchForTerms(qbcBuilder.build(), ContextUtils.getContextInfo());
+            if (terms.isEmpty()) {
+                GlobalVariables.getMessageMap().putError(propName, LUKRMSConstants.KSKRMS_MSG_ERROR_NO_TERM_IS_FOUND, termCode);
+            } else if (terms.size() > 1) {
+                GlobalVariables.getMessageMap().putError(propName, LUKRMSConstants.KSKRMS_MSG_ERROR_FOUND_MORE_THAN_ONE_TERM, termCode);
+            } else {
+                return terms.get(firstTerm);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
-        if (terms.isEmpty()) {
-            GlobalVariables.getMessageMap().putError(propName, LUKRMSConstants.KSKRMS_MSG_ERROR_NO_TERM_IS_FOUND, termCode);
-        } else if (terms.size() > 1) {
-            GlobalVariables.getMessageMap().putError(propName, LUKRMSConstants.KSKRMS_MSG_ERROR_FOUND_MORE_THAN_ONE_TERM, termCode);
-        } else {
-            return terms.get(0);
-        }
-
         return null;
     }
 
@@ -168,13 +164,6 @@ public class CourseComponentBuilder implements ComponentBuilder<LUPropositionEdi
             courseService = GlobalResourceLoader.getService(new QName(CommonServiceConstants.REF_OBJECT_URI_GLOBAL_PREFIX + "course", "CourseService"));
         }
         return courseService;
-    }
-
-    protected CluService getCluService() {
-        if (cluService == null) {
-            cluService = GlobalResourceLoader.getService(new QName(CluServiceConstants.CLU_NAMESPACE, CluServiceConstants.SERVICE_NAME_LOCAL_PART));
-        }
-        return cluService;
     }
 
     private AcademicCalendarService getAcalService() {

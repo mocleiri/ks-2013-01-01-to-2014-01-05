@@ -19,7 +19,14 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.student.lum.lu.ui.krms.dto.CluInformation;
+import org.kuali.student.lum.lu.ui.krms.dto.CluSetInformation;
+import org.kuali.student.lum.lu.ui.krms.dto.CluSetRangeInformation;
 import org.kuali.student.r2.common.dto.DtoConstants;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.common.exceptions.InvalidParameterException;
+import org.kuali.student.r2.common.exceptions.MissingParameterException;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
+import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.util.ContextUtils;
 import org.kuali.student.r2.core.search.dto.SearchParamInfo;
 import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
@@ -29,6 +36,7 @@ import org.kuali.student.r2.core.search.dto.SearchResultRowInfo;
 import org.kuali.student.r2.core.versionmanagement.dto.VersionDisplayInfo;
 import org.kuali.student.r2.lum.clu.dto.CluInfo;
 import org.kuali.student.r2.lum.clu.dto.CluResultInfo;
+import org.kuali.student.r2.lum.clu.dto.CluSetInfo;
 import org.kuali.student.r2.lum.clu.dto.MembershipQueryInfo;
 import org.kuali.student.r2.lum.clu.dto.ResultOptionInfo;
 import org.kuali.student.r2.lum.clu.service.CluService;
@@ -54,7 +62,101 @@ public class CluInformationHelper {
         super();
     }
 
-    public List<CluInformation> getCourseInfos(List<String> cluIds) {
+    public List<CluSetInfo> getCluSetInfos(List<String> cluSetIds) {
+        List<CluSetInfo> clusetInfos = new ArrayList<CluSetInfo>();
+        if (cluSetIds != null) {
+            for (String cluSetId : cluSetIds) {
+                clusetInfos.add(this.getCluSetInfo(cluSetId));
+            }
+        }
+        return clusetInfos;
+    }
+
+    public CluSetInfo getCluSetInfo(String cluSetId) {
+        CluSetInfo cluSetInfo = null;
+        try {
+            // note: the cluIds returned by cluService.getCluSetInfo also contains the clus
+            //       that are the result of query parameter search.  Set to null here and
+            //       retrieve the clus that are direct members.
+            cluSetInfo = this.getCluService().getCluSet(cluSetId, ContextUtils.getContextInfo());
+            cluSetInfo.setCluIds(this.getCluService().getCluIdsFromCluSet(cluSetId, ContextUtils.getContextInfo()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return cluSetInfo;
+    }
+
+    /**
+     * This methos assumes that there can only be a maximum of one wrapped cluset
+     * for cluids and one for membershipqueries.
+     *
+     * @param cluSetId
+     * @return
+     */
+    public CluSetInformation getCluSetInformation(String cluSetId) {
+
+        CluSetInformation result = new CluSetInformation();
+        result.setCluSetInfo(this.getCluSetInfo(cluSetId));
+
+        List<String> cluIds = result.getCluSetInfo().getCluIds();
+        this.createCluSetRange(result, result.getCluSetInfo().getMembershipQuery());
+
+        // goes through the list of sub clusets and ignore the ones that are not reusable
+        List<CluSetInfo> cluSetInfos = this.getCluSetInfos(result.getCluSetInfo().getCluSetIds());
+        if (cluSetInfos != null) {
+            List<CluSetInformation> unWrappedCluSets = new ArrayList<CluSetInformation>();
+            for (CluSetInfo subCluSet : cluSetInfos) {
+                if (subCluSet.getIsReusable()) {
+
+                    //Handle predefined clusets.
+                    CluSetInformation cluSetInformation = new CluSetInformation(subCluSet);
+                    cluSetInformation.setClus(this.getCluInfos(subCluSet.getCluIds()));
+                    for(String subCluSetId : subCluSet.getCluSetIds()){
+                        cluSetInformation.getCluSets().add(this.getCluSetInformation(subCluSetId));
+                    }
+                    unWrappedCluSets.add(cluSetInformation);
+                } else {
+
+                    //Retrieve the information from the wrapped membership cluset.
+                    if(subCluSet.getMembershipQuery()!=null){
+                        this.createCluSetRange(result, subCluSet.getMembershipQuery());
+                    } else {
+
+                        //Retrieve the information from the wrapped clu cluset.
+                        if (subCluSet.getCluIds() != null && !subCluSet.getCluIds().isEmpty()) {
+                            cluIds = subCluSet.getCluIds();
+                        }
+                    }
+                }
+            }
+            result.setCluSets(unWrappedCluSets);
+        }
+
+        result.setClus(this.getCluInfos(cluIds));
+
+        return result;
+    }
+
+    /**
+     * Creates a new clusetrangeinformation wrapper object for each membershipquery that exist in the
+     * wrapper cluset.
+     *
+     * @param clusetInfo
+     * @param mqInfo
+     */
+    private void createCluSetRange(CluSetInformation clusetInfo, MembershipQueryInfo mqInfo) {
+        if (mqInfo == null || mqInfo.getSearchTypeKey() == null || mqInfo.getSearchTypeKey().isEmpty()) {
+            return;
+        }
+        CluSetRangeInformation cluSetRange = new CluSetRangeInformation();
+        cluSetRange.setMembershipQueryInfo(mqInfo);
+        cluSetRange.setClusInRange(this.getCluInfosWithDetailForQuery(mqInfo));
+        cluSetRange.setCluSetRangeLabel(clusetInfo.getRangeHelper().buildLabelFromQuery(mqInfo));
+
+        clusetInfo.getCluSetRanges().add(cluSetRange);
+    }
+
+    public List<CluInformation> getCluInfos(List<String> cluIds) {
         List<CluInformation> result = new ArrayList<CluInformation>();
         if (cluIds != null) {
             for (String cluId : cluIds) {
@@ -71,18 +173,8 @@ public class CluInformationHelper {
                         }
 
                         cluInformation.setCredits(getCreditInfo(cluInfo.getId()));
-
                         cluInformation.setType(cluInfo.getTypeKey());
-                        //If the clu type is variation, get the parent clu id.
-                        if ("kuali.lu.type.Variation".equals(cluInfo.getTypeKey())) {
-                            List<String> clus = this.getCluService().getCluIdsByRelatedCluAndRelationType(cluInfo.getId(), "kuali.lu.lu.relation.type.hasVariationProgram", ContextUtils.getContextInfo());
-                            if (clus == null || clus.size() == 0) {
-                                throw new RuntimeException("Statement Dependency clu found, but no parent Program exists");
-                            } else if (clus.size() > 1) {
-                                throw new RuntimeException("Statement Dependency clu can only have one parent Program relation");
-                            }
-                            cluInformation.setParentCluId(clus.get(0));
-                        }
+                        cluInformation.setParentCluId(this.getParentCluId(cluInfo));
 
                         cluInformation.setCluId(cluInfo.getId());
                         cluInformation.setVerIndependentId(cluInfo.getVersion().getVersionIndId());
@@ -93,10 +185,29 @@ public class CluInformationHelper {
                 }
             }
         }
-        if (result != null) {
-            Collections.sort(result);
-        }
+
+        Collections.sort(result);
         return result;
+    }
+
+    private String getParentCluId(CluInfo cluInfo){
+        //If the clu type is variation, get the parent clu id.
+        if ("kuali.lu.type.Variation".equals(cluInfo.getTypeKey())) {
+            int firstClu = 0;
+            List<String> clus = null;
+            try {
+                clus = this.getCluService().getCluIdsByRelatedCluAndRelationType(cluInfo.getId(), "kuali.lu.lu.relation.type.hasVariationProgram", ContextUtils.getContextInfo());
+            } catch (Exception e) {
+                throw new RuntimeException("Could not retrieve parent clu.");
+            }
+            if (clus == null || clus.size() == 0) {
+                throw new RuntimeException("Statement Dependency clu found, but no parent Program exists");
+            } else if (clus.size() > 1) {
+                throw new RuntimeException("Statement Dependency clu can only have one parent Program relation");
+            }
+            return clus.get(firstClu);
+        }
+        return null;
     }
 
     public String getCreditInfo(String cluId) {
