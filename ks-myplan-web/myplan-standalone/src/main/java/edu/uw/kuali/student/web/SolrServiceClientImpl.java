@@ -1,14 +1,11 @@
 package edu.uw.kuali.student.web;
 
 import edu.uw.kuali.student.lib.client.studentservice.ServiceException;
-import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.HttpClientUtil;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.restlet.ext.net.HttpClientHelper;
 import org.restlet.data.Protocol;
 import org.restlet.Client;
@@ -39,15 +36,7 @@ public class SolrServiceClientImpl implements SolrSeviceClient {
 
     public SolrServiceClientImpl(String baseUrl) {
         setSolrBaseUrl(baseUrl);
-        ModifiableSolrParams params = new ModifiableSolrParams();
-        params.set(HttpClientUtil.PROP_MAX_CONNECTIONS, 128);
-        params.set(HttpClientUtil.PROP_MAX_CONNECTIONS_PER_HOST, 32);
-        params.set(HttpClientUtil.PROP_FOLLOW_REDIRECTS, false);
-        params.set(HttpClientUtil.PROP_BASIC_AUTH_USER, ConfigContext.getCurrentContextConfig().getProperty("uw.keystore.filename"));
-        params.set(HttpClientUtil.PROP_BASIC_AUTH_PASS, ConfigContext.getCurrentContextConfig().getProperty("uw.keystore.password"));
-        HttpClient client = HttpClientUtil.createClient(params);
-        SolrServer solrServer = new HttpSolrServer(solrBaseUrl, client);
-        setServer(solrServer);
+        setServer(new HttpSolrServer(baseUrl));
     }
 
     public SolrServer getServer() {
