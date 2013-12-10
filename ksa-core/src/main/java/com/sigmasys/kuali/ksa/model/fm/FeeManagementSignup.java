@@ -49,10 +49,15 @@ public class FeeManagementSignup implements Identifiable, KeyPairAware {
 
     private String operationCode;
 
+    private OfferingType offeringType;
+
+    private String offeringTypeCode;
+
 
     @PostLoad
     protected void populateTransientFields() {
         operation = (operationCode != null) ? EnumUtils.findById(FeeManagementSignupOperation.class, operationCode) : null;
+        offeringType = (offeringTypeCode != null) ? EnumUtils.findById(OfferingType.class, offeringTypeCode) : null;
     }
 
 
@@ -191,6 +196,16 @@ public class FeeManagementSignup implements Identifiable, KeyPairAware {
         operation = EnumUtils.findById(FeeManagementSignupOperation.class, operationCode);
     }
 
+    @Column(name = "OFFERING_TYPE", length = 3)
+    protected String getOfferingTypeCode() {
+        return offeringTypeCode;
+    }
+
+    protected void setOfferingTypeCode(String offeringTypeCode) {
+        this.offeringTypeCode = offeringTypeCode;
+        offeringType = EnumUtils.findById(OfferingType.class, offeringTypeCode);
+    }
+
     @Transient
     public FeeManagementSignupOperation getOperation() {
         return operation;
@@ -201,5 +216,13 @@ public class FeeManagementSignup implements Identifiable, KeyPairAware {
         operationCode = operation.getId();
     }
 
+    @Transient
+    public OfferingType getOfferingType() {
+        return offeringType;
+    }
 
+    public void setOfferingType(OfferingType offeringType) {
+        this.offeringType = offeringType;
+        offeringTypeCode = offeringType.getId();
+    }
 }

@@ -155,7 +155,8 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                                                          String rateCodes,
                                                          String rateTypeCodes,
                                                          String rateCatalogCodes,
-                                                         String signupOperations) {
+                                                         String signupOperations,
+                                                         String offeringIds) {
 
         Set<FeeManagementSignup> filteredSignups = new HashSet<FeeManagementSignup>();
 
@@ -165,11 +166,13 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
             List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
             List<String> operationValues = CommonUtils.split(signupOperations, MULTI_VALUE_DELIMITER);
+            List<String> offeringIdValues = CommonUtils.split(offeringIds, MULTI_VALUE_DELIMITER);
 
             Set<FeeManagementSignup> rateCodeSignups = new HashSet<FeeManagementSignup>();
             Set<FeeManagementSignup> rateTypeCodeSignups = new HashSet<FeeManagementSignup>();
             Set<FeeManagementSignup> rateCatalogCodeSignups = new HashSet<FeeManagementSignup>();
             Set<FeeManagementSignup> operationSignups = new HashSet<FeeManagementSignup>();
+            Set<FeeManagementSignup> offeringIdSignups = new HashSet<FeeManagementSignup>();
 
             for (FeeManagementSignup signup : signups) {
 
@@ -224,6 +227,13 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                     }
                 }
 
+                for (String offeringId : offeringIdValues) {
+                    if (Pattern.compile(offeringId).matcher(signup.getOfferingId()).matches()) {
+                        offeringIdSignups.add(signup);
+                        break;
+                    }
+                }
+
                 FeeManagementSignupOperation signupOperation = signup.getOperation();
 
                 if (signupOperation != null) {
@@ -263,6 +273,14 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             if (StringUtils.isNotEmpty(signupOperations)) {
                 if (intersection != null) {
                     intersection = CollectionUtils.intersection(intersection, operationSignups);
+                } else {
+                    intersection = operationSignups;
+                }
+            }
+
+            if (StringUtils.isNotEmpty(offeringIds)) {
+                if (intersection != null) {
+                    intersection = CollectionUtils.intersection(intersection, offeringIdSignups);
                 } else {
                     intersection = operationSignups;
                 }
@@ -630,7 +648,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups =
-                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations);
+                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
 
         return compareObjects(signups.size(), numberOfSignups, operator);
     }
@@ -660,7 +678,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups =
-                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations);
+                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
 
         for (FeeManagementSignup fmSignup : signups) {
             if (fmSignup.getUnit() != null) {
@@ -747,12 +765,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
         if (signup != null) {
-            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), rateCodes, null, null, null));
+            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), rateCodes, null, null, null, null));
         }
 
         FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), rateCodes, null, null, null));
+        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), rateCodes, null, null, null, null));
     }
 
     /**
@@ -768,12 +786,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
         if (signup != null) {
-            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, rateTypeCodes, null, null));
+            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, rateTypeCodes, null, null, null));
         }
 
         FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, rateTypeCodes, null, null));
+        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, rateTypeCodes, null, null, null));
     }
 
     /**
@@ -789,12 +807,74 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
         if (signup != null) {
-            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, null, rateCatalogCodes, null));
+            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, null, rateCatalogCodes, null, null));
         }
 
         FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, null, rateCatalogCodes, null));
+        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, null, rateCatalogCodes, null, null));
+    }
+
+    /**
+     * Checks if the signup has Offering IDs.
+     *
+     * @param offeringIds List of Offering IDs separated by ","
+     * @param context     BRM context
+     * @return boolean value
+     */
+    @Override
+    public boolean signupHasOfferingIds(String offeringIds, BrmContext context) {
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, null, null, null, offeringIds));
+        }
+
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, null, null, null, offeringIds));
+    }
+
+    /**
+     * Checks if the signup has Offering Types.
+     *
+     * @param offeringTypes List of OfferingType values by ","
+     * @param context       BRM context
+     * @return boolean value
+     */
+    @Override
+    public boolean signupHasOfferingTypes(String offeringTypes, BrmContext context) {
+
+        List<String> offeringTypeValues = CommonUtils.split(offeringTypes, MULTI_VALUE_DELIMITER);
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            OfferingType offeringType = signup.getOfferingType();
+            if (offeringType != null) {
+                if (offeringTypeValues.contains(offeringType.name())) {
+                    return true;
+                }
+            }
+        }
+
+        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups = session.getSignups();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+            for (FeeManagementSignup fmSignup : signups) {
+                OfferingType offeringType = fmSignup.getOfferingType();
+                if (offeringType != null) {
+                    if (offeringTypeValues.contains(offeringType.name())) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
 

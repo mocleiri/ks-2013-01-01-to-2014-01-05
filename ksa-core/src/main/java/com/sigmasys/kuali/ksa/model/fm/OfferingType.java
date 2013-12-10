@@ -33,7 +33,6 @@ public enum OfferingType implements Identifiable {
             case ACTIVITY_OFFERING:
                 return "Activity Offering";
         }
-
         throw new IllegalStateException("No OfferingType found for " + name() + " value.");
     }
 }

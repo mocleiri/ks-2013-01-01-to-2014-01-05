@@ -225,6 +225,24 @@ public interface BrmFeeManagementService {
      */
     boolean signupHasRateCatalogs(String rateCatalogCodes, BrmContext context);
 
+    /**
+     * Checks if the signup has Offering IDs.
+     *
+     * @param offeringIds List of Offering IDs separated by ","
+     * @param context     BRM context
+     * @return boolean value
+     */
+    boolean signupHasOfferingIds(String offeringIds, BrmContext context);
+
+    /**
+     * Checks if the signup has Offering Types.
+     *
+     * @param offeringTypes List of OfferingType values by ","
+     * @param context       BRM context
+     * @return boolean value
+     */
+    boolean signupHasOfferingTypes(String offeringTypes, BrmContext context);
+
 
     // TODO
 
