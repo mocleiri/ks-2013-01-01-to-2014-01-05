@@ -78,7 +78,7 @@ Feature: Performance.Metrics
     When I add Delivery Logistics to a large activity offering and save
     Then the transaction takes less than "3" seconds
 
-#being Medium
+#begin Medium
   Scenario: Medium Copy Course Offering
     When I click copy for a medium course offering
     Then the transaction takes less than "3" seconds
@@ -102,6 +102,31 @@ Feature: Performance.Metrics
     When I add Delivery Logistics to a medium activity offering and save
     Then the transaction takes less than "3" seconds
 #end Medium
+
+#begin Small
+  Scenario: Small Copy Course Offering
+    When I click copy for a small course offering
+    Then the transaction takes less than "3" seconds
+    And I copy a course offering
+    Then the transaction takes less than "3" seconds
+
+  Scenario: Small Delete Course Offering
+    When I search for a small course by course code to delete
+    And I delete the course offering
+    Then the transaction takes less than "3" seconds
+
+  Scenario: Small Edit Activity Offering
+    When I edit a small Activity Offering for performance
+    Then the transaction takes less than "3" seconds
+
+  Scenario: Small Copy Activity Offering
+    When I copy a small Activity Offering for performance
+    Then the transaction takes less than "3" seconds
+
+  Scenario: Small Add Delivery Logistics
+    When I add Delivery Logistics to a small activity offering and save
+    Then the transaction takes less than "3" seconds
+#end Small
 
   Scenario: Manage SOC
     When I search for a SOC
