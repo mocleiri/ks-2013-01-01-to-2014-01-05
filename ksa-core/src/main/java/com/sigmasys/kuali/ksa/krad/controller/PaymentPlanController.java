@@ -443,11 +443,19 @@ public class PaymentPlanController extends GenericSearchController {
         }
 
         Date today = new Date();
+        int addedCount = 0;
+        int errorCount = 0;
         for(String account : accountList) {
-            paymentBillingService.createPaymentBillingQueue(plan.getId(), account, plan.getMaxAmount(), today, false);
+            try {
+                paymentBillingService.createPaymentBillingQueue(plan.getId(), account, plan.getMaxAmount(), today, false);
+                addedCount++;
+            } catch(IllegalArgumentException e) {
+                GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
+                errorCount++;
+            }
         }
 
-        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, accountList.size() + " accounts added to " + plan.getName() + " plan");
+        GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, addedCount + " accounts added to " + plan.getName() + " plan");
 
         return getUIFModelAndView(form);
     }
