@@ -981,11 +981,13 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
             List<String> signupOperationValues = CommonUtils.split(signupOperations, MULTI_VALUE_DELIMITER);
 
+            boolean signupOperationsExist = StringUtils.isNotEmpty(signupOperations);
+
             for (FeeManagementSignup fmSignup : signups) {
 
                 FeeManagementSignupOperation signupOperation = fmSignup.getOperation();
 
-                if (signupOperation != null && signupOperationValues.contains(signupOperation.name())) {
+                if (!signupOperationsExist || (signupOperation != null && signupOperationValues.contains(signupOperation.name()))) {
                     fmSignup.setComplete(isComplete);
                 }
             }
@@ -1038,11 +1040,85 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
             List<String> signupOperationValues = CommonUtils.split(signupOperations, MULTI_VALUE_DELIMITER);
 
+            boolean signupOperationsExist = StringUtils.isNotEmpty(signupOperations);
+
             for (FeeManagementSignup fmSignup : signups) {
 
                 FeeManagementSignupOperation signupOperation = fmSignup.getOperation();
 
-                if (signupOperation != null && signupOperationValues.contains(signupOperation.name())) {
+                if (!signupOperationsExist || (signupOperation != null && signupOperationValues.contains(signupOperation.name()))) {
+                    fmSignup.setTaken(isTaken);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets "isComplete" to true or false on all preceding FeeManagementSignup objects from FeeManagementSession
+     * that have certain signup operations with the same Offering ID.
+     *
+     * @param isComplete       Boolean value
+     * @param signupOperations List of signup operation values separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void setPrecedingSignupsComplete(boolean isComplete, String signupOperations, BrmContext context) {
+
+        FeeManagementSignup signup = getRequiredGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups = session.getSignups();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+
+            List<String> signupOperationValues = CommonUtils.split(signupOperations, MULTI_VALUE_DELIMITER);
+
+            for (FeeManagementSignup fmSignup : signups) {
+
+                String offeringId = fmSignup.getOfferingId();
+                FeeManagementSignupOperation signupOperation = fmSignup.getOperation();
+                Date effectiveDate = fmSignup.getEffectiveDate();
+
+                boolean operationsComply = StringUtils.isEmpty(signupOperations) || signupOperationValues.contains(signupOperation.name());
+
+                if (offeringId.equals(signup.getOfferingId()) && effectiveDate.before(signup.getEffectiveDate()) && operationsComply) {
+                    fmSignup.setComplete(isComplete);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets "isTaken" to true or false on all preceding FeeManagementSignup objects from FeeManagementSession
+     * that have certain signup operations with the same Offering ID.
+     *
+     * @param isTaken          Boolean value
+     * @param signupOperations List of signup operation values separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void setPrecedingSignupsTaken(boolean isTaken, String signupOperations, BrmContext context) {
+
+        FeeManagementSignup signup = getRequiredGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups = session.getSignups();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+
+            List<String> signupOperationValues = CommonUtils.split(signupOperations, MULTI_VALUE_DELIMITER);
+
+            for (FeeManagementSignup fmSignup : signups) {
+
+                String offeringId = fmSignup.getOfferingId();
+                FeeManagementSignupOperation signupOperation = fmSignup.getOperation();
+                Date effectiveDate = fmSignup.getEffectiveDate();
+
+                boolean operationsComply = StringUtils.isEmpty(signupOperations) || signupOperationValues.contains(signupOperation.name());
+
+                if (offeringId.equals(signup.getOfferingId()) && effectiveDate.before(signup.getEffectiveDate()) && operationsComply) {
                     fmSignup.setTaken(isTaken);
                 }
             }

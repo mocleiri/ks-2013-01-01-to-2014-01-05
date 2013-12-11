@@ -309,5 +309,25 @@ public interface BrmFeeManagementService {
      */
     void setSessionSignupsTaken(boolean isTaken, String signupOperations, BrmContext context);
 
+    /**
+     * Sets "isComplete" to true or false on all preceding FeeManagementSignup objects from FeeManagementSession
+     * that have certain signup operations with the same Offering ID.
+     *
+     * @param isComplete       Boolean value
+     * @param signupOperations List of signup operation values separated by ","
+     * @param context          BRM context
+     */
+    void setPrecedingSignupsComplete(boolean isComplete, String signupOperations, BrmContext context);
+
+    /**
+     * Sets "isTaken" to true or false on all preceding FeeManagementSignup objects from FeeManagementSession
+     * that have certain signup operations with the same Offering ID.
+     *
+     * @param isTaken          Boolean value
+     * @param signupOperations List of signup operation values separated by ","
+     * @param context          BRM context
+     */
+    void setPrecedingSignupsTaken(boolean isTaken, String signupOperations, BrmContext context);
+
 
 }
