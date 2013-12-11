@@ -141,7 +141,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         return (T) context.getGlobalVariables().get(variableName);
     }
 
-    private <T> T getNonNullGlobalVariable(BrmContext context, String variableName) {
+    private <T> T getRequiredGlobalVariable(BrmContext context, String variableName) {
         T variable = getGlobalVariable(context, variableName);
         if (variable == null) {
             String errMsg = "Global variable '" + variableName + "' has not been found";
@@ -334,7 +334,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean compareSessionKeyPair(String key, String value, String operator, BrmContext context) {
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
         return compareKeyPair(session, key, value, operator);
     }
 
@@ -356,7 +356,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             return compareKeyPair(signup, key, value, operator);
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups = session.getSignups();
 
@@ -398,7 +398,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             return false;
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups = session.getSignups();
 
@@ -417,31 +417,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         }
 
         return false;
-    }
-
-    /**
-     * Sets an Account KeyPair specified by "key" and "value".
-     *
-     * @param key     KeyPair key
-     * @param value   KeyPair value
-     * @param context BRM context
-     */
-    @Override
-    public void setAccountKeyPair(String key, String value, BrmContext context) {
-        setKeyPair(context.getAccount(), key, value);
-    }
-
-    /**
-     * Sets a FeeManagementSession KeyPair specified by "key" and "value".
-     *
-     * @param key     KeyPair key
-     * @param value   KeyPair value
-     * @param context BRM context
-     */
-    @Override
-    public void setSessionKeyPair(String key, String value, BrmContext context) {
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
-        setKeyPair(session, key, value);
     }
 
     /**
@@ -492,7 +467,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public boolean compareSessionAtp(String atpId, String operator, BrmContext context) {
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
         String sessionAtpId = session.getAtpId();
         if (sessionAtpId == null) {
             String errMsg = "FeeManagementSession ATP ID cannot be null";
@@ -569,7 +544,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             }
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups = session.getSignups();
 
@@ -609,7 +584,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 return compareObjects(signup.getEffectiveDate(), dateValue, operator);
             }
 
-            FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+            FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
             Set<FeeManagementSignup> signups = session.getSignups();
 
@@ -645,7 +620,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     public boolean compareNumberOfSignups(int numberOfSignups, String rateCodes, String rateTypeCodes,
                                           String signupOperations, String operator, BrmContext context) {
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups =
                 filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
@@ -675,7 +650,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             return compareObjects(signup.getUnit() != null ? signup.getUnit() : signupUnits, numberOfUnits, operator);
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups =
                 filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
@@ -705,7 +680,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             return signup.isTaken();
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
         Set<FeeManagementSignup> signups = session.getSignups();
 
@@ -736,7 +711,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             return signup.isComplete();
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
         Set<FeeManagementSignup> signups = session.getSignups();
 
@@ -768,7 +743,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), rateCodes, null, null, null, null));
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), rateCodes, null, null, null, null));
     }
@@ -789,7 +764,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, rateTypeCodes, null, null, null));
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, rateTypeCodes, null, null, null));
     }
@@ -810,7 +785,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, null, rateCatalogCodes, null, null));
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, null, rateCatalogCodes, null, null));
     }
@@ -831,7 +806,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, null, null, null, offeringIds));
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, null, null, null, offeringIds));
     }
@@ -859,7 +834,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             }
         }
 
-        FeeManagementSession session = getNonNullGlobalVariable(context, FM_SESSION_VAR_NAME);
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups = session.getSignups();
 
@@ -879,5 +854,199 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
 
     // TODO
+
+
+    // RHS methods start here
+
+    /**
+     * Sets an Account KeyPair specified by "key" and "value".
+     *
+     * @param key     KeyPair key
+     * @param value   KeyPair value
+     * @param context BRM context
+     */
+    @Override
+    public void setAccountKeyPair(String key, String value, BrmContext context) {
+        setKeyPair(context.getAccount(), key, value);
+    }
+
+    /**
+     * Sets a FeeManagementSession KeyPair specified by "key" and "value".
+     *
+     * @param key     KeyPair key
+     * @param value   KeyPair value
+     * @param context BRM context
+     */
+    @Override
+    public void setSessionKeyPair(String key, String value, BrmContext context) {
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+        setKeyPair(session, key, value);
+    }
+
+    /**
+     * Sets a FeeManagementSignup KeyPair specified by "key" and "value".
+     *
+     * @param key     KeyPair key
+     * @param value   KeyPair value
+     * @param context BRM context
+     */
+    @Override
+    public void setSignupKeyPair(String key, String value, BrmContext context) {
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            setKeyPair(signup, key, value);
+        } else {
+
+            FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+            Set<FeeManagementSignup> signups = session.getSignups();
+
+            if (CollectionUtils.isNotEmpty(signups)) {
+                for (FeeManagementSignup fmSignup : signups) {
+                    setKeyPair(fmSignup, key, value);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets "isReviewRequired" to true or false on FeeManagementSession.
+     *
+     * @param isReviewRequired Boolean value
+     * @param context          BRM context
+     */
+    @Override
+    public void setSessionReviewRequired(boolean isReviewRequired, BrmContext context) {
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+        session.setReviewRequired(isReviewRequired);
+    }
+
+    /**
+     * Sets "isReviewComplete" to true or false on FeeManagementSession.
+     *
+     * @param isReviewComplete Boolean value
+     * @param context          BRM context
+     */
+    @Override
+    public void setSessionReviewComplete(boolean isReviewComplete, BrmContext context) {
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+        session.setReviewComplete(isReviewComplete);
+    }
+
+    /**
+     * Sets "isComplete" to true or false on FeeManagementSignup.
+     *
+     * @param isComplete Boolean value
+     * @param context    BRM context
+     */
+    @Override
+    public void setSignupComplete(boolean isComplete, BrmContext context) {
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            signup.setComplete(isComplete);
+        } else {
+
+            FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+            Set<FeeManagementSignup> signups = session.getSignups();
+
+            if (CollectionUtils.isNotEmpty(signups)) {
+                for (FeeManagementSignup fmSignup : signups) {
+                    fmSignup.setComplete(isComplete);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets "isComplete" to true or false on all FeeManagementSignup objects from FeeManagementSession
+     * that have certain signup operations.
+     *
+     * @param isComplete       Boolean value
+     * @param signupOperations List of signup operation values separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void setSessionSignupsComplete(boolean isComplete, String signupOperations, BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups = session.getSignups();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+
+            List<String> signupOperationValues = CommonUtils.split(signupOperations, MULTI_VALUE_DELIMITER);
+
+            for (FeeManagementSignup fmSignup : signups) {
+
+                FeeManagementSignupOperation signupOperation = fmSignup.getOperation();
+
+                if (signupOperation != null && signupOperationValues.contains(signupOperation.name())) {
+                    fmSignup.setComplete(isComplete);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets "isTaken" to true or false on FeeManagementSignup.
+     *
+     * @param isTaken Boolean value
+     * @param context BRM context
+     */
+    @Override
+    public void setSignupTaken(boolean isTaken, BrmContext context) {
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            signup.setTaken(isTaken);
+        } else {
+
+            FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+            Set<FeeManagementSignup> signups = session.getSignups();
+
+            if (CollectionUtils.isNotEmpty(signups)) {
+                for (FeeManagementSignup fmSignup : signups) {
+                    fmSignup.setTaken(isTaken);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets "isTaken" to true or false on all FeeManagementSignup objects from FeeManagementSession
+     * that have certain signup operations.
+     *
+     * @param isTaken          Boolean value
+     * @param signupOperations List of signup operation values separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void setSessionSignupsTaken(boolean isTaken, String signupOperations, BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups = session.getSignups();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+
+            List<String> signupOperationValues = CommonUtils.split(signupOperations, MULTI_VALUE_DELIMITER);
+
+            for (FeeManagementSignup fmSignup : signups) {
+
+                FeeManagementSignupOperation signupOperation = fmSignup.getOperation();
+
+                if (signupOperation != null && signupOperationValues.contains(signupOperation.name())) {
+                    fmSignup.setTaken(isTaken);
+                }
+            }
+        }
+    }
 
 }

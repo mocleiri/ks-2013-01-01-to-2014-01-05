@@ -68,24 +68,6 @@ public interface BrmFeeManagementService {
     boolean compareSignupRateKeyPair(String key, String value, String operator, BrmContext context);
 
     /**
-     * Sets an Account KeyPair specified by "key" and "value".
-     *
-     * @param key     KeyPair key
-     * @param value   KeyPair value
-     * @param context BRM context
-     */
-    void setAccountKeyPair(String key, String value, BrmContext context);
-
-    /**
-     * Sets a FeeManagementSession KeyPair specified by "key" and "value".
-     *
-     * @param key     KeyPair key
-     * @param value   KeyPair value
-     * @param context BRM context
-     */
-    void setSessionKeyPair(String key, String value, BrmContext context);
-
-    /**
      * Compares the current account type code to the given value.
      *
      * @param accountTypeCode AccountType code
@@ -245,5 +227,87 @@ public interface BrmFeeManagementService {
 
 
     // TODO
+
+    // RHS method declarations
+
+    /**
+     * Sets an Account KeyPair specified by "key" and "value".
+     *
+     * @param key     KeyPair key
+     * @param value   KeyPair value
+     * @param context BRM context
+     */
+    void setAccountKeyPair(String key, String value, BrmContext context);
+
+    /**
+     * Sets a FeeManagementSession KeyPair specified by "key" and "value".
+     *
+     * @param key     KeyPair key
+     * @param value   KeyPair value
+     * @param context BRM context
+     */
+    void setSessionKeyPair(String key, String value, BrmContext context);
+
+    /**
+     * Sets a FeeManagementSignup KeyPair specified by "key" and "value".
+     *
+     * @param key     KeyPair key
+     * @param value   KeyPair value
+     * @param context BRM context
+     */
+    void setSignupKeyPair(String key, String value, BrmContext context);
+
+    /**
+     * Sets "isReviewRequired" to true or false on FeeManagementSession.
+     *
+     * @param isReviewRequired Boolean value
+     * @param context          BRM context
+     */
+    void setSessionReviewRequired(boolean isReviewRequired, BrmContext context);
+
+    /**
+     * Sets "isReviewComplete" to true or false on FeeManagementSession.
+     *
+     * @param isReviewComplete Boolean value
+     * @param context          BRM context
+     */
+    void setSessionReviewComplete(boolean isReviewComplete, BrmContext context);
+
+    /**
+     * Sets "isComplete" to true or false on FeeManagementSignup.
+     *
+     * @param isComplete Boolean value
+     * @param context    BRM context
+     */
+    void setSignupComplete(boolean isComplete, BrmContext context);
+
+    /**
+     * Sets "isComplete" to true or false on all FeeManagementSignup objects from FeeManagementSession
+     * that have certain signup operations.
+     *
+     * @param isComplete       Boolean value
+     * @param signupOperations List of signup operation values separated by ","
+     * @param context          BRM context
+     */
+    void setSessionSignupsComplete(boolean isComplete, String signupOperations, BrmContext context);
+
+    /**
+     * Sets "isTaken" to true or false on FeeManagementSignup.
+     *
+     * @param isTaken Boolean value
+     * @param context BRM context
+     */
+    void setSignupTaken(boolean isTaken, BrmContext context);
+
+    /**
+     * Sets "isTaken" to true or false on all FeeManagementSignup objects from FeeManagementSession
+     * that have certain signup operations.
+     *
+     * @param isTaken          Boolean value
+     * @param signupOperations List of signup operation values separated by ","
+     * @param context          BRM context
+     */
+    void setSessionSignupsTaken(boolean isTaken, String signupOperations, BrmContext context);
+
 
 }
