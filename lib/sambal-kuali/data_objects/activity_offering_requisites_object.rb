@@ -146,7 +146,8 @@ class AORequisitesData
       end
       page.lookup_search_button
       page.loading.wait_while_present
-      page.lookup_results.a(:title => /.*#{Regexp.escape(code)}.*/i).when_present.click
+      row = page.lookup_results.table.row(:text => /\b#{Regexp.escape(code)}\b/i)
+      row.a(:text => "Select").when_present.click
 
       ##############################################################
       ### TODO adding if statement due to tabs switching when AFT runs, will have to investigate if this is a bug
