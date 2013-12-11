@@ -1125,4 +1125,59 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         }
     }
 
+    /**
+     * Removes all rates on the current signup and all preceding signups (offerings) based on the given parameters.
+     *
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void removeRatesFromSignupAndPrecedingOfferings(String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+
+        FeeManagementSignup signup = getRequiredGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups = session.getSignups();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+
+            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+
+            for (FeeManagementSignup fmSignup : signups) {
+
+                Set<FeeManagementSignupRate> signupRates = fmSignup.getSignupRates();
+
+                if (CollectionUtils.isNotEmpty(signupRates)) {
+
+                    for (FeeManagementSignupRate signupRate : new HashSet<FeeManagementSignupRate>(signupRates)) {
+
+                        Rate rate = signupRate.getRate();
+                        RateType rateType = rate.getRateType();
+                        RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+                        boolean rateCodesComply = StringUtils.isEmpty(rateCodes) || rateCodeValues.contains(rate.getCode());
+                        boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) || rateTypeCodeValues.contains(rateType.getCode());
+                        boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) || rateCatalogCodeValues.contains(rateCatalog.getCode());
+
+                        if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply &&
+                                fmSignup.getOfferingId().equals(signup.getOfferingId()) &&
+                                fmSignup.getEffectiveDate().before(signup.getEffectiveDate())) {
+
+                            signupRates.remove(signupRate);
+
+                            if (signupRate.getId() != null) {
+                                deleteEntity(signupRate.getId(), FeeManagementSignupRate.class);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

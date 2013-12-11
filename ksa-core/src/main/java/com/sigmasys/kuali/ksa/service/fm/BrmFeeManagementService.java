@@ -329,5 +329,15 @@ public interface BrmFeeManagementService {
      */
     void setPrecedingSignupsTaken(boolean isTaken, String signupOperations, BrmContext context);
 
+    /**
+     * Removes all rates on the current signup and all preceding signups (offerings) based on the given parameters.
+     *
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    void removeRatesFromSignupAndPrecedingOfferings(String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
+
 
 }
