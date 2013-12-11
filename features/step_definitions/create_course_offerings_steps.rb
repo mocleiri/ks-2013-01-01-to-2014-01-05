@@ -26,11 +26,11 @@ Then /^the new Course Offering should contain only the selected delivery formats
 
 end
 
-And /^I copy a course offering from an existing offering$/ do
+And /^I create a course offering from an existing offering$/ do
   @course_offering = create CourseOffering, :term=> Rollover::PUBLISHED_SOC_TERM, :course => "CHEM132", :create_from_existing=>(make CourseOffering, :term=> "201201", :course => "CHEM132")
 end
 
-And /^I copy a course offering from an existing offering and choose to exclude instructor information$/ do
+And /^I create a course offering from an existing offering and choose to exclude instructor information$/ do
   @course_offering = create CourseOffering, :term=> Rollover::FINAL_EDITS_SOC_TERM, :course => "CHEM132", :exclude_instructor => true, :create_from_existing=>(make CourseOffering, :term=> "201201", :course => "CHEM132")
 end
 
