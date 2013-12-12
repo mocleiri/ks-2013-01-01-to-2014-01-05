@@ -73,7 +73,7 @@ class ManageSoc
           raise "SOC is not in publish state" unless page.publish_button.enabled? and page.soc_status == 'Final Edits' and page.soc_scheduling_status == 'Completed'
           raise "Final Edits date doesnt exists" unless page.is_date_exists('Final Edits')
         when 'Close'
-          raise "SOC is not in close state" unless page.close_button.exists? and page.soc_status == 'Published' and page.soc_publishing_status == 'Published'
+          raise "SOC is not in close state" unless page.soc_status == 'Published' and page.soc_publishing_status == 'Published'
           raise "Publish Initiated Date is blank" unless page.publish_initiated_date != nil
           raise "Publish completed Date is blank" unless page.publish_completed_date != nil
           raise "Publish duration is blank" unless page.publish_duration != nil
