@@ -1,9 +1,9 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
+import com.sigmasys.kuali.ksa.krad.model.PaymentBillingTransferDetailModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.model.Memo;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
-import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class UserPaymentPlanForm extends AbstractViewModel {
 
     private List<PaymentBillingPlan> paymentBillingPlans;
 
-    private List<PaymentBillingTransferDetail> paymentBillingTransferDetails;
+    private List<PaymentBillingTransferDetailModel> paymentBillingTransferDetails;
 
     private Memo changeMemo;
 
@@ -66,14 +66,14 @@ public class UserPaymentPlanForm extends AbstractViewModel {
         this.paymentBillingPlans = paymentBillingPlans;
     }
 
-    public List<PaymentBillingTransferDetail> getPaymentBillingTransferDetails() {
+    public List<PaymentBillingTransferDetailModel> getPaymentBillingTransferDetails() {
         if(paymentBillingTransferDetails == null) {
-            paymentBillingTransferDetails = new ArrayList<PaymentBillingTransferDetail>();
+            paymentBillingTransferDetails = new ArrayList<PaymentBillingTransferDetailModel>();
         }
         return paymentBillingTransferDetails;
     }
 
-    public void setPaymentBillingTransferDetails(List<PaymentBillingTransferDetail> paymentBillingTransferDetails) {
+    public void setPaymentBillingTransferDetails(List<PaymentBillingTransferDetailModel> paymentBillingTransferDetails) {
         this.paymentBillingTransferDetails = paymentBillingTransferDetails;
     }
 

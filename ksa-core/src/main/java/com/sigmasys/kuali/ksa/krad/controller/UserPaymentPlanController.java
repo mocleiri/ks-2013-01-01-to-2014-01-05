@@ -1,11 +1,13 @@
 package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.UserPaymentPlanForm;
+import com.sigmasys.kuali.ksa.krad.model.PaymentBillingTransferDetailModel;
 import com.sigmasys.kuali.ksa.krad.model.ThirdPartyMemberModel;
 import com.sigmasys.kuali.ksa.krad.util.AccountUtils;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.TransactionTransfer;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingQueue;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
@@ -311,9 +313,34 @@ public class UserPaymentPlanController extends GenericSearchController {
 
         AccountUtils.populateTransactionHeading(form, userId);
 
+        List<PaymentBillingTransferDetailModel> transferDetailModels = new ArrayList<PaymentBillingTransferDetailModel>();
+
         List<PaymentBillingTransferDetail> transferDetails = paymentBillingService.getPaymentBillingTransferDetails(userId);
 
-        form.setPaymentBillingTransferDetails(transferDetails);
+        for(PaymentBillingTransferDetail transferDetail : transferDetails) {
+            PaymentBillingTransferDetailModel model = new PaymentBillingTransferDetailModel(transferDetail);
+            transferDetailModels.add(model);
+
+            List<PaymentBillingQueue> queues = paymentBillingService.getPaymentBillingQueues(userId, transferDetail.getId());
+            model.setPaymentBillingQueues(queues);
+
+            model.setPlan(transferDetail.getPlan());
+            List<TransactionTransfer> transactionTransfers = transactionTransferService.getTransactionTransfersByGroupId(transferDetail.getTransferGroupId());
+            model.setTransactionTransfers(transactionTransfers);
+
+
+        }
+
+        // Get the ones where the transfer detail is null
+        List<PaymentBillingQueue> paymentBillingQueues = paymentBillingService.getPaymentBillingQueues(userId, null);
+        for(PaymentBillingQueue paymentBillingQueue : paymentBillingQueues) {
+            PaymentBillingTransferDetailModel model = new PaymentBillingTransferDetailModel();
+            model.addPaymentBillingQueue(paymentBillingQueue);
+            model.setPlan(paymentBillingQueue.getPlan());
+            transferDetailModels.add(model);
+        }
+
+        form.setPaymentBillingTransferDetails(transferDetailModels);
     }
 
 }
