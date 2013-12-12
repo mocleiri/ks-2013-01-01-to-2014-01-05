@@ -3,6 +3,8 @@ package com.sigmasys.kuali.ksa.krad.util;
 import com.sigmasys.kuali.ksa.krad.form.AbstractViewModel;
 import com.sigmasys.kuali.ksa.krad.model.InformationModel;
 import com.sigmasys.kuali.ksa.model.Information;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingQueue;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.hold.HoldService;
 import com.sigmasys.kuali.ksa.service.pb.PaymentBillingService;
@@ -57,7 +59,12 @@ public class AccountUtils {
         //form.setMemos(informationService.getMemos(userId));
         form.setHolds(AccountUtils.getHolds(userId));
 
-        form.setPaymentBillingPlansForTooltip(paymentBillingService.getPaymentBillingPlansByAccountId(userId));
+        List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlansByAccountId(userId);
+        List<PaymentBillingQueue> queues = paymentBillingService.getPaymentBillingQueues(userId, null);
+        for(PaymentBillingQueue queue : queues) {
+            plans.add(queue.getPlan());
+        }
+        form.setPaymentBillingPlansForTooltip(plans);
         form.setThirdPartyPlansForTooltip(thirdPartyTransferService.getThirdPartyPlansByMember(userId));
 
     }
