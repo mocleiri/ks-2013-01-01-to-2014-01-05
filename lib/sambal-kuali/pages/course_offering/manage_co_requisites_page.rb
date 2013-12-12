@@ -73,4 +73,8 @@ class ManageCORequisites < BasePage
 
   element(:info_message) { |b| b.rule_maintenance_section.li(class: "uif-infoMessageItem")}
   element(:edit_loading) { |b| b.rule_maintenance_section.image(alt: "Loading...") }
+
+  def return_course_code code
+    lookup_results_table.row(text: /#{code}/)
+  end
 end

@@ -154,7 +154,7 @@ class CORequisitesData
       end
       page.lookup_search_button
       page.loading.wait_while_present
-      page.lookup_results.a(:title => /.*#{Regexp.escape(code)}.*/i).when_present.click
+      page.return_course_code(/.*#{Regexp.escape(code)}.*/i).a( text: /Select/).click
       page.loading.wait_while_present
     end
   end

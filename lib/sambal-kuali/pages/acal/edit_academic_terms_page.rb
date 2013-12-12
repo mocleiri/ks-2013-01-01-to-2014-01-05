@@ -13,7 +13,7 @@ class EditAcademicTerms < BasePage
   element(:term_start_date_add)  { |b| b.frm.text_field(id: "term_start_date_add_add_control") }
   element(:term_end_date_add)  { |b| b.frm.text_field(id: "term_end_date_add_add_control") }
 
-  action(:acal_term_add) { |b| b.frm.button(id: "add_term_add").click; b.loading.wait_while_present }
+  action(:acal_term_add) { |b| b.frm.button(id: "acal-term_add").click; b.loading.wait_while_present }
 
   element(:acal_term_list_div) { |b| b.frm.div(id: "acal-term")  }
 

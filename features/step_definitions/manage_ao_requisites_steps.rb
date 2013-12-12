@@ -177,7 +177,15 @@ Then /^a (?:error|warning) in the Student Eligibility & Prerequisite section is 
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
-    page.prereq_message_section.text.should match /.*#{exp_msg}.*/
+    page.prereq_message_section_warning.text.should match /.*#{exp_msg}.*/
+  end
+end
+
+Then /^a (?:error|info) in the Student Eligibility & Prerequisite section is displayed stating "([^"]*)"$/ do |exp_msg|
+  @prereq.open_agenda_section
+  on ActivityOfferingRequisites do |page|
+    page.loading.wait_while_present
+    page.prereq_message_section_info.text.should match /.*#{exp_msg}.*/
   end
 end
 
@@ -185,7 +193,7 @@ Then /^no (?:error|warning) in the Student Eligibility & Prerequisite section is
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
-    page.prereq_message_section.text.should_not match /.*#{exp_msg}.*/
+    page.prereq_message_section_warning.text.should_not match /.*#{exp_msg}.*/
   end
 end
 

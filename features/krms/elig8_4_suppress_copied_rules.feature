@@ -14,4 +14,4 @@ Feature: SA.ELIG8-4 Suppress the Copied rules on Activity Offering level
   Scenario: Test whether deleting the copied CO rule gives the correct warning messages
     When I suppress the copied rule in the Student Eligibility & Prerequisite section
     Then a warning in the Student Eligibility & Prerequisite section is displayed stating "Rule statements deleted. No rule of this type will be executed."
-    And a warning in the Student Eligibility & Prerequisite section is displayed stating "Activity Offering Rule differs from Course Offering Rule"
+    And a info in the Student Eligibility & Prerequisite section is displayed stating "Activity Offering Rule differs from Course Offering Rule"
