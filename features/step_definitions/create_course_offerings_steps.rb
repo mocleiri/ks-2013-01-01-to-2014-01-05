@@ -30,8 +30,12 @@ And /^I create a course offering from an existing offering$/ do
   @course_offering = create CourseOffering, :term=> Rollover::PUBLISHED_SOC_TERM, :course => "CHEM132", :create_from_existing=>(make CourseOffering, :term=> "201201", :course => "CHEM132")
 end
 
-And /^I create a course offering from an existing offering and choose to exclude instructor information$/ do
-  @course_offering = create CourseOffering, :term=> Rollover::FINAL_EDITS_SOC_TERM, :course => "CHEM132", :exclude_instructor => true, :create_from_existing=>(make CourseOffering, :term=> "201201", :course => "CHEM132")
+And /^I create a course offering from an existing offering in a different term and choose to exclude instructor information$/ do
+  @course_offering = create CourseOffering, :term=> Rollover::FINAL_EDITS_SOC_TERM, :course => "CHEM132", :exclude_instructor => true, :create_from_existing=>(make CourseOffering, :term=> Rollover::MAIN_TEST_TERM_SOURCE, :course => "CHEM132")
+end
+
+And /^I create a course offering from an existing offering within same term and choose to exclude instructor information$/ do
+  @course_offering = create CourseOffering, :exclude_instructor => true, :create_by_copy => (make CourseOffering, :course => "CHEM132", :term=> Rollover::MAIN_TEST_TERM_SOURCE)
 end
 
 Then /^the new Course Offering should be displayed in the list of available offerings$/ do

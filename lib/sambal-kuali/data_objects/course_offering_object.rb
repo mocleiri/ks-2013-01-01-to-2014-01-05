@@ -1127,6 +1127,10 @@ class CourseOffering
       page.copy source_course_code
     end
     on CopyCourseOffering do |page|
+
+      page.select_exclude_cancelled_aos if @exclude_cancelled_aos
+      page.select_exclude_scheduling if @exclude_scheduling
+      page.select_exclude_instructor if @exclude_instructor
       page.create_copy
     end
 
