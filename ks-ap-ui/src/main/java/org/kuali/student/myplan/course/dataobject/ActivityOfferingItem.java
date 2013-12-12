@@ -69,6 +69,16 @@ public class ActivityOfferingItem implements Serializable {
 
 	private String instituteCode;
 	private String instituteName;
+	
+	private String academicSessionDescr;
+
+	public String getAcademicSessionDescr() {
+		return academicSessionDescr;
+	}
+
+	public void setAcademicSessionDescr(String academicSessionDescr) {
+		this.academicSessionDescr = academicSessionDescr;
+	}
 
 	public String getLuiId() {
 		return luiId;

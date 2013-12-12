@@ -659,6 +659,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 	 * @param termId
 	 * @param planItemId
 	 * @return
+	 * @throws java.text.ParseException 
 	 */
 	public ActivityOfferingItem getActivityItem(ActivityOfferingDisplayInfo displayInfo,
 			CourseOfferingInfo courseOfferingInfo, boolean openForPlanning, String termId, String planItemId) {
@@ -736,8 +737,12 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 		}
 		String instituteCode = null;
 		String instituteName = null;
-
 		String campus = null;
+		
+		String sessionDescr = " ";
+		String sessionStartDate = " ";
+		String sessionEndDate = " ";
+		
 		for (AttributeInfo attrib : displayInfo.getAttributes()) {
 			String key = attrib.getKey();
 			String value = attrib.getValue();
@@ -812,8 +817,47 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 			} else if ("EnrollmentRestrictions".equalsIgnoreCase(key)) {
 				activity.setEnrollRestriction(flag);
 			}
+			
+			
+//			Date sessionStartDate = null;
+//			Date sessionEndDate = null;
+			
+			if ("SessionDescr".equalsIgnoreCase(key)) {
+				sessionDescr = value;
+			}
+
+			if ("SessionBeginDate".equalsIgnoreCase(key)) {
+
+//				try {
+//					sessionStartDate = new SimpleDateFormat("MM/dd/yyyy")
+//							.parse(value);
+//				} catch (java.text.ParseException e) {
+//					// TODO Auto-generated catch block
+//					throw new IllegalArgumentException(
+//							"Invalid session start date " + sessionStartDate);
+//				}
+				sessionStartDate = value;
+			}
+			
+			if ("SessionEndDate".equalsIgnoreCase(key)) {
+
+//				try {
+//					sessionEndDate = new SimpleDateFormat("MM/dd/yyyy")
+//							.parse(value);
+//				} catch (java.text.ParseException e) {
+//					// TODO Auto-generated catch block
+//					throw new IllegalArgumentException(
+//							"Invalid session end date " + sessionEndDate);
+//				}
+				sessionEndDate = value;
+			}
 
 		}
+		
+		sessionDescr += " " + sessionStartDate + " - "
+	+ sessionEndDate;
+	activity.setAcademicSessionDescr(sessionDescr);
+	
 		activity.setInstructor(displayInfo.getInstructorName());
 		activity.setHonorsSection(displayInfo.getIsHonorsOffering());
 

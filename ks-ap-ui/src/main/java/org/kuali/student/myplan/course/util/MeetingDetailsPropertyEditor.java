@@ -37,6 +37,12 @@ public class MeetingDetailsPropertyEditor extends PropertyEditorSupport {
 		if (activityItem.getMeetingDetailsList() != null
 				&& activityItem.getMeetingDetailsList().size() > 0) {
 			StringBuilder sb = new StringBuilder();
+			
+			sb.append("<div class='sessionDescr'>");
+			sb.append(activityItem.getAcademicSessionDescr());
+			sb.append("</div>");
+			
+			
 			sb.append("<div class='meetingdetailslist'>");
 
 			for (MeetingDetails m : activityItem.getMeetingDetailsList()) {
