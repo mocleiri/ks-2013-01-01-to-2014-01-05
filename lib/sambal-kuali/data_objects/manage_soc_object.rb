@@ -140,7 +140,7 @@ class ManageSoc
     page.publish_action
     page.publish_confirm_action
     raise "SOC status doesnt change to Publishing In Progress" unless page.soc_status == 'Publishing In Progress'
-    raise "Close button not displayed" unless page.close_button.exists?
+#    raise "Close button not displayed" unless page.close_button.exists?
     raise "Publish Initiated Date is blank" unless page.schedule_initiated_date != nil
     raise "Once publish started, schedule completed date should say 'Publishing in progress'" unless page.publish_completed_date == 'Publishing in progress'
     raise "Publish duration should have the '(in progress)' text at the end" unless page.publish_duration =~ /(in progress)/
