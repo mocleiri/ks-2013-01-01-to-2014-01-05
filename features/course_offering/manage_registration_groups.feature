@@ -27,10 +27,10 @@ As an Administrator, I want to create registration groups for a Course Offering
     Given I manage registration groups for a new course offering
     When I create an activity offering cluster
     Then I try to create a second activity offering cluster with the same private name
-    And a cluster error message appears stating "The cluster private name is already in use"
+    And a cluster error message appears stating "The cluster private name: \w* is already in use. Choose another private name"
     Then I try to create a second activity offering cluster with a different private name
     And I try to rename the second activity offering cluster to the same private name as the first
-    And a cluster error message appears stating "The cluster private name is already in use"
+    And a cluster error message appears stating "The cluster private name: \w* is already in use. Choose another private name"
     Then I remove the newly created cluster
 
   Scenario: ARG 6.4C When an AO cluster does not have all AO types represented a warning message should appear

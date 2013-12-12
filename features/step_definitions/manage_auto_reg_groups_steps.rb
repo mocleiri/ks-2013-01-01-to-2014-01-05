@@ -60,9 +60,9 @@ When /^I try to create a second activity offering cluster with a different priva
   @ao_cluster2 = create ActivityOfferingCluster
 end
 
-Then /^a cluster error message appears stating "(.*?)"$/ do |errMsg|
+Then /^a cluster error message appears stating "(.*?)"$/ do |expected_errMsg|
   on ManageCourseOfferings do |page|
-    page.get_cluster_error_msgs.should include errMsg
+    page.get_cluster_error_msgs.should match /#{expected_errMsg}/
   end
 end
 
@@ -149,7 +149,7 @@ When /^I copy an Activity Offering$/ do
 end
 
 When /^I add an Activity Offering$/ do
-  @course_offering.create_ao(make ActivityOffering, :format => "Lecture/Discussion")
+  @course_offering.create_ao :ao_obj => (make ActivityOffering, :format => "Lecture/Discussion")
 end
 
 When /^I update an Activity Offering to have less seats$/ do
