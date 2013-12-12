@@ -17,7 +17,7 @@ Background:
     Then the new Course Offering should contain only the selected delivery formats
 
   @smoke_test
-  Scenario: Create Course Offering from existing Course Offering
+  Scenario: CO 6.1 Create Course Offering from existing Course Offering
     When I create a course offering from an existing offering
     Then the new Course Offering should be displayed in the list of available offerings
 
