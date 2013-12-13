@@ -339,5 +339,23 @@ public interface BrmFeeManagementService {
      */
     void removeRatesFromSignupAndPrecedingOfferings(String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
 
+    /**
+     * Adds a rate to a FeeManagementSignup object from the BRM context.
+     *
+     * @param rateCode    Rate code
+     * @param rateSubCode Rate sub-code
+     */
+    void addRateToSignup(String rateCode, String rateSubCode, BrmContext context);
+
+    /**
+     * Replaces a rate on FeeManagementSignup object with the new rate specified by code and sub-code.
+     *
+     * @param rateCode       Code of the rate to be replaced
+     * @param rateSubCode    Sub-code of the rate to be replaced
+     * @param newRateCode    Code of the new rate
+     * @param newRateSubCode Sub-code of the new rate
+     */
+    void replaceRateOnSignup(String rateCode, String rateSubCode, String newRateCode, String newRateSubCode, BrmContext context);
+
 
 }

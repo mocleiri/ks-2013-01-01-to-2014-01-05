@@ -8,6 +8,7 @@ import com.sigmasys.kuali.ksa.service.atp.AtpService;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmMethodInterceptor;
 import com.sigmasys.kuali.ksa.service.fm.BrmFeeManagementService;
+import com.sigmasys.kuali.ksa.service.fm.RateService;
 import com.sigmasys.kuali.ksa.service.hold.HoldService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.util.CommonUtils;
@@ -67,6 +68,9 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
     @Autowired
     private AtpService atpService;
+
+    @Autowired
+    private RateService rateService;
 
 
     /**
@@ -151,12 +155,49 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         return variable;
     }
 
-    public Set<FeeManagementSignup> filterSessionSignups(Collection<FeeManagementSignup> signups,
-                                                         String rateCodes,
-                                                         String rateTypeCodes,
-                                                         String rateCatalogCodes,
-                                                         String signupOperations,
-                                                         String offeringIds) {
+    private void addRateToSignup(Rate rate, FeeManagementSignup signup) {
+
+        FeeManagementSignupRate signupRate = new FeeManagementSignupRate();
+
+        signupRate.setRate(rate);
+        signupRate.setSignup(signup);
+        signupRate.setComplete(false);
+
+        persistEntity(signupRate);
+
+        Set<FeeManagementSignupRate> signupRates = signup.getSignupRates();
+
+        if (signupRates == null) {
+            signupRates = new HashSet<FeeManagementSignupRate>();
+        }
+
+        signupRates.add(signupRate);
+        signup.setSignupRates(signupRates);
+
+        persistEntity(signup);
+    }
+
+    private void replaceRateOnSignup(Long rateId, Rate newRate, FeeManagementSignup signup) {
+
+        Set<FeeManagementSignupRate> signupRates = signup.getSignupRates();
+
+        if (CollectionUtils.isNotEmpty(signupRates)) {
+            for (FeeManagementSignupRate signupRate : signupRates) {
+
+                if (rateId.equals(signupRate.getRate().getId())) {
+                    signupRate.setRate(newRate);
+                    persistEntity(signupRate);
+                }
+            }
+        }
+    }
+
+    private Set<FeeManagementSignup> filterSessionSignups(Collection<FeeManagementSignup> signups,
+                                                          String rateCodes,
+                                                          String rateTypeCodes,
+                                                          String rateCatalogCodes,
+                                                          String signupOperations,
+                                                          String offeringIds) {
 
         Set<FeeManagementSignup> filteredSignups = new HashSet<FeeManagementSignup>();
 
@@ -1175,6 +1216,87 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds a rate to a FeeManagementSignup object from the BRM context.
+     *
+     * @param rateCode    Rate code
+     * @param rateSubCode Rate sub-code
+     */
+    @Override
+    public void addRateToSignup(String rateCode, String rateSubCode, BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        String atpId = session.getAtpId();
+
+        Rate rate = rateService.getRate(rateCode, rateSubCode, atpId);
+        if (rate == null) {
+            String errMsg = "Cannot find Rate [" + rateCode + ", " + rateSubCode + ", " + atpId + "]";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            addRateToSignup(rate, signup);
+        } else {
+
+            Set<FeeManagementSignup> signups = session.getSignups();
+
+            if (CollectionUtils.isNotEmpty(signups)) {
+                for (FeeManagementSignup fmSignup : signups) {
+                    addRateToSignup(rate, fmSignup);
+                }
+            }
+        }
+    }
+
+    /**
+     * Replaces a rate on FeeManagementSignup object with the new rate specified by code and sub-code.
+     *
+     * @param rateCode       Code of the rate to be replaced
+     * @param rateSubCode    Sub-code of the rate to be replaced
+     * @param newRateCode    Code of the new rate
+     * @param newRateSubCode Sub-code of the new rate
+     */
+    @Override
+    public void replaceRateOnSignup(String rateCode, String rateSubCode, String newRateCode, String newRateSubCode, BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        String atpId = session.getAtpId();
+
+        Rate rate = rateService.getRate(rateCode, rateSubCode, atpId);
+        if (rate == null) {
+            String errMsg = "Cannot find Rate [" + rateCode + ", " + rateSubCode + ", " + atpId + "]";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Rate newRate = rateService.getRate(newRateCode, newRateSubCode, atpId);
+        if (newRate == null) {
+            String errMsg = "Cannot find Rate [" + newRateCode + ", " + newRateSubCode + ", " + atpId + "]";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+
+        if (signup != null) {
+            replaceRateOnSignup(rate.getId(), newRate, signup);
+        } else {
+
+            Set<FeeManagementSignup> signups = session.getSignups();
+
+            if (CollectionUtils.isNotEmpty(signups)) {
+                for (FeeManagementSignup fmSignup : signups) {
+                    replaceRateOnSignup(rate.getId(), newRate, fmSignup);
                 }
             }
         }
