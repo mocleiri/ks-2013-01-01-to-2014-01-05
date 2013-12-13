@@ -72,7 +72,9 @@ class ActivityOfferingRequisites < BasePage
   action(:coreq_replace) { |b| b.coreq_replace_link.click; b.loading.wait_while_present }
   element(:coreq_suppress_link) { |b| b.corequisite_add_links.a(:text => /Suppress Rule/)}
   action(:coreq_suppress) { |b| b.coreq_suppress_link.click; b.loading.wait_while_present }
-  element( :coreq_message_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleB_disclosureContent")}
+  element(:coreq_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleB_disclosureContent")}
+  element(:coreq_message_section_warning) { |b| b.coreq_section.li( class: "uif-warningMessageItem")}
+  element(:coreq_message_section_info) { |b| b.coreq_section.li( class: "uif-infoMessageItem")}
 
   element(:recommended_prep_edit_links) {|b| b.frm.div( id: "KSAO-RuleEdit-ActionLinks_ruleC")}
   element(:recommended_prep_add_links) {|b| b.frm.div( id: "KSAO-RuleAdd-ActionLink_ruleC")}
@@ -94,7 +96,7 @@ class ActivityOfferingRequisites < BasePage
   action(:prep_replace) { |b| b.prep_replace_link.click; b.loading.wait_while_present }
   element(:prep_suppress_link) { |b| b.recommended_prep_add_links.a(:text => /Suppress Rule/)}
   action(:prep_suppress) { |b| b.prep_suppress_link.click; b.loading.wait_while_present }
-  element( :prep_message_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleC_disclosureContent")}
+  element(:prep_message_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleC_disclosureContent")}
 
   element(:antirequisite_edit_links) {|b| b.frm.div( id: "KSAO-RuleEdit-ActionLinks_ruleD")}
   element(:antirequisite_add_links) {|b| b.frm.div( id: "KSAO-RuleAdd-ActionLink_ruleD")}
@@ -116,7 +118,7 @@ class ActivityOfferingRequisites < BasePage
   action(:antireq_replace) { |b| b.antireq_replace_link.click; b.loading.wait_while_present }
   element(:antireq_suppress_link) { |b| b.antirequisite_add_links.a(:text => /Suppress Rule/)}
   action(:antireq_suppress) { |b| b.antireq_suppress_link.click; b.loading.wait_while_present }
-  element( :antireq_message_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleD_disclosureContent")}
+  element(:antireq_message_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleD_disclosureContent")}
 
   element(:repeatable_credit_edit_links) {|b| b.frm.div( id: "KSAO-RuleEdit-ActionLinks_ruleE")}
   element(:repeatable_credit_add_links) {|b| b.frm.div( id: "KSAO-RuleAdd-ActionLink_ruleE")}
@@ -138,7 +140,7 @@ class ActivityOfferingRequisites < BasePage
   action(:repeat_replace) { |b| b.repeat_replace_link.click; b.loading.wait_while_present }
   element(:repeat_suppress_link) { |b| b.repeatable_credit_add_links.a(:text => /Suppress Rule/)}
   action(:repeat_suppress) { |b| b.repeat_suppress_link.click; b.loading.wait_while_present }
-  element( :repeat_message_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleE_disclosureContent")}
+  element(:repeat_message_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleE_disclosureContent")}
 
   element(:restricted_credit_edit_links) {|b| b.frm.div( id: "KSAO-RuleEdit-ActionLinks_ruleF")}
   element(:restricted_credit_add_links) {|b| b.frm.div( id: "KSAO-RuleAdd-ActionLink_ruleF")}
@@ -160,7 +162,7 @@ class ActivityOfferingRequisites < BasePage
   action(:restrict_replace) { |b| b.restrict_replace_link.click; b.loading.wait_while_present }
   element(:restrict_suppress_link) { |b| b.restricted_credit_add_links.a(:text => /Suppress Rule/)}
   action(:restrict_suppress) { |b| b.restrict_suppress_link.click; b.loading.wait_while_present }
-  element( :restrict_message_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleF_disclosureContent")}
+  element(:restrict_message_section) { |b| b.frm.div( id: "KSAO-AgendaManage-RulePrototype_ruleF_disclosureContent")}
 
   element(:compare_section) { |b| b.frm.div(id: "compareCluCoAndAoRuleLightBox")}
   element(:compare_tree) { |b| b.compare_section.div( id: "KRMS-AoCompareTree-Section")}

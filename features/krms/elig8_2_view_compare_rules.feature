@@ -5,9 +5,9 @@ Feature: SA.ELIG8-2 View the Catalog and Course Offering rule
     Given I am logged in as admin
 
   #ELIG8.2.EB1 (KSENROLL-8707)
-  Scenario: Test whether warning messages are shown when agendas page is loaded
+  Scenario: Test whether info messages are shown when agendas page is loaded
     When I navigate to the agendas page and open the Student Eligibility & Prerequisite section
-    Then a warning in the Student Eligibility & Prerequisite section is displayed stating "Course Offering rule exists and will be enforced on Activity Offering"
+    Then a info in the Student Eligibility & Prerequisite section is displayed stating "Course Offering rule exists and will be enforced on Activity Offering"
 
   #ELIG8.2.EB2 (KSENROLL-8707)
   Scenario: Test whether the user can view catalog and course offering rules

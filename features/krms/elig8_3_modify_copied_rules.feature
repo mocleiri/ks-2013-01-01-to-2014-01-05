@@ -7,7 +7,7 @@ Feature: SA.ELIG8-3 Modify the Copied rules on Activity Offering level
   #ELIG8.3.EB1 (KSENROLL-8745)
   Scenario: Test whether modifying the copied CO rule gives the appropriate warning message
     When I copy and edit the Course Offering rule to the Student Eligibility & Prerequisite section
-    Then a warning in the Student Eligibility & Prerequisite section is displayed stating "Activity Offering Rule differs from Course Offering Rule"
+    Then a info in the Student Eligibility & Prerequisite section is displayed stating "Activity Offering Rule differs from Course Offering Rule"
     And the AO rule should differ from the CO and CLU rules in the Student Eligibility & Prerequisite section
 
   #ELIG8.3.EB2 (KSENROLL-8745)
