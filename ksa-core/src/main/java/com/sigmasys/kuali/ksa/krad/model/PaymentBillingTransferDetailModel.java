@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.model.Memo;
 import com.sigmasys.kuali.ksa.model.TransactionTransfer;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingQueue;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingSchedule;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail;
 
 import java.math.BigDecimal;
@@ -22,6 +23,8 @@ public class PaymentBillingTransferDetailModel {
     private List<PaymentBillingQueue> paymentBillingQueues;
 
     private List<TransactionTransfer> transactionTransfers;
+
+    private List<PaymentBillingSchedule> paymentBillingSchedules;
 
     private Memo changeMemo;
 
@@ -148,5 +151,16 @@ public class PaymentBillingTransferDetailModel {
             return "Queued";
         }
         return "";
+    }
+
+    public List<PaymentBillingSchedule> getPaymentBillingSchedules() {
+        if(paymentBillingSchedules == null) {
+            paymentBillingSchedules = new ArrayList<PaymentBillingSchedule>();
+        }
+        return paymentBillingSchedules;
+    }
+
+    public void setPaymentBillingSchedules(List<PaymentBillingSchedule> paymentBillingSchedules) {
+        this.paymentBillingSchedules = paymentBillingSchedules;
     }
 }

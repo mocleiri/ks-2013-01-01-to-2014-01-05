@@ -336,6 +336,12 @@
                                         <bean parent="Uif-ImageField" p:source="../images/re_execute.png" p:style="cursor:pointer;" p:altText="Re-execute the Payment Payment Billing Plan" p:title=""
                                               p:onClickScript="showLightboxComponent('reExecutePBLightbox@{#lineSuffix}');"/>
                                         <ref bean="reExecutePBLightbox"/>
+                                        <bean parent="Uif-ImageField" p:source="../images/transaction_transfer_list.png" p:style="cursor:pointer;" p:altText="View Transaction Transfer List" p:title=""
+                                              p:onClickScript="showLightboxComponent('transactionTransferPBLightbox@{#lineSuffix}');"/>
+                                        <ref bean="transactionTransferPBLightbox"/>
+                                        <bean parent="Uif-ImageField" p:source="../images/schedule_of_payments.png" p:style="cursor:pointer;" p:altText="View Schedule of Payments" p:title=""
+                                              p:onClickScript="showLightboxComponent('paymentSchedulePBLightbox@{#lineSuffix}');"/>
+                                        <ref bean="paymentSchedulePBLightbox"/>
                                         <bean parent="Uif-ImageField" p:source="../images/delete.png" p:style="cursor:pointer;" p:altText="Reverse the Payment Billing Plan" p:title=""
                                               p:onClickScript="showLightboxComponent('reversePBLightbox@{#lineSuffix}');" p:render="@{!#empty(#line.paymentBillingTransferDetail)}"/>
                                         <ref bean="reversePBLightbox"/>
@@ -366,6 +372,76 @@
 
                 <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="reexecutePaymentBillingPlan" p:actionLabel="Re-execute Plan"
                       p:actionParameters="planId:@{#line.plan.id}" p:preSubmitCall="jQuery.fancybox.close(); return true;"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="transactionTransferPBLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+        <property name="headerText" value="Transaction Transfers"/>
+        <property name="hidden" value="true"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-Message" p:messageText="No transaction transfers" p:render="@{#line.transactionTransfers.size() == 0}"/>
+                <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:width="85%">
+                    <property name="readOnly" value="true"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.TransactionTransfer"/>
+                    <property name="propertyName" value="transactionTransfers"/>
+                    <property name="layoutManager.sequencePropertyName" value="id"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="false"/>
+                            <entry key="bInfo" value="false"/>
+                            <entry key="bFilter" value="false"/>
+                        </map>
+                    </property>
+
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:label="Transfer Date" p:propertyName="creationDate"/>
+                            <bean parent="Uif-InputField" p:label="Source Transaction Description" p:propertyName="sourceTransaction.statementText"/>
+                            <bean parent="Uif-InputField" p:label="Offset Transaction Description" p:propertyName="offsetTransaction.statementText"/>
+                            <bean parent="Uif-InputField" p:label="Destination Transaction Description" p:propertyName="destTransaction.statementText"/>
+                            <bean parent="Uif-InputField" p:label="Transfer Amount" p:propertyName="transferAmount"/>
+                            <bean parent="Uif-InputField" p:label="Reversal Amount" p:propertyName="reversalAmount"/>
+                            <bean parent="Uif-InputField" p:label="Transaction Type" p:propertyName="trasnferType"/>
+                            <bean parent="Uif-InputField" p:label="Status" p:propertyName="reversalStatus"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="paymentSchedulePBLightbox" parent="Uif-VerticalBoxSection" p:layoutManager.orientation="VERTICAL">
+        <property name="headerText" value="Schedule of Payments"/>
+        <property name="hidden" value="true"/>
+        <property name="items">
+            <list>
+                <bean parent="Uif-Message" p:messageText="No payments scheduled" p:render="@{#line.paymentBillingSchedules.size() == 0}"/>
+                <bean parent="Uif-TableCollectionSection" p:layoutManager.numberOfColumns="5" p:width="85%">
+                    <property name="readOnly" value="true"/>
+                    <property name="collectionObjectClass" value="com.sigmasys.kuali.ksa.model.pb.PaymentBillingSchedule"/>
+                    <property name="propertyName" value="paymentBillingSchedules"/>
+                    <property name="layoutManager.sequencePropertyName" value="id"/>
+                    <property name="layoutManager.richTable.render" value="true"/>
+                    <property name="layoutManager.renderSequenceField" value="false"/>
+                    <property name="layoutManager.richTable.templateOptions">
+                        <map merge="true">
+                            <entry key="bPaginate" value="false"/>
+                            <entry key="bInfo" value="false"/>
+                            <entry key="bFilter" value="false"/>
+                        </map>
+                    </property>
+
+                    <property name="items">
+                        <list>
+                            <bean parent="Uif-InputField" p:label="Payment Date" p:propertyName="effectiveDate"/>
+                            <bean parent="Uif-InputField" p:label="Amount" p:propertyName="amount"/>
+                        </list>
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>

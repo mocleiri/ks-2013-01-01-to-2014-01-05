@@ -8,6 +8,7 @@ import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.model.TransactionTransfer;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingPlan;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingQueue;
+import com.sigmasys.kuali.ksa.model.pb.PaymentBillingSchedule;
 import com.sigmasys.kuali.ksa.model.pb.PaymentBillingTransferDetail;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlan;
 import com.sigmasys.kuali.ksa.model.tp.ThirdPartyPlanMember;
@@ -328,8 +329,10 @@ public class UserPaymentPlanController extends GenericSearchController {
             List<TransactionTransfer> transactionTransfers = transactionTransferService.getTransactionTransfersByGroupId(transferDetail.getTransferGroupId());
             model.setTransactionTransfers(transactionTransfers);
 
+            List<PaymentBillingSchedule> schedules = paymentBillingService.getPaymentBillingSchedulesByTransferDetailId(transferDetail.getId());
 
         }
+
 
         // Get the ones where the transfer detail is null
         List<PaymentBillingQueue> paymentBillingQueues = paymentBillingService.getPaymentBillingQueues(userId, null);
