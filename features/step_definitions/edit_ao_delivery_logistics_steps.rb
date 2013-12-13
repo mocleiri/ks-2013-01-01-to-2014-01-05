@@ -161,7 +161,8 @@ end
 
 When /^I edit an Activity Offering with non-standard time slots (approved|not approved)$/ do |approval|
   if approval=="not approved"
-    course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201301", :course=>"ENGL202")
+    #course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201301", :course=>"ENGL202")
+    course_offering = make CourseOffering, :term => "201301", :course=>"ENGL202A"
   else
     course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201301", :course=>"ENGL262")
   end
@@ -170,5 +171,38 @@ When /^I edit an Activity Offering with non-standard time slots (approved|not ap
 end
 
 Then /^there is a validation error on the EndTime field$/  do
-  pending
+  @activity_offering.edit
+  @dl_obj.end_time_ampm.upcase! unless @dl_obj.end_time_ampm.nil?
+  @dl_obj.start_time_ampm.upcase! unless @dl_obj.start_time_ampm.nil?
+  on ActivityOfferingMaintenance do |page|
+    page.view_requested_delivery_logistics
+
+    if @dl_obj.days != nil then
+      page.add_start_time.click
+      page.loading.wait_while_present
+      page.add_days.set @dl_obj.days
+      sleep 2
+    end
+
+    if @dl_obj.start_time != nil then
+      page.add_start_time.click
+      page.loading.wait_while_present
+      page.add_start_time.set @dl_obj.start_time + " " + @dl_obj.start_time_ampm
+      page.add_start_time.click
+      page.loading.wait_while_present
+    end
+
+    page.end_time_select.click
+    page.loading.wait_while_present
+    sleep 3
+    puts "error msg div : #{page.end_time_error_div}"
+    puts "error msg: #{page.end_time_error}"
+    #puts page.get_cluster_error_msgs
+    sleep 4
+  end
+end
+
+And /^I attempt to add non-standard RDLs for an AO as a (DSC|CSC)$/ do |role|
+  @dl_obj = make DeliveryLogistics, :std_ts => false, :days => "TH", :start_time => "08:21", :start_time_ampm => "pm", :end_time => "09:04", :end_time_ampm => "pm",
+                  :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102", :dsc => (role=="DSC")
 end

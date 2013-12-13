@@ -103,6 +103,9 @@ class ActivityOfferingMaintenance < BasePage
   element(:add_end_time_ampm) { |b| b.add_logistics_div.select(name: "document.newMaintainableObject.dataObject.newScheduleRequest.endTimeAMPM") }
   # select box
   element(:end_time_select) { |b| b.select(id: "rdl_endtime_control") }
+  # error msg
+  element(:end_time_error_div) { |b| b.div(id: "rdl_endtime_errors") }
+  value(:end_time_error) { |b| b.end_time_error_div.li(class: "uif-errorMessageItem-field").text }
   element(:add_facility) { |b| b.add_logistics_div.div(data_label: "Facility").text_field() }
   action(:lookup_facility) { |b| b.add_logistics_div.div(data_label: "Facility").button().click; b.loading.wait_while_present }
   element(:add_room) { |b| b.add_logistics_div.div(data_label: "Room").text_field() }
@@ -194,6 +197,14 @@ class ActivityOfferingMaintenance < BasePage
   ROOM = 5
   FEATURES = 6
   ACTIONS = 7
+
+  def get_cluster_error_msgs(private_name = :default_cluster)
+    msg_list = []
+    frm.ul(class: "uif-clientMessageItems").lis(class:  "uif-errorMessageItem-field").each do |li|
+      msg_list <<  li.text()
+    end
+    msg_list.to_s
+  end
 
   def jump_to_ao(ao_name)
     select_ao_menu.select(ao_name)
