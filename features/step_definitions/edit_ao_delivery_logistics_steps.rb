@@ -67,11 +67,12 @@ Then /^the AO's delivery logistics shows the new schedule$/ do
       dl_key = "#{days}#{start_time}"
       #get the corresponding ADL by key
       del_logisitics = @activity_offering.requested_delivery_logistics_list[dl_key]
+      exp_room = (del_logisitics.room.nil?)?"":del_logisitics.room
       page.get_requested_logistics_days(row).delete(' ').should == del_logisitics.days
       page.get_requested_logistics_start_time(row).delete(' ').should == "#{del_logisitics.start_time}#{del_logisitics.start_time_ampm}"
       page.get_requested_logistics_end_time(row).delete(' ').should == "#{del_logisitics.end_time}#{del_logisitics.end_time_ampm}"
       page.get_requested_logistics_facility(row).should == del_logisitics.facility_long_name
-      page.get_requested_logistics_room(row).should == del_logisitics.room
+      page.get_requested_logistics_room(row).should == exp_room
     end
     page.cancel
   end
@@ -105,14 +106,14 @@ When /^I add RDLs for an AO$/ do
   @activity_offering.save
 end
 
-When /^I add RDLs for an AO as a DSC$/ do
-  # add new RDL row
-  @activity_offering.edit
-  dl_obj = create DeliveryLogistics, :days => "MWF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
-                  :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102", :dsc => true
-  @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
-  @activity_offering.save
-end
+#When /^I add standard RDLs for an AO$/ do
+#  # add new RDL row
+#  @activity_offering.edit
+#  dl_obj = create DeliveryLogistics, :days => "MWF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
+#                  :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102", :dsc => true
+#  @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
+#  @activity_offering.save
+#end
 
 When /^I add RDLs for an AO checking the TBA flag$/ do
   # add new TBA RDL row
@@ -131,18 +132,16 @@ And /^I delete the original RDLs$/ do
   @activity_offering.save
 end
 
-When /^I add (standard|non-standard) RDLs for an AO$/ do |tsType|
-  # capture the RDLs
-  #@activity_offering.requested_delivery_logistics_list.values[0]
+When /^I add (standard|non-standard) RDLs for an AO as a (CSC|DSC)$/ do |tsType, role|
   # add new RDL row
   @activity_offering.edit
   if tsType=="standard"
-    dl_obj = create DeliveryLogistics, :std_ts => true, :days => "MWF", :start_time => "08:00", :start_time_ampm => "am", :end_time => "08:35", :end_time_ampm => "am",
-                    :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
+    dl_obj = create DeliveryLogistics, :std_ts => true, :days => "MWF", :start_time => "10:00", :start_time_ampm => "am", :end_time => "10:50", :end_time_ampm => "am",
+                    :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102", :dsc => (role=="DSC")
     @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
   elsif tsType=="non-standard"
     dl_obj = create DeliveryLogistics, :std_ts => false, :days => "TH", :start_time => "08:21", :start_time_ampm => "pm", :end_time => "09:04", :end_time_ampm => "pm",
-                    :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102"
+                    :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102", :dsc => (role=="DSC")
     @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
   end
   @activity_offering.save
@@ -160,6 +159,16 @@ Then /^the "approved for non-standard time slots" flag is set$/ do
   end
 end
 
-And(/^I edit the Activity Offering with non-standard time slots approved$/) do
-  @activity_offering.parent_course_offering.manage_and_init
+When /^I edit an Activity Offering with non-standard time slots (approved|not approved)$/ do |approval|
+  if approval=="not approved"
+    course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201301", :course=>"ENGL202")
+  else
+    course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201301", :course=>"ENGL262")
+  end
+  course_offering.manage_and_init
+  @activity_offering = course_offering.get_ao_obj_by_code("A")
+end
+
+Then /^there is a validation error on the EndTime field$/  do
+  pending
 end

@@ -1078,9 +1078,14 @@ class DeliveryLogistics
     if isRDL then
       on ActivityOfferingMaintenance do |page|
         page.view_requested_delivery_logistics
-        #target_row = target_row_by_dl_key
-        #page.edit_rdl_row(target_row)
         sleep 2
+        ns_ts_allowed = !page.non_std_ts_text.nil? && page.non_std_ts_text=="true"
+        # if non-standard TS allowed, then treat DSC as CSC
+        if @dsc then
+          if ns_ts_allowed
+            @dsc=false
+          end
+        end
 
         @end_time_ampm.upcase! unless @end_time_ampm.nil?
         @start_time_ampm.upcase! unless @start_time_ampm.nil?

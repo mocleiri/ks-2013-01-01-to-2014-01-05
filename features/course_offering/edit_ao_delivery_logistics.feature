@@ -1,5 +1,5 @@
 @nightly @green_team
-Feature: WC.Edit AO delivery logistics
+Feature: WC.Edit AO delivery logistics as CSC
 
   As a schedule coordinator, I want to edit the requested delivery logistics of an AO
   and then confirm that those changes have been persisted
@@ -13,11 +13,11 @@ Feature: WC.Edit AO delivery logistics
     Then the AO's delivery logistics shows the new schedule
 
   Scenario: Add standard RDLs for an AO
-    When I add standard RDLs for an AO
+    When I add standard RDLs for an AO as a CSC
     Then the AO's delivery logistics shows the new schedule
 
   Scenario: Add non-standard RDLs for an AO
-    When I add non-standard RDLs for an AO
+    When I add non-standard RDLs for an AO as a CSC
     Then the AO's delivery logistics shows the new schedule
 
   Scenario: Add an RDL using incomplete logistics - times only
@@ -40,3 +40,9 @@ Feature: WC.Edit AO delivery logistics
     When I add RDLs for an AO
     And I delete the original RDLs
     Then the AO's delivery logistics shows the new schedule
+
+  #CO 20.2 (KSENROLL-10318)
+  @draft
+  Scenario: Set non-standard TS approval flag
+    When I check the "approved for non-standard time slots" flag
+    Then the "approved for non-standard time slots" flag is set

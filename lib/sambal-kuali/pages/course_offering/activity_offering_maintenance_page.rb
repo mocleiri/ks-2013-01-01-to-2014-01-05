@@ -91,6 +91,7 @@ class ActivityOfferingMaintenance < BasePage
 
   element(:add_logistics_div) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-New") }
   element(:non_std_ts_checkbox) { |b| b.checkbox(id: "isApprovedForNonStandardTimeSlots_control") }
+  element(:non_std_ts_text) { |b| b.span(id: "isApprovedForNonStandardTimeSlots_control").text }
   action(:approve_non_std_ts) { |b| b.non_std_ts_checkbox.set }
   action(:disallow_non_std_ts) { |b| b.non_std_ts_checkbox.clear }
   element(:add_tba){ |b|b.add_logistics_div.div(data_label: "TBA").checkbox()}
