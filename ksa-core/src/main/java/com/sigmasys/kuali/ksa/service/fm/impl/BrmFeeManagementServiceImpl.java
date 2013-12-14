@@ -18,6 +18,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.kuali.student.r2.core.atp.dto.MilestoneInfo;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,11 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
     private static final Log logger = LogFactory.getLog(BrmFeeManagementServiceImpl.class);
 
+    // Global variable names
+    private static final String FM_SESSION_VAR_NAME = "fmSession";
+    private static final String FM_SIGNUP_VAR_NAME = "fmSignup";
+
+
     // Default multi-value delimiter
     private static final String MULTI_VALUE_DELIMITER = ",";
 
@@ -52,10 +58,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     private static final String LESS_OPERATOR = "<";
     private static final String GREATER_EQUAL_OPERATOR = ">=";
     private static final String LESS_EQUAL_OPERATOR = "<=";
-
-    // Global variable names
-    private static final String FM_SESSION_VAR_NAME = "fmSession";
-    private static final String FM_SIGNUP_VAR_NAME = "fmSignup";
 
 
     @Autowired
@@ -651,6 +653,58 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Compares the FeeManagementSignup effective date to the signup or session ATP milestone.
+     *
+     * @param date     Date in "MM/dd/yyyy"format
+     * @param operator Relational operator. For example, "==" or "!="
+     * @param context  BRM context
+     * @return boolean value
+     */
+    @Override
+    public boolean compareSignupEffectiveDateToAtpMilestone(String date, String operator, BrmContext context) {
+
+        String atpId = null;
+
+        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
+        if (signup != null) {
+            atpId = signup.getAtpId();
+        }
+
+        if (atpId == null) {
+            FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+            atpId = session.getAtpId();
+        }
+
+        if (StringUtils.isBlank(atpId)) {
+            String errMsg = "Neither FM signup nor session has a valid non-empty ATP ID";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        if (!atpService.atpExists(atpId)) {
+            String errMsg = "ATP ID = " + atpId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
+        }
+
+        try {
+
+            List<MilestoneInfo> milestones = atpService.getMilestonesForAtp(atpId, atpService.getAtpContextInfo());
+
+            for (MilestoneInfo milestone : milestones) {
+                //TODO
+            }
+
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
+        return true;
     }
 
 

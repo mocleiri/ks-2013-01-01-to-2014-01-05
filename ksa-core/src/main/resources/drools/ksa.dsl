@@ -27,6 +27,7 @@
 [then][]Use code "{debitTypeId}" to charge ${debitAmount} = context.getTransactionService().createCharge("{debitTypeId}",context.getAccount().getId(), new Date(), new BigDecimal({debitAmount}));
 [then][]Use code "{creditTypeId}" to credit ${creditAmount} = context.getTransactionService().createPayment("{creditTypeId}",context.getAccount().getId(), new Date(), new BigDecimal({creditAmount}));
 
+########################################################################################################################
 
 # FEE MANAGEMENT DSL definitions
 
@@ -69,7 +70,12 @@
 
 
 # RHS definitions
-[then][]Set status to "{status}", key pair "{key}" to "{value}" where code is "{luCodes}" = context.getFeeManagementService().setCourseStatusForLearningUnits(feeBase,"{luCodes}","{status}","{key}","{value}");
+[then][]set account key "{key}" to "{value}" = context.getFmService().setAccountKey("{key}","{value}",context);
+[then][]set session key "{key}" to "{value}" = context.getFmService().setSessionKey("{key}","{value}",context);
+[then][]set signup key "{key}" to "{value}" = context.getFmService().setSignupKey("{key}","{value}",context);
+
+
+########################################################################################################################
 
 # ACCOUNT BLOCKING DSL definitions
 # Assumption: transactionTypeIds, atpIds, holdIssueNames, permissionNames are global parameters
