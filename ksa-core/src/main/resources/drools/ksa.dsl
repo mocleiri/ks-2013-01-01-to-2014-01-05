@@ -31,26 +31,45 @@
 # FEE MANAGEMENT DSL definitions
 
 # LHS definitions
-[when][]Student account ID is "{userId}" = account.id == "{userId}"
-[when][]Student is resident = feeManagementService.isResident(feeBase)
-[when][]Student is not resident = !feeManagementService.isResident(feeBase)
-[when][]Student is graduate = feeManagementService.isGraduate(feeBase)
-[when][]Student is not graduate = !feeManagementService.isGraduate(feeBase)
-[when][]LU code is "{luCodes}" with status "{statuses}" = feeManagementService.containsLearningUnitCode(feeBase, "{luCodes}", "{statuses}")
-[when][]Major is "{majorCodes}" = feeManagementService.containsMajorCode(feeBase, "{majorCodes}")
-[when][]Section is "{sectionCodes}" with status "{statuses}" = feeManagementService.containsSectionCode(feeBase, "{sectionCodes}", "{statuses}")
-[when][]Number of credits is {numberOfCredits} with status "{status}" = feeManagementService.getNumOfCredits(feeBase, "{status}") == {numberOfCredits}
-[when][]Number of credits > {numberOfCredits} with status "{status}" = feeManagementService.getNumOfCredits(feeBase, "{status}") > {numberOfCredits}
-[when][]Number of credits < {numberOfCredits} with status "{status}" = feeManagementService.getNumOfCredits(feeBase, "{status}") < {numberOfCredits}
-[when][]Key pair "{key}" is "{values}" = feeManagementService.containsKeyPair(feeBase, "{key}", "{values}")
+[when][]account key "{key}" is "{value}" = fmService.compareAccountKeyPair("{key}","{value}","==",context)
+[when][]account key "{key}" is not "{value}" = fmService.compareAccountKeyPair("{key}","{value}","!=",context)
+[when][]account key "{key}" gt "{value}" = fmService.compareAccountKeyPair("{key}","{value}",">",context)
+[when][]account key "{key}" gte "{value}" = fmService.compareAccountKeyPair("{key}","{value}",">=",context)
+[when][]account key "{key}" lt "{value}" = fmService.compareAccountKeyPair("{key}","{value}","<",context)
+[when][]account key "{key}" lte "{value}" = fmService.compareAccountKeyPair("{key}","{value}","<=",context)
+[when][]session key "{key}" is "{value}" = fmService.compareSessionKeyPair("{key}","{value}","==",context)
+[when][]session key "{key}" is not "{value}" = fmService.compareSessionKeyPair("{key}","{value}","!=",context)
+[when][]session key "{key}" gt "{value}" = fmService.compareSessionKeyPair("{key}","{value}",">",context)
+[when][]session key "{key}" gte "{value}" = fmService.compareSessionKeyPair("{key}","{value}",">=",context)
+[when][]session key "{key}" lt "{value}" = fmService.compareSessionKeyPair("{key}","{value}","<",context)
+[when][]session key "{key}" lte "{value}" = fmService.compareSessionKeyPair("{key}","{value}","<=",context)
+[when][]signup key "{key}" is "{value}" = fmService.compareSignupKeyPair("{key}","{value}","==",context)
+[when][]signup key "{key}" is not "{value}" = fmService.compareSignupKeyPair("{key}","{value}","!=",context)
+[when][]signup key "{key}" gt "{value}" = fmService.compareSignupKeyPair("{key}","{value}",">",context)
+[when][]signup key "{key}" gte "{value}" = fmService.compareSignupKeyPair("{key}","{value}",">=",context)
+[when][]signup key "{key}" lt "{value}" = fmService.compareSignupKeyPair("{key}","{value}","<",context)
+[when][]signup key "{key}" lte "{value}" = fmService.compareSignupKeyPair("{key}","{value}","<=",context)
+[when][]signup rate key "{key}" is "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}","==",context)
+[when][]signup rate key "{key}" is not "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}","!=",context)
+[when][]signup rate key "{key}" gt "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}",">",context)
+[when][]signup rate key "{key}" gte "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}",">=",context)
+[when][]signup rate key "{key}" lt "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}","<",context)
+[when][]signup rate key "{key}" lte "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}","<=",context)
+[when][]account type is "{accountTypeCode}" = fmService.compareAccountType("{accountTypeCode}","==",context)
+[when][]account type is not "{accountTypeCode}" = fmService.compareAccountType("{accountTypeCode}","!=",context)
+[when][]account status is "{accountStatusCode}" = fmService.compareAccountStatus("{accountStatusCode}","==",context)
+[when][]account status is not "{accountStatusCode}" = fmService.compareAccountStatus("{accountStatusCode}","!=",context)
+[when][]session atp is "{atpId}" = fmService.compareSessionAtp("{atpId}","==",context)
+[when][]session atp is not "{atpId}" = fmService.compareSessionAtp("{atpId}","!=",context)
+[when][]account has flag "{flagTypeCode}" = fmService.accountHasFlag("{flagTypeCode}",null,"==",context)
+[when][]account has flag "{flagTypeCode}" with severity {severity} = fmService.accountHasFlag("{flagTypeCode}",{severity},"==",context)
+[when][]account has flag "{flagTypeCode}" with severity above {severity} = fmService.accountHasFlag("{flagTypeCode}",{severity},">",context)
+[when][]account has flag "{flagTypeCode}" with severity below {severity} = fmService.accountHasFlag("{flagTypeCode}",{severity},"<",context)
+[when][]account has applied hold "{holdIssueName}" = fmService.accountHasAppliedHold("{holdIssueName}",context)
+
 
 # RHS definitions
 [then][]Set status to "{status}", key pair "{key}" to "{value}" where code is "{luCodes}" = context.getFeeManagementService().setCourseStatusForLearningUnits(feeBase,"{luCodes}","{status}","{key}","{value}");
-[then][]Set status to "{status}", key pair "{key}" to "{value}" where section is "{sectionCodes}" = context.getFeeManagementService().setCourseStatusForSections(feeBase,"{sectionCodes}","{status}","{key}","{value}");
-[then][]Set status to "{newStatus}", key pair "{key}" to "{value}" where status is "{oldStatus}" = context.getFeeManagementService().setCourseStatusForStatus(feeBase,"{oldStatus}","{newStatus}","{key}","{value}");
-[then][]Number of credits for LU code "{luCodes}" with status "{statuses}" = context.getFeeManagementService().getNumOfCreditsByLearningUnitCodes(feeBase,"{luCodes}","{statuses}");
-[then][]Use "{transactionTypeId}" to charge ${amountPerCredit} per credit where section is "{sectionCodes}" with status "{statuses}" = context.getFeeManagementService().createTransactionForNumberOfCredits(feeBase,"{transactionTypeId}",new BigDecimal({amountPerCredit}),"{sectionCodes}","{statuses}");
-
 
 # ACCOUNT BLOCKING DSL definitions
 # Assumption: transactionTypeIds, atpIds, holdIssueNames, permissionNames are global parameters

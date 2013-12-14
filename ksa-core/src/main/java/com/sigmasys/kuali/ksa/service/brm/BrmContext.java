@@ -3,6 +3,7 @@ package com.sigmasys.kuali.ksa.service.brm;
 import com.sigmasys.kuali.ksa.model.Account;
 import com.sigmasys.kuali.ksa.service.*;
 import com.sigmasys.kuali.ksa.service.atp.AtpService;
+import com.sigmasys.kuali.ksa.service.fm.BrmFeeManagementService;
 import com.sigmasys.kuali.ksa.service.hold.HoldService;
 import com.sigmasys.kuali.ksa.util.ContextUtils;
 
@@ -21,6 +22,8 @@ public class BrmContext implements Serializable {
 
     private Map<String, Object> attributes = new HashMap<String, Object>();
     private Map<String, Object> globalVariables = new HashMap<String, Object>();
+
+
 
     public boolean isInitialized() {
         return account != null && attributes != null && globalVariables != null;
@@ -68,6 +71,10 @@ public class BrmContext implements Serializable {
 
     public BrmPaymentService getBrmPaymentService() {
         return getService(BrmPaymentService.class);
+    }
+
+    public BrmFeeManagementService getFmService() {
+        return getService(BrmFeeManagementService.class);
     }
 
     public HoldService getHoldService() {

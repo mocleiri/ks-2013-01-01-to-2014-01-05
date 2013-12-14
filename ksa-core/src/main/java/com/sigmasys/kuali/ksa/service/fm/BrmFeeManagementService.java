@@ -106,7 +106,7 @@ public interface BrmFeeManagementService {
      * @param context      BRM context
      * @return boolean value
      */
-    boolean accountHasFlag(String flagTypeCode, int severity, String operator, BrmContext context);
+    boolean accountHasFlag(String flagTypeCode, Integer severity, String operator, BrmContext context);
 
     /**
      * Compares the FeeManagementSession ATP ID to the given value.
@@ -356,6 +356,16 @@ public interface BrmFeeManagementService {
      * @param newRateSubCode Sub-code of the new rate
      */
     void replaceRateOnSignup(String rateCode, String rateSubCode, String newRateCode, String newRateSubCode, BrmContext context);
+
+    /**
+     * Charges rates on the manifests from FeeManagementSession.
+     *
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    void chargeManifestRates(String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
 
 
 }

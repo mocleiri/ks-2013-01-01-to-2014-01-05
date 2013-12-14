@@ -4,6 +4,7 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.KeyPairService;
+import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.atp.AtpService;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmMethodInterceptor;
@@ -71,6 +72,9 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
     @Autowired
     private RateService rateService;
+
+    @Autowired
+    private TransactionService transactionService;
 
 
     /**
@@ -528,13 +532,17 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      * @return boolean value
      */
     @Override
-    public boolean accountHasFlag(String flagTypeCode, int severity, String operator, BrmContext context) {
+    public boolean accountHasFlag(String flagTypeCode, Integer severity, String operator, BrmContext context) {
         List<Flag> flags = informationService.getFlags(context.getAccount().getId());
         if (CollectionUtils.isNotEmpty(flags)) {
             for (Flag flag : flags) {
                 if (flag.getType().getCode().equals(flagTypeCode)) {
-                    Integer flagSeverity = flag.getSeverity();
-                    if (flagSeverity != null && compareObjects(flagSeverity, severity, operator)) {
+                    if (severity != null) {
+                        Integer flagSeverity = flag.getSeverity();
+                        if (flagSeverity != null && compareObjects(flagSeverity, severity, operator)) {
+                            return true;
+                        }
+                    } else {
                         return true;
                     }
                 }
@@ -1301,5 +1309,52 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             }
         }
     }
+
+    /**
+     * Charges rates on the manifests from FeeManagementSession.
+     *
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void chargeManifestRates(String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+
+            for (FeeManagementManifest manifest : manifests) {
+
+                Rate rate = manifest.getRate();
+                RateType rateType = rate.getRateType();
+                RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+                boolean rateCodesComply = StringUtils.isEmpty(rateCodes) || rateCodeValues.contains(rate.getCode());
+                boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) || rateTypeCodeValues.contains(rateType.getCode());
+                boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) || rateCatalogCodeValues.contains(rateCatalog.getCode());
+
+                if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
+
+                    RateAmount rateAmount = rate.getDefaultRateAmount();
+
+                    // TODO: Create a new charge
+                    transactionService.createCharge(rateAmount.getTransactionTypeId(),
+                            context.getAccount().getId(),
+                            new Date(),
+                            rateAmount.getAmount());
+
+                }
+            }
+        }
+    }
+
 
 }

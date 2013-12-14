@@ -42,6 +42,8 @@ public class FeeManagementSession implements Identifiable, KeyPairAware {
 
     private Set<FeeManagementSignup> signups;
 
+    private Set<FeeManagementManifest> manifests;
+
     private FeeManagementSessionStatus status;
 
     private String statusCode;
@@ -191,6 +193,16 @@ public class FeeManagementSession implements Identifiable, KeyPairAware {
 
     public void setSignups(Set<FeeManagementSignup> signups) {
         this.signups = signups;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "FM_SESSION_ID_FK")
+    public Set<FeeManagementManifest> getManifests() {
+        return manifests;
+    }
+
+    public void setManifests(Set<FeeManagementManifest> manifests) {
+        this.manifests = manifests;
     }
 
     @Column(name = "STATUS", length = 2)
