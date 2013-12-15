@@ -25,7 +25,7 @@ class Enrollment < BasePage
   #Administration
   action(:perform_rollover) { |p| p.frm.link(text: "Perform Rollover").click }
   action(:view_rollover_details) { |p| p.frm.link(text: "View Rollover Details").click }
-  action(:manage_soc) { |p| p.frm.link(text: "Manage Set of Courses").click }
+  action(:manage_soc) { |p| p.frm.link(text: "Manage SOC").click }
   action(:manage_final_exam_matrix) { |b| b.frm.link(text: "Manage Final Exam Matrix").click }
   action(:manage_time_slots) { |p| p.frm.link(text: "Manage Time Slots").click }
   action(:manage_populations) { |p| p.frm.link(text: "Manage Populations").click }
