@@ -865,7 +865,7 @@
                                     </bean>
                                 </property>
                             </bean>
-                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="addTransactionTag" p:actionLabel="Add Tag" p:onClickScript="jQuery.fancybox.close();"/>
+                            <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="addTransactionTag" p:actionLabel="Add Tag" p:preSubmitCall="jQuery.fancybox.close();return true;"/>
                             <ref bean="transactionTags"/>
                         </list>
                     </property>
