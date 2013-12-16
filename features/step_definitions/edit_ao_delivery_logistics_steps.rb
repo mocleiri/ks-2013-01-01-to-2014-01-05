@@ -193,6 +193,8 @@ Then /^there is a validation error on the EndTime field$/  do
     end
 
     page.end_time_select.click
+    page.add_room.click
+    page.end_time_select.click
     page.loading.wait_while_present
     sleep 3
     puts "error msg div : #{page.end_time_error_div}"
