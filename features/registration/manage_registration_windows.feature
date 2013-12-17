@@ -1,4 +1,4 @@
-@nightly @red_team
+@pending @red_team
 Feature: EC.Manage registration windows
 
   Background:
