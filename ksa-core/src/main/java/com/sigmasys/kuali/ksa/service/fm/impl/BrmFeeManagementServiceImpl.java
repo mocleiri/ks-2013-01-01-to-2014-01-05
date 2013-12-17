@@ -1,18 +1,24 @@
 package com.sigmasys.kuali.ksa.service.fm.impl;
 
+import com.sigmasys.kuali.ksa.exception.UserNotFoundException;
 import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.fm.*;
+import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.KeyPairService;
 import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.atp.AtpService;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmMethodInterceptor;
+import com.sigmasys.kuali.ksa.service.brm.BrmService;
 import com.sigmasys.kuali.ksa.service.fm.BrmFeeManagementService;
+import com.sigmasys.kuali.ksa.service.fm.FeeManagementService;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import com.sigmasys.kuali.ksa.service.hold.HoldService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
+import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import com.sigmasys.kuali.ksa.util.CommonUtils;
+import com.sigmasys.kuali.ksa.util.EnumUtils;
 import org.aopalliance.aop.Advice;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -52,13 +59,39 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     private static final String MULTI_VALUE_DELIMITER = ",";
 
     // Relational operators
-    private static final String EQUAL_OPERATOR = "=";
-    private static final String UNEQUAL_OPERATOR = "!=";
-    private static final String GREATER_OPERATOR = ">";
-    private static final String LESS_OPERATOR = "<";
-    private static final String GREATER_EQUAL_OPERATOR = ">=";
-    private static final String LESS_EQUAL_OPERATOR = "<=";
+    private static enum Operator implements Identifiable {
 
+        EQUAL(Operator.EQUAL_OPERATOR),
+        UNEQUAL(Operator.UNEQUAL_OPERATOR),
+        GREATER(Operator.GREATER_OPERATOR),
+        LESS(Operator.LESS_OPERATOR),
+        GREATER_EQUAL(Operator.GREATER_EQUAL_OPERATOR),
+        LESS_EQUAL(Operator.LESS_EQUAL_OPERATOR);
+
+        private static final String EQUAL_OPERATOR = "=";
+        private static final String UNEQUAL_OPERATOR = "!=";
+        private static final String GREATER_OPERATOR = ">";
+        private static final String LESS_OPERATOR = "<";
+        private static final String GREATER_EQUAL_OPERATOR = ">=";
+        private static final String LESS_EQUAL_OPERATOR = "<=";
+
+        private String id;
+
+        private Operator(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public Serializable getId() {
+            return id;
+        }
+    }
+
+    @Autowired
+    private BrmService brmService;
+
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private KeyPairService keyPairService;
@@ -79,6 +112,9 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     private TransactionService transactionService;
 
 
+    private FeeManagementService fmService;
+
+
     /**
      * Adds an AOP proxy to the current instance.
      */
@@ -95,23 +131,27 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
     private <T extends Comparable<T>> boolean compareObjects(T object1, T object2, String operator) {
 
-        if (EQUAL_OPERATOR.equals(operator)) {
-            return object1.compareTo(object2) == 0;
-        } else if (UNEQUAL_OPERATOR.equals(operator)) {
-            return object1.compareTo(object2) != 0;
-        } else if (GREATER_OPERATOR.equals(operator)) {
-            return object1.compareTo(object2) > 0;
-        } else if (LESS_OPERATOR.equals(operator)) {
-            return object1.compareTo(object2) < 0;
-        } else if (GREATER_EQUAL_OPERATOR.equals(operator)) {
-            return object1.compareTo(object2) >= 0;
-        } else if (LESS_EQUAL_OPERATOR.equals(operator)) {
-            return object1.compareTo(object2) <= 0;
+        Operator operatorValue = EnumUtils.findById(Operator.class, operator);
+
+        switch (operatorValue) {
+            case EQUAL:
+                return object1.compareTo(object2) == 0;
+            case UNEQUAL:
+                return object1.compareTo(object2) != 0;
+            case GREATER:
+                return object1.compareTo(object2) > 0;
+            case LESS:
+                return object1.compareTo(object2) < 0;
+            case GREATER_EQUAL:
+                return object1.compareTo(object2) >= 0;
+            case LESS_EQUAL:
+                return object1.compareTo(object2) <= 0;
+            default:
+                String errMsg = "Unknown relational operator '" + operator + "'";
+                logger.error(errMsg);
+                throw new IllegalStateException(errMsg);
         }
 
-        String errMsg = "Unknown relational operator " + operator;
-        logger.error(errMsg);
-        throw new IllegalArgumentException(errMsg);
     }
 
     private <T extends KeyPairAware> boolean compareKeyPair(T entity, String key, String value, String operator) {
@@ -119,12 +159,15 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         List<KeyPair> keyPairs = keyPairService.getKeyPairsByKey(entity, key);
 
         if (CollectionUtils.isNotEmpty(keyPairs)) {
+
+            Operator operatorValue = EnumUtils.findById(Operator.class, operator);
+
             for (KeyPair keyPair : keyPairs) {
 
                 Comparable object1;
                 Comparable object2;
 
-                if (!EQUAL_OPERATOR.equals(operator) || !UNEQUAL_OPERATOR.equals(operator)) {
+                if (operatorValue != Operator.EQUAL && operatorValue != Operator.UNEQUAL) {
                     object1 = (keyPair.getValue() != null) ? new BigDecimal(keyPair.getValue()) : BigDecimal.ZERO;
                     object2 = (value != null) ? new BigDecimal(value) : BigDecimal.ZERO;
                 } else {
@@ -352,6 +395,29 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public FeeManagementManifest assessFees(String accountId, String atpId) {
+
+        Account account = accountService.getFullAccount(accountId);
+        if (account == null) {
+            String errMsg = "Account with ID = " + accountId + " does not exist";
+            logger.error(errMsg);
+            throw new UserNotFoundException(errMsg);
+        }
+
+        // Calling BrmService with payment application rules
+        BrmContext brmContext = new BrmContext();
+        brmContext.setAccount(account);
+
+        Map<String, Object> globalParams = new HashMap<String, Object>();
+
+        // TODO: Figure out how to retrieve the FM session by accountId and atpId
+        globalParams.put(FM_SESSION_VAR_NAME, null);
+
+        brmContext.setGlobalVariables(globalParams);
+
+        brmService.fireRules(Constants.BRM_FM_RULE_SET_NAME_1, brmContext);
+
+        FeeManagementSession session = (FeeManagementSession) globalParams.get(FM_SESSION_VAR_NAME);
+
         // TODO
         return null;
     }
@@ -658,20 +724,23 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     /**
      * Compares the FeeManagementSignup effective date to the signup or session ATP milestone.
      *
-     * @param date     Date in "MM/dd/yyyy"format
-     * @param operator Relational operator. For example, "==" or "!="
-     * @param context  BRM context
+     * @param milestoneName Milestone name
+     * @param operator      Relational operator. For example, "==" or "!="
+     * @param context       BRM context
      * @return boolean value
      */
     @Override
-    public boolean compareSignupEffectiveDateToAtpMilestone(String date, String operator, BrmContext context) {
+    public boolean compareSignupEffectiveDateToAtpMilestone(String milestoneName, String operator, BrmContext context) {
 
-        String atpId = null;
+        FeeManagementSignup signup = getRequiredGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
-        FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
-        if (signup != null) {
-            atpId = signup.getAtpId();
+        if (signup.getEffectiveDate() == null) {
+            String errMsg = "Signup effective date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalStateException(errMsg);
         }
+
+        String atpId = signup.getAtpId();
 
         if (atpId == null) {
             FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
@@ -692,10 +761,64 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         try {
 
+            Date signupDate = CalendarUtils.removeTime(signup.getEffectiveDate());
+
             List<MilestoneInfo> milestones = atpService.getMilestonesForAtp(atpId, atpService.getAtpContextInfo());
 
             for (MilestoneInfo milestone : milestones) {
-                //TODO
+
+                if (milestoneName.equals(milestone.getName())) {
+
+                    Date milestoneStartDate = milestone.getStartDate();
+                    Date milestoneEndDate = milestone.getEndDate();
+
+                    if (milestoneStartDate != null && milestoneEndDate != null) {
+
+                        switch (EnumUtils.findById(Operator.class, operator)) {
+                            case EQUAL:
+                                if (signupDate.compareTo(milestoneStartDate) >= 0 && signupDate.compareTo(milestoneEndDate) <= 0) {
+                                    return true;
+                                }
+                                break;
+                            case UNEQUAL:
+                                if (signupDate.compareTo(milestoneStartDate) < 0 || signupDate.compareTo(milestoneEndDate) > 0) {
+                                    return true;
+                                }
+                                break;
+                            case GREATER:
+                                if (signupDate.compareTo(milestoneEndDate) > 0) {
+                                    return true;
+                                }
+                                break;
+                            case LESS:
+                                if (signupDate.compareTo(milestoneStartDate) < 0) {
+                                    return true;
+                                }
+                                break;
+                            case GREATER_EQUAL:
+                                if (signupDate.compareTo(milestoneEndDate) >= 0) {
+                                    return true;
+                                }
+                                break;
+                            case LESS_EQUAL:
+                                if (signupDate.compareTo(milestoneStartDate) <= 0) {
+                                    return true;
+                                }
+                        }
+                    }
+
+                    if (milestoneStartDate != null && milestoneEndDate == null) {
+                        if (compareObjects(signupDate, milestoneStartDate, operator)) {
+                            return true;
+                        }
+                    } else if (milestoneStartDate == null && milestoneEndDate != null) {
+                        if (compareObjects(signupDate, milestoneEndDate, operator)) {
+                            return true;
+                        }
+                    }
+
+                    break;
+                }
             }
 
 
@@ -704,7 +827,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             throw new RuntimeException(e.getMessage(), e);
         }
 
-        return true;
+        return false;
     }
 
 

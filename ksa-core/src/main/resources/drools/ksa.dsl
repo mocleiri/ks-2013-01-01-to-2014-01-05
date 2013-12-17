@@ -67,13 +67,20 @@
 [when][]account has flag "{flagTypeCode}" with severity above {severity} = fmService.accountHasFlag("{flagTypeCode}",{severity},">",context)
 [when][]account has flag "{flagTypeCode}" with severity below {severity} = fmService.accountHasFlag("{flagTypeCode}",{severity},"<",context)
 [when][]account has applied hold "{holdIssueName}" = fmService.accountHasAppliedHold("{holdIssueName}",context)
+[when][]signup effective date is "{date}" = fmService.compareSignupEffectiveDate("{date}","==",context)
+[when][]signup effective date is on atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{date}","==",context)
+[when][]signup effective date is after atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{date}",">",context)
+[when][]signup effective date is before atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{date}","<",context)
+[when][]signup effective date is on or after atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{date}",">=",context)
+[when][]signup effective date is on or before atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{date}","<=",context)
 
 
 # RHS definitions
 [then][]set account key "{key}" to "{value}" = context.getFmService().setAccountKey("{key}","{value}",context);
 [then][]set session key "{key}" to "{value}" = context.getFmService().setSessionKey("{key}","{value}",context);
 [then][]set signup key "{key}" to "{value}" = context.getFmService().setSignupKey("{key}","{value}",context);
-
+[then][]mark signup as taken = context.getFmService().setSignupTaken(true,context);
+[then][]mark signup as complete = context.getFmService().setSignupComplete(true,context);
 
 ########################################################################################################################
 
