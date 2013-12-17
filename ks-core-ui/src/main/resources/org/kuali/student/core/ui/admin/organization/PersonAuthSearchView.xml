@@ -20,7 +20,7 @@
 		<property name="items">
 			<list>
 				<ref bean="KS-Person-Auth-Search-View" />
-				<ref bean="KS-Person-Auth-Response-View" />
+				<ref bean="KS-Person-Auth-Response-Detail-View"/>
 			</list>
 		</property>
 	</bean>
@@ -95,7 +95,7 @@
     </bean>
  
     <bean id="KS-Person-Auth-Search-Result" parent="Uif-TableCollectionSection"
-          p:layoutManager.numberOfColumns="6" p:renderAddLine="false">
+          p:layoutManager.numberOfColumns="4" p:renderAddLine="false">
         <property name="collectionObjectClass" value="org.kuali.student.core.organization.ui.form.model.ProposalInfoModel" />
         <property name="propertyName" value="proposals" />        
         <property name="layoutManager.renderSequenceField" value="false" />
@@ -119,7 +119,63 @@
             </list>
         </property>        
     </bean>
-	 
+    <bean id="KS-Person-Auth-Response-Detail-View" parent="Uif-Page" p:headerText="Person Authorization Detail">
+		<property name="items">
+			<list>
+				<ref bean="KS-Person-Auth-Response-Detail-View-Section" />
+			</list>
+		</property>
+	</bean>
+	<bean id="KS-Person-Auth-Response-Detail-View-Section" parent="Uif-VerticalBoxSection">
+		<property name="items">
+			<list>
+				<bean parent="Uif-GridGroup">
+					<property name="layoutManager.numberOfColumns" value="2" />
+					<property name="layoutManager.applyDefaultCellWidths"
+						value="false" />
+					<property name="style" value="margin-bottom:0;" />
+					<property name="items">
+						<list>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="submittedByName" p:label="Request Submitted By" p:readOnly="true" />
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="submittedForName" p:label="Request Authorization For" p:readOnly="true"/>					        
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="forOrganizationName" p:label="Department" p:readOnly="true"/>
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="typeName" p:label="Type" p:readOnly="true"/>
+							<bean parent="Uif-DataField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true"
+								p:propertyName="stateName" p:label="State" p:readOnly="true"/>							
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="proposalInfo.effectiveDate" p:label="Requested Effective Date" p:readOnly="true"/>							
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="proposalInfo.descr.plain" p:label="Notes" p:readOnly="true">
+								<property name="control">
+            						<bean parent="Uif-LargeTextAreaControl" />
+          						</property>	
+							</bean>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="proposalInfo.meta.createTime" p:label="Date Submitted" p:readOnly="true"/>
+							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
+								p:propertyName="proposalInfo.rationale.plain" p:label="Approver Notes" p:readOnly="true">
+								<property name="control">
+            						<bean parent="Uif-LargeTextAreaControl" />
+          						</property>	
+							</bean>
+							<bean parent="Uif-HorizontalFieldGroup">
+                                <property name="items">
+                                    <list>                                        
+                                        <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Back" p:methodToCall="cancel" p:actionParameters="returnViewName:KS-Person-Auth-Search-View"/>
+                                    </list>
+                                </property>
+                            </bean>				
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>		
+	<!--  
 	<bean id="KS-Person-Auth-Response-View" parent="Uif-Page" p:headerText="Organization Authorization Request Response">
 		<property name="items">
 			<list>
@@ -178,5 +234,6 @@
 			</list>
 		</property>
 	</bean>	
+	 -->
 	
 </beans>

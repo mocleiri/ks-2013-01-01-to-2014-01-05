@@ -80,8 +80,7 @@ public class OrganizationServiceHelper extends ViewHelperServiceImpl{
 		    throw new RuntimeException(ex);
 		}
         return matchingOrgs;
-    }
-	
+    }	
 	
 	
 	public List<Person> suggestPersonsByName(String personName){

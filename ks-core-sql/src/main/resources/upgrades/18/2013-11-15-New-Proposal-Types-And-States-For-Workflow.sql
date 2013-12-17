@@ -76,3 +76,17 @@ INSERT INTO KSEN_STATE (ID, NAME, LIFECYCLE_KEY, DESCR_PLAIN, DESCR_FORMATTED, C
 INSERT INTO KSEN_STATE (ID, NAME, LIFECYCLE_KEY, DESCR_PLAIN, DESCR_FORMATTED, CREATEID, CREATETIME, EFF_DT, EXPIR_DT, OBJ_ID, UPDATEID, UPDATETIME, VER_NBR)
  VALUES ('kuali.proposal.state.not.approved', 'Not Approved', 'kuali.proposal.lifecycle', 'Proposal has not been approved.  Typically this means the proposal has completed workflow and the final decision was to not approve the proposal.', 'Proposal has not been approved.  Typically this means the proposal has completed workflow and the final decision was to not approve the proposal.', 'SYSTEMLOADER', TO_DATE('1/1/2013', 'MM/DD/YYYY'), TO_DATE('', 'MM/DD/YYYY'), TO_DATE('', 'MM/DD/YYYY'), NVL('', SYS_GUID()), '', TO_DATE('', 'MM/DD/YYYY'), 0)
 /
+-- added 12/15/2013 by aniruddha to cover new case
+INSERT INTO KSEN_STATE (ID, NAME, LIFECYCLE_KEY, DESCR_PLAIN,
+DESCR_FORMATTED, CREATEID, CREATETIME, EFF_DT, EXPIR_DT, OBJ_ID,
+UPDATEID, UPDATETIME, VER_NBR)
+ VALUES ('kuali.proposal.state.clarification', 'Clarification',
+'kuali.proposal.lifecycle', 'Proposal sent back for clarification.
+Typically this means the proposal has sent back for clarification and
+final approval has not been made.', 'Proposal sent back for
+clarification.  Typically this means the proposal has sent back for
+clarification and  final approval has not been made.', 'SYSTEMLOADER',
+TO_DATE('1/1/2013', 'MM/DD/YYYY'), TO_DATE('', 'MM/DD/YYYY'),
+TO_DATE('', 'MM/DD/YYYY'), NVL('', SYS_GUID()), '', TO_DATE('',
+'MM/DD/YYYY'), 0)
+/
