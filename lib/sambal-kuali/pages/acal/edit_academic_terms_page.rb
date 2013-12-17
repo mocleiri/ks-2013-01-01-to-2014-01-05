@@ -108,7 +108,7 @@ class EditAcademicTerms < BasePage
   end
 
   def delete_key_date_group(term_type, key_date_group_type)
-    key_date_group_div(term_type, key_date_group_type).button(id: /key_date_group_delete_button/).click
+    key_date_group_div(term_type, key_date_group_type).link(id: /key_date_group_delete_button/).click
     loading.wait_while_present
   end
   #def key_date_group_exists?(term_type, key_date_group_type)
