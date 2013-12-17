@@ -62,5 +62,10 @@ public class ProposalServiceConstants {
     public static final String PROPOSAL_STATE_SUBMITTED = "kuali.proposal.state.submitted";
     public static final String PROPOSAL_STATE_APPROVED = "kuali.proposal.state.approved";
     public static final String PROPOSAL_STATE_NOT_APPROVED = "kuali.proposal.state.not.approved";
-
+    
+    /**
+     * Authorization Role constants
+     */
+    public static final String ROLENAME_STUDENT_CM_ADMIN = "Kuali Student CM Admin";
+    public static final String ROLENAME_STUDENT_CM_USER = "Kuali Student CM User";
 }
