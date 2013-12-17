@@ -42,7 +42,6 @@ Feature: WC.Edit AO delivery logistics as CSC
     Then the AO's delivery logistics shows the new schedule
 
   #CO 20.2 (KSENROLL-10318)
-  @draft
   Scenario: Set non-standard TS approval flag
     When I check the "approved for non-standard time slots" flag
     Then the "approved for non-standard time slots" flag is set
