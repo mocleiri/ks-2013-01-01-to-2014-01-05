@@ -62,7 +62,7 @@ When /^I edit a course offering with multiple delivery format types$/ do
 end
 
 When /^I select a final exam type of "([^"]*)"$/ do |final_option|
-     @course_offering.edit_offering :final_exam_type => final_option, :edit_in_progress => true
+  @course_offering.edit_offering :final_exam_type => final_option, :edit_in_progress => true
 end
 
 And /^I clear the registration options checkboxes$/ do
@@ -106,9 +106,9 @@ end
 When /^I change the delivery format options$/ do
   updated_delivery_format = []
   updated_delivery_format[0] =  make DeliveryFormat,
-                                   :format=>"Lecture Only",
-                                   :grade_format => "Lecture",
-                                   :final_exam_activity => "Lecture"
+                                     :format=>"Lecture Only",
+                                     :grade_format => "Lecture",
+                                     :final_exam_activity => "Lecture"
 
   @course_offering.edit_offering :delivery_format_list => updated_delivery_format, :edit_in_progress => true
 end
@@ -202,24 +202,24 @@ end
 Then /^I can submit and the delivery formats are updated$/ do
   @course_offering.save
   @course_offering.search_by_subjectcode
-       @course_offering.view_course_details
-       on CourseOfferingInquiry do  |page|
-         page.get_delivery_format("Lecture Only").should == "Lecture Only"
-         page.get_grade_roster_level("Lecture Only").should == "Lecture"
-         page.get_final_exam_activity("Lecture Only").should == "Lecture"
-         page.close
+  @course_offering.view_course_details
+  on CourseOfferingInquiry do  |page|
+    page.get_delivery_format("Lecture Only").should == "Lecture Only"
+    page.get_grade_roster_level("Lecture Only").should == "Lecture"
+    page.get_final_exam_activity("Lecture Only").should == "Lecture"
+    page.close
   end
 end
 
 Then /^I can submit and the modified delivery formats are updated$/ do
   @course_offering.save
   @course_offering.search_by_subjectcode
-       @course_offering.view_course_details
-       on CourseOfferingInquiry do  |page|
-         page.get_delivery_format("Lecture/Discussion").should == "Lecture/Discussion"
-         page.get_grade_roster_level("Lecture/Discussion").should == "Lecture"
-         #page.get_final_exam_activity("Lecture/Discussion").should == "Lecture"
-         page.close
+  @course_offering.view_course_details
+  on CourseOfferingInquiry do  |page|
+    page.get_delivery_format("Lecture/Discussion").should == "Lecture/Discussion"
+    page.get_grade_roster_level("Lecture/Discussion").should == "Lecture"
+    #page.get_final_exam_activity("Lecture/Discussion").should == "Lecture"
+    page.close
   end
 end
 
@@ -236,10 +236,6 @@ end
 
 Then /^I can submit the edited course offering$/ do
   @course_offering.save
-end
-
-When /^a final exam driver of "([^"]*)"$/ do |final_driver|
-    @course_offering.edit_offering :final_exam_activity => final_driver
 end
 
 Then /^I edit the same course offering$/ do
@@ -271,14 +267,14 @@ Then /^the changes of the affiliated person are persisted$/ do
 end
 
 When /^I (activate|deactivate) the wait list$/ do |activate|
-    @course_offering.edit_offering :waitlist => true, :edit_in_progress => true
+  @course_offering.edit_offering :waitlist => true, :edit_in_progress => true
 end
 
 When /^I add an administering organization and activate the honors flag$/ do
- organization_list = {}
- organization_list[0] = make AffiliatedOrg
+  organization_list = {}
+  organization_list[0] = make AffiliatedOrg
 
- @course_offering.edit_offering  :honors_flag => "YES", :affiliated_org_list=> organization_list, :edit_in_progress => true
+  @course_offering.edit_offering  :honors_flag => "YES", :affiliated_org_list=> organization_list, :edit_in_progress => true
 
 end
 

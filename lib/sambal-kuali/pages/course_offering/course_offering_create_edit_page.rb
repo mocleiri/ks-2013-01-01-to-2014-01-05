@@ -20,8 +20,12 @@ class CourseOfferingCreateEdit < BasePage
   element(:edit_next_co_link) { |b| b.frm.link(id: "edit_co_next") }
   action(:edit_next_co) { |b| b.edit_next_co_link.click; b.loading.wait_while_present }
   element(:navigation_confirmation_dialog) { |b| b.div(id: "CourseOfferingEdit-NavigationConfirmation") }
-  action(:navigation_save_and_continue) { |b| b.navigation_confirmation_dialog.button(id: "edit_co_save_and_continue").click; b.loading.wait_while_present }
-  action(:navigation_cancel_and_continue) { |b| b.navigation_confirmation_dialog.button(id: "edit_co_cancel").click; b.loading.wait_while_present }
+
+  element(:nav_save_and_continue_element) { |b| b.navigation_confirmation_dialog.button(id: "edit_co_save_and_continue") }
+  action(:navigation_save_and_continue) { |b| b.nav_save_and_continue_element.wait_until_present; b.nav_save_and_continue_element.click; b.loading.wait_while_present }
+
+  element(:nav_cancel_and_continue_element) { |b| b.navigation_confirmation_dialog.button(id: "edit_co_cancel") }
+  action(:navigation_cancel_and_continue) { |b| b.nav_cancel_and_continue_element.wait_until_present; b.nav_cancel_and_continue_element.click; b.loading.wait_while_present }
   element(:edit_relatedCos_dropdown_list) { |b| b.frm.select(id: "edit_co_select_control") }
 
   element(:term_label_div) { |b| b.frm.div(data_label: "Term") }
@@ -66,8 +70,7 @@ class CourseOfferingCreateEdit < BasePage
     multiple_credit_checkbox(credit_value).clear
   end
 
-  element(:delivery_assessment_section) { |b| b.frm.div( id: "delivery_and_assessment") }
-  value(:delivery_assessment_warning) { |b| b.delivery_assessment_section.li( class: "uif-warningMessageItem").text}
+  value(:delivery_assessment_warning) { |b| b.error_list.li( class: "uif-warningMessageItem").text}
 
   element(:final_exam_option_div) { |b| b.frm.div(id: "finalExamType") }
   #TODO:: need elements for AZ here
@@ -80,8 +83,9 @@ class CourseOfferingCreateEdit < BasePage
   element(:cross_listed_co_check_box) { |b| b.checkbox(id: "KS-COEditListed-Checkbox-Group_control_0") }
   action(:cross_listed_co_set) {|b| b.cross_listed_co_check_box.set; b.loading.wait_while_present   }
   action(:cross_listed_co_clear) {|b| b.cross_listed_co_check_box.clear; b.loading.wait_while_present   }
-#TODO: need element for AZ
-  action(:final_exam_driver_select) { |driver,b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control").select driver; b.loading.wait_while_present }
+
+  element(:final_exam_driver_element) { |b| b.frm.select(id: "KS-CourseOfferingEdit-FinalExamDriver_control") }
+  action(:final_exam_driver_select) { |driver,b| b.final_exam_driver_element.select driver; b.loading.wait_while_present }
 
   element(:use_exam_matrix_div) { |b| b.frm.div(id: "finalExamMatrix")}
   element(:use_exam_matrix_checkbox) { |b| b.use_exam_matrix_div.checkbox}
@@ -126,11 +130,11 @@ class CourseOfferingCreateEdit < BasePage
   end
 
   def set_grade_roster_level(grade_format)
-      new_grade_roster_level_select.select grade_format
+    new_grade_roster_level_select.select grade_format
   end
 
   def set_final_exam_activity(final_exam_activity)
-     new_final_exam_activity_select.select final_exam_activity
+    new_final_exam_activity_select.select final_exam_activity
   end
 
   def edit_grade_roster_level(format,grade_format)
@@ -239,9 +243,9 @@ class CourseOfferingCreateEdit < BasePage
     #workaround here as id field value is not returned in rows[1].text
     #admin_orgs_table.row(text: /#{Regexp.escape(org_id)}/)
     admin_orgs_table.rows[1..-1].each do |row|
-       if row.cells[ORG_ID_COLUMN].text_field().value == org_id
-         return row
-       end
+      if row.cells[ORG_ID_COLUMN].text_field().value == org_id
+        return row
+      end
     end
   end
 

@@ -36,7 +36,6 @@ class CourseOffering
   #string - generally set using options hash
   attr_accessor :grade_format,
                 :delivery_format_list,
-                :final_exam_activity,
                 :honors_flag,
                 :grade_options,
                 :reg_options,
@@ -169,10 +168,11 @@ class CourseOffering
           page.final_exam_option_none
         end
 
-        #need to specify which row dfl is being created on, which is 1 greater than the current iteration
-        @delivery_format_list.each_with_index do |dfl|
+        @delivery_format_list.each_with_index do |dfl,index|
+          on(CourseOfferingCreateEdit).add_format if index > 0  #update default df row on first iteration
           dfl.create
         end
+
         if @waitlist.nil?  #if waitlist is nil, means use default
           @waitlist = page.has_waitlist?
         elsif  !@waitlist
@@ -344,13 +344,6 @@ class CourseOffering
       @final_exam_driver = options[:final_exam_driver]
     end
 
-    if options[:final_exam_activity] != nil
-      on CourseOfferingCreateEdit do |page|
-        page.select_final_exam_activity(options[:final_exam_activity])
-      end
-      @final_exam_activity = options[:final_exam_activity]
-    end
-
     if options[:affiliated_person_list] != nil
       options[:affiliated_person_list].values.each do |person|
         on CourseOfferingCreateEdit do |page|
@@ -429,19 +422,19 @@ class CourseOffering
       page.edit_previous_co
     end
   end
-  
+
   def edit_next_co
     on CourseOfferingCreateEdit do |page|
       page.edit_next_co
     end
   end
-  
+
   def edit_arbitrary_co
     on CourseOfferingCreateEdit do |page|
       page.edit_relatedCos_dropdown_list.options[10].select
     end
   end
-  
+
   def set_reg_options (options)
     if options[:pass_fail_flag] and options[:audit_flag]
       @reg_options = "Allow students to audit; Pass/Fail Grading"
@@ -705,9 +698,9 @@ class CourseOffering
 # TEMPORARY - This will eventually be replaced by a call to course_offering.delivery_format_list,
 # the new format added to the list and the new list passed on the options hash to course_offering.edit_offering
 
- def add_delivery_format (delivery_format_obj)
-   delivery_format_obj.create
-   @delivery_format_list <<  delivery_format_obj
+  def add_delivery_format (delivery_format_obj)
+    delivery_format_obj.create
+    @delivery_format_list <<  delivery_format_obj
   end
 
 # TEMPORARY - This will eventually be replaced by a call to course_offering.delivery_format_list,
@@ -943,7 +936,7 @@ class CourseOffering
 
 
   def get_ao_list(cluster_private_name = :default_cluster)
-   get_cluster_obj_by_private_name(cluster_private_name).ao_list
+    get_cluster_obj_by_private_name(cluster_private_name).ao_list
   end
 
 
@@ -1086,7 +1079,7 @@ class CourseOffering
 
 
   def get_ao_obj_by_code(ao_code, cluster_private_name = :default_cluster)
-   get_cluster_obj_by_private_name(cluster_private_name).ao_list.select{|ao| ao.code == ao_code}[0]
+    get_cluster_obj_by_private_name(cluster_private_name).ao_list.select{|ao| ao.code == ao_code}[0]
   end
 
   # searches all clusters
@@ -1134,6 +1127,10 @@ class CourseOffering
       page.copy source_course_code
     end
     on CopyCourseOffering do |page|
+
+      page.select_exclude_cancelled_aos if @exclude_cancelled_aos
+      page.select_exclude_scheduling if @exclude_scheduling
+      page.select_exclude_instructor if @exclude_instructor
       page.create_copy
     end
 
@@ -1289,8 +1286,9 @@ class DeliveryFormat
     else
       on CourseOfferingCreateEdit do |page|
         page.new_format_select.select(@format)
+        page.new_grade_roster_level_select.wait_until_present
         page.new_grade_roster_level_select.select(@grade_format)
-        page.new_final_exam_activity_select.select(@final_exam_activity)
+        page.new_final_exam_activity_select.select(@final_exam_activity) if page.new_final_exam_activity_select.present?
       end
     end
     standardize_format_values
@@ -1299,6 +1297,7 @@ class DeliveryFormat
   def set_random_delivery_formats
     on CourseOfferingCreateEdit do  |page|
       @format = page.select_random_option(page.new_format_select)
+      page.new_grade_roster_level_select.wait_until_present
       @grade_format = page.select_random_option(page.new_grade_roster_level_select)
       @final_exam_activity = page.select_random_option(page.new_final_exam_activity_select) if page.new_final_exam_activity_select.present?
     end
