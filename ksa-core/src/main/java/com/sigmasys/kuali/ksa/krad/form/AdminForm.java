@@ -3,10 +3,13 @@ package com.sigmasys.kuali.ksa.krad.form;
 import com.sigmasys.kuali.ksa.krad.model.AccountInformationHolder;
 import com.sigmasys.kuali.ksa.krad.model.AccountSearchInformationHolder;
 import com.sigmasys.kuali.ksa.krad.model.AccountSearchResultModel;
+import com.sigmasys.kuali.ksa.krad.util.StringValueFinder;
 import com.sigmasys.kuali.ksa.model.Activity;
 import com.sigmasys.kuali.ksa.model.GlTransaction;
 import com.sigmasys.kuali.ksa.model.OrgName;
+import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +33,9 @@ public class AdminForm extends AbstractViewModel {
 	 * Account search results.
 	 */
 	private List<AccountSearchResultModel> accountSearchResults;
-	
+
+    private String activityLimit = "20";
+
 	/**
 	 * General Ledger Transactions.
 	 */
@@ -184,4 +189,30 @@ public class AdminForm extends AbstractViewModel {
         }
         getAccount().getOrgName().setName(organizationName);
     }
+
+    public String getActivityLimit() {
+        return activityLimit;
+    }
+
+    public void setActivityLimit(String activityLimit) {
+        this.activityLimit = activityLimit;
+    }
+
+    public KeyValuesFinder getActivityLimitFinder() {
+        List<String> activityLimits = new ArrayList<String>();
+        activityLimits.add("All");
+        activityLimits.add("1");
+        activityLimits.add("10");
+        activityLimits.add("20");
+        activityLimits.add("50");
+        activityLimits.add("100");
+
+
+        StringValueFinder finder = new StringValueFinder();
+        finder.initValues(activityLimits);
+
+        return finder;
+    }
+
+
 }

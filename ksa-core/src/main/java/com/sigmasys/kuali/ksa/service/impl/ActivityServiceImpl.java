@@ -24,6 +24,8 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class ActivityServiceImpl extends GenericPersistenceService implements ActivityService {
 
+    protected static final int UNLIMITED_ITEMS_NUMBER = -1;
+
 
     private List<Activity> getActivities(Long id) {
         Query query = em.createQuery("select act from Activity act " +
@@ -90,7 +92,16 @@ public class ActivityServiceImpl extends GenericPersistenceService implements Ac
      */
     @Override
     public List<Activity> getActivities() {
-        return getActivities((Long) null);
+        return getActivities((String)null, UNLIMITED_ITEMS_NUMBER);
+    }
+
+    /**
+     * Returns the specified number of activities sorted by ID in the descendant order
+     *
+     * @return List of activities
+     */
+    public List<Activity> getActivities(int limit) {
+        return getActivities((String) null, limit);
     }
 
     /**
@@ -101,11 +112,29 @@ public class ActivityServiceImpl extends GenericPersistenceService implements Ac
      */
     @Override
     public List<Activity> getActivities(String userId) {
+        return getActivities(userId, UNLIMITED_ITEMS_NUMBER);
+    }
+
+    /**
+     * Returns the specified number of activities sorted by ID in the descendant order for the given Account ID.
+     *
+     * @param userId Account ID
+     * @return List of activities
+     */
+    public List<Activity> getActivities(String userId, int limit) {
         Query query = em.createQuery("select act from Activity act " +
                 //" left outer join fetch act.type t " +
-                " where act.creatorId = :userId " +
+                ((userId != null) ? " where act.creatorId = :userId " : "") +
                 " order by act.timestamp desc");
-        query.setParameter("userId", userId);
+
+        if(userId != null) {
+            query.setParameter("userId", userId);
+        }
+
+        if(limit != UNLIMITED_ITEMS_NUMBER) {
+            query.setMaxResults(limit);
+        }
+
         return query.getResultList();
     }
 

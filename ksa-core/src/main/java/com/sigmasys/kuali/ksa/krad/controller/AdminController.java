@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.model.GlTransaction;
 import com.sigmasys.kuali.ksa.model.GlTransactionStatus;
 import com.sigmasys.kuali.ksa.service.ActivityService;
 import com.sigmasys.kuali.ksa.service.GeneralLedgerService;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTimeComparator;
@@ -57,7 +58,15 @@ public class AdminController extends GenericSearchController {
         logger.info("Admin Controller: Page '" + pageId + "'");
 
         if ("SystemActivity".equals(pageId)) {
-            List<Activity> activities = activityService.getActivities();
+            String limitString = form.getActivityLimit();
+            int limit = -1;
+            try {
+                limit = Integer.parseInt(limitString);
+            } catch(Throwable t) {
+                // don't care what happens if it wasn't a valid int.  Treat it as unlimited.
+            }
+
+            List<Activity> activities = activityService.getActivities(limit);
             activities = this.filterActivities(form, activities);
             form.setActivities(activities);
             return getUIFModelAndView(form);
@@ -76,7 +85,15 @@ public class AdminController extends GenericSearchController {
         logger.info("Admin Controller: Page '" + pageId + "'");
 
         if ("SystemActivity".equals(pageId)) {
-            List<Activity> activities = activityService.getActivities();
+            String limitString = form.getActivityLimit();
+            int limit = -1;
+            try {
+                limit = Integer.parseInt(limitString);
+            } catch(Throwable t) {
+                // don't care what happens if it wasn't a valid int.  Treat it as unlimited.
+            }
+
+            List<Activity> activities = activityService.getActivities(limit);
             activities = this.filterActivities(form, activities);
             form.setActivities(activities);
         }
@@ -92,6 +109,9 @@ public class AdminController extends GenericSearchController {
         Date end = form.getEndingDate();
 
         for (Activity a : activities) {
+
+            a.setLogDetail(StringEscapeUtils.escapeHtml(a.getLogDetail()));
+            //a.setLogDetail(a.getLogDetail().replaceAll("'", "&#39;"));
 
             Date timestamp = a.getTimestamp();
 

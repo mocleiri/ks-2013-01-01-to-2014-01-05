@@ -52,12 +52,27 @@ public interface ActivityService {
     List<Activity> getActivities();
 
     /**
+     * Returns the specified number of activities sorted by ID in the descendant order
+     *
+     * @return List of activities
+     */
+    List<Activity> getActivities(int limit);
+
+    /**
      * Returns all activities sorted by ID in the descendant order for the given Account ID.
      *
      * @param userId Account ID
      * @return List of activities
      */
     List<Activity> getActivities(String userId);
+
+    /**
+     * Returns the specified number of activities sorted by ID in the descendant order for the given Account ID.
+     *
+     * @param userId Account ID
+     * @return List of activities
+     */
+    List<Activity> getActivities(String userId, int limit);
 
     /**
      * Persists the activity in the database.

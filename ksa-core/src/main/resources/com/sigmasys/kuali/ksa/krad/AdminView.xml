@@ -371,6 +371,14 @@
                         </list>
                     </property>
                 </bean>
+                <bean parent="Uif-InputField" p:propertyName="activityLimit" p:labelPlacement="LEFT" p:label="Limit recent activities"
+                      p:fieldLabel.renderColon="false">
+                    <property name="control">
+                        <bean parent="Uif-DropdownControl" p:width="100%"/>
+                    </property>
+                    <property name="optionsFinder" value="@{getActivityLimitFinder()}"/>
+                </bean>
+
                 <bean parent="Uif-SecondaryActionButton-Small" p:methodToCall="filter" p:actionLabel="Filter"
                       p:onClickScript="writeHiddenToForm(&quot;pageId&quot;, &quot;SystemActivity&quot;);">
                 </bean>
