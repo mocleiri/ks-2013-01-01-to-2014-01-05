@@ -58,6 +58,34 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     // Default multi-value delimiter
     private static final String MULTI_VALUE_DELIMITER = ",";
 
+    @Autowired
+    private BrmService brmService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private KeyPairService keyPairService;
+
+    @Autowired
+    private InformationService informationService;
+
+    @Autowired
+    private HoldService holdService;
+
+    @Autowired
+    private AtpService atpService;
+
+    @Autowired
+    private RateService rateService;
+
+    @Autowired
+    private TransactionService transactionService;
+
+    @Autowired
+    private FeeManagementService fmService;
+
+
     // Relational operators
     private static enum Operator implements Identifiable {
 
@@ -86,33 +114,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             return id;
         }
     }
-
-    @Autowired
-    private BrmService brmService;
-
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private KeyPairService keyPairService;
-
-    @Autowired
-    private InformationService informationService;
-
-    @Autowired
-    private HoldService holdService;
-
-    @Autowired
-    private AtpService atpService;
-
-    @Autowired
-    private RateService rateService;
-
-    @Autowired
-    private TransactionService transactionService;
-
-
-    private FeeManagementService fmService;
 
 
     /**
@@ -202,6 +203,36 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             throw new IllegalStateException(errMsg);
         }
         return variable;
+    }
+
+    private boolean matchesPatterns(String value, Collection<String> patterns) {
+        for (String pattern : patterns) {
+            if (Pattern.compile(pattern).matcher(value).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean collectionHasMatch(Collection<String> values, String patternValue) {
+        Pattern pattern = Pattern.compile(patternValue);
+        for (String value : values) {
+            if (pattern.matcher(value).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<String> getMatches(Collection<String> values, String patternValue) {
+        List<String> matches = new LinkedList<String>();
+        Pattern pattern = Pattern.compile(patternValue);
+        for (String value : values) {
+            if (pattern.matcher(value).matches()) {
+                matches.add(value);
+            }
+        }
+        return matches;
     }
 
     private void addRateToSignup(Rate rate, FeeManagementSignup signup) {
@@ -1288,7 +1319,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      * @param context          BRM context
      */
     @Override
-    public void setPrecedingSignupsComplete(boolean isComplete, String signupOperations, BrmContext context) {
+    public void setPrecedingOfferingsComplete(boolean isComplete, String signupOperations, BrmContext context) {
 
         FeeManagementSignup signup = getRequiredGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
@@ -1324,7 +1355,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      * @param context          BRM context
      */
     @Override
-    public void setPrecedingSignupsTaken(boolean isTaken, String signupOperations, BrmContext context) {
+    public void setPrecedingOfferingsTaken(boolean isTaken, String signupOperations, BrmContext context) {
 
         FeeManagementSignup signup = getRequiredGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
@@ -1354,19 +1385,24 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     /**
      * Removes all rates on the current signup and all preceding signups (offerings) based on the given parameters.
      *
-     * @param rateCodes        List of rate codes separated by ","
-     * @param rateTypeCodes    List of rate type codes separated by ","
-     * @param rateCatalogCodes List of rate catalog codes separated by ","
-     * @param context          BRM context
+     * @param rateCodes            List of rate codes separated by ","
+     * @param rateTypeCodes        List of rate type codes separated by ","
+     * @param rateCatalogCodes     List of rate catalog codes separated by ","
+     * @param removeFromSignupOnly If true the rates will be removed from the signup only
+     * @param context              BRM context
      */
     @Override
-    public void removeRatesFromSignupAndPrecedingOfferings(String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+    public void removeRatesFromSignupAndPrecedingOfferings(String rateCodes,
+                                                           String rateTypeCodes,
+                                                           String rateCatalogCodes,
+                                                           boolean removeFromSignupOnly,
+                                                           BrmContext context) {
 
         FeeManagementSignup signup = getRequiredGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        Set<FeeManagementSignup> signups = session.getSignups();
+        Collection<FeeManagementSignup> signups = !removeFromSignupOnly ? session.getSignups() : Arrays.asList(signup);
 
         if (CollectionUtils.isNotEmpty(signups)) {
 
@@ -1386,13 +1422,18 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                         RateType rateType = rate.getRateType();
                         RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
 
-                        boolean rateCodesComply = StringUtils.isEmpty(rateCodes) || rateCodeValues.contains(rate.getCode());
-                        boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) || rateTypeCodeValues.contains(rateType.getCode());
-                        boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) || rateCatalogCodeValues.contains(rateCatalog.getCode());
+                        boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
+                                matchesPatterns(rate.getCode(), rateCodeValues);
+
+                        boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
+                                matchesPatterns(rateType.getCode(), rateTypeCodeValues);
+
+                        boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
+                                matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
 
                         if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply &&
                                 fmSignup.getOfferingId().equals(signup.getOfferingId()) &&
-                                fmSignup.getEffectiveDate().before(signup.getEffectiveDate())) {
+                                fmSignup.getEffectiveDate().compareTo(signup.getEffectiveDate()) <= 0) {
 
                             signupRates.remove(signupRate);
 

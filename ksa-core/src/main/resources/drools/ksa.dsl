@@ -67,12 +67,13 @@
 [when][]account has flag "{flagTypeCode}" with severity above {severity} = fmService.accountHasFlag("{flagTypeCode}",{severity},">",context)
 [when][]account has flag "{flagTypeCode}" with severity below {severity} = fmService.accountHasFlag("{flagTypeCode}",{severity},"<",context)
 [when][]account has applied hold "{holdIssueName}" = fmService.accountHasAppliedHold("{holdIssueName}",context)
-[when][]signup effective date is "{date}" = fmService.compareSignupEffectiveDate("{date}","==",context)
-[when][]signup effective date is on atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{date}","==",context)
-[when][]signup effective date is after atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{date}",">",context)
-[when][]signup effective date is before atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{date}","<",context)
-[when][]signup effective date is on or after atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{date}",">=",context)
-[when][]signup effective date is on or before atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{date}","<=",context)
+[when][]signup operation is "{operations}" = fmService.compareSignupOperations("{operations}",context)
+[when][]signup date is "{date}" = fmService.compareSignupEffectiveDate("{date}","==",context)
+[when][]signup date is on atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{milestoneName}","==",context)
+[when][]signup date is after atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{milestoneName}",">",context)
+[when][]signup date is before atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{milestoneName}","<",context)
+[when][]signup date is on or after atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{milestoneName}",">=",context)
+[when][]signup date is on or before atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{milestoneName}","<=",context)
 
 
 # RHS definitions
@@ -80,7 +81,19 @@
 [then][]set session key "{key}" to "{value}" = context.getFmService().setSessionKey("{key}","{value}",context);
 [then][]set signup key "{key}" to "{value}" = context.getFmService().setSignupKey("{key}","{value}",context);
 [then][]mark signup as taken = context.getFmService().setSignupTaken(true,context);
+[then][]mark signup as not taken = context.getFmService().setSignupTaken(false,context);
 [then][]mark signup as complete = context.getFmService().setSignupComplete(true,context);
+[then][]mark signup as not complete = context.getFmService().setSignupComplete(false,context);
+[then][]mark preceding offerings as complete = context.getFmService().setPrecedingOfferingsComplete(true,null,context);
+[then][]mark preceding offerings as not complete = context.getFmService().setPrecedingOfferingsComplete(false,null,context);
+[then][]mark preceding offerings with operation "{operations}" as complete = context.getFmService().setPrecedingOfferingsComplete(true,"{operations}",context);
+[then][]mark preceding offerings as taken = context.getFmService().setPrecedingOfferingsTaken(true,null,context);
+[then][]mark preceding offerings as not taken = context.getFmService().setPrecedingOfferingsTaken(false,null,context);
+[then][]mark preceding offerings with operation "{operations}" as taken = context.getFmService().setPrecedingOfferingsTaken(true,"{operations}",context);
+[then][]on signup remove rates "{rateCodes}" = context.getFmService().removeRatesFromSignupAndPrecedingOfferings("{rateCodes}",null,null,true,context);
+[then][]on signup remove rates "{rateCodes}" with type "{rateTypeCodes}", catalog "{rateCatalogCodes}" = context.getFmService().removeRatesFromSignupAndPrecedingOfferings("{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",true,context);
+[then][]on signup including preceding offerings remove rates "{rateCodes}" = context.getFmService().removeRatesFromSignupAndPrecedingOfferings("{rateCodes}",null,null,false,context);
+[then][]on signup including preceding offerings remove rates "{rateCodes}" with type "{rateTypeCodes}", catalog "{rateCatalogCodes}" = context.getFmService().removeRatesFromSignupAndPrecedingOfferings("{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",false,context);
 
 ########################################################################################################################
 

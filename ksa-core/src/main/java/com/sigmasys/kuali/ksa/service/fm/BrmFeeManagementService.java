@@ -327,7 +327,7 @@ public interface BrmFeeManagementService {
      * @param signupOperations List of signup operation values separated by ","
      * @param context          BRM context
      */
-    void setPrecedingSignupsComplete(boolean isComplete, String signupOperations, BrmContext context);
+    void setPrecedingOfferingsComplete(boolean isComplete, String signupOperations, BrmContext context);
 
     /**
      * Sets "isTaken" to true or false on all preceding FeeManagementSignup objects from FeeManagementSession
@@ -337,17 +337,22 @@ public interface BrmFeeManagementService {
      * @param signupOperations List of signup operation values separated by ","
      * @param context          BRM context
      */
-    void setPrecedingSignupsTaken(boolean isTaken, String signupOperations, BrmContext context);
+    void setPrecedingOfferingsTaken(boolean isTaken, String signupOperations, BrmContext context);
 
     /**
      * Removes all rates on the current signup and all preceding signups (offerings) based on the given parameters.
      *
-     * @param rateCodes        List of rate codes separated by ","
-     * @param rateTypeCodes    List of rate type codes separated by ","
-     * @param rateCatalogCodes List of rate catalog codes separated by ","
-     * @param context          BRM context
+     * @param rateCodes            List of rate codes separated by ","
+     * @param rateTypeCodes        List of rate type codes separated by ","
+     * @param rateCatalogCodes     List of rate catalog codes separated by ","
+     * @param removeFromSignupOnly If true the rates will be removed from the signup only
+     * @param context              BRM context
      */
-    void removeRatesFromSignupAndPrecedingOfferings(String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
+    void removeRatesFromSignupAndPrecedingOfferings(String rateCodes,
+                                                    String rateTypeCodes,
+                                                    String rateCatalogCodes,
+                                                    boolean removeFromSignupOnly,
+                                                    BrmContext context);
 
     /**
      * Adds a rate to a FeeManagementSignup object from the BRM context.

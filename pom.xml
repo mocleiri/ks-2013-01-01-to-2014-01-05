@@ -339,6 +339,7 @@
                             <autocommit>true</autocommit>
                             <srcFiles>
                                 <srcFile>${sql.dir}/ksa_load_rules_dml.sql</srcFile>
+                                <srcFile>${sql.dir}/ksa_load_fm_rules_dml.sql</srcFile>
                             </srcFiles>
                         </configuration>
                     </execution>

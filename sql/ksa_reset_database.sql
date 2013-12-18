@@ -18,6 +18,7 @@ set sqlblanklines on
 set sqlterminator '!'
 
 @ksa_load_rules_dml.sql
+@ksa_load_fm_rules_dml.sql
 
 set sqlterminator ';'
 
