@@ -152,6 +152,7 @@ public class SettingsController extends GenericSearchController {
             form.setAuditableEntity(auditableEntityService.getAuditableEntity(Long.valueOf(entityId), ActivityType.class));
         } else if ("GeneralLedgerTypePage".equals(pageId)) {
             form.setAuditableEntity(new GeneralLedgerType());
+            form.getAuditableEntity().setGlOperationCode(GlOperationType.DEBIT_CODE);
             form.setAuditableEntities(auditableEntityService.getAuditableEntities(GeneralLedgerType.class));
         } else if ("GeneralLedgerTypeDetailsPage".equals(pageId)) {
             if (entityId == null || entityId.trim().isEmpty()) {

@@ -674,7 +674,7 @@
                             <bean parent="Uif-TextControl" p:size="20" p:maxLength="100"/>
                         </property>
                     </bean>
-                    <bean parent="Uif-InputField" p:label="Charge Operation" p:propertyName="auditableEntity.glOperationCode"  p:labelPlacement="TOP" p:required="true">
+                    <bean parent="Uif-InputField" p:label="Operation on Charge (Default: Debit)" p:propertyName="auditableEntity.glOperationCode"  p:labelPlacement="TOP" p:required="true">
                         <property name="control">
                             <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeListShort"/>
                         </property>
@@ -1169,7 +1169,7 @@
                         <bean parent="Uif-TextControl" p:size="20" p:maxLength="100"/>
                     </property>
                 </bean>
-                <bean parent="Uif-InputField" p:label="Charge Operation" p:propertyName="auditableEntity.glOperationCode"  p:labelPlacement="TOP" p:required="true">
+                <bean parent="Uif-InputField" p:label="Operation on Charge (Default: Debit)" p:propertyName="auditableEntity.glOperationCode"  p:labelPlacement="TOP" p:required="true">
                     <property name="control">
                         <bean parent="Uif-DropdownControl" p:options-ref="TransactionTypeListShort"/>
                     </property>
