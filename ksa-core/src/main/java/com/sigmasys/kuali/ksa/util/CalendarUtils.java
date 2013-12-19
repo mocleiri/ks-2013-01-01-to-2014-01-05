@@ -35,8 +35,8 @@ public class CalendarUtils {
      * Safely compares two dates. Checks if the first date is before the second date.
      * Ignores comparison if either or both of the dates are <code>null</code>.
      *
-     * @param date          A date to compare.
-     * @param compareTo     A date to compare to.
+     * @param date      A date to compare.
+     * @param compareTo A date to compare to.
      * @return <code>true</code> if "date" is before "compareTo", <code>false</code> otherwise.
      */
     public static boolean isBefore(Date date, Date compareTo) {
@@ -47,8 +47,8 @@ public class CalendarUtils {
      * Safely compares two dates. Checks if the first date is before or equals to the second date.
      * Ignores comparison if either or both of the dates are <code>null</code>.
      *
-     * @param date          A date to compare.
-     * @param compareTo     A date to compare to.
+     * @param date      A date to compare.
+     * @param compareTo A date to compare to.
      * @return <code>true</code> if "date" is before or equals to "compareTo", <code>false</code> otherwise.
      */
     public static boolean isBeforeOrEquals(Date date, Date compareTo) {
@@ -60,8 +60,8 @@ public class CalendarUtils {
      * Safely compares two dates. Checks if the first date is after the second date.
      * Ignores comparison if either or both of the dates are <code>null</code>.
      *
-     * @param date          A date to compare.
-     * @param compareTo     A date to compare to.
+     * @param date      A date to compare.
+     * @param compareTo A date to compare to.
      * @return <code>true</code> if "date" is after "compareTo", <code>false</code> otherwise.
      */
     public static boolean isAfter(Date date, Date compareTo) {
@@ -72,8 +72,8 @@ public class CalendarUtils {
      * Safely compares two dates. Checks if the first date is after or equals to the second date.
      * Ignores comparison if either or both of the dates are <code>null</code>.
      *
-     * @param date          A date to compare.
-     * @param compareTo     A date to compare to.
+     * @param date      A date to compare.
+     * @param compareTo A date to compare to.
      * @return <code>true</code> if "date" is after or equals "compareTo", <code>false</code> otherwise.
      */
     public static boolean isAfterOrEquals(Date date, Date compareTo) {
@@ -171,10 +171,6 @@ public class CalendarUtils {
         cal.set(Calendar.SECOND, seconds);
         cal.set(Calendar.MILLISECOND, millis);
         return cal.getTime();
-    }
-
-    public static Date truncate(Date date) {
-        return setTime(date, 0, 0, 0, 0);
     }
 
     public static int getWorkingDaysBetween(Date fromDate, Date toDate) {

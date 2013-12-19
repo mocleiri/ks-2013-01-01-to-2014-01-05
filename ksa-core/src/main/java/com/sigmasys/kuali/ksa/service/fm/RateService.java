@@ -523,9 +523,9 @@ public interface RateService {
      * Calculates the effective date of a Rate with the given ID.
      * Uses the provided based date to compare to the transaction date.
      *
-     * @param rateId    ID of a Rate, which effective date is to be found.
-     * @param baseDate  Date used to compare to the transaction date.
-     * @return          Effective date from the Rate with the given ID.
+     * @param rateId   ID of a Rate, which effective date is to be found.
+     * @param baseDate Date used to compare to the transaction date.
+     * @return Effective date from the Rate with the given ID.
      */
     Date getEffectiveDateFromRate(Long rateId, Date baseDate);
 
@@ -533,9 +533,9 @@ public interface RateService {
      * Calculates the recognition date of a Rate with the given ID.
      * Uses the provided base date to supply as a default value in case all else fails.
      *
-     * @param rateId    ID of a Rate which recognition date is to be found.
-     * @param baseDate  Date used as a default value if all else fail.
-     * @return          Recognition date from the Rate with the given ID.
+     * @param rateId   ID of a Rate which recognition date is to be found.
+     * @param baseDate Date used as a default value if all else fail.
+     * @return Recognition date from the Rate with the given ID.
      */
     Date getRecognitionDateFromRate(Long rateId, Date baseDate);
 
@@ -543,9 +543,9 @@ public interface RateService {
      * Calculates the total amount of the Rate with the given ID.
      * Uses the number of units to either locate a flexible rate or calculate a fixed rate.
      *
-     * @param rateId    ID of a Rate which total amount is to be calculated.
-     * @param numUnits  Number of units.
-     * @return          The total amount from the Rate with the given ID.
+     * @param rateId   ID of a Rate which total amount is to be calculated.
+     * @param numUnits Number of units.
+     * @return The total amount from the Rate with the given ID.
      */
     BigDecimal getAmountFromRate(Long rateId, int numUnits);
 
@@ -553,9 +553,9 @@ public interface RateService {
      * Finds out the transaction type from RateAmount associated with a Rate
      * with the given ID and the number of units.
      *
-     * @param rateId    ID of a Rate which associated amount's transaction type is to be found.
-     * @param numUnits  Number of units.
-     * @return          Transaction Type from the RateAmount.
+     * @param rateId   ID of a Rate which associated amount's transaction type is to be found.
+     * @param numUnits Number of units.
+     * @return Transaction Type from the RateAmount.
      */
     String getTransactionTypeFromRate(Long rateId, int numUnits);
 }

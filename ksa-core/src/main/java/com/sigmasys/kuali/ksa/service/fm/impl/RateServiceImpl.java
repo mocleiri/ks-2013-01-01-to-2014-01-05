@@ -15,7 +15,6 @@ import com.sigmasys.kuali.ksa.service.atp.AtpService;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.util.BeanUtils;
-import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -31,6 +30,8 @@ import javax.jws.WebService;
 import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.*;
+
+import static com.sigmasys.kuali.ksa.util.CalendarUtils.*;
 
 /**
  * Fee Rate Service implementation.
@@ -1849,7 +1850,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     }
 
 
-
     /**************************************************************
      *
      * Rate Interpretation methods.
@@ -1860,9 +1860,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * Calculates the effective date of a Rate with the given ID.
      * Uses the provided based date to compare to the transaction date.
      *
-     * @param rateId    ID of a Rate, which effective date is to be found.
-     * @param baseDate  Date used to compare to the transaction date.
-     * @return          Effective date from the Rate with the given ID.
+     * @param rateId   ID of a Rate, which effective date is to be found.
+     * @param baseDate Date used to compare to the transaction date.
+     * @return Effective date from the Rate with the given ID.
      */
     @Override
     @PermissionsAllowed(Permission.READ_RATE)
@@ -1877,36 +1877,33 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new IllegalArgumentException(errorMsg);
         }
 
-        Date effectiveDate = null;
-
         // Check the value of "overrideTransactionDateType"
         TransactionDateType transactionDateType =
                 (rate.getRateCatalogAtp() != null) && (rate.getRateCatalogAtp().getRateCatalog() != null)
-                    ? rate.getRateCatalogAtp().getRateCatalog().getTransactionDateType() : null;
+                        ? rate.getRateCatalogAtp().getRateCatalog().getTransactionDateType() : null;
 
-        if (transactionDateType == TransactionDateType.ALWAYS) {
+        if (transactionDateType != null) {
+            switch (transactionDateType) {
+                case ALWAYS:
+                    return rate.getTransactionDate();
+                case UNTIL:
+                    return isAfter(baseDate, rate.getTransactionDate()) ? baseDate : rate.getTransactionDate();
+                case AFTER:
+                    return isAfter(baseDate, rate.getTransactionDate()) ? rate.getTransactionDate() : baseDate;
 
-            effectiveDate = rate.getTransactionDate();
-        } else if (transactionDateType == TransactionDateType.UNTIL) {
+            }
+        }
 
-            effectiveDate = CalendarUtils.isAfter(baseDate, rate.getTransactionDate())
-                        ? baseDate : rate.getTransactionDate();
-        } else if (transactionDateType == TransactionDateType.AFTER) {
-
-            effectiveDate = CalendarUtils.isAfter(baseDate, rate.getTransactionDate())
-                    ? rate.getTransactionDate() : baseDate;
-        } // no transaction date type will result in a null effective date
-
-        return effectiveDate;
+        return null;
     }
 
     /**
      * Calculates the recognition date of a Rate with the given ID.
      * Uses the provided base date to supply as a default value in case all else fails.
      *
-     * @param rateId    ID of a Rate which recognition date is to be found.
-     * @param baseDate  Date used as a default value if all else fail.
-     * @return          Recognition date from the Rate with the given ID.
+     * @param rateId   ID of a Rate which recognition date is to be found.
+     * @param baseDate Date used as a default value if all else fail.
+     * @return Recognition date from the Rate with the given ID.
      */
     @Override
     @PermissionsAllowed(Permission.READ_RATE)
@@ -1925,7 +1922,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         // Check the value of the "isRecognitionDateDefinable":
         if ((rate.getRateCatalogAtp() != null) && (rate.getRateCatalogAtp().getRateCatalog() != null)
-            && BooleanUtils.isTrue(rate.getRateCatalogAtp().getRateCatalog().isRecognitionDateDefinable())) {
+                && BooleanUtils.isTrue(rate.getRateCatalogAtp().getRateCatalog().isRecognitionDateDefinable())) {
 
             // Get the Recognition Date from Rate:
             recognitionDate = rate.getRecognitionDate();
@@ -1943,9 +1940,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * Calculates the total amount of the Rate with the given ID.
      * Uses the number of units to either locate a flexible rate or calculate a fixed rate.
      *
-     * @param rateId    ID of a Rate which total amount is to be calculated.
-     * @param numUnits  Number of units.
-     * @return          The total amount from the Rate with the given ID.
+     * @param rateId   ID of a Rate which total amount is to be calculated.
+     * @param numUnits Number of units.
+     * @return The total amount from the Rate with the given ID.
      */
     @Override
     @PermissionsAllowed(Permission.READ_RATE)
@@ -1992,9 +1989,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * Finds out the transaction type from RateAmount associated with a Rate
      * with the given ID and the number of units.
      *
-     * @param rateId    ID of a Rate which associated amount's transaction type is to be found.
-     * @param numUnits  Number of units.
-     * @return          Transaction Type from the RateAmount.
+     * @param rateId   ID of a Rate which associated amount's transaction type is to be found.
+     * @param numUnits Number of units.
+     * @return Transaction Type from the RateAmount.
      */
     @Override
     @PermissionsAllowed(Permission.READ_RATE)
@@ -2002,15 +1999,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         // Get the matching RateAmount:
         RateAmount rateAmount = getRateAmount(rateId, numUnits);
-        String transactionType = null;
 
-        if (rateAmount != null) {
-
-            // Get the transaction type from the RateAmount:
-            transactionType = rateAmount.getTransactionTypeId();
-        }
-
-        return transactionType;
+        return (rateAmount != null) ? rateAmount.getTransactionTypeId() : null;
     }
 
     /**
@@ -2018,9 +2008,9 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * Returns the Rate's default amount if none can be matched by the number of units.
      * Returns <code>null</code> if no such Rate is found.
      *
-     * @param rateId    ID of a Rate which Rate Amount is to be found if any.
-     * @param numUnits  Number of units to match.
-     * @return
+     * @param rateId   ID of a Rate which Rate Amount is to be found if any.
+     * @param numUnits Number of units to match.
+     * @return RateAmount instance
      */
     private RateAmount getRateAmount(Long rateId, int numUnits) {
 
@@ -2033,37 +2023,29 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             throw new IllegalArgumentException(errorMsg);
         }
 
-        // Try to find a matching RateAmount in the Rate:
-        RateAmount result = null;
-
         // Loop through the RateAmounts:
         if (CollectionUtils.isNotEmpty(rate.getRateAmounts())) {
 
             for (RateAmount rateAmount : rate.getRateAmounts()) {
 
                 // Compare the number of units to locate a match:
-                if ((rateAmount.getUnit() != null) && (rateAmount.getUnit() == numUnits)) {
-
+                if (rateAmount.getUnit() != null && rateAmount.getUnit() == numUnits) {
                     // Match found:
-                    result = rateAmount;
-                    break;
+                    return rateAmount;
                 }
             }
-        } else {
-
-            // Default to the Rate's default RateAmount:
-            result = rate.getDefaultRateAmount();
         }
 
-        return result;
+        // Default to the Rate's default RateAmount:
+        return rate.getDefaultRateAmount();
     }
 
     /**
      * Calculates a Fixed rate amount using the provided Rate and number of units.
      *
-     * @param rate      Rate for which to calculate a Fixed rate amount.
-     * @param numUnits  Number of units used for calculations.
-     * @return          Fixed rate amount for the given Rate.
+     * @param rate     Rate for which to calculate a Fixed rate amount.
+     * @param numUnits Number of units used for calculations.
+     * @return Fixed rate amount for the given Rate.
      */
     private BigDecimal calculateFixedRateAmount(Rate rate, int numUnits) {
 
@@ -2077,8 +2059,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             if (rate.isLimitAmount()) {
 
                 // Get the limit range or assign default values:
-                int minUnits = (rate.getMinLimitUnits() != null) ? rate.getMinLimitUnits().intValue() : 0;
-                int maxUnits = (rate.getMaxLimitUnits() != null) ? rate.getMaxLimitUnits().intValue() : Integer.MAX_VALUE;
+                int minUnits = (rate.getMinLimitUnits() != null) ? rate.getMinLimitUnits() : 0;
+                int maxUnits = (rate.getMaxLimitUnits() != null) ? rate.getMaxLimitUnits() : Integer.MAX_VALUE;
 
                 if (numUnits > maxUnits) {
 
