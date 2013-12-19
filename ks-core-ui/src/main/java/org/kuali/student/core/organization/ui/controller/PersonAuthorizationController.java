@@ -2,6 +2,7 @@ package org.kuali.student.core.organization.ui.controller;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,9 @@ import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
+import org.kuali.rice.kew.actionitem.ActionItemActionListExtension;
+import org.kuali.rice.kew.actiontaken.ActionTakenValue;
+import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.action.DocumentActionParameters;
 import org.kuali.rice.kew.api.action.ReturnPoint;
 import org.kuali.rice.kew.api.action.WorkflowDocumentActionsService;
@@ -27,6 +31,7 @@ import org.kuali.rice.kew.api.document.DocumentDetail;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.document.DocumentUpdate;
 import org.kuali.rice.kew.api.document.WorkflowDocumentService;
+import org.kuali.rice.kew.service.KEWServiceLocator;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.role.Role;
@@ -44,6 +49,7 @@ import org.kuali.student.core.organization.ui.form.PersonAuthorizationForm;
 import org.kuali.student.core.organization.ui.form.model.ProposalInfoModel;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.MetaInfo;
+import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
@@ -79,8 +85,6 @@ public class PersonAuthorizationController extends UifControllerBase {
 	
 	private WorkflowDocumentService workflowDocumentService;
     private WorkflowDocumentActionsService workflowDocumentActionsService;
-    
-    
 	
 	List<ProposalInfoModel> uiProposals = new ArrayList<ProposalInfoModel>();
 	
@@ -104,6 +108,16 @@ public class PersonAuthorizationController extends UifControllerBase {
 		// and approver should be able to see approval screen.
 		if(StringUtils.isNotBlank(documentId)){
 			Document document = getWorkflowDocumentService().getDocument(documentId);
+			Collection<ActionItemActionListExtension> actionList = KEWServiceLocator.getActionListService().getActionListForSingleDocument(documentId);
+			String lastActionTakenCode = null;
+			LOG.info("Action list size is : " + actionList.size());
+			for(ActionItemActionListExtension action : actionList){
+				List<ActionTakenValue> actionsTaken = action.getRouteHeader().getActionsTaken();
+				if(!actionsTaken.isEmpty()){
+					lastActionTakenCode = actionsTaken.get(actionsTaken.size()-1).getActionTaken();
+					LOG.info("Last action for this document : " + lastActionTakenCode);
+				}				 
+			}
 			LOG.info("Document status : " + document.getStatus());
 			ProposalInfo proposalInfo = null;
 			PersonAuthorizationForm viewForm = (PersonAuthorizationForm)form;
@@ -117,6 +131,7 @@ public class PersonAuthorizationController extends UifControllerBase {
 				viewForm.setSubmittedByName(getPersonName(proposalInfo.getMeta().getCreateId()));
 				viewForm.setSubmittedForName(getPersonName(proposalInfo.getProposerPerson().get(0)));
 				viewForm.setForOrganizationName(getOrgName(proposalInfo.getProposerOrg().get(0)));
+				viewForm.setForOrganizationId(proposalInfo.getProposerOrg().get(0));
 				viewForm.setStateName(getStateService().getState(proposalInfo.getStateKey(), getContextInfo()).getName());
 				viewForm.setTypeName("Kuali Student CM User");
 				
@@ -125,13 +140,23 @@ public class PersonAuthorizationController extends UifControllerBase {
 						// Checking if logged in user is normal user or approver
 						// User comes here only if cliking on ActionList or Document Search
 						
-						if(hasAuthorizationApprovalRole(person.getPrincipalId())){						
-							return getUIFModelAndView(viewForm, "KS-Person-Auth-Response-View");
+						if(!StringUtils.equals(KewApiConstants.ACTION_TAKEN_RETURNED_TO_PREVIOUS_CD, lastActionTakenCode)){
+							if(hasAuthorizationApprovalRole(person.getPrincipalId())){
+								return getUIFModelAndView(viewForm, "KS-Person-Auth-Response-View");
+							}else {
+								return getUIFModelAndView(viewForm, "KS-Person-Auth-Detail-View");
+							}
 						} else {
-							return getUIFModelAndView(viewForm, "KS-Person-Auth-Request-View");
+							if(StringUtils.equals(KewApiConstants.ACTION_TAKEN_RETURNED_TO_PREVIOUS_CD, lastActionTakenCode)){
+								viewForm.setClarificationRequired(true);								
+								GlobalVariables.getMessageMap().putInfo("KS-Person-Auth-Request-Section", "clarifictionRequired");
+								return getUIFModelAndView(viewForm, "KS-Person-Auth-Request-View");
+							} else {
+								return getUIFModelAndView(viewForm, "KS-Person-Auth-Detail-View");
+							}
 						}
 					} else if(document.getStatus().equals(DocumentStatus.FINAL) || document.getStatus().equals(DocumentStatus.DISAPPROVED) ||
-							document.getStatus().equals(DocumentStatus.PROCESSED)){
+							document.getStatus().equals(DocumentStatus.PROCESSED) || document.getStatus().equals(DocumentStatus.CANCELED)){
 						return getUIFModelAndView(viewForm, "KS-Person-Auth-Detail-View");
 					} else {
 						LOG.info("Found status in else : " + document.getStatus());
@@ -240,6 +265,19 @@ public class PersonAuthorizationController extends UifControllerBase {
 		return getUIFModelAndView(viewForm, returnViewName);
 	}
 	
+	@RequestMapping(params = "methodToCall=widthdraw")
+	public ModelAndView widthdraw(@ModelAttribute("KualiForm") PersonAuthorizationForm submitForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
+		ProposalInfo proposalInfo = submitForm.getProposalInfo();
+		try {
+			proposalInfo = submitForApproval(proposalInfo, "widthdraw");
+			submitForm.setProposalInfo(proposalInfo);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return getUIFModelAndView(submitForm, "KS-Person-Auth-Detail-View"); 
+	}
+	
 	@RequestMapping(params = "methodToCall=performApproval")
 	public ModelAndView performApproval(@ModelAttribute("KualiForm") PersonAuthorizationForm submitForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String action = submitForm.getActionParamaterValue("action");
@@ -254,20 +292,14 @@ public class PersonAuthorizationController extends UifControllerBase {
         		GlobalVariables.getMessageMap().putError("KS-Person-Auth-Response-View-Section", "unknownError","Please insert approval notes");
         		return getUIFModelAndView(submitForm, null);
         	}
+        	        	
+        	proposalInfo = submitForApproval(proposalInfo, action);
         	
-        	if(action.equalsIgnoreCase("approved")){
-        		proposalInfo.setStateKey(ProposalServiceConstants.PROPOSAL_STATE_APPROVED);
-        	}else if(action.equalsIgnoreCase("denied")){
-        		proposalInfo.setStateKey(ProposalServiceConstants.PROPOSAL_STATE_NOT_APPROVED);
-        	}else if(action.equalsIgnoreCase("clarification")){
-        		proposalInfo.setStateKey(ProposalServiceConstants.PROPOSAL_STATE_DRAFT);
-        	}
-        	submitForApproval(proposalInfo);
-        	//proposalInfo = getProposalService().updateProposal(proposalInfo.getId(), proposalInfo, getContextInfo());
+        	submitForm.setProposalInfo(proposalInfo);
         	        	        	
-        	GlobalVariables.getMessageMap().putInfo("KS-Person-Auth-Response-View", "databaseChnageSuccess");
+        	GlobalVariables.getMessageMap().putInfo("KS-Person-Auth-Detail-View", "databaseChnageSuccess");
         	
-        	return getUIFModelAndView(submitForm, "KS-Person-Auth-Response-View");
+        	return getUIFModelAndView(submitForm, "KS-Person-Auth-Detail-View");
         }
         return getUIFModelAndView(submitForm, null);
 	}
@@ -290,19 +322,19 @@ public class PersonAuthorizationController extends UifControllerBase {
         		GlobalVariables.getMessageMap().putError("KS-Person-Auth-Request-Section", "unknownError","Please enter name without change.");
         		return getUIFModelAndView(submitForm, null);
         	}
+        	
         	List<String> personIds = new ArrayList<String>();
         	personIds.add(getPersonId(submittedForName).getPrincipalId());
         	String forOrganization = submitForm.getForOrganizationId();
         	List<String> organizationIds = new ArrayList<String>();
         	organizationIds.add(forOrganization);
         	
-        	proposalInfo.setName("Authorization Request For " + submittedForName);
+        	proposalInfo.setName(submittedForName);
         	proposalInfo.setProposerPerson(personIds);
             proposalInfo.setProposerOrg(organizationIds);
         	proposalInfo.setTypeKey(ProposalServiceConstants.PROPOSAL_TYPE_CURRICULUM_MANAGEMENT_USER_AUTHORIZATION_ADD_REQUEST);
-        	proposalInfo.setStateKey(ProposalServiceConstants.PROPOSAL_STATE_DRAFT);
-        	
-        	proposalInfo = submitForApproval(proposalInfo);
+
+        	proposalInfo = submitForApproval(proposalInfo,null);
 
         	submitForm.setProposalInfo(proposalInfo);
         	submitForm.setForOrganizationName(getOrgName(submitForm.getForOrganizationId()));
@@ -314,7 +346,7 @@ public class PersonAuthorizationController extends UifControllerBase {
         return getUIFModelAndView(submitForm, null);
 	}
 	
-    public ProposalInfo submitForApproval(ProposalInfo proposalInfo) throws Exception {
+    public ProposalInfo submitForApproval(ProposalInfo proposalInfo, String state) throws Exception {
                     
         //Get the workflow id
         String workflowId = proposalInfo.getWorkflowId();
@@ -328,14 +360,27 @@ public class PersonAuthorizationController extends UifControllerBase {
             DocumentUpdate docUpdate = DocumentUpdate.Builder.create(docDetail.getDocument()).build();
             dapBuilder.setDocumentUpdate(docUpdate);
             DocumentActionParameters docActionParams = dapBuilder.build();
-            
-            if(proposalInfo.getStateKey().equals(ProposalServiceConstants.PROPOSAL_STATE_APPROVED)){
-            	getWorkflowDocumentActionsService().approve(docActionParams);
-            } else if(proposalInfo.getStateKey().equals(ProposalServiceConstants.PROPOSAL_STATE_NOT_APPROVED)){
-            	getWorkflowDocumentActionsService().disapprove(docActionParams);
-            } else if(proposalInfo.getStateKey().equals(ProposalServiceConstants.PROPOSAL_STATE_DRAFT)){
-            	getWorkflowDocumentActionsService().returnToPreviousNode(docActionParams, ReturnPoint.create("PreRoute"));
-            }            
+
+            ProposalInfo latestProposal = getProposalService().getProposal(proposalInfo.getId(),getContextInfo());
+            latestProposal.setRationale(new RichTextInfo());
+    		latestProposal.getRationale().setPlain(proposalInfo.getRationale().getPlain());
+    		
+            if("approved".equalsIgnoreCase(state)){
+            	proposalInfo = getProposalService().updateProposal(latestProposal.getId(), latestProposal, getContextInfo());
+        		getWorkflowDocumentActionsService().approve(docActionParams);        		
+        	}else if("denied".equalsIgnoreCase(state)){
+        		proposalInfo = getProposalService().updateProposal(latestProposal.getId(), latestProposal, getContextInfo());
+        		getWorkflowDocumentActionsService().disapprove(docActionParams);
+        	}else if("clarification".equalsIgnoreCase(state)){
+                proposalInfo = getProposalService().updateProposal(latestProposal.getId(), latestProposal, getContextInfo());
+        		getWorkflowDocumentActionsService().returnToPreviousNode(docActionParams, ReturnPoint.create("PreRoute"));        		
+        	} else if("widthdraw".equalsIgnoreCase(state)){
+        		getWorkflowDocumentActionsService().cancel(docActionParams);
+        	}else {
+        		latestProposal.getDescr().setPlain(proposalInfo.getDescr().getPlain());
+        		proposalInfo = getProposalService().updateProposal(latestProposal.getId(), latestProposal, getContextInfo());
+        		getWorkflowDocumentActionsService().approve(docActionParams);
+        	}                  
         } else  {
             LOG.info("Creating Workflow Document.");
             DocumentUpdate.Builder builder = DocumentUpdate.Builder.create();
@@ -347,9 +392,7 @@ public class PersonAuthorizationController extends UifControllerBase {
             
             workflowId = docResponse.getDocumentId();
             proposalInfo.setWorkflowId(workflowId);
-            
-            //List<AttributeInfo> attributes = proposalInfo.getAttributes();
-            //new AttributeHelper (attributes).put ("workflowNode", ProposalServiceConstants.PROPOSAL_STATE_DRAFT);
+            proposalInfo.setStateKey(ProposalServiceConstants.PROPOSAL_STATE_DRAFT);
             
             try {
                 docDetail = getWorkflowDocumentService().getDocumentDetail(workflowId);
@@ -383,6 +426,7 @@ public class PersonAuthorizationController extends UifControllerBase {
 		}
 		return this.proposalService;
 	}
+	
 	
 	public void setOrganizationService(OrganizationService organizationService)
 	{

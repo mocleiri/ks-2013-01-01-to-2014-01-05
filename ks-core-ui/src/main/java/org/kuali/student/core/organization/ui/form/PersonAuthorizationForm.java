@@ -1,5 +1,7 @@
 package org.kuali.student.core.organization.ui.form;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.kuali.rice.krad.web.form.UifFormBase;
@@ -22,8 +24,10 @@ public class PersonAuthorizationForm extends UifFormBase {
 	private String requestedSince;
 	private String stateName;
 	private String typeName;
-	
+		
 	private List<ProposalInfoModel> proposals;
+	
+	private boolean clarificationRequired;
 	
 	public ProposalInfo getProposalInfo() {
 		return proposalInfo;
@@ -85,6 +89,20 @@ public class PersonAuthorizationForm extends UifFormBase {
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
+	public boolean getClarificationRequired() {
+		return clarificationRequired;
+	}
+	public void setClarificationRequired(boolean clarificationRequired) {
+		this.clarificationRequired = clarificationRequired;
+	}
 	
+	public String getEffectiveDateString(){
+		SimpleDateFormat stringFormat = new SimpleDateFormat("mm/dd/yyyy");
+		String strDate = new String();
+		if(proposalInfo.getEffectiveDate() != null){
+			strDate = stringFormat.format(proposalInfo.getEffectiveDate());
+		}
+		return strDate; 
+	}
 
 }
