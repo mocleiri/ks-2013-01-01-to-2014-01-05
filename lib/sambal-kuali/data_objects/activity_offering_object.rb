@@ -1115,7 +1115,7 @@ class DeliveryLogistics
           if @dsc
             approved = page.non_std_ts_control.text
             puts "Approved? >> #{approved}"
-            approved_for_nonStandard_timeslots = ( approved == true ? true : false );
+            approved_for_nonStandard_timeslots = ( approved == "true" ? true : false );
             if approved_for_nonStandard_timeslots
               page.add_end_time_div.click
               page.add_end_time.wait_until_present
