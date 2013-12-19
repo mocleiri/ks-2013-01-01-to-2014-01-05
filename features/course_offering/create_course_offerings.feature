@@ -26,25 +26,21 @@ Background:
     Then the new Course Offering should be displayed in the list of available offerings
     And the new Course Offering should not contain any instructor information in its activity offerings
 
-  @pending
   Scenario: CO 6.2B Create Course Offering from existing Course Offering within same term excluding instructor information using Manage CO
     When I create a course offering from an existing offering within same term and choose to exclude instructor information using Manage CO
     Then the new Course Offering should be displayed in the list of available offerings
     And the new Course Offering should not contain any instructor information in its activity offerings
 
-  @pending
   Scenario: CO 6.4 Create Course Offering from existing Course Offering within same term excluding instructor information using Create CO
     When I create a course offering from an existing offering within same term and choose to exclude instructor information using Create CO
     Then the new Course Offering should be displayed in the list of available offerings
     And the new Course Offering should not contain any instructor information in its activity offerings
 
-  @pending
   Scenario: CO 6.7 Create Course Offering from existing Course Offering in a different term excluding scheduling information
     When I create a course offering from an existing offering in a different term and choose to exclude scheduling information
     Then the new Course Offering should be displayed in the list of available offerings
     And the new Course Offering should not contain any scheduling information in its activity offerings
 
-  @pending
   Scenario: CO 6.8 Create Course Offering from existing Course Offering within same term excluding scheduling information
     When I create a course offering from an existing offering within same term and choose to exclude scheduling information
     Then the new Course Offering should be displayed in the list of available offerings
