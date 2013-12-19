@@ -1113,19 +1113,13 @@ class DeliveryLogistics
 
         if @end_time != nil then
           if @dsc
-            approved = page.non_std_ts_control.text
-            puts "Approved? >> #{approved}"
-            approved_for_nonStandard_timeslots = ( approved == "true" ? true : false );
+            approved_for_nonStandard_timeslots = ( page.non_std_ts_control.text == "true" ? true : false );
             if approved_for_nonStandard_timeslots
               page.add_end_time_div.click
               page.add_end_time.wait_until_present
-              et = "#{@end_time} #{@end_time_ampm}"
-              puts "NOT STD TS >> #{et}"
-              page.add_end_time.set et
+              page.add_end_time.set "#{@end_time} #{@end_time_ampm}"
             else
-              page.end_time_select.click
-              sleep 1
-              page.loading.wait_while_present
+              page.end_time_select_populate_list
               page.end_time_select.select("#{@end_time} #{@end_time_ampm.upcase}")
             end
           else

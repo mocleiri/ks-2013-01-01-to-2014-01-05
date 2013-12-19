@@ -117,10 +117,11 @@ class ActivityOfferingMaintenance < BasePage
 
         # Widget #2 (select list)
         element(:end_time_select) { |b| b.select(id: "rdl_endtime_control") }
+        action(:end_time_select_populate_list) { |b| b.add_start_time.fire_event "onblur"; sleep 3; }
 
-  # error msg
-  element(:end_time_error_div) { |b| b.div(id: "rdl_endtime_errors") }
-  value(:end_time_error) { |b| b.end_time_error_div.li(class: "uif-errorMessageItem-field").text }
+        # error msg
+        element(:end_time_error_msg) { |b| b.div(:data_for => "rdl_endtime_control").ul.li(class: "uif-errorMessageItem-field").text}
+
   element(:add_facility) { |b| b.add_logistics_div.div(data_label: "Facility").text_field() }
   action(:lookup_facility) { |b| b.add_logistics_div.div(data_label: "Facility").button().click; b.loading.wait_while_present }
   element(:add_room) { |b| b.add_logistics_div.div(data_label: "Room").text_field() }
@@ -240,7 +241,7 @@ class ActivityOfferingMaintenance < BasePage
   end
 
   def delete_rdl_row(row)
-    row.cells[LOGISTICS_ACTION_COLUMN].button(text: "delete").click
+    row.cells[LOGISTICS_ACTION_COLUMN].link(text: "delete").click
   end
 
   def get_inst_effort(id)
