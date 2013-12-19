@@ -265,6 +265,7 @@ class ManageCourseOfferings < BasePage
   ########################## cluster tab
 
   element(:cluster_list_div)  { |b| b.frm.div(id: "KS-CourseOfferingManagement-AOClustersCollection").div(class: "uif-stackedCollectionLayout") }
+  element(:cluster_warning_list)  { |b| b.frm.ul(id: "pageValidationList") }
 
   def cluster_div_list
     div_list = []
@@ -350,8 +351,8 @@ class ManageCourseOfferings < BasePage
 
   def get_cluster_warning_msgs(private_name = :default_cluster)
     msg_list = []
-    target_cluster(private_name).uls(class: "uif-validationMessagesList").each do |ul|
-      ul.lis(class:  "uif-warningMessageItem").each do |li|
+    if cluster_warning_list.exists?
+      cluster_warning_list.lis(class:  "uif-warningMessageItem").each do |li|
         msg_list <<  li.text()
       end
     end

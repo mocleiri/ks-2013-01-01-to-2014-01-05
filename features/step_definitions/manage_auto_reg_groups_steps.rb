@@ -69,7 +69,7 @@ end
 Then /^for the original cluster a warning message appears stating "(.*?)"$/ do |errMsg|
   cluster_private_name = @course_offering.activity_offering_cluster_list[0].private_name
   on ManageCourseOfferings do |page|
-    page.get_cluster_warning_msgs(cluster_private_name).should include errMsg
+    page.get_cluster_warning_msgs(cluster_private_name).should match /#{cluster_private_name}.+#{errMsg}/
   end
 end
 
