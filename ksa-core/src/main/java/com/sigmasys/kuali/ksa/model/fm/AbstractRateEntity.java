@@ -98,7 +98,7 @@ public abstract class AbstractRateEntity extends AuditableEntity<Long> implement
 
     public void setTransactionDateType(TransactionDateType transactionDateType) {
         this.transactionDateType = transactionDateType;
-        transactionDateTypeCode = transactionDateType.getId();
+        transactionDateTypeCode = (transactionDateType != null) ? transactionDateType.getId() : null;
     }
 
 }
