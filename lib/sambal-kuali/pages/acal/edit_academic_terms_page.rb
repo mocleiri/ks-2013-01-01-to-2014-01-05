@@ -13,7 +13,7 @@ class EditAcademicTerms < BasePage
   element(:term_start_date_add)  { |b| b.frm.text_field(id: "term_start_date_add_add_control") }
   element(:term_end_date_add)  { |b| b.frm.text_field(id: "term_end_date_add_add_control") }
 
-  action(:acal_term_add) { |b| b.frm.link(id: "acal-term_add").click; b.loading.wait_while_present }
+  action(:acal_term_add) { |b| b.frm.button(id: "acal-term_add").click; b.loading.wait_while_present }
 
   element(:acal_term_list_div) { |b| b.frm.div(id: "acal-term")  }
 
@@ -108,7 +108,7 @@ class EditAcademicTerms < BasePage
   end
 
   def delete_key_date_group(term_type, key_date_group_type)
-    key_date_group_div(term_type, key_date_group_type).button(id: /key_date_group_delete_button/).click
+    key_date_group_div(term_type, key_date_group_type).link(id: /key_date_group_delete_button/).click
     loading.wait_while_present
   end
   #def key_date_group_exists?(term_type, key_date_group_type)
@@ -155,7 +155,7 @@ class EditAcademicTerms < BasePage
 
 #  def add_key_date_add_row(term_index,key_date_group);  ;end
 
-  #KeyDates
+#KeyDates
   action(:key_date_dropdown_addline) { |term_index, key_date_group_index, b| b.frm.select(name: "newCollectionLines['termWrapperList_#{term_index}_.keyDatesGroupWrappers_#{key_date_group_index}_.keydates'].keyDateType")}
   action(:key_date_start_date_addline) { |term_index, key_date_group_index, b| b.frm.text_field(name: "newCollectionLines['termWrapperList_#{term_index}_.keyDatesGroupWrappers_#{key_date_group_index}_.keydates'].startDate")}
   action(:key_date_end_date_addline) { |term_index, key_date_group_index, b| b.frm.text_field(name: "newCollectionLines['termWrapperList_#{term_index}_.keyDatesGroupWrappers_#{key_date_group_index}_.keydates'].endDate")}
@@ -183,10 +183,10 @@ class EditAcademicTerms < BasePage
   def edit_key_date_end_date(row, value); row.cells[END_DATE_COL].text_field.set(value); end
   def edit_key_date_end_time(row, value); row.cells[END_TIME_COL].text_field.set(value); end
   def edit_key_date_end_ampm(row, value); row.cells[END_AMPM_COL].select.select(value.downcase); end
-  #def clear_key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.clear; end
-  #def set_key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.set; end
-  #def clear_key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.clear; end
-  #def set_key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.set; end
+#def clear_key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.clear; end
+#def set_key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.set; end
+#def clear_key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.clear; end
+#def set_key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.set; end
   def delete_key_date(row); row.cells[ACTION_COL].link(text: "Delete").click; end
 
   def key_date_start_date(row); row.cells[START_DATE_COL].text_field.value; end
@@ -209,8 +209,8 @@ class EditAcademicTerms < BasePage
       return "pm"
     end
   end
-  #def key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.checked?; end
-  #def key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.checked?; end
+#def key_date_is_all_day(row); row.cells[IS_ALL_DAY_COL].checkbox.checked?; end
+#def key_date_is_range(row); row.cells[IS_DATE_RANGE_COL].checkbox.checked?; end
 
   action(:get_term_type) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].name").value }
   action(:get_term_start_date) { |term_index,b| b.frm.text_field(name: "termWrapperList[#{term_index}].startDate").value }

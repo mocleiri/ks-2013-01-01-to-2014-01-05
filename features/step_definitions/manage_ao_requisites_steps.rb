@@ -177,7 +177,15 @@ Then /^a (?:error|warning) in the Student Eligibility & Prerequisite section is 
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
-    page.prereq_message_section.text.should match /.*#{exp_msg}.*/
+    page.prereq_message_section_warning.text.should match /.*#{exp_msg}.*/
+  end
+end
+
+Then /^a (?:error|info) in the Student Eligibility & Prerequisite section is displayed stating "([^"]*)"$/ do |exp_msg|
+  @prereq.open_agenda_section
+  on ActivityOfferingRequisites do |page|
+    page.loading.wait_while_present
+    page.prereq_message_section_info.text.should match /.*#{exp_msg}.*/
   end
 end
 
@@ -185,7 +193,7 @@ Then /^no (?:error|warning) in the Student Eligibility & Prerequisite section is
   @prereq.open_agenda_section
   on ActivityOfferingRequisites do |page|
     page.loading.wait_while_present
-    page.prereq_message_section.text.should_not match /.*#{exp_msg}.*/
+    page.prereq_message_section_warning.text.should_not match /.*#{exp_msg}.*/
   end
 end
 
@@ -275,8 +283,8 @@ Then /^the copied course offering should have the same AO Requisites as the orig
     page.loading.wait_while_present
     @activityOR.show_all_courses( "agenda")
     page.eligibility_prereq_section.text.should match @activityOR.test_text("agenda", "CHEM241,CHEM242,CHEM247,Must have been admitted to the (Biochemistry, Chemistry) program,ENGL101")
-    page.prereq_message_section.text.should match /Activity Offering Rule differs from Course Offering Rule/
-    page.coreq_message_section.text.should match /Rule statements deleted/
+    page.prereq_message_section_info.text.should match /Activity Offering Rule differs from Course Offering Rule/
+    page.coreq_message_section_warning.text.should match /Rule statements deleted/
     page.submit
   end
   on ManageCourseOfferings do |page|
@@ -286,7 +294,7 @@ Then /^the copied course offering should have the same AO Requisites as the orig
     page.loading.wait_while_present
     @activityOR.show_all_courses( "agenda")
     page.corequisite_section.text.should match @activityOR.test_text("agenda", "concurrently enrolled in a minimum,BSCI202,BSCI361,HIST110")
-    page.coreq_message_section.text.should match /Activity Offering Rule differs from Course Offering Rule/
+    page.coreq_message_section_info.text.should match /Activity Offering Rule differs from Course Offering Rule/
     page.antirequisite_section.text.should match @activityOR.test_text("agenda", "free form text input value")
   end
 end

@@ -219,13 +219,13 @@ class ManageCourseOfferings < BasePage
 
   def select_aos(code_list, cluster_private_name = :default_cluster)
     for code in code_list
-        target_row(code, cluster_private_name).checkbox.set
+      target_row(code, cluster_private_name).checkbox.set
     end
   end
 
   def deselect_aos(code_list, cluster_private_name = :default_cluster)
     for code in code_list
-        target_row(code, cluster_private_name).checkbox.clear
+      target_row(code, cluster_private_name).checkbox.clear
     end
   end
 
@@ -253,7 +253,7 @@ class ManageCourseOfferings < BasePage
     codes = []
     begin
       activity_offering_results_table(cluster_private_name).rows.each { |row| codes << row[AO_CODE].text }
-      codes.delete_if { |code| code == "CODE" }
+      codes.delete_if { |code| code == "Code" }
       codes.delete_if { |code| code.strip == "" }
     rescue
       #no AOs found
@@ -265,6 +265,7 @@ class ManageCourseOfferings < BasePage
   ########################## cluster tab
 
   element(:cluster_list_div)  { |b| b.frm.div(id: "KS-CourseOfferingManagement-AOClustersCollection").div(class: "uif-stackedCollectionLayout") }
+  element(:cluster_warning_list)  { |b| b.frm.ul(id: "pageValidationList") }
 
   def cluster_div_list
     div_list = []
@@ -350,8 +351,8 @@ class ManageCourseOfferings < BasePage
 
   def get_cluster_warning_msgs(private_name = :default_cluster)
     msg_list = []
-    target_cluster(private_name).uls(class: "uif-validationMessagesList").each do |ul|
-      ul.lis(class:  "uif-warningMessageItem").each do |li|
+    if cluster_warning_list.exists?
+      cluster_warning_list.lis(class:  "uif-warningMessageItem").each do |li|
         msg_list <<  li.text()
       end
     end
@@ -441,7 +442,7 @@ class ManageCourseOfferings < BasePage
   #TODO: enhance to handle multiple codes properly
   def target_reg_group_row(codes, cluster_private_name = :default_cluster)
     view_reg_groups_table(cluster_private_name).rows[1..-1].each do |row|
-       return row if row.cells[2].text == codes
+      return row if row.cells[2].text == codes
     end
     raise "error: target_reg_group_row not found for #{codes}"
   end

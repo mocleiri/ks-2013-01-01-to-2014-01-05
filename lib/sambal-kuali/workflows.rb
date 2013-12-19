@@ -107,10 +107,11 @@ module Workflows
     current_user = ""
 
     visit KSFunctionalHome do |page|
+      Watir::Wait.until { page.enrollment_link.present? || page.username_field.present? }
       current_user = page.current_logged_in_user_id
       if current_user == :no_user
         page.login_with user, pwd
-      elsif current_user != user
+      elsif current_user.downcase != user.downcase
         page.logout
         visit Login do |page|
           page.login_with user, pwd
