@@ -1141,6 +1141,48 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     }
 
     /**
+     * Sets a FeeManagementSession KeyPair specified by "key" and "value".
+     *
+     * @param key                      KeyPair key
+     * @param includedSignupOperations List of included signup operation values separated by ","
+     * @param excludedSignupOperations List of excluded signup operation values separated by ","
+     * @param context                  BRM context
+     */
+    @Override
+    public void setSessionKeyPairToUnitNumber(String key,
+                                              String includedSignupOperations,
+                                              String excludedSignupOperations,
+                                              BrmContext context) {
+        int includedUnits = 0;
+        int excludedUnits = 0;
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups = session.getSignups();
+
+        if (CollectionUtils.isNotEmpty(signups)) {
+
+            List<String> includedOperations = CommonUtils.split(includedSignupOperations, MULTI_VALUE_DELIMITER);
+            List<String> excludedOperations = CommonUtils.split(excludedSignupOperations, MULTI_VALUE_DELIMITER);
+
+            for (FeeManagementSignup signup : signups) {
+
+                FeeManagementSignupOperation signupOperation = signup.getOperation();
+
+                if (signupOperation != null) {
+                    if (includedOperations.contains(signupOperation.name())) {
+                        includedUnits += signup.getUnit();
+                    } else if (excludedOperations.contains(signupOperation.name())) {
+                        excludedUnits += signup.getUnit();
+                    }
+                }
+            }
+        }
+
+        setKeyPair(session, key, Integer.toString(includedUnits - excludedUnits));
+    }
+
+    /**
      * Sets a FeeManagementSignup KeyPair specified by "key" and "value".
      *
      * @param key     KeyPair key

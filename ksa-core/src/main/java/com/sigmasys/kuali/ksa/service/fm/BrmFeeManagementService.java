@@ -259,6 +259,20 @@ public interface BrmFeeManagementService {
     void setSessionKeyPair(String key, String value, BrmContext context);
 
     /**
+     * Sets a FeeManagementSession KeyPair specified by "key" to the number of signup units with
+     * "includedSignupOperations" minus "excludedSignupOperations"
+     *
+     * @param key                      KeyPair key
+     * @param includedSignupOperations List of included signup operation values separated by ","
+     * @param excludedSignupOperations List of excluded signup operation values separated by ","
+     * @param context                  BRM context
+     */
+    void setSessionKeyPairToUnitNumber(String key,
+                                       String includedSignupOperations,
+                                       String excludedSignupOperations,
+                                       BrmContext context);
+
+    /**
      * Sets a FeeManagementSignup KeyPair specified by "key" and "value".
      *
      * @param key     KeyPair key

@@ -123,7 +123,7 @@ public class BrmFeeManagementServiceTest extends AbstractServiceTest {
         signup.setAtpId("19871");
         signup.setOfferingType(OfferingType.ACTIVITY_OFFERING);
         signup.setSession(session);
-        signup.setOperation(FeeManagementSignupOperation.ADD);
+        signup.setOperation(FeeManagementSignupOperation. ADD_WITHOUT_PENALTY);
         signup.setUnit(5);
 
         persistenceService.persistEntity(signup);

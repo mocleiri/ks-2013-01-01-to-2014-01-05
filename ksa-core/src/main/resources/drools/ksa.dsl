@@ -12,6 +12,7 @@
 # LHS definitions
 
 [when][]\({constraints}\) = context : BrmContext({constraints})
+[when][]Context is initialized = isInitialized()
 [when][]Account ID is "{userId}" = account.id == "{userId}"
 [when][]ATP is "{atpIds}" = CommonUtils.containsAny(atpIds, "{atpIds}", ",")
 [when][]Transaction type is "{transactionTypeIds}" = CommonUtils.containsAny(transactionTypeIds, "{transactionTypeIds}", ",")
@@ -77,13 +78,18 @@
 
 
 # RHS definitions
-[then][]set account key "{key}" to "{value}" = context.getFmService().setAccountKey("{key}","{value}",context);
-[then][]set session key "{key}" to "{value}" = context.getFmService().setSessionKey("{key}","{value}",context);
-[then][]set signup key "{key}" to "{value}" = context.getFmService().setSignupKey("{key}","{value}",context);
+[then][]set account key "{key}" to "{value}" = context.getFmService().setAccountKeyPair("{key}","{value}",context);
+[then][]set session key "{key}" to "{value}" = context.getFmService().setSessionKeyPair("{key}","{value}",context);
+[then][]set session key "{key}" to number of units where signup operation is "{includedOperations}" minus "{excludedOperations}" = context.getFmService().setSessionKeyPairToUnitNumber("{key}","{includedOperations}","{excludedOperations}",context);
+[then][]set signup key "{key}" to "{value}" = context.getFmService().setSignupKeyPair("{key}","{value}",context);
 [then][]mark signup as taken = context.getFmService().setSignupTaken(true,context);
 [then][]mark signup as not taken = context.getFmService().setSignupTaken(false,context);
 [then][]mark signup as complete = context.getFmService().setSignupComplete(true,context);
 [then][]mark signup as not complete = context.getFmService().setSignupComplete(false,context);
+[then][]mark all signups with operation "{operations}" as taken = context.getFmService().setSessionSignupsTaken(true,"{operations}",context);
+[then][]mark all signups with operation "{operations}" as not taken = context.getFmService().setSessionSignupsTaken(false,"{operations}",context);
+[then][]mark all signups with operation "{operations}" as complete = context.getFmService().setSessionSignupsComplete(true,"{operations}",context);
+[then][]mark all signups with operation "{operations}" as not complete = context.getFmService().setSessionSignupsComplete(false,"{operations}",context);
 [then][]mark preceding offerings as complete = context.getFmService().setPrecedingOfferingsComplete(true,null,context);
 [then][]mark preceding offerings as not complete = context.getFmService().setPrecedingOfferingsComplete(false,null,context);
 [then][]mark preceding offerings with operation "{operations}" as complete = context.getFmService().setPrecedingOfferingsComplete(true,"{operations}",context);
@@ -114,7 +120,6 @@
 # PAYMENT APPLICATION DSL definitions
 
 # LHS definitions
-[when][]Context is initialized = isInitialized()
 
 # RHS definitions
 [then][]Set global variable "{globalVariable}" to "{attributeValue}" = context.getBrmPaymentService().setGlobalVariableToAttributeValue("{globalVariable}", "{attributeValue}", context);
