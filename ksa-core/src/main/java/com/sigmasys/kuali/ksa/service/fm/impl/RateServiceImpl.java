@@ -15,7 +15,9 @@ import com.sigmasys.kuali.ksa.service.atp.AtpService;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import com.sigmasys.kuali.ksa.service.impl.GenericPersistenceService;
 import com.sigmasys.kuali.ksa.util.BeanUtils;
+import com.sigmasys.kuali.ksa.util.CalendarUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1846,4 +1848,258 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         return subCodes;
     }
 
+
+
+    /**************************************************************
+     *
+     * Rate Interpretation methods.
+     *
+     **************************************************************/
+
+    /**
+     * Calculates the effective date of a Rate with the given ID.
+     * Uses the provided based date to compare to the transaction date.
+     *
+     * @param rateId    ID of a Rate, which effective date is to be found.
+     * @param baseDate  Date used to compare to the transaction date.
+     * @return          Effective date from the Rate with the given ID.
+     */
+    @Override
+    @PermissionsAllowed(Permission.READ_RATE)
+    public Date getEffectiveDateFromRate(Long rateId, Date baseDate) {
+
+        // Get the Rate:
+        Rate rate = getRate(rateId);
+
+        if (rate == null) {
+            String errorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", rateId);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        Date effectiveDate = null;
+
+        // Check the value of "overrideTransactionDateType"
+        TransactionDateType transactionDateType =
+                (rate.getRateCatalogAtp() != null) && (rate.getRateCatalogAtp().getRateCatalog() != null)
+                    ? rate.getRateCatalogAtp().getRateCatalog().getTransactionDateType() : null;
+
+        if (transactionDateType == TransactionDateType.ALWAYS) {
+
+            effectiveDate = rate.getTransactionDate();
+        } else if (transactionDateType == TransactionDateType.UNTIL) {
+
+            effectiveDate = CalendarUtils.isAfter(baseDate, rate.getTransactionDate())
+                        ? baseDate : rate.getTransactionDate();
+        } else if (transactionDateType == TransactionDateType.AFTER) {
+
+            effectiveDate = CalendarUtils.isAfter(baseDate, rate.getTransactionDate())
+                    ? rate.getTransactionDate() : baseDate;
+        } // no transaction date type will result in a null effective date
+
+        return effectiveDate;
+    }
+
+    /**
+     * Calculates the recognition date of a Rate with the given ID.
+     * Uses the provided base date to supply as a default value in case all else fails.
+     *
+     * @param rateId    ID of a Rate which recognition date is to be found.
+     * @param baseDate  Date used as a default value if all else fail.
+     * @return          Recognition date from the Rate with the given ID.
+     */
+    @Override
+    @PermissionsAllowed(Permission.READ_RATE)
+    public Date getRecognitionDateFromRate(Long rateId, Date baseDate) {
+
+        // Get the Rate:
+        Rate rate = getRate(rateId);
+
+        if (rate == null) {
+            String errorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", rateId);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        Date recognitionDate = null;
+
+        // Check the value of the "isRecognitionDateDefinable":
+        if ((rate.getRateCatalogAtp() != null) && (rate.getRateCatalogAtp().getRateCatalog() != null)
+            && BooleanUtils.isTrue(rate.getRateCatalogAtp().getRateCatalog().isRecognitionDateDefinable())) {
+
+            // Get the Recognition Date from Rate:
+            recognitionDate = rate.getRecognitionDate();
+        }
+
+        // If Recognition Date wasn't found, get the Effective Date:
+        if (recognitionDate == null) {
+            recognitionDate = getEffectiveDateFromRate(rateId, baseDate);
+        }
+
+        return (recognitionDate != null) ? recognitionDate : baseDate;
+    }
+
+    /**
+     * Calculates the total amount of the Rate with the given ID.
+     * Uses the number of units to either locate a flexible rate or calculate a fixed rate.
+     *
+     * @param rateId    ID of a Rate which total amount is to be calculated.
+     * @param numUnits  Number of units.
+     * @return          The total amount from the Rate with the given ID.
+     */
+    @Override
+    @PermissionsAllowed(Permission.READ_RATE)
+    public BigDecimal getAmountFromRate(Long rateId, int numUnits) {
+
+        // Get the Rate:
+        Rate rate = getRate(rateId);
+
+        if (rate == null) {
+            String errorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", rateId);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        // Check the rate type and determine how to get the amount:
+        RateType rateType = rate.getRateType();
+        BigDecimal result = null;
+
+        if (rateType != null) {
+
+            if (StringUtils.containsIgnoreCase(rateType.getCode(), "flexible")) {
+
+                // Flexible rate:
+                RateAmount rateAmount = getRateAmount(rateId, numUnits);
+
+                if (rateAmount != null) {
+                    result = rateAmount.getAmount();
+                }
+            } else if (StringUtils.containsIgnoreCase(rateType.getCode(), "fixed")) {
+
+                // Fixed rate:
+                result = calculateFixedRateAmount(rate, numUnits);
+            } else {
+
+                // Flat rate:
+                result = (rate.getDefaultRateAmount() != null) ? rate.getDefaultRateAmount().getAmount() : null;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Finds out the transaction type from RateAmount associated with a Rate
+     * with the given ID and the number of units.
+     *
+     * @param rateId    ID of a Rate which associated amount's transaction type is to be found.
+     * @param numUnits  Number of units.
+     * @return          Transaction Type from the RateAmount.
+     */
+    @Override
+    @PermissionsAllowed(Permission.READ_RATE)
+    public String getTransactionTypeFromRate(Long rateId, int numUnits) {
+
+        // Get the matching RateAmount:
+        RateAmount rateAmount = getRateAmount(rateId, numUnits);
+        String transactionType = null;
+
+        if (rateAmount != null) {
+
+            // Get the transaction type from the RateAmount:
+            transactionType = rateAmount.getTransactionTypeId();
+        }
+
+        return transactionType;
+    }
+
+    /**
+     * Returns a RateAmount from the Rate with the given ID that matches the given number of units.
+     * Returns the Rate's default amount if none can be matched by the number of units.
+     * Returns <code>null</code> if no such Rate is found.
+     *
+     * @param rateId    ID of a Rate which Rate Amount is to be found if any.
+     * @param numUnits  Number of units to match.
+     * @return
+     */
+    private RateAmount getRateAmount(Long rateId, int numUnits) {
+
+        // Get the Rate:
+        Rate rate = getRate(rateId);
+
+        if (rate == null) {
+            String errorMsg = String.format("Invalid Rate ID %d. Rate cannot be found.", rateId);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        // Try to find a matching RateAmount in the Rate:
+        RateAmount result = null;
+
+        // Loop through the RateAmounts:
+        if (CollectionUtils.isNotEmpty(rate.getRateAmounts())) {
+
+            for (RateAmount rateAmount : rate.getRateAmounts()) {
+
+                // Compare the number of units to locate a match:
+                if ((rateAmount.getUnit() != null) && (rateAmount.getUnit() == numUnits)) {
+
+                    // Match found:
+                    result = rateAmount;
+                    break;
+                }
+            }
+        } else {
+
+            // Default to the Rate's default RateAmount:
+            result = rate.getDefaultRateAmount();
+        }
+
+        return result;
+    }
+
+    /**
+     * Calculates a Fixed rate amount using the provided Rate and number of units.
+     *
+     * @param rate      Rate for which to calculate a Fixed rate amount.
+     * @param numUnits  Number of units used for calculations.
+     * @return          Fixed rate amount for the given Rate.
+     */
+    private BigDecimal calculateFixedRateAmount(Rate rate, int numUnits) {
+
+        // Get the default amount:
+        RateAmount rateAmount = rate.getDefaultRateAmount();
+        BigDecimal fixedRateAmount = null;
+
+        if ((rateAmount != null) && (rateAmount.getAmount() != null)) {
+
+            // Check if the Rate amount must be limited:
+            if (rate.isLimitAmount()) {
+
+                // Get the limit range or assign default values:
+                int minUnits = (rate.getMinLimitUnits() != null) ? rate.getMinLimitUnits().intValue() : 0;
+                int maxUnits = (rate.getMaxLimitUnits() != null) ? rate.getMaxLimitUnits().intValue() : Integer.MAX_VALUE;
+
+                if (numUnits > maxUnits) {
+
+                    // Calculate the amount:
+                    fixedRateAmount = rateAmount.getAmount().multiply(new BigDecimal(numUnits - maxUnits));
+                    fixedRateAmount = (rate.getLimitAmountValue() != null) ?
+                            fixedRateAmount.add(rate.getLimitAmountValue()) : fixedRateAmount;
+                } else if (numUnits >= minUnits) {
+
+                    // Use the limit amount:
+                    fixedRateAmount = rate.getLimitAmountValue();
+                }
+            }
+
+            // Calculate the default fixed rate amount if it hasn't been assigned
+            // by multiplying the default amount by the number of units:
+            if (fixedRateAmount == null) {
+                fixedRateAmount = rateAmount.getAmount().multiply(new BigDecimal(numUnits));
+            }
+        }
+
+        return fixedRateAmount;
+    }
 }

@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.model.KeyPair;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -1172,5 +1173,359 @@ public class RateServiceTest extends AbstractServiceTest {
 
     }
 
+
+    /*******************************************************************
+     *
+     * Rate Interpretation tests.
+     *
+     *******************************************************************/
+
+    @Test
+    public void testGetEffectiveDateFromRateNullRateId() throws Exception {
+
+        boolean exceptionCaught = false;
+
+        // Call the service method with a null Rate ID:
+        try {
+            rateService.getEffectiveDateFromRate(null, null);
+            Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
+        } catch (IllegalArgumentException e) {
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", null);
+            Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
+            exceptionCaught = true;
+        }
+
+        // Verify exception was thrown:
+        Assert.isTrue(exceptionCaught, "An exception wasn't thrown and should have been.");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateNoRateFound() throws Exception {
+
+        boolean exceptionCaught = false;
+        Long rateId = 0L;
+
+        // Call the service method with a bogus Rate ID:
+        try {
+            rateService.getEffectiveDateFromRate(rateId, null);
+            Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
+        } catch (IllegalArgumentException e) {
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", rateId);
+            Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
+            exceptionCaught = true;
+        }
+
+        // Verify exception was thrown:
+        Assert.isTrue(exceptionCaught, "An exception wasn't thrown and should have been.");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateNoRateCatalogAtp() throws Exception {
+
+        // According to today's data schema design, Rate must have a RateCatalogAtp
+        // so this test succeeds by design:
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateNoRateCatalog() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().setRateCatalog(null);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), null);
+
+        // Validate the effective date is null:
+        Assert.isNull(effectiveDate, "Effective date should have been null but it wasn't.");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateNoTransactionDateType() throws Exception {
+
+        // Create Rate and remove the Transaction date type:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(null);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), null);
+
+        // Validate the effective date is null:
+        Assert.isNull(effectiveDate, "Effective date should have been null but it wasn't.");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeALWAYSNullTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.ALWAYS);
+        rate.setTransactionDate(null);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), null);
+
+        // Validate the effective date is null:
+        Assert.isNull(effectiveDate, "Effective date should have been null but it wasn't.");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeALWAYSValidTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.ALWAYS);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), null);
+
+        // Validate the effective date equals to the Transaction Date:
+        Assert.isTrue(DateUtils.isSameInstant(rate.getTransactionDate(), effectiveDate), "Didn't get the same Transaction date");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeUNTILNullBaseDateNullTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
+        rate.setTransactionDate(null);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), null);
+
+        // Validate the effective date is null:
+        Assert.isNull(effectiveDate, "Effective date should have been null but it wasn't.");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeUNTILNullBaseDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), null);
+
+        // Validate the effective date equals to the Transaction Date:
+        Assert.isTrue(DateUtils.isSameInstant(rate.getTransactionDate(), effectiveDate), "Didn't get the same Transaction date");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeUNTILNullTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
+        rate.setTransactionDate(null);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), new Date());
+
+        // Validate the effective date is null:
+        Assert.isNull(effectiveDate, "Effective date should have been null but it wasn't.");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeUNTILBaseDateBeforeTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), new Date(0));
+
+        // Validate the effective date equals to the Transaction Date:
+        Assert.isTrue(DateUtils.isSameInstant(rate.getTransactionDate(), effectiveDate), "Didn't get the same Transaction date");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeUNTILBaseDateAfterTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
+
+        // Call the method:
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 1);
+        Date baseDate = calendar.getTime();
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), baseDate);
+
+        // Validate the effective date equals to the Base Date:
+        Assert.isTrue(DateUtils.isSameInstant(baseDate, effectiveDate), "Didn't get the same Base date");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeUNTILBaseDateEqualsToTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), rate.getTransactionDate());
+
+        // Validate the effective date equals to the Transaction Date:
+        Assert.isTrue(DateUtils.isSameInstant(rate.getTransactionDate(), effectiveDate), "Didn't get the same Transaction date");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeAFTERNullTransactionDateNullBaseDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
+        rate.setTransactionDate(null);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), null);
+
+        // Validate the effective date is null:
+        Assert.isNull(effectiveDate, "Effective date should have been null but it wasn't.");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeAFTERNullBaseDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
+
+        // Call the method:
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), null);
+
+        // Validate the effective date is null:
+        Assert.isNull(effectiveDate, "Effective date should have been null but it wasn't.");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeAFTERNullTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
+        rate.setTransactionDate(null);
+
+        // Call the method:
+        Date baseDate = new Date();
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), baseDate);
+
+        // Validate the effective date equals to the Base Date:
+        Assert.isTrue(DateUtils.isSameInstant(baseDate, effectiveDate), "Didn't get the same Base date");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeAFTERBaseDateBeforeTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
+
+        // Call the method:
+        Date baseDate = new Date(0);
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), baseDate);
+
+        // Validate the effective date equals to the Base Date:
+        Assert.isTrue(DateUtils.isSameInstant(baseDate, effectiveDate), "Didn't get the same Base date");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeAFTERBaseDateAfterTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
+
+        // Call the method:
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 1);
+        Date baseDate = calendar.getTime();
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), baseDate);
+
+        // Validate the effective date equals to the Transaction Date:
+        Assert.isTrue(DateUtils.isSameInstant(rate.getTransactionDate(), effectiveDate), "Didn't get the same Transaction date");
+    }
+
+    @Test
+    public void testGetEffectiveDateFromRateTransactionDateTypeAFTERBaseDateEqualsToTransactionDate() throws Exception {
+
+        // Create Rate:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
+
+        // Call the method:
+        Date baseDate = rate.getTransactionDate();
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), baseDate);
+
+        // Validate the effective date equals to the Base Date:
+        Assert.isTrue(DateUtils.isSameInstant(baseDate, effectiveDate), "Didn't get the same Base date");
+    }
 
 }
