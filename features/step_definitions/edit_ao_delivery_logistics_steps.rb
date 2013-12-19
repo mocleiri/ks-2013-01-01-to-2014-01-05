@@ -161,8 +161,7 @@ end
 
 When /^I edit an Activity Offering with non-standard time slots (approved|not approved)$/ do |approval|
   if approval=="not approved"
-    #course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201301", :course=>"ENGL202")
-    course_offering = make CourseOffering, :term => "201301", :course=>"ENGL202A"
+    course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201301", :course=>"ENGL202")
   else
     course_offering = create CourseOffering, :create_by_copy => (make CourseOffering, :term => "201301", :course=>"ENGL262")
   end
@@ -208,3 +207,6 @@ And /^I attempt to add non-standard RDLs for an AO as a (DSC|CSC)$/ do |role|
   @dl_obj = make DeliveryLogistics, :std_ts => false, :days => "TH", :start_time => "08:21", :start_time_ampm => "pm", :end_time => "09:04", :end_time_ampm => "pm",
                   :facility => "PHYS", :facility_long_name => "PHYS", :room => "4102", :dsc => (role=="DSC")
 end
+
+
+

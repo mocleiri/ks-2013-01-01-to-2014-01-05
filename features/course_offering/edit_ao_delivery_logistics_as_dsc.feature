@@ -14,7 +14,7 @@ Feature: WC.Edit AO delivery logistics as DSC
     Then the AO's delivery logistics shows the new schedule
 
   #CO 20.2 (KSENROLL-10318)
-  #@bug @KSENROLL-11322
+  @bug @KSENROLL-11322
   Scenario: Add non-standard RDLs for an AO with non-standard time slots not approved
     When I edit an Activity Offering with non-standard time slots not approved
     And I attempt to add non-standard RDLs for an AO as a DSC
@@ -37,3 +37,5 @@ Feature: WC.Edit AO delivery logistics as DSC
     When I am editing an AO with RDLs in an open term
     When I add RDLs for an AO checking the TBA flag
     Then the AO's delivery logistics shows the new schedule as TBA
+
+

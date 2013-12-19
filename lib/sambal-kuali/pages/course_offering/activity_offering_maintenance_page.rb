@@ -90,7 +90,8 @@ class ActivityOfferingMaintenance < BasePage
   LOGISTICS_ACTION_COLUMN = 7
 
   element(:add_logistics_div) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-New") }
-  element(:non_std_ts_checkbox) { |b| b.checkbox(id: "isApprovedForNonStandardTimeSlots_control") }
+  element(:non_std_ts_control) { |b| b.span(id: "isApprovedForNonStandardTimeSlots_control") }
+  element(:non_std_ts_checkbox) { |b| b.non_std_ts_control.checkbox }
   element(:non_std_ts_text) { |b| b.label(id: "isApprovedForNonStandardTimeSlots_label").text }
   action(:approve_non_std_ts) { |b| b.non_std_ts_checkbox.set }
   action(:disallow_non_std_ts) { |b| b.non_std_ts_checkbox.clear }
@@ -98,11 +99,24 @@ class ActivityOfferingMaintenance < BasePage
   element(:add_days) { |b| b.add_logistics_div.div(data_label: "Days").text_field() }
   element(:add_start_time) { |b| b.add_logistics_div.div(data_label: "Start Time").text_field() }
   element(:add_start_time_ampm) { |b| b.add_logistics_div.select(name: "document.newMaintainableObject.dataObject.newScheduleRequest.startTimeAMPM") }
-  # text field
-  element(:add_end_time) { |b| b.add_logistics_div.div(data_label: "End Time").text_field() }
-  element(:add_end_time_ampm) { |b| b.add_logistics_div.select(name: "document.newMaintainableObject.dataObject.newScheduleRequest.endTimeAMPM") }
-  # select box
-  element(:end_time_select) { |b| b.select(id: "rdl_endtime_control") }
+
+  # END TIME WIDGETS
+  # This field comes in 2 variants: 1) an "Input"-field, 2) a "Select"-list
+  # Only 1 variant is displayed for any given variation of these variables: 1) the logged-in user, 2) whether or not the AO has been approved for "non standard"
+  # See the application code/documentation for more detail
+  #
+  # Note: the difference between #1 and #2 is a bit subtle.  But if you log in as CSC(admin) you'll see it renders as an "<input>" in the DOM (which when you
+  #       press the "down"-key you see the DOM gets dynamically populated with a "<ul>"-tag (widget #1).  However, if you log in as DSC(carol) and you edit
+  #       an AO which has been "approved for non-standard timeslots", you'll see it instead renders in the DOM as a "<select>" ()widget #2).
+
+        # Widget #1 (input field)
+        element(:add_end_time_div) { |b| b.add_logistics_div.div(id: "rdl_endtime") }
+        element(:add_end_time) { |b| b.add_end_time_div.text_field() }
+        element(:add_end_time_ampm) { |b| b.add_logistics_div.select(name: "document.newMaintainableObject.dataObject.newScheduleRequest.endTimeAMPM") }
+
+        # Widget #2 (select list)
+        element(:end_time_select) { |b| b.select(id: "rdl_endtime_control") }
+
   # error msg
   element(:end_time_error_div) { |b| b.div(id: "rdl_endtime_errors") }
   value(:end_time_error) { |b| b.end_time_error_div.li(class: "uif-errorMessageItem-field").text }
