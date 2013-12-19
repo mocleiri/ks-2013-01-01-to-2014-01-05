@@ -161,6 +161,7 @@ module CalendarUtils
         end
       end
     end
+    puts "ACAL get_random_calendar_year: #{random_year}"
     random_year
   end
 
