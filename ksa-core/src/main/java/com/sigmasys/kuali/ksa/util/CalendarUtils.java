@@ -1,5 +1,7 @@
 package com.sigmasys.kuali.ksa.util;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -27,6 +29,56 @@ public class CalendarUtils {
     }
 
     private CalendarUtils() {
+    }
+
+    /**
+     * Safely compares two dates. Checks if the first date is before the second date.
+     * Ignores comparison if either or both of the dates are <code>null</code>.
+     *
+     * @param date          A date to compare.
+     * @param compareTo     A date to compare to.
+     * @return <code>true</code> if "date" is before "compareTo", <code>false</code> otherwise.
+     */
+    public static boolean isBefore(Date date, Date compareTo) {
+        return (date != null) && (compareTo != null) && date.before(compareTo);
+    }
+
+    /**
+     * Safely compares two dates. Checks if the first date is before or equals to the second date.
+     * Ignores comparison if either or both of the dates are <code>null</code>.
+     *
+     * @param date          A date to compare.
+     * @param compareTo     A date to compare to.
+     * @return <code>true</code> if "date" is before or equals to "compareTo", <code>false</code> otherwise.
+     */
+    public static boolean isBeforeOrEquals(Date date, Date compareTo) {
+        return (date != null) && (compareTo != null) &&
+                (date.before(compareTo) || DateUtils.isSameInstant(date, compareTo));
+    }
+
+    /**
+     * Safely compares two dates. Checks if the first date is after the second date.
+     * Ignores comparison if either or both of the dates are <code>null</code>.
+     *
+     * @param date          A date to compare.
+     * @param compareTo     A date to compare to.
+     * @return <code>true</code> if "date" is after "compareTo", <code>false</code> otherwise.
+     */
+    public static boolean isAfter(Date date, Date compareTo) {
+        return (date != null) && (compareTo != null) && date.after(compareTo);
+    }
+
+    /**
+     * Safely compares two dates. Checks if the first date is after or equals to the second date.
+     * Ignores comparison if either or both of the dates are <code>null</code>.
+     *
+     * @param date          A date to compare.
+     * @param compareTo     A date to compare to.
+     * @return <code>true</code> if "date" is after or equals "compareTo", <code>false</code> otherwise.
+     */
+    public static boolean isAfterOrEquals(Date date, Date compareTo) {
+        return (date != null) && (compareTo != null) &&
+                (date.after(compareTo) || DateUtils.isSameInstant(date, compareTo));
     }
 
     // Converts a java.util.Date into an instance of XMLGregorianCalendar
