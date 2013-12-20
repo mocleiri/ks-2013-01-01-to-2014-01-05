@@ -606,7 +606,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         RateAmount rateAmount = new RateAmount();
         rateAmount.setAmount(defaultRateAmount);
         rateAmount.setTransactionTypeId(transactionTypeId);
-        rateAmount.setUnit(0);
+        rateAmount.setUnits(0);
 
         // Persisting RateAmount
         persistEntity(rateAmount);
@@ -1098,7 +1098,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                 throw new InvalidRateException(errMsg);
             }
 
-            if (rateAmount.getUnit() == null) {
+            if (rateAmount.getUnits() == null) {
                 String errMsg = "RateAmount unit cannot be null";
                 logger.error(errMsg);
                 throw new InvalidRateException(errMsg);
@@ -1142,7 +1142,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             if (rateAmount.getId().equals(defaultRateAmount.getId())) {
                 defaultAmountIsPresent = true;
             } else {
-                uniqueUnits.add(rateAmount.getUnit());
+                uniqueUnits.add(rateAmount.getUnits());
             }
         }
 
@@ -2029,7 +2029,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             for (RateAmount rateAmount : rate.getRateAmounts()) {
 
                 // Compare the number of units to locate a match:
-                if (rateAmount.getUnit() != null && rateAmount.getUnit() == numUnits) {
+                if (rateAmount.getUnits() != null && rateAmount.getUnits() == numUnits) {
                     // Match found:
                     return rateAmount;
                 }

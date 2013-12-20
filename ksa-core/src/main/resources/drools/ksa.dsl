@@ -35,28 +35,28 @@
 # LHS definitions
 [when][]account key "{key}" is "{value}" = fmService.compareAccountKeyPair("{key}","{value}","==",context)
 [when][]account key "{key}" is not "{value}" = fmService.compareAccountKeyPair("{key}","{value}","!=",context)
-[when][]account key "{key}" gt "{value}" = fmService.compareAccountKeyPair("{key}","{value}",">",context)
-[when][]account key "{key}" gte "{value}" = fmService.compareAccountKeyPair("{key}","{value}",">=",context)
-[when][]account key "{key}" lt "{value}" = fmService.compareAccountKeyPair("{key}","{value}","<",context)
-[when][]account key "{key}" lte "{value}" = fmService.compareAccountKeyPair("{key}","{value}","<=",context)
+[when][]account key "{key}" gt {value} = fmService.compareAccountKeyPair("{key}","{value}",">",context)
+[when][]account key "{key}" gte {value} = fmService.compareAccountKeyPair("{key}","{value}",">=",context)
+[when][]account key "{key}" lt {value} = fmService.compareAccountKeyPair("{key}","{value}","<",context)
+[when][]account key "{key}" lte {value} = fmService.compareAccountKeyPair("{key}","{value}","<=",context)
 [when][]session key "{key}" is "{value}" = fmService.compareSessionKeyPair("{key}","{value}","==",context)
 [when][]session key "{key}" is not "{value}" = fmService.compareSessionKeyPair("{key}","{value}","!=",context)
-[when][]session key "{key}" gt "{value}" = fmService.compareSessionKeyPair("{key}","{value}",">",context)
-[when][]session key "{key}" gte "{value}" = fmService.compareSessionKeyPair("{key}","{value}",">=",context)
-[when][]session key "{key}" lt "{value}" = fmService.compareSessionKeyPair("{key}","{value}","<",context)
-[when][]session key "{key}" lte "{value}" = fmService.compareSessionKeyPair("{key}","{value}","<=",context)
+[when][]session key "{key}" gt {value} = fmService.compareSessionKeyPair("{key}","{value}",">",context)
+[when][]session key "{key}" gte {value} = fmService.compareSessionKeyPair("{key}","{value}",">=",context)
+[when][]session key "{key}" lt {value} = fmService.compareSessionKeyPair("{key}","{value}","<",context)
+[when][]session key "{key}" lte {value} = fmService.compareSessionKeyPair("{key}","{value}","<=",context)
 [when][]signup key "{key}" is "{value}" = fmService.compareSignupKeyPair("{key}","{value}","==",context)
 [when][]signup key "{key}" is not "{value}" = fmService.compareSignupKeyPair("{key}","{value}","!=",context)
-[when][]signup key "{key}" gt "{value}" = fmService.compareSignupKeyPair("{key}","{value}",">",context)
-[when][]signup key "{key}" gte "{value}" = fmService.compareSignupKeyPair("{key}","{value}",">=",context)
-[when][]signup key "{key}" lt "{value}" = fmService.compareSignupKeyPair("{key}","{value}","<",context)
-[when][]signup key "{key}" lte "{value}" = fmService.compareSignupKeyPair("{key}","{value}","<=",context)
+[when][]signup key "{key}" gt {value} = fmService.compareSignupKeyPair("{key}","{value}",">",context)
+[when][]signup key "{key}" gte {value} = fmService.compareSignupKeyPair("{key}","{value}",">=",context)
+[when][]signup key "{key}" lt {value} = fmService.compareSignupKeyPair("{key}","{value}","<",context)
+[when][]signup key "{key}" lte {value} = fmService.compareSignupKeyPair("{key}","{value}","<=",context)
 [when][]signup rate key "{key}" is "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}","==",context)
 [when][]signup rate key "{key}" is not "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}","!=",context)
-[when][]signup rate key "{key}" gt "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}",">",context)
-[when][]signup rate key "{key}" gte "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}",">=",context)
-[when][]signup rate key "{key}" lt "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}","<",context)
-[when][]signup rate key "{key}" lte "{value}" = fmService.compareSignupRateKeyPair("{key}","{value}","<=",context)
+[when][]signup rate key "{key}" gt {value} = fmService.compareSignupRateKeyPair("{key}","{value}",">",context)
+[when][]signup rate key "{key}" gte {value} = fmService.compareSignupRateKeyPair("{key}","{value}",">=",context)
+[when][]signup rate key "{key}" lt {value} = fmService.compareSignupRateKeyPair("{key}","{value}","<",context)
+[when][]signup rate key "{key}" lte {value} = fmService.compareSignupRateKeyPair("{key}","{value}","<=",context)
 [when][]account type is "{accountTypeCode}" = fmService.compareAccountType("{accountTypeCode}","==",context)
 [when][]account type is not "{accountTypeCode}" = fmService.compareAccountType("{accountTypeCode}","!=",context)
 [when][]account status is "{accountStatusCode}" = fmService.compareAccountStatus("{accountStatusCode}","==",context)
@@ -80,12 +80,17 @@
 # RHS definitions
 [then][]set account key "{key}" to "{value}" = context.getFmService().setAccountKeyPair("{key}","{value}",context);
 [then][]set session key "{key}" to "{value}" = context.getFmService().setSessionKeyPair("{key}","{value}",context);
+[then][]set session key "{key}" to number of units where signup is taken = context.getFmService().setSessionKeyPairToUnitNumberWithSignupMethod("{key}","isTaken",context);
 [then][]set session key "{key}" to number of units where signup operation is "{includedOperations}" minus "{excludedOperations}" = context.getFmService().setSessionKeyPairToUnitNumber("{key}","{includedOperations}","{excludedOperations}",context);
 [then][]set signup key "{key}" to "{value}" = context.getFmService().setSignupKeyPair("{key}","{value}",context);
 [then][]mark signup as taken = context.getFmService().setSignupTaken(true,context);
 [then][]mark signup as not taken = context.getFmService().setSignupTaken(false,context);
 [then][]mark signup as complete = context.getFmService().setSignupComplete(true,context);
 [then][]mark signup as not complete = context.getFmService().setSignupComplete(false,context);
+[then][]mark all signups as taken = context.getFmService().setSessionSignupsTaken(true,null,context);
+[then][]mark all signups as not taken = context.getFmService().setSessionSignupsTaken(false,null,context);
+[then][]mark all signups as complete = context.getFmService().setSessionSignupsComplete(true,null,context);
+[then][]mark all signups as not complete = context.getFmService().setSessionSignupsComplete(false,null,context);
 [then][]mark all signups with operation "{operations}" as taken = context.getFmService().setSessionSignupsTaken(true,"{operations}",context);
 [then][]mark all signups with operation "{operations}" as not taken = context.getFmService().setSessionSignupsTaken(false,"{operations}",context);
 [then][]mark all signups with operation "{operations}" as complete = context.getFmService().setSessionSignupsComplete(true,"{operations}",context);

@@ -55,7 +55,7 @@ Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) va
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (5006, 'FM Rule 6', 3, 10, null,
 '(signup operation is "WITHDRAW")',
-'mark all signups with operation "" as not taken
+'mark all signups as not taken
  set session key "withdrawn" to "true"
  on signup including preceding offerings remove rates ".*fee.*"
 ')!
@@ -63,6 +63,7 @@ Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) va
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (5007, 'FM Rule 7', 3, 9, null,
 '(Context is initialized)',
 'set session key "chargeable.credits" to number of units where signup operation is "ADD,ADD_WITHOUT_PENALTY,TRANSFER_IN" minus "DROP,DROP_WITHOUT_PENALTY,TRANSFER_OUT"
+ set session key "taken.credits" to number of units where signup is taken
 ')!
 
 -- FM rule associations

@@ -23,7 +23,7 @@ public class FeeManagementSignupRateAmount implements Identifiable {
 
     private String transactionTypeId;
 
-    private Integer unit;
+    private Integer units;
 
     private BigDecimal amount;
 
@@ -60,13 +60,13 @@ public class FeeManagementSignupRateAmount implements Identifiable {
         this.transactionTypeId = transactionTypeId;
     }
 
-    @Column(name = "UNIT")
-    public Integer getUnit() {
-        return unit;
+    @Column(name = "UNITS")
+    public Integer getUnits() {
+        return units;
     }
 
-    public void setUnit(Integer unit) {
-        this.unit = unit;
+    public void setUnits(Integer units) {
+        this.units = units;
     }
 
     @Column(name = "AMOUNT")

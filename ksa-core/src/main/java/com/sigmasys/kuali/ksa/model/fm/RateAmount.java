@@ -14,12 +14,12 @@ import java.math.BigDecimal;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_RATE_AMOUNT", uniqueConstraints = {@UniqueConstraint(columnNames = {"RATE_ID_FK", "UNIT"})})
+@Table(name = "KSSA_RATE_AMOUNT", uniqueConstraints = {@UniqueConstraint(columnNames = {"RATE_ID_FK", "UNITS"})})
 public class RateAmount implements Identifiable {
 
     private Long id;
 
-    private Integer unit;
+    private Integer units;
 
     private BigDecimal amount;
 
@@ -40,13 +40,13 @@ public class RateAmount implements Identifiable {
         this.id = id;
     }
 
-    @Column(name = "UNIT")
-    public Integer getUnit() {
-        return unit;
+    @Column(name = "UNITS")
+    public Integer getUnits() {
+        return units;
     }
 
-    public void setUnit(Integer unit) {
-        this.unit = unit;
+    public void setUnits(Integer units) {
+        this.units = units;
     }
 
     @Column(name = "AMOUNT")

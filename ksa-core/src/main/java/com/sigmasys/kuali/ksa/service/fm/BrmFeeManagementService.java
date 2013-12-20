@@ -259,7 +259,7 @@ public interface BrmFeeManagementService {
     void setSessionKeyPair(String key, String value, BrmContext context);
 
     /**
-     * Sets a FeeManagementSession KeyPair specified by "key" to the number of signup units with
+     * Sets a FeeManagementSession KeyPair specified by "key" to the unit number of signups with
      * "includedSignupOperations" minus "excludedSignupOperations"
      *
      * @param key                      KeyPair key
@@ -271,6 +271,18 @@ public interface BrmFeeManagementService {
                                        String includedSignupOperations,
                                        String excludedSignupOperations,
                                        BrmContext context);
+
+    /**
+     * Sets a FeeManagementSession KeyPair specified by "key" to the unit number of signups on which a boolean method
+     * specified by "signupBooleanMethod" method name returns true.
+     * It throws IllegalArgumentException if the boolean method does not exist or returns a non-boolean value.
+     *
+     * @param key                 KeyPair key
+     * @param signupBooleanMethod The name of the boolean method on FeeManagementSignup class.
+     * @param context             BRM context
+     * @throws IllegalArgumentException
+     */
+    void setSessionKeyPairToUnitNumberWithSignupMethod(String key, String signupBooleanMethod, BrmContext context);
 
     /**
      * Sets a FeeManagementSignup KeyPair specified by "key" and "value".

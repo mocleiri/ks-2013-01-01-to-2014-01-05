@@ -12,7 +12,7 @@ alter table KSSA_LANGUAGE add constraint UK_9aak1l0nffyaasjc8afohwcnn unique (LO
 alter table KSSA_PB_PLAN add constraint UK_i4pcljunyigo3plb5fir5ijpn unique (CODE);
 alter table KSSA_PB_QUEUE add constraint UK_5icskdmhcv7g9mbk5hu4002jy unique (ACNT_ID_FK, PB_PLAN_ID_FK);
 alter table KSSA_RATE add constraint UK_sprnbc42tmcbuqoon4w4j9636 unique (CODE, SUB_CODE, RATE_CATALOG_ATP_ID_FK);
-alter table KSSA_RATE_AMOUNT add constraint UK_rc6t7fmp9iwkcyu0xu1g91gfv unique (RATE_ID_FK, UNIT);
+alter table KSSA_RATE_AMOUNT add constraint UK_3w5jur4jsn8g10nuncm4jleyt unique (RATE_ID_FK, UNITS);
 alter table KSSA_RATE_TYPE add constraint UK_oy0lm1b29qn3wuyf2g6glpdy0 unique (CODE);
 alter table KSSA_RULE add constraint UK_53nu3ypotqtt3om1i2oxwsm2i unique (NAME);
 alter table KSSA_RULE_SET add constraint UK_pjuv5c6oi216yq84k2k5m5jfi unique (NAME);

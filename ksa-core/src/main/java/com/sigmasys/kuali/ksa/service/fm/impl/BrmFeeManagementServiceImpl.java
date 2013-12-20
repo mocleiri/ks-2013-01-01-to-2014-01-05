@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -904,7 +905,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
         if (signup != null) {
-            return compareObjects(signup.getUnit() != null ? signup.getUnit() : signupUnits, numberOfUnits, operator);
+            return compareObjects(signup.getUnits() != null ? signup.getUnits() : signupUnits, numberOfUnits, operator);
         }
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
@@ -913,7 +914,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
 
         for (FeeManagementSignup fmSignup : signups) {
-            if (fmSignup.getUnit() != null) {
+            if (fmSignup.getUnits() != null) {
                 signupUnits++;
             }
         }
@@ -1141,7 +1142,8 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     }
 
     /**
-     * Sets a FeeManagementSession KeyPair specified by "key" and "value".
+     * Sets a FeeManagementSession KeyPair specified by "key" to the unit number of signups with
+     * "includedSignupOperations" minus "excludedSignupOperations"
      *
      * @param key                      KeyPair key
      * @param includedSignupOperations List of included signup operation values separated by ","
@@ -1171,15 +1173,63 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
                 if (signupOperation != null) {
                     if (includedOperations.contains(signupOperation.name())) {
-                        includedUnits += signup.getUnit();
+                        includedUnits += signup.getUnits();
                     } else if (excludedOperations.contains(signupOperation.name())) {
-                        excludedUnits += signup.getUnit();
+                        excludedUnits += signup.getUnits();
                     }
                 }
             }
         }
 
         setKeyPair(session, key, Integer.toString(includedUnits - excludedUnits));
+    }
+
+    /**
+     * Sets a FeeManagementSession KeyPair specified by "key" to the unit number of signups on which a boolean method
+     * specified by "signupBooleanMethod" method name returns true.
+     * It throws IllegalArgumentException if the boolean method does not exist or returns a non-boolean value.
+     *
+     * @param key                 KeyPair key
+     * @param signupBooleanMethod The name of the boolean method on FeeManagementSignup class.
+     * @param context             BRM context
+     * @throws IllegalArgumentException
+     */
+    @Override
+    public void setSessionKeyPairToUnitNumberWithSignupMethod(String key, String signupBooleanMethod, BrmContext context) {
+
+        try {
+
+            int units = 0;
+
+            FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+            Set<FeeManagementSignup> signups = session.getSignups();
+
+            if (CollectionUtils.isNotEmpty(signups)) {
+
+                Method method = FeeManagementSignup.class.getDeclaredMethod(signupBooleanMethod);
+
+                Class<?> methodType = method.getReturnType();
+
+                if (!Boolean.class.equals(methodType)) {
+                    String errMsg = "The signup method must return a boolean value, actual type = " + methodType.getName();
+                    logger.error(errMsg);
+                    throw new IllegalArgumentException(errMsg);
+                }
+
+                for (FeeManagementSignup signup : signups) {
+                    if ((Boolean) method.invoke(signup)) {
+                        units += signup.getUnits();
+                    }
+                }
+            }
+
+            setKeyPair(session, key, Integer.toString(units));
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -1454,11 +1504,19 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
             for (FeeManagementSignup fmSignup : signups) {
 
+                if (signup.isComplete()) {
+                    continue;
+                }
+
                 Set<FeeManagementSignupRate> signupRates = fmSignup.getSignupRates();
 
                 if (CollectionUtils.isNotEmpty(signupRates)) {
 
                     for (FeeManagementSignupRate signupRate : new HashSet<FeeManagementSignupRate>(signupRates)) {
+
+                        if (signupRate.isComplete()) {
+                            continue;
+                        }
 
                         Rate rate = signupRate.getRate();
                         RateType rateType = rate.getRateType();
@@ -1512,14 +1570,23 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
         if (signup != null) {
-            addRateToSignup(rate, signup);
+
+            if (!signup.isComplete()) {
+                addRateToSignup(rate, signup);
+            }
+
         } else {
 
             Set<FeeManagementSignup> signups = session.getSignups();
 
             if (CollectionUtils.isNotEmpty(signups)) {
+
                 for (FeeManagementSignup fmSignup : signups) {
-                    addRateToSignup(rate, fmSignup);
+
+                    if (!fmSignup.isComplete()) {
+                        addRateToSignup(rate, fmSignup);
+                    }
+
                 }
             }
         }
@@ -1557,14 +1624,22 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
         if (signup != null) {
-            replaceRateOnSignup(rate.getId(), newRate, signup);
+
+            if (!signup.isComplete()) {
+                replaceRateOnSignup(rate.getId(), newRate, signup);
+            }
+
         } else {
 
             Set<FeeManagementSignup> signups = session.getSignups();
 
             if (CollectionUtils.isNotEmpty(signups)) {
+
                 for (FeeManagementSignup fmSignup : signups) {
-                    replaceRateOnSignup(rate.getId(), newRate, fmSignup);
+
+                    if (!fmSignup.isComplete()) {
+                        replaceRateOnSignup(rate.getId(), newRate, fmSignup);
+                    }
                 }
             }
         }
@@ -1580,6 +1655,8 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public void chargeManifestRates(String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+
+        // TODO: How to check if the signup rates are complete or not
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
@@ -1597,15 +1674,20 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 RateType rateType = rate.getRateType();
                 RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
 
-                boolean rateCodesComply = StringUtils.isEmpty(rateCodes) || rateCodeValues.contains(rate.getCode());
-                boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) || rateTypeCodeValues.contains(rateType.getCode());
-                boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) || rateCatalogCodeValues.contains(rateCatalog.getCode());
+                boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
+                        matchesPatterns(rate.getCode(), rateCodeValues);
+
+                boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
+                        matchesPatterns(rateType.getCode(), rateTypeCodeValues);
+
+                boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
+                        matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
 
                 if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
 
                     RateAmount rateAmount = rate.getDefaultRateAmount();
 
-                    // TODO: Create a new charge
+                    // TODO: Create a new charge in the right way
                     transactionService.createCharge(rateAmount.getTransactionTypeId(),
                             context.getAccount().getId(),
                             new Date(),

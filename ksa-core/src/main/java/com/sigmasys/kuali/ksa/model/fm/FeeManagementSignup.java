@@ -31,7 +31,7 @@ public class FeeManagementSignup implements Identifiable, KeyPairAware {
 
     private String atpId;
 
-    private Integer unit;
+    private Integer units;
 
     private Boolean isComplete;
 
@@ -111,13 +111,13 @@ public class FeeManagementSignup implements Identifiable, KeyPairAware {
         this.atpId = atpId;
     }
 
-    @Column(name = "UNIT")
-    public Integer getUnit() {
-        return unit;
+    @Column(name = "UNITS")
+    public Integer getUnits() {
+        return units;
     }
 
-    public void setUnit(Integer unit) {
-        this.unit = unit;
+    public void setUnits(Integer units) {
+        this.units = units;
     }
 
     @org.hibernate.annotations.Type(type = "yes_no")

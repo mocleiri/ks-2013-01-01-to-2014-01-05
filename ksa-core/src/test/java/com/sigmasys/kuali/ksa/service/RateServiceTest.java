@@ -1010,13 +1010,13 @@ public class RateServiceTest extends AbstractServiceTest {
 
         RateAmount amount1 = new RateAmount();
         amount1.setAmount(new BigDecimal(200.00));
-        amount1.setUnit(125);
+        amount1.setUnits(125);
         amount1.setTransactionTypeId(rateCatalog.getTransactionTypeId());
         amounts.add(amount1);
 
         RateAmount amount2 = new RateAmount();
         amount2.setAmount(new BigDecimal(100.00));
-        amount2.setUnit(275);
+        amount2.setUnits(275);
         amount2.setTransactionTypeId(rateCatalog.getTransactionTypeId());
         amounts.add(amount2);
 
@@ -1076,13 +1076,13 @@ public class RateServiceTest extends AbstractServiceTest {
 
         RateAmount amount1 = new RateAmount();
         amount1.setAmount(new BigDecimal(200.00));
-        amount1.setUnit(350);
+        amount1.setUnits(350);
         amount1.setTransactionTypeId(rateCatalog.getTransactionTypeId());
         amounts.add(amount1);
 
         RateAmount amount2 = new RateAmount();
         amount2.setAmount(new BigDecimal(100.00));
-        amount2.setUnit(125);
+        amount2.setUnits(125);
         amount2.setTransactionTypeId(rateCatalog.getTransactionTypeId());
         amounts.add(amount2);
 
@@ -1101,7 +1101,7 @@ public class RateServiceTest extends AbstractServiceTest {
             Assert.notNull(rateAmount.getRate());
             Assert.isTrue(rateAmount.getRate().getId().equals(rate.getId()));
 
-            if (rateAmount.getUnit() == 125) {
+            if (rateAmount.getUnits() == 125) {
                 rateService.deleteRateAmount(rateAmount.getId());
             }
 
