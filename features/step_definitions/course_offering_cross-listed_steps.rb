@@ -21,7 +21,10 @@ And /^the cross-listing is indicated for the alias Course Offering$/ do
   @course_offering_alias.manage
 
   #  Validate the crosslisting messaging is present.
-  on(ManageCourseOfferings).cross_listed_message.include? "crosslisted alias for: " << cross_listed_infoText_targetValue
+  on ManageCourseOfferings do |page|
+    page.cross_listed_message_div.wait_until_present
+    page.cross_listed_message.include? "crosslisted alias for: " << cross_listed_infoText_targetValue
+  end
 end
 
 And /^the copy-link is not showing for the alias$/ do
