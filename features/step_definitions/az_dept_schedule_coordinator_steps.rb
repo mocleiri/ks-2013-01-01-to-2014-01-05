@@ -732,6 +732,6 @@ When /^I have access to view requested delivery logistics$/ do
 end
 When /^I have access to delete requested delivery logistics$/ do
   on ActivityOfferingMaintenance do |page|
-    page.delete_requested_delivery_logistics_button.present?.should == true
+    page.delete_requested_delivery_logistics_element.present?.should == true
   end
 end

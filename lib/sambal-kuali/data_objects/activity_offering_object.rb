@@ -547,7 +547,7 @@ class ActivityOffering
 
   def delete_personnel person
     row = person.target_row_by_personnel_id
-    row.cells[ActivityOfferingMaintenance::PERS_ACTION_COLUMN].button.click()
+    row.cells[ActivityOfferingMaintenance::PERS_ACTION_COLUMN].link.click()
   end
 
   #completes activity offering edit operation

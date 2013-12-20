@@ -143,8 +143,8 @@ class ActivityOfferingMaintenance < BasePage
     end
   end
 
-  element(:delete_requested_delivery_logistics_button) { |b| b.requested_logistics_table.button(text: "delete") } #TODO: identify button by row (days + start_time)
-  action(:delete_requested_delivery_logistics) { |b| b.delete_requested_delivery_logistics_button.click; b.loading.wait_while_present }
+  element(:delete_requested_delivery_logistics_element) { |b| b.requested_logistics_table.link(text: "delete") } #TODO: identify button by row (days + start_time)
+  action(:delete_requested_delivery_logistics) { |b| b.delete_requested_delivery_logistics_element.click; b.loading.wait_while_present }
   element(:requested_logistics_div) { |b| b.frm.div(id: "ActivityOffering-DeliveryLogistic-Requested") }
   element(:requested_logistics_table) { |b| b.requested_logistics_div.table() }
 
@@ -357,12 +357,12 @@ class ActivityOfferingMaintenance < BasePage
   end
 
   def remove_seatpool(pop_name)
-    target_pool_row(pop_name).button(text: "delete").click
+    target_pool_row(pop_name).link(text: "delete").click
     loading.wait_while_present
   end
 
   def remove_seatpool_by_index(sp_index)
-    seat_pools_table.rows[sp_index].button(text: "delete").click
+    seat_pools_table.rows[sp_index].link(text: "delete").click
     loading.wait_while_present
   end
 
