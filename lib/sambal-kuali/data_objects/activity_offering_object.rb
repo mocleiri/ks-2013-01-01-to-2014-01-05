@@ -1123,9 +1123,8 @@ class DeliveryLogistics
               page.end_time_select.select("#{@end_time} #{@end_time_ampm.upcase}")
             end
           else
-            page.add_end_time.click
-            sleep 1
-            page.loading.wait_while_present
+            page.end_time_select_populate_list
+
             if @std_ts then
               page.add_end_time.set @end_time.to_s[0]
               page.loading.wait_while_present
