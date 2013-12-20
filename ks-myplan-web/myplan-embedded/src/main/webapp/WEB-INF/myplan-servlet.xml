@@ -22,6 +22,7 @@
     <context:component-scan base-package="org.kuali.student.myplan.plan"/>
     <context:component-scan base-package="org.kuali.student.myplan.adviser"/>
     <context:component-scan base-package="org.kuali.student.myplan.comment"/>
+    <context:component-scan base-package="org.kuali.student.myplan.sampleplan"/>
     <context:component-scan base-package="edu.uw.kuali.student.myplan"/>
 
     <!-- Custom UW ATP Comparator bean -->
