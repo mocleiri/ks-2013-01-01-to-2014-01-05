@@ -6,6 +6,7 @@ import com.sigmasys.kuali.ksa.model.KeyPair;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -1177,6 +1178,7 @@ public class RateServiceTest extends AbstractServiceTest {
     /*******************************************************************
      *
      * Rate Interpretation tests.
+     * Tests for the "getEffectiveDateFromRate" method.
      *
      *******************************************************************/
 
@@ -1190,7 +1192,7 @@ public class RateServiceTest extends AbstractServiceTest {
             rateService.getEffectiveDateFromRate(null, null);
             Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
         } catch (IllegalArgumentException e) {
-            String expectedErrorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", null);
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getEffectiveDateFromRate. Rate cannot be found.", null);
             Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
             exceptionCaught = true;
         }
@@ -1210,7 +1212,7 @@ public class RateServiceTest extends AbstractServiceTest {
             rateService.getEffectiveDateFromRate(rateId, null);
             Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
         } catch (IllegalArgumentException e) {
-            String expectedErrorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", rateId);
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getEffectiveDateFromRate. Rate cannot be found.", rateId);
             Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
             exceptionCaught = true;
         }
@@ -1528,4 +1530,731 @@ public class RateServiceTest extends AbstractServiceTest {
         Assert.isTrue(DateUtils.isSameInstant(baseDate, effectiveDate), "Didn't get the same Base date");
     }
 
+    /**********************************************************************
+     *
+     * Tests for the "getRecognitionDateFromRate" method.
+     *
+     **********************************************************************/
+
+    @Test
+    public void testGetRecognitionDateFromRateNullRateId() throws Exception {
+
+        boolean exceptionCaught = false;
+
+        // Call the service method with a null Rate ID:
+        try {
+            rateService.getRecognitionDateFromRate(null, null);
+            Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
+        } catch (IllegalArgumentException e) {
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getRecognitionDateFromRate. Rate cannot be found.", null);
+            Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
+            exceptionCaught = true;
+        }
+
+        // Verify exception was thrown:
+        Assert.isTrue(exceptionCaught, "An exception wasn't thrown and should have been.");
+    }
+
+    @Test
+    public void testGetRecognitionDateFromRateNoRateIdFound() throws Exception {
+
+        boolean exceptionCaught = false;
+        Long rateId = 0L;
+
+        // Call the service method with a bogus Rate ID:
+        try {
+            rateService.getRecognitionDateFromRate(rateId, null);
+            Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
+        } catch (IllegalArgumentException e) {
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getRecognitionDateFromRate. Rate cannot be found.", rateId);
+            Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
+            exceptionCaught = true;
+        }
+
+        // Verify exception was thrown:
+        Assert.isTrue(exceptionCaught, "An exception wasn't thrown and should have been.");
+    }
+
+    @Test
+    public void testGetRecognitionDateFromRateNoRateCatalogAtp() throws Exception {
+
+        // According to today's data schema design, Rate must have a RateCatalogAtp
+        // so this test succeeds by design:
+    }
+
+    @Test
+    public void testGetRecognitionDateFromRateNoRateCatalog() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateCatalogAtp().setRateCatalog(null);
+        rate.setRecognitionDate(null);
+
+        // Call the method:
+        Date baseDate = new Date();
+        Date recognitionDateFromRate = rateService.getRecognitionDateFromRate(rate.getId(), baseDate);
+
+        // Validate the recognition date is as expected:
+        Assert.notNull(recognitionDateFromRate, "Recognition date must not be null.");
+        Assert.isTrue(DateUtils.isSameInstant(baseDate, recognitionDateFromRate), "Recognition Date should have been equals to base date but it wasn't.");
+    }
+
+    @Test
+    public void testGetRecognitionDateFromRateRecognitionDateIsNotDefinableNullEffectiveDate() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.setRecognitionDate(null);
+        rate.getRateCatalogAtp().getRateCatalog().setRecognitionDateDefinable(false);
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(null);
+
+        // Call the method:
+        Date baseDate = new Date();
+        Date recognitionDateFromRate = rateService.getRecognitionDateFromRate(rate.getId(), baseDate);
+
+        // Validate the recognition date is as expected:
+        Assert.notNull(recognitionDateFromRate, "Recognition date must not be null.");
+        Assert.isTrue(DateUtils.isSameInstant(baseDate, recognitionDateFromRate), "Recognition Date should have been equals to base date but it wasn't.");
+    }
+
+    @Test
+    public void testGetRecognitionDateFromRateRecognitionDateIsNotDefinableValidEffectiveDate() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        Date transactionDate = new Date();
+
+        rate.setRecognitionDate(null);
+        rate.getRateCatalogAtp().getRateCatalog().setRecognitionDateDefinable(false);
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.ALWAYS);
+        rate.setTransactionDate(transactionDate);
+
+        // Call the method:
+        Date baseDate = new Date();
+        Date recognitionDateFromRate = rateService.getRecognitionDateFromRate(rate.getId(), baseDate);
+
+        // Validate the recognition date is as expected:
+        Assert.notNull(recognitionDateFromRate, "Recognition date must not be null.");
+        Assert.isTrue(DateUtils.isSameInstant(transactionDate, recognitionDateFromRate), "Recognition Date should have been equals to transaction date but it wasn't.");
+    }
+
+    @Test
+    public void testGetRecognitionDateFromRateRecognitionDateDefinableNullRecognitionDate() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        Date transactionDate = new Date();
+
+        rate.setRecognitionDate(null);
+        rate.getRateCatalogAtp().getRateCatalog().setRecognitionDateDefinable(true);
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.ALWAYS);
+        rate.setTransactionDate(transactionDate);
+
+        // Call the method:
+        Date baseDate = new Date();
+        Date recognitionDateFromRate = rateService.getRecognitionDateFromRate(rate.getId(), baseDate);
+
+        // Validate the recognition date is as expected:
+        Assert.notNull(recognitionDateFromRate, "Recognition date must not be null.");
+        Assert.isTrue(DateUtils.isSameInstant(transactionDate, recognitionDateFromRate), "Recognition Date should have been equals to transaction date but it wasn't.");
+    }
+
+    @Test
+    public void testGetRecognitionDateFromRateRecognitionDateDefinableNullRecognitionDateNullEffectiveDate() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.setRecognitionDate(null);
+        rate.getRateCatalogAtp().getRateCatalog().setRecognitionDateDefinable(true);
+        rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(null);
+
+        // Call the method:
+        Date baseDate = new Date();
+        Date recognitionDateFromRate = rateService.getRecognitionDateFromRate(rate.getId(), baseDate);
+
+        // Validate the recognition date is as expected:
+        Assert.notNull(recognitionDateFromRate, "Recognition date must not be null.");
+        Assert.isTrue(DateUtils.isSameInstant(baseDate, recognitionDateFromRate), "Recognition Date should have been equals to base date but it wasn't.");
+    }
+
+    @Test
+    public void testGetRecognitionDateFromRateRecognitionDateDefinableValidRecognitionDate() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        Date recognitionDate = new Date();
+
+        rate.setRecognitionDate(recognitionDate);
+        rate.getRateCatalogAtp().getRateCatalog().setRecognitionDateDefinable(true);
+        rate.setRecognitionDate(recognitionDate);
+
+        // Call the method:
+        Date baseDate = new Date();
+        Date recognitionDateFromRate = rateService.getRecognitionDateFromRate(rate.getId(), baseDate);
+
+        // Validate the recognition date is as expected:
+        Assert.notNull(recognitionDateFromRate, "Recognition date must not be null.");
+        Assert.isTrue(DateUtils.isSameInstant(recognitionDate, recognitionDateFromRate), "Recognition Date should have been equals to Rate recognition date but it wasn't.");
+    }
+
+    /*****************************************************************************
+     *
+     * Tests for the "getAmountFromRate" method
+     *
+     *****************************************************************************/
+
+    @Test
+    public void testGetAmountFromRateNullRateId() throws Exception {
+
+        boolean exceptionCaught = false;
+
+        // Call the service method with a null Rate ID:
+        try {
+            rateService.getAmountFromRate(null, 0);
+            Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
+        } catch (IllegalArgumentException e) {
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", null);
+            Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
+            exceptionCaught = true;
+        }
+
+        // Verify exception was thrown:
+        Assert.isTrue(exceptionCaught, "An exception wasn't thrown and should have been.");
+    }
+
+    @Test
+    public void testGetAmountFromRateNoRateIdFound() throws Exception {
+
+        boolean exceptionCaught = false;
+        Long rateId = 0L;
+
+        // Call the service method with a null Rate ID:
+        try {
+            rateService.getAmountFromRate(rateId, 0);
+            Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
+        } catch (IllegalArgumentException e) {
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", rateId);
+            Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
+            exceptionCaught = true;
+        }
+
+        // Verify exception was thrown:
+        Assert.isTrue(exceptionCaught, "An exception wasn't thrown and should have been.");
+    }
+
+    @Test
+    public void testGetAmountFromRateNullRateType() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        // Based on the design, Rates require RateType, so a Rate won't be found in the service method:
+        rate.setRateType(null);
+
+        // Call the service method with a null Rate ID:
+        boolean exceptionCaught = false;
+        Long rateId = 0L;
+
+        try {
+            rateService.getAmountFromRate(rateId, 0);
+            Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
+        } catch (IllegalArgumentException e) {
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", rateId);
+            Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
+            exceptionCaught = true;
+        }
+
+        // Verify exception was thrown:
+        Assert.isTrue(exceptionCaught, "An exception wasn't thrown and should have been.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFLATRateRateTypeCodeDoesNotContainFLAT() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        BigDecimal defaultAmount = new BigDecimal(27);
+
+        rate.getRateType().setCode("foo"); // It may contain "flat" or anything else to be "flat rate"
+        rate.getDefaultRateAmount().setAmount(defaultAmount);
+
+        // Call the service method:
+        int numUnits = 4;
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate that the amount from rate is as expected:
+        Assert.notNull(amountFromRate, "Amount from rate should not be null.");
+        Assert.isTrue((amountFromRate.compareTo(defaultAmount) == 0), "Amount from Rate should have been as default amount");
+    }
+
+    @Test
+    public void testGetAmountFromRateFLATRateRateTypeCodeContainsFLATNullDefaultRateAmount() throws Exception {
+
+        // By design, Default RateAmount must exist, so this test succeeds just as the previous one:
+    }
+
+    @Test
+    public void testGetAmountFromRateFLATRateRateTypeCodeContainsFLATNullDefaultRateAmountAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        BigDecimal defaultAmount = null;
+
+        rate.getRateType().setCode("soo.flatt.foo"); // It may contain "flat" or anything else to be "flat rate"
+        rate.getDefaultRateAmount().setAmount(defaultAmount);
+
+        // Call the service method:
+        int numUnits = 4;
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate that the amount from rate is as expected:
+        Assert.isNull(amountFromRate, "Amount from rate should be null.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFLEXIBLERateNoRateAmountMatchNullDefaultRateAmountAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateType().setCode("flexible");
+        rate.getDefaultRateAmount().setAmount(null);
+
+        // Make sure that none of the RateAmounts match the number of units:
+        int numUnits = 4;
+
+        for (RateAmount rateAmount : rate.getRateAmounts()) {
+            // Set the RateAmount number of units to a value different from numUnits:
+            rateAmount.setUnits(numUnits+1);
+        }
+
+        // Call the service method:
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate the result:
+        Assert.isNull(amountFromRate, "Amount from Rate should be null.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFLEXIBLERateNoRateAmountMatchValidDefaultRateAmountAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        BigDecimal defaultAmount = new BigDecimal(10);
+
+        rate.getRateType().setCode("345345FLExIBLE3000DSAF");
+        rate.getDefaultRateAmount().setAmount(defaultAmount);
+
+        // Make sure that none of the RateAmounts match the number of units:
+        int numUnits = 4;
+
+        for (RateAmount rateAmount : rate.getRateAmounts()) {
+            // Set the RateAmount number of units to a value different from numUnits:
+            rateAmount.setUnits(numUnits+1);
+        }
+
+        // Call the service method:
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate the result:
+        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
+        Assert.isTrue(amountFromRate.compareTo(defaultAmount) == 0, "Amount from Rate should be as default amount.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFLEXIBLERateRateAmountMatchNullAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateType().setCode("Flexible");
+
+        // Make sure that only the first of the RateAmounts match the number of units:
+        int numUnits = 4;
+
+        for (RateAmount rateAmount : rate.getRateAmounts()) {
+            // Set the RateAmount number of units to a value of numUnits and expected amount:
+            rateAmount.setUnits(numUnits);
+            rateAmount.setAmount(null);
+            break;
+        }
+
+        // Call the service method:
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate the result:
+        Assert.isNull(amountFromRate, "Amount from Rate should be null.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFLEXIBLERateRateAmountMatchValidAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateType().setCode("fLEXible");
+
+        // Make sure that only the first of the RateAmounts match the number of units:
+        int numUnits = 4;
+        BigDecimal expectedAmount = new BigDecimal(10L);
+
+        for (RateAmount rateAmount : rate.getRateAmounts()) {
+            // Set the RateAmount number of units to a value of numUnits and expected amount:
+            rateAmount.setUnits(numUnits);
+            rateAmount.setAmount(expectedAmount);
+            break;
+        }
+
+        // Call the service method:
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate the result:
+        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
+        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be as default amount.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFIXEDRateNullDefaultRateAmount() throws Exception {
+
+        // By design, Rate must have a Default RateAmount, so this test must succeed.
+    }
+
+    @Test
+    public void testGetAmountFromRateFIXEDRateNullDefaultRateAmountAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+
+        rate.getRateType().setCode("54980--.fIxEdsdf809sdfklj3");
+        rate.getDefaultRateAmount().setAmount(null);
+
+        // Call the service method:
+        int numUnits = 4;
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate:
+        Assert.isNull(amountFromRate, "Amount from Rate should be null.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFIXEDRateNotLimitAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        BigDecimal defaultAmount = new BigDecimal(24);
+
+        rate.getRateType().setCode("fixed");
+        rate.getDefaultRateAmount().setAmount(defaultAmount);
+        rate.setLimitAmount(false);
+
+        // Call the service method:
+        int numUnits = 4;
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate:
+        BigDecimal expectedAmount = defaultAmount.multiply(new BigDecimal(numUnits));
+        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
+        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be as default amount.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFIXEDRateLimitAmountNullLimitsNumUnitsInRange() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        BigDecimal limitAmount = new BigDecimal(24);
+
+        rate.getRateType().setCode("fixed");
+        rate.setMinLimitUnits(null);
+        rate.setMaxLimitUnits(null);
+        rate.setLimitAmountValue(limitAmount);
+        rate.setLimitAmount(true);
+
+        // Call the service method:
+        int numUnits = 4;
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate:
+        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
+        Assert.isTrue(amountFromRate.compareTo(limitAmount) == 0, "Amount from Rate should be as limit amount.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFIXEDRateLimitAmountValidLimitsNumUnitsAboveMaxNullLimitAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        BigDecimal defaultAmount = new BigDecimal(24);
+        int numUnits = 10;
+        int minUnits = (numUnits - 7);
+        int maxUnits = (numUnits - 3);
+
+        rate.getRateType().setCode("fixed");
+        rate.getDefaultRateAmount().setAmount(defaultAmount);
+        rate.setMinLimitUnits(minUnits);
+        rate.setMaxLimitUnits(maxUnits);
+        rate.setLimitAmountValue(null);
+        rate.setLimitAmount(true);
+
+        // Call the service method:
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate:
+        BigDecimal expectedAmount = defaultAmount.multiply(new BigDecimal(numUnits - maxUnits));
+        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
+        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be as expected amount.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFIXEDRateLimitAmountValidLimitsNumUnitsAboveMaxValidLimitAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        BigDecimal defaultAmount = new BigDecimal(24);
+        BigDecimal limitAmount = new BigDecimal(24);
+        int numUnits = 10;
+        int minUnits = (numUnits - 7);
+        int maxUnits = (numUnits - 3);
+
+        rate.getRateType().setCode("fixed");
+        rate.getDefaultRateAmount().setAmount(defaultAmount);
+        rate.setMinLimitUnits(minUnits);
+        rate.setMaxLimitUnits(maxUnits);
+        rate.setLimitAmountValue(limitAmount);
+        rate.setLimitAmount(true);
+
+        // Call the service method:
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate:
+        BigDecimal expectedAmount = defaultAmount.multiply(new BigDecimal(numUnits - maxUnits)).add(limitAmount);
+        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
+        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be as expected amount.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFIXEDRateLimitAmountValidLimitsNumUnitsInRangeNullLimitAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        BigDecimal defaultAmount = new BigDecimal(24);
+        int numUnits = 10;
+        int minUnits = (numUnits - 7);
+        int maxUnits = (numUnits + 3);
+
+        rate.getRateType().setCode("fixed");
+        rate.getDefaultRateAmount().setAmount(defaultAmount);
+        rate.setMinLimitUnits(minUnits);
+        rate.setMaxLimitUnits(maxUnits);
+        rate.setLimitAmountValue(null);
+        rate.setLimitAmount(true);
+
+        // Call the service method:
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate:
+        BigDecimal expectedAmount = defaultAmount.multiply(new BigDecimal(numUnits));
+        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
+        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be as expected amount.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFIXEDRateLimitAmountValidLimitsNumUnitsInRangeValidLimitAmount() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        BigDecimal defaultAmount = new BigDecimal(24);
+        BigDecimal limitAmount = new BigDecimal(24);
+        int numUnits = 10;
+        int minUnits = (numUnits - 7);
+        int maxUnits = (numUnits + 3);
+
+        rate.getRateType().setCode("fixed");
+        rate.getDefaultRateAmount().setAmount(defaultAmount);
+        rate.setMinLimitUnits(minUnits);
+        rate.setMaxLimitUnits(maxUnits);
+        rate.setLimitAmountValue(limitAmount);
+        rate.setLimitAmount(true);
+
+        // Call the service method:
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate:
+        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
+        Assert.isTrue(amountFromRate.compareTo(limitAmount) == 0, "Amount from Rate should be as expected amount.");
+    }
+
+    @Test
+    public void testGetAmountFromRateFIXEDRateLimitAmountValidLimitsNumUnitsBelowMin() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        BigDecimal defaultAmount = new BigDecimal(24);
+        int numUnits = 4;
+
+        rate.getRateType().setCode("fixed");
+        rate.getDefaultRateAmount().setAmount(defaultAmount);
+        rate.setMinLimitUnits(numUnits + 10);
+        rate.setMaxLimitUnits(numUnits + 1000);
+        rate.setLimitAmount(true);
+
+        // Call the service method:
+        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
+
+        // Validate:
+        BigDecimal expectedAmount = defaultAmount.multiply(new BigDecimal(numUnits));
+        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
+        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be as default amount.");
+    }
+
+    /******************************************************************************************
+     *
+     * Tests for the "getTransactionTypeFromRate" method.
+     *
+     ******************************************************************************************/
+
+    @Test
+    public void testGetTransactionTypeFromRateNullRateId() throws Exception {
+
+        boolean exceptionCaught = false;
+
+        // Call the service method with a null Rate ID:
+        try {
+            rateService.getTransactionTypeFromRate(null, 0);
+            Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
+        } catch (IllegalArgumentException e) {
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getTransactionTypeFromRate. Rate cannot be found.", null);
+            Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
+            exceptionCaught = true;
+        }
+
+        // Verify exception was thrown:
+        Assert.isTrue(exceptionCaught, "An exception wasn't thrown and should have been.");
+    }
+
+    @Test
+    public void testGetTransactionTypeFromRateUnknownRateId() throws Exception {
+
+        boolean exceptionCaught = false;
+        Long rateId = 0L;
+
+        // Call the service method with a null Rate ID:
+        try {
+            rateService.getTransactionTypeFromRate(rateId, 0);
+            Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
+        } catch (IllegalArgumentException e) {
+            String expectedErrorMsg = String.format("Invalid Rate ID %d in getTransactionTypeFromRate. Rate cannot be found.", rateId);
+            Assert.isTrue(expectedErrorMsg.equals(e.getMessage()), "Incorrect exception error message");
+            exceptionCaught = true;
+        }
+
+        // Verify exception was thrown:
+        Assert.isTrue(exceptionCaught, "An exception wasn't thrown and should have been.");
+    }
+
+    @Test
+    public void testGetTransactionTypeFromRateDefaultRateAmountNullTransactionTypeId() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        int numUnits = 4;
+
+        rate.getDefaultRateAmount().setTransactionTypeId(null);
+
+        // Call the service method:
+        String transactionTypeIdFromRate = rateService.getTransactionTypeFromRate(rate.getId(), numUnits);
+
+        // Validate:
+        Assert.isNull(transactionTypeIdFromRate, "Transaction Type from Rate should be null.");
+    }
+
+    @Test
+    public void testGetTransactionTypeFromRateDefaultRateAmountValidTransactionTypeId() throws Exception {
+
+        // Create Rate and remove the RateCatalog:
+        String rateCatalogCode = "RC_2013";
+        String rateCode = "R_2013";
+        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+        Rate rate = _createRate(rateCode, rateCatalogCode);
+        String transactionTypeId = "test-test";
+        int numUnits = 4;
+
+        rate.getDefaultRateAmount().setTransactionTypeId(transactionTypeId);
+
+        // Call the service method:
+        String transactionTypeIdFromRate = rateService.getTransactionTypeFromRate(rate.getId(), numUnits);
+
+        // Validate:
+        Assert.notNull(transactionTypeIdFromRate, "Transaction Type from Rate should not be null.");
+        Assert.isTrue(StringUtils.equals(transactionTypeIdFromRate, transactionTypeId), "Transaction type ID from rate is not what's expected.");
+    }
 }

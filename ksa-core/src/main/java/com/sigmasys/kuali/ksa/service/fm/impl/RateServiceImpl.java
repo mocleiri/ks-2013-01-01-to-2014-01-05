@@ -1872,7 +1872,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         Rate rate = getRate(rateId);
 
         if (rate == null) {
-            String errorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", rateId);
+            String errorMsg = String.format("Invalid Rate ID %d in getEffectiveDateFromRate. Rate cannot be found.", rateId);
             logger.error(errorMsg);
             throw new IllegalArgumentException(errorMsg);
         }
@@ -1890,7 +1890,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                     return isAfter(baseDate, rate.getTransactionDate()) ? baseDate : rate.getTransactionDate();
                 case AFTER:
                     return isAfter(baseDate, rate.getTransactionDate()) ? rate.getTransactionDate() : baseDate;
-
+                default:
+                    break;
             }
         }
 
@@ -1913,7 +1914,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         Rate rate = getRate(rateId);
 
         if (rate == null) {
-            String errorMsg = String.format("Invalid Rate ID %d in getAmountFromRate. Rate cannot be found.", rateId);
+            String errorMsg = String.format("Invalid Rate ID %d in getRecognitionDateFromRate. Rate cannot be found.", rateId);
             logger.error(errorMsg);
             throw new IllegalArgumentException(errorMsg);
         }
@@ -1966,7 +1967,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             if (StringUtils.containsIgnoreCase(rateType.getCode(), "flexible")) {
 
                 // Flexible rate:
-                RateAmount rateAmount = getRateAmount(rateId, numUnits);
+                RateAmount rateAmount = getRateAmount(rate, numUnits);
 
                 if (rateAmount != null) {
                     result = rateAmount.getAmount();
@@ -1997,31 +1998,31 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     @PermissionsAllowed(Permission.READ_RATE)
     public String getTransactionTypeFromRate(Long rateId, int numUnits) {
 
+        // Get the Rate:
+        Rate rate = getRate(rateId);
+
+        if (rate == null) {
+            String errorMsg = String.format("Invalid Rate ID %d in getTransactionTypeFromRate. Rate cannot be found.", rateId);
+            logger.error(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
         // Get the matching RateAmount:
-        RateAmount rateAmount = getRateAmount(rateId, numUnits);
+        RateAmount rateAmount = getRateAmount(rate, numUnits);
 
         return (rateAmount != null) ? rateAmount.getTransactionTypeId() : null;
     }
 
     /**
-     * Returns a RateAmount from the Rate with the given ID that matches the given number of units.
+     * Returns a RateAmount from the given Rate that matches the given number of units.
      * Returns the Rate's default amount if none can be matched by the number of units.
      * Returns <code>null</code> if no such Rate is found.
      *
-     * @param rateId   ID of a Rate which Rate Amount is to be found if any.
-     * @param numUnits Number of units to match.
+     * @param rate      Rate which Rate Amount is to be found if any.
+     * @param numUnits  Number of units to match.
      * @return RateAmount instance
      */
-    private RateAmount getRateAmount(Long rateId, int numUnits) {
-
-        // Get the Rate:
-        Rate rate = getRate(rateId);
-
-        if (rate == null) {
-            String errorMsg = String.format("Invalid Rate ID %d. Rate cannot be found.", rateId);
-            logger.error(errorMsg);
-            throw new IllegalArgumentException(errorMsg);
-        }
+    private RateAmount getRateAmount(Rate rate, int numUnits) {
 
         // Loop through the RateAmounts:
         if (CollectionUtils.isNotEmpty(rate.getRateAmounts())) {
@@ -2029,7 +2030,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             for (RateAmount rateAmount : rate.getRateAmounts()) {
 
                 // Compare the number of units to locate a match:
-                if (rateAmount.getUnits() != null && rateAmount.getUnits() == numUnits) {
+                if ((rateAmount.getUnits() != null) && (rateAmount.getUnits() == numUnits)) {
+
                     // Match found:
                     return rateAmount;
                 }
