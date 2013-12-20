@@ -75,6 +75,16 @@
 [when][]signup date is before atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{milestoneName}","<",context)
 [when][]signup date is on or after atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{milestoneName}",">=",context)
 [when][]signup date is on or before atp milestone "{milestoneName}" = fmService.compareSignupEffectiveDateToAtpMilestone("{milestoneName}","<=",context)
+[when][]number of units is {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","==",context)
+[when][]number of units gt {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">",context)
+[when][]number of units gte {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">=",context)
+[when][]number of units lt {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<",context)
+[when][]number of units lte {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<=",context)
+[when][]number of signups is {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","==",context)
+[when][]number of signups gt {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">",context)
+[when][]number of signups gte {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">=",context)
+[when][]number of signups lt {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<",context)
+[when][]number of signups lte {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<=",context)
 
 
 # RHS definitions

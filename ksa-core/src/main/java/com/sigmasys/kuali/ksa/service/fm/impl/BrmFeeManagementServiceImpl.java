@@ -298,6 +298,10 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
             for (FeeManagementSignup signup : signups) {
 
+                if (signup.isComplete()) {
+                    continue;
+                }
+
                 Set<FeeManagementSignupRate> signupRates = signup.getSignupRates();
 
                 boolean signupAdded = false;
@@ -915,7 +919,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         for (FeeManagementSignup fmSignup : signups) {
             if (fmSignup.getUnits() != null) {
-                signupUnits++;
+                signupUnits += fmSignup.getUnits();
             }
         }
 
