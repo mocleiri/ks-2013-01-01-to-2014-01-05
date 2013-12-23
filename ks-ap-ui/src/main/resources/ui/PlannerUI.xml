@@ -406,6 +406,7 @@
 							<bean parent="Uif-Message" p:render="@{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().isStudent()}"
 								p:messageText="Create your plan by finding and adding courses to any term" />
 							<bean parent="Uif-Message" p:render="@{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().isAdviser()}"
+								p:additionalCssClasses="ksap-planner-advisorwelcome"
 								p:messageText="Viewing @{T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().studentName}'s planner" />
 						</list>
 					</property>
@@ -669,7 +670,7 @@
 									</list>
 								</property>
 							</bean>
-							<bean parent="Uif-MessageField" p:render="@{#line.grade ne null and T(org.kuali.student.ap.framework.config.KsapFrameworkServiceLocator).getUserSessionHelper().isStudent()}">
+							<bean parent="Uif-MessageField" p:render="@{#line.grade ne null}">
 								<property name="messageText" value="@{#line.grade}" />
 								<property name="cssClasses">
 									<list merge="true">
