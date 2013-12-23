@@ -318,7 +318,8 @@ function openMenu(id, getId, atpId, e, selector, popupClasses, popupOptions, clo
     var popupHtml = jQuery('<div />').attr("id", id + "_popup").attr("class", popupClasses)
     		.html(jQuery("#" + getId).html()).wrap("<div>").parent().clone().html();
     jQuery.each(popupBox.data(), function (key, value) {
-    	popupHtml = eval("popupHtml.replace(/__KSAP__"+key+"__/gi,'"+value+"')");
+    	var nvalue = value.replace(/'/, "&#39;");
+    	popupHtml = eval("popupHtml.replace(/__KSAP__"+key+"__/gi,'"+nvalue+"')");
     });
 
     var popupOptionsDefault = {
