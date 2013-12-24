@@ -926,6 +926,96 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         return compareObjects(signupUnits, numberOfUnits, operator);
     }
 
+    /**
+     * Compares the number of units to the number of units of taken signups.
+     *
+     * @param rateCodes        List of Rate codes separated by ","
+     * @param rateTypeCodes    List of RateType codes separated by ","
+     * @param signupOperations List of signup operation values separated by ","
+     * @param operator         Relational operator. For example, "==" or "!="
+     * @param context          BRM context
+     * @return boolean value
+     */
+    @Override
+    public boolean compareNumberOfTakenUnits(String rateCodes, String rateTypeCodes,
+                                             String signupOperations, String operator, BrmContext context) {
+        int sessionUnits = 0;
+        int takenUnits = 0;
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups =
+                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
+
+        for (FeeManagementSignup signup : signups) {
+
+            if (signup.getUnits() != null) {
+
+                sessionUnits += signup.getUnits();
+
+                if (signup.isTaken()) {
+                    takenUnits += signup.getUnits();
+                }
+            }
+        }
+
+        return compareObjects(sessionUnits, takenUnits, operator);
+    }
+
+    /**
+     * Compares the amount of all session signups to the amount of taken signups.
+     *
+     * @param rateCodes        List of Rate codes separated by ","
+     * @param rateTypeCodes    List of RateType codes separated by ","
+     * @param signupOperations List of signup operation values separated by ","
+     * @param operator         Relational operator. For example, "==" or "!="
+     * @param context          BRM context
+     * @return boolean value
+     */
+    @Override
+    public boolean compareAmountOfTakenSignups(String rateCodes, String rateTypeCodes,
+                                               String signupOperations, String operator, BrmContext context) {
+
+        BigDecimal sessionAmount = BigDecimal.ZERO;
+        BigDecimal takenAmount = BigDecimal.ZERO;
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups =
+                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
+
+        for (FeeManagementSignup signup : signups) {
+
+            Set<FeeManagementSignupRate> signupRates = signup.getSignupRates();
+
+            if (CollectionUtils.isNotEmpty(signupRates)) {
+
+                for (FeeManagementSignupRate signupRate : signupRates) {
+
+                    Rate rate = signupRate.getRate();
+
+                    if (rate != null) {
+
+                        Set<RateAmount> rateAmounts = rate.getRateAmounts();
+
+                        if (CollectionUtils.isNotEmpty(rateAmounts)) {
+
+                            for (RateAmount rateAmount : rateAmounts) {
+
+                                sessionAmount = sessionAmount.add(rateAmount.getAmount());
+
+                                if (signup.isTaken()) {
+                                    takenAmount = takenAmount.add(rateAmount.getAmount());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return compareObjects(sessionAmount, takenAmount, operator);
+    }
 
     /**
      * Checks if the current signup in the context is taken.
