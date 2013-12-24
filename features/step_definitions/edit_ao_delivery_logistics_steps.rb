@@ -194,6 +194,8 @@ Then /^there is a validation error on the EndTime field$/  do
     page.end_time_select_populate_list
     page.end_time_select.click
     page.end_time_error_msg.should match /Days and Start Time combo does not match an existing Standard Time Slot/
+
+    page.cancel   # cleanup to prevent browser's "you have unsaved changes" modal-dialog (which causes any subsequent tests executing in the same thread to fail)
   end
 end
 
