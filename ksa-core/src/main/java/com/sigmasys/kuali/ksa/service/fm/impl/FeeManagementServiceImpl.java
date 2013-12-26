@@ -46,6 +46,7 @@ import com.sigmasys.kuali.ksa.util.BeanUtils;
  * according to the specification in the "Process Diagrams" document
  *
  * @author Sergey Godunov
+ * @author Michael Ivanov
  */
 @Service("feeManagementService")
 @Transactional(readOnly = true)
@@ -206,19 +207,17 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         FeeManagementSession fmSession = reconcileSessionForRealTimeFeeManagement(feeManagementTermRecord);
 
         // Create an FM Report:
-        FeeManagementReportInfo report = createFeeManagementReport(fmSession.getId());
-
-        return report;
+        return createFeeManagementReport(fmSession.getId());
     }
 
     /**
      * Accesses an FM Session and invokes the Rules Engine to create a Manifest.
      *
      * @param feeManagementSessionId ID of an FM session to process.
-     * @return FeeManagementManifest instance
+     * @return FeeManagementSession instance
      */
     @Override
-    public FeeManagementManifest processFeeManagementSession(Long feeManagementSessionId) {
+    public FeeManagementSession processFeeManagementSession(Long feeManagementSessionId) {
         // TODO: Figure out how to invoke the Rules Engine to perform Fee Management and create manifest:
         return null;
     }
@@ -405,6 +404,100 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         }
 
         return query.getResultList();
+    }
+
+    /**
+     * Creates and persists a new instance of FeeManagementManifest class for the given parameters.
+     *
+     * @param manifestType      FeeManagementManifestType enum value
+     * @param manifestStatus    FeeManagementManifestStatus enum value
+     * @param transactionTypeId Transaction type ID
+     * @param rateId            Rate ID
+     * @param internalChargeId  Internal Charge ID
+     * @param registrationId    Registration ID
+     * @param offeringId        Offering ID
+     * @param effectiveDate     Effective Date
+     * @param recognitionDate   Recognition Date
+     * @param amount            Manifest amount
+     * @return FeeManagementManifest instance
+     */
+    @Override
+    public FeeManagementManifest createFeeManagementManifest(FeeManagementManifestType manifestType,
+                                                             FeeManagementManifestStatus manifestStatus,
+                                                             String transactionTypeId,
+                                                             Long rateId,
+                                                             String internalChargeId,
+                                                             String registrationId,
+                                                             String offeringId,
+                                                             Date effectiveDate,
+                                                             Date recognitionDate,
+                                                             BigDecimal amount) {
+
+        if (StringUtils.isBlank(transactionTypeId)) {
+            String errMsg = "Transaction type ID cannot be null or empty";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (rateId == null) {
+            String errMsg = "Rate ID cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (effectiveDate == null) {
+            String errMsg = "Effective date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (recognitionDate == null) {
+            String errMsg = "Recognition date cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (StringUtils.isBlank(internalChargeId) && StringUtils.isBlank(registrationId)) {
+            String errMsg = "Either internalChargeId or registrationId must be set";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (!transactionService.transactionTypeExists(transactionTypeId)) {
+            String errMsg = "TransactionType with ID = " + transactionTypeId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        Rate rate = rateService.getRate(rateId);
+        if (rate == null) {
+            String errMsg = "Rate with ID = " + rateId + " does not exist";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            String errMsg = "Amount must be greater than 0";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        FeeManagementManifest manifest = new FeeManagementManifest();
+
+        manifest.setType(manifestType);
+        manifest.setStatus(manifestStatus);
+        manifest.setTransactionTypeId(transactionTypeId);
+        manifest.setRate(rate);
+        manifest.setInternalChargeId(internalChargeId);
+        manifest.setRegistrationId(registrationId);
+        manifest.setOfferingId(offeringId);
+        manifest.setEffectiveDate(effectiveDate);
+        manifest.setRecognitionDate(recognitionDate);
+        manifest.setAmount(amount);
+
+        persistEntity(manifest);
+
+        return manifest;
     }
 
 
@@ -775,7 +868,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * Attempts to find a Rate using the provided objects.
      *
      * @param incomingSignup          FM IncomingSignup DTO.
-     * @param incomingRateInfo        FM InfomingRateInfo DTO.
+     * @param incomingRateInfo        FM IncomingRateInfo DTO.
      * @param feeManagementTermRecord FM TermRecord DTO.
      * @return Rate found using the parameters from the provided objects.
      * @throws IllegalArgumentException If the parameters in the provided objects do not result in a hit.
@@ -1644,18 +1737,22 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         // First check if the FM manifests point at each other:
         boolean pointAtEachOther = fullReversal
                 ? (fmm1.getLinkedManifest() != null) && (fmm2.getLinkedManifest() != null)
-                && fmm1.getLinkedManifest().getId().equals(fmm2.getId()) && fmm2.getLinkedManifest().getId().equals(fmm1.getId())
+                && fmm1.getLinkedManifest().getId().equals(fmm2.getId()) &&
+                fmm2.getLinkedManifest().getId().equals(fmm1.getId())
                 : true;
 
         // Check if the types are CHARGE and CANCEL
         if (pointAtEachOther) {
-            boolean statusesForReversal = ((fmm1.getType() == FeeManagementManifestType.CHARGE) && (fmm2.getType() == FeeManagementManifestType.CANCELLATION))
-                    || ((fmm2.getType() == FeeManagementManifestType.CHARGE) && (fmm1.getType() == FeeManagementManifestType.CANCELLATION));
+            boolean statusesForReversal = ((fmm1.getType() == FeeManagementManifestType.CHARGE) &&
+                    (fmm2.getType() == FeeManagementManifestType.CANCELLATION))
+                    || ((fmm2.getType() == FeeManagementManifestType.CHARGE) &&
+                    (fmm1.getType() == FeeManagementManifestType.CANCELLATION));
 
             // Now check if the manifests match and have the same transactionTypeId and amount:
             if (statusesForReversal && manifestsMatch(fmm1, fmm2, true)) {
                 return fullReversal
-                        ? StringUtils.equals(fmm1.getTransactionTypeId(), fmm2.getTransactionTypeId()) && safeAmountsEqual(fmm1, fmm2)
+                        ? StringUtils.equals(fmm1.getTransactionTypeId(),
+                        fmm2.getTransactionTypeId()) && safeAmountsEqual(fmm1, fmm2)
                         : true;
             }
         }

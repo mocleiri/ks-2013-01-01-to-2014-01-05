@@ -6,6 +6,8 @@ import com.sigmasys.kuali.ksa.model.fm.*;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -86,9 +88,9 @@ public interface FeeManagementService {
      * Accesses an FM Session and invokes the Rules Engine to create a Manifest.
      *
      * @param feeManagementSessionId ID of an FM session to process.
-     * @return FeeManagementManifest instance
+     * @return FeeManagementSession instance
      */
-    FeeManagementManifest processFeeManagementSession(Long feeManagementSessionId);
+    FeeManagementSession processFeeManagementSession(Long feeManagementSessionId);
 
     /**
      * Creates a new FM Session using the given FM TermRecord.
@@ -125,4 +127,32 @@ public interface FeeManagementService {
      * @return A report with Fee Management assessment.
      */
     FeeManagementReportInfo simulateRealTimeFeeManagement(FeeManagementTermRecord feeManagementTermRecord);
+
+
+    /**
+     * Creates and persists a new instance of FeeManagementManifest class for the given parameters.
+     *
+     * @param manifestType      FeeManagementManifestType enum value
+     * @param manifestStatus    FeeManagementManifestStatus enum value
+     * @param transactionTypeId Transaction type ID
+     * @param rateId            Rate ID
+     * @param internalChargeId  Internal Charge ID
+     * @param registrationId    Registration ID
+     * @param offeringId        Offering ID
+     * @param effectiveDate     Effective Date
+     * @param recognitionDate   Recognition Date
+     * @param amount            Manifest amount
+     * @return FeeManagementManifest instance
+     */
+    FeeManagementManifest createFeeManagementManifest(FeeManagementManifestType manifestType,
+                                                      FeeManagementManifestStatus manifestStatus,
+                                                      String transactionTypeId,
+                                                      Long rateId,
+                                                      String internalChargeId,
+                                                      String registrationId,
+                                                      String offeringId,
+                                                      Date effectiveDate,
+                                                      Date recognitionDate,
+                                                      BigDecimal amount);
+
 }
