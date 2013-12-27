@@ -142,6 +142,7 @@ public interface FeeManagementService {
      * @param effectiveDate     Effective Date
      * @param recognitionDate   Recognition Date
      * @param amount            Manifest amount
+     * @param isSessionCurrent  Indicates if the FM session should be current or not.
      * @return FeeManagementManifest instance
      */
     FeeManagementManifest createFeeManagementManifest(FeeManagementManifestType manifestType,
@@ -153,6 +154,7 @@ public interface FeeManagementService {
                                                       String offeringId,
                                                       Date effectiveDate,
                                                       Date recognitionDate,
-                                                      BigDecimal amount);
+                                                      BigDecimal amount,
+                                                      boolean isSessionCurrent);
 
 }

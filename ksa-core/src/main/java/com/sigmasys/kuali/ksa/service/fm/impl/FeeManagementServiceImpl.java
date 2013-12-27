@@ -419,6 +419,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
      * @param effectiveDate     Effective Date
      * @param recognitionDate   Recognition Date
      * @param amount            Manifest amount
+     * @param isSessionCurrent  Indicates if the FM session should be current or not.
      * @return FeeManagementManifest instance
      */
     @Override
@@ -431,7 +432,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
                                                              String offeringId,
                                                              Date effectiveDate,
                                                              Date recognitionDate,
-                                                             BigDecimal amount) {
+                                                             BigDecimal amount,
+                                                             boolean isSessionCurrent) {
 
         if (StringUtils.isBlank(transactionTypeId)) {
             String errMsg = "Transaction type ID cannot be null or empty";
@@ -494,6 +496,7 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
         manifest.setEffectiveDate(effectiveDate);
         manifest.setRecognitionDate(recognitionDate);
         manifest.setAmount(amount);
+        manifest.setSessionCurrent(isSessionCurrent);
 
         persistEntity(manifest);
 

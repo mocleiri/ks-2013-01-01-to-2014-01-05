@@ -3,6 +3,8 @@ package com.sigmasys.kuali.ksa.service.fm;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 
+import java.math.BigDecimal;
+
 
 /**
  * BRM FeeManagementService.
@@ -424,11 +426,142 @@ public interface BrmFeeManagementService {
      * Charges rates on the manifests from FeeManagementSession.
      *
      * @param rateCodes        List of rate codes separated by ","
+     * @param rateSubCodes     List of rate sub-codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param internalChargeId Manifest internal charge ID
+     * @param numberOfUnits    Number of units
+     * @param amount           Manifest amount
+     * @param context          BRM context
+     */
+    void chargeManifestRates(String rateCodes,
+                             String rateSubCodes,
+                             String rateTypeCodes,
+                             String rateCatalogCodes,
+                             String internalChargeId,
+                             int numberOfUnits,
+                             BigDecimal amount,
+                             BrmContext context);
+
+    /**
+     * Adds tags to FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param tagCodes         List of tag codes separated by ","
+     * @param rateCodes        List of rate codes separated by ","
      * @param rateTypeCodes    List of rate type codes separated by ","
      * @param rateCatalogCodes List of rate catalog codes separated by ","
      * @param context          BRM context
      */
-    void chargeManifestRates(String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
+    void addTagsToManifests(String tagCodes, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
+
+    /**
+     * Adds tags to FM manifests that have the specified internal charge ID.
+     *
+     * @param tagCodes         List of tag codes separated by ","
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    void addTagsToManifests(String tagCodes, String internalChargeId, BrmContext context);
+
+    /**
+     * Adds a rollup to FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param rollupCode       Rollup code
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    void addRollupToManifests(String rollupCode, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
+
+    /**
+     * Adds a rollup to FM manifests that have the specified internal charge ID.
+     *
+     * @param rollupCode       Rollup code
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    void addRollupToManifests(String rollupCode, String internalChargeId, BrmContext context);
+
+    /**
+     * Sets the effective date on FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param effectiveDate    Manifest effective date
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    void setManifestEffectiveDate(String effectiveDate, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
+
+    /**
+     * Sets the effective date on FM manifests that have the specified internal charge ID.
+     *
+     * @param effectiveDate    Manifest effective date
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    void setManifestEffectiveDate(String effectiveDate, String internalChargeId, BrmContext context);
+
+    /**
+     * Sets the recognition date on FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param recognitionDate  Manifest recognition date
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    void setManifestRecognitionDate(String recognitionDate, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
+
+    /**
+     * Sets the recognition date on FM manifests that have the specified internal charge ID.
+     *
+     * @param recognitionDate  Manifest recognition date
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    void setManifestRecognitionDate(String recognitionDate, String internalChargeId, BrmContext context);
+
+    /**
+     * Sets the GL account ID on FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param glAccountId      Manifest GL Account ID
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    void setManifestGlAccount(String glAccountId, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
+
+    /**
+     * Sets the GL account on FM manifests that have the specified internal charge ID.
+     *
+     * @param glAccountId      Manifest GL Account ID
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    void setManifestGlAccount(String glAccountId, String internalChargeId, BrmContext context);
+
+    /**
+     * Sets the amount on FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param amount           Manifest amount
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    void setManifestAmount(BigDecimal amount, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context);
+
+    /**
+     * Sets the amount on FM manifests that have the specified internal charge ID.
+     *
+     * @param amount           Manifest amount
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    void setManifestAmount(BigDecimal amount, String internalChargeId, BrmContext context);
 
 
 }

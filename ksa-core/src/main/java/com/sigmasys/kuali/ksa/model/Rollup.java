@@ -10,7 +10,7 @@ import javax.persistence.*;
  * @author Michael Ivanov
  */
 @Entity
-@Table(name = "KSSA_ROLLUP")
+@Table(name = "KSSA_ROLLUP", uniqueConstraints = {@UniqueConstraint(columnNames = {"CODE"})})
 public class Rollup extends AuditableEntity<Long> implements Cloneable {
 
     @Id

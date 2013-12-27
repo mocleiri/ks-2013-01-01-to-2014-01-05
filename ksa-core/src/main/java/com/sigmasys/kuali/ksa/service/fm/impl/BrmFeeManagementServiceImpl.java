@@ -31,9 +31,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Query;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -452,6 +454,37 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         }
 
         return filteredSignups;
+    }
+
+    private void addTagsToManifest(Collection<Tag> tags, FeeManagementManifest manifest) {
+
+        Set<Tag> manifestTags = manifest.getTags();
+
+        if (manifestTags == null) {
+            manifestTags = new HashSet<Tag>();
+            manifest.setTags(manifestTags);
+        }
+
+        for (Tag tag : tags) {
+            manifestTags.add(tag);
+        }
+
+        persistEntity(manifest);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Tag> getTagsByCodes(List<String> tagCodes) {
+        Query query = em.createQuery("select t from Tag t where t.code in (:tagCodes)");
+        query.setParameter("tagCodes", tagCodes);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private Rollup getRollupByCode(String rollupCode) {
+        Query query = em.createQuery("select r from Rollup r where r.code = :rollupCode");
+        query.setParameter("rollupCode", rollupCode);
+        List<Rollup> rollups = query.getResultList();
+        return CollectionUtils.isNotEmpty(rollups) ? rollups.get(0) : null;
     }
 
     /**
@@ -1756,12 +1789,23 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      * Charges rates on the manifests from FeeManagementSession.
      *
      * @param rateCodes        List of rate codes separated by ","
+     * @param rateSubCodes     List of rate sub-codes separated by ","
      * @param rateTypeCodes    List of rate type codes separated by ","
      * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param internalChargeId Manifest internal charge ID
+     * @param numberOfUnits    Number of units
+     * @param amount           Manifest amount
      * @param context          BRM context
      */
     @Override
-    public void chargeManifestRates(String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+    public void chargeManifestRates(String rateCodes,
+                                    String rateSubCodes,
+                                    String rateTypeCodes,
+                                    String rateCatalogCodes,
+                                    String internalChargeId,
+                                    int numberOfUnits,
+                                    BigDecimal amount,
+                                    BrmContext context) {
 
         // TODO: How to check if the signup rates are complete or not
 
@@ -1800,6 +1844,487 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                             new Date(),
                             rateAmount.getAmount());
 
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Adds tags to FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param tagCodes         List of tag codes separated by ","
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void addTagsToManifests(String tagCodes, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            List<String> tagCodeValues = CommonUtils.split(tagCodes, MULTI_VALUE_DELIMITER);
+
+            List<Tag> tags = getTagsByCodes(tagCodeValues);
+            if (CollectionUtils.isEmpty(tags)) {
+                String errMsg = "No tags found with codes: " + tagCodes;
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+
+            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+
+            for (FeeManagementManifest manifest : manifests) {
+
+                Rate rate = manifest.getRate();
+                RateType rateType = rate.getRateType();
+                RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+                boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
+                        matchesPatterns(rate.getCode(), rateCodeValues);
+
+                boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
+                        matchesPatterns(rateType.getCode(), rateTypeCodeValues);
+
+                boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
+                        matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
+
+                if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
+                    addTagsToManifest(tags, manifest);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Adds tags to FM manifests that have the specified internal charge ID.
+     *
+     * @param tagCodes         List of tag codes separated by ","
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    @Override
+    public void addTagsToManifests(String tagCodes, String internalChargeId, BrmContext context) {
+
+        if (StringUtils.isBlank(internalChargeId)) {
+            String errMsg = "Internal charge ID must not be blank";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            List<String> tagCodeValues = CommonUtils.split(tagCodes, MULTI_VALUE_DELIMITER);
+
+            List<Tag> tags = getTagsByCodes(tagCodeValues);
+            if (CollectionUtils.isEmpty(tags)) {
+                String errMsg = "No tags found with codes: " + tagCodes;
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+
+            for (FeeManagementManifest manifest : manifests) {
+
+                if (internalChargeId.equals(manifest.getInternalChargeId())) {
+                    addTagsToManifest(tags, manifest);
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds a rollup to FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param rollupCode       Rollup code
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void addRollupToManifests(String rollupCode, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            Rollup rollup = getRollupByCode(rollupCode);
+
+            if (rollup == null) {
+                String errMsg = "Rollup with code = " + rollupCode + " does not exist";
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+
+            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+
+            for (FeeManagementManifest manifest : manifests) {
+
+                Rate rate = manifest.getRate();
+                RateType rateType = rate.getRateType();
+                RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+                boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
+                        matchesPatterns(rate.getCode(), rateCodeValues);
+
+                boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
+                        matchesPatterns(rateType.getCode(), rateTypeCodeValues);
+
+                boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
+                        matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
+
+                if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
+                    manifest.setRollup(rollup);
+                    persistEntity(manifest);
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds a rollup to FM manifests that have the specified internal charge ID.
+     *
+     * @param rollupCode       Rollup code
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    @Override
+    public void addRollupToManifests(String rollupCode, String internalChargeId, BrmContext context) {
+
+        if (StringUtils.isBlank(internalChargeId)) {
+            String errMsg = "Internal charge ID must not be blank";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            Rollup rollup = getRollupByCode(rollupCode);
+
+            if (rollup == null) {
+                String errMsg = "Rollup with code = " + rollupCode + " does not exist";
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+
+            for (FeeManagementManifest manifest : manifests) {
+
+                if (internalChargeId.equals(manifest.getInternalChargeId())) {
+                    manifest.setRollup(rollup);
+                    persistEntity(manifest);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the effective date on FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param effectiveDate    Manifest effective date
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void setManifestEffectiveDate(String effectiveDate, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            try {
+
+                Date date = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse(effectiveDate);
+
+                List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
+                List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
+                List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+
+                for (FeeManagementManifest manifest : manifests) {
+
+                    Rate rate = manifest.getRate();
+                    RateType rateType = rate.getRateType();
+                    RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+                    boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
+                            matchesPatterns(rate.getCode(), rateCodeValues);
+
+                    boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
+                            matchesPatterns(rateType.getCode(), rateTypeCodeValues);
+
+                    boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
+                            matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
+
+                    if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
+                        manifest.setEffectiveDate(date);
+                        persistEntity(manifest);
+                    }
+                }
+
+            } catch (ParseException pe) {
+                logger.error(pe.getMessage(), pe);
+                throw new RuntimeException(pe.getMessage(), pe);
+            }
+        }
+    }
+
+    /**
+     * Sets the effective date on FM manifests that have the specified internal charge ID.
+     *
+     * @param effectiveDate    Manifest effective date
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    @Override
+    public void setManifestEffectiveDate(String effectiveDate, String internalChargeId, BrmContext context) {
+
+        if (StringUtils.isBlank(internalChargeId)) {
+            String errMsg = "Internal charge ID must not be blank";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            try {
+
+                Date date = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse(effectiveDate);
+
+                for (FeeManagementManifest manifest : manifests) {
+
+                    if (internalChargeId.equals(manifest.getInternalChargeId())) {
+                        manifest.setEffectiveDate(date);
+                        persistEntity(manifest);
+                    }
+                }
+
+            } catch (ParseException pe) {
+                logger.error(pe.getMessage(), pe);
+                throw new RuntimeException(pe.getMessage(), pe);
+            }
+        }
+    }
+
+    /**
+     * Sets the recognition date on FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param recognitionDate  Manifest recognition date
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void setManifestRecognitionDate(String recognitionDate, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            try {
+
+                Date date = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse(recognitionDate);
+
+                List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
+                List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
+                List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+
+                for (FeeManagementManifest manifest : manifests) {
+
+                    Rate rate = manifest.getRate();
+                    RateType rateType = rate.getRateType();
+                    RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+                    boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
+                            matchesPatterns(rate.getCode(), rateCodeValues);
+
+                    boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
+                            matchesPatterns(rateType.getCode(), rateTypeCodeValues);
+
+                    boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
+                            matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
+
+                    if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
+                        manifest.setRecognitionDate(date);
+                        persistEntity(manifest);
+                    }
+                }
+
+            } catch (ParseException pe) {
+                logger.error(pe.getMessage(), pe);
+                throw new RuntimeException(pe.getMessage(), pe);
+            }
+        }
+    }
+
+    /**
+     * Sets the recognition date on FM manifests that have the specified internal charge ID.
+     *
+     * @param recognitionDate  Manifest recognition date
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    @Override
+    public void setManifestRecognitionDate(String recognitionDate, String internalChargeId, BrmContext context) {
+
+        if (StringUtils.isBlank(internalChargeId)) {
+            String errMsg = "Internal charge ID must not be blank";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            try {
+
+                Date date = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse(recognitionDate);
+
+                for (FeeManagementManifest manifest : manifests) {
+
+                    if (internalChargeId.equals(manifest.getInternalChargeId())) {
+                        manifest.setRecognitionDate(date);
+                        persistEntity(manifest);
+                    }
+                }
+
+            } catch (ParseException pe) {
+                logger.error(pe.getMessage(), pe);
+                throw new RuntimeException(pe.getMessage(), pe);
+            }
+        }
+    }
+
+    /**
+     * Sets the GL account ID on FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param glAccountId      Manifest GL Account ID
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void setManifestGlAccount(String glAccountId, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+        // TODO
+    }
+
+    /**
+     * Sets the GL account on FM manifests that have the specified internal charge ID.
+     *
+     * @param glAccountId      Manifest GL Account ID
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    @Override
+    public void setManifestGlAccount(String glAccountId, String internalChargeId, BrmContext context) {
+        // TODO
+    }
+
+    /**
+     * Sets the amount on FM manifests filtering them by rate, rate type and catalog codes.
+     *
+     * @param amount           Manifest amount
+     * @param rateCodes        List of rate codes separated by ","
+     * @param rateTypeCodes    List of rate type codes separated by ","
+     * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void setManifestAmount(BigDecimal amount, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
+            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+
+            for (FeeManagementManifest manifest : manifests) {
+
+                Rate rate = manifest.getRate();
+                RateType rateType = rate.getRateType();
+                RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+                boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
+                        matchesPatterns(rate.getCode(), rateCodeValues);
+
+                boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
+                        matchesPatterns(rateType.getCode(), rateTypeCodeValues);
+
+                boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
+                        matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
+
+                if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
+                    manifest.setAmount(amount);
+                    persistEntity(manifest);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the amount on FM manifests that have the specified internal charge ID.
+     *
+     * @param amount           Manifest amount
+     * @param internalChargeId Manifest internal charge ID
+     * @param context          BRM context
+     */
+    @Override
+    public void setManifestAmount(BigDecimal amount, String internalChargeId, BrmContext context) {
+
+        if (StringUtils.isBlank(internalChargeId)) {
+            String errMsg = "Internal charge ID must not be blank";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            for (FeeManagementManifest manifest : manifests) {
+
+                if (internalChargeId.equals(manifest.getInternalChargeId())) {
+                    manifest.setAmount(amount);
+                    persistEntity(manifest);
                 }
             }
         }
