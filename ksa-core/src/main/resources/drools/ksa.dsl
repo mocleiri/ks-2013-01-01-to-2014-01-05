@@ -85,16 +85,16 @@
 [when][]amount of rates "{rateCodes}" gte taken amount of rates "{takenRateCodes}" = fmService.compareAmountOfTakenSignups("{rateCodes}","{takenRateCodes}",">=",context)
 [when][]amount of rates "{rateCodes}" lt taken amount of rates "{takenRateCodes}" = fmService.compareAmountOfTakenSignups("{rateCodes}","{takenRateCodes}","<",context)
 [when][]amount of rates "{rateCodes}" lte taken amount of rates "{takenRateCodes}" = fmService.compareAmountOfTakenSignups("{rateCodes}","{takenRateCodes}","<=",context)
-[when][]number of units is {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","==",context)
-[when][]number of units gt {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">",context)
-[when][]number of units gte {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">=",context)
-[when][]number of units lt {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<",context)
-[when][]number of units lte {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<=",context)
-[when][]number of signups is {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","==",context)
-[when][]number of signups gt {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">",context)
-[when][]number of signups gte {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">=",context)
-[when][]number of signups lt {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<",context)
-[when][]number of signups lte {units} with rate codes "{rateCodes}", rate types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<=",context)
+[when][]number of units is {units} with rates "{rateCodes}", types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","==",context)
+[when][]number of units gt {units} with rates "{rateCodes}", types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">",context)
+[when][]number of units gte {units} with rates "{rateCodes}", types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">=",context)
+[when][]number of units lt {units} with rates "{rateCodes}", types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<",context)
+[when][]number of units lte {units} with rates "{rateCodes}", types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfUnits({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<=",context)
+[when][]number of signups is {units} with rates "{rateCodes}", types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","==",context)
+[when][]number of signups gt {units} with rates "{rateCodes}", types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">",context)
+[when][]number of signups gte {units} with rates "{rateCodes}", types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}",">=",context)
+[when][]number of signups lt {units} with rates "{rateCodes}", types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<",context)
+[when][]number of signups lte {units} with rates "{rateCodes}", types "{rateTypeCodes}", signup operations "{signupOperations}" = fmService.compareNumberOfSignups({units},"{rateCodes}","{rateTypeCodes}","{signupOperations}","<=",context)
 
 
 # RHS definitions
@@ -125,6 +125,17 @@
 [then][]on signup remove rates "{rateCodes}" with type "{rateTypeCodes}", catalog "{rateCatalogCodes}" = context.getFmService().removeRatesFromSignupAndPrecedingOfferings("{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",true,context);
 [then][]on signup including preceding offerings remove rates "{rateCodes}" = context.getFmService().removeRatesFromSignupAndPrecedingOfferings("{rateCodes}",null,null,false,context);
 [then][]on signup including preceding offerings remove rates "{rateCodes}" with type "{rateTypeCodes}", catalog "{rateCatalogCodes}" = context.getFmService().removeRatesFromSignupAndPrecedingOfferings("{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",false,context);
+[then][]add tags "{tagCodes}" to manifests with rates "{rateCodes}", types "{rateTypeCodes}", catalogs "{rateCatalogCodes}" = context.getFmService().addTagsToManifests("{tagCodes}","{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",context);
+[then][]add tags "{tagCodes}" to manifests with id "{internalChargeId}" = context.getFmService().addTagsToManifests("{tagCodes}","{internalChargeId}",context);
+[then][]add rollup "{rollupCode}" to manifests with rates "{rateCodes}", types "{rateTypeCodes}", catalogs "{rateCatalogCodes}" = context.getFmService().addRollupToManifests("{rollupCode}","{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",context);
+[then][]add rollup "{rollupCode}" to manifests with id "{internalChargeId}" = context.getFmService().addRollupToManifests("{rollupCode}","{internalChargeId}",context);
+[then][]set effective date to "{effectiveDate}" on manifests with rates "{rateCodes}", types "{rateTypeCodes}", catalogs "{rateCatalogCodes}" = context.getFmService().setManifestEffectiveDate("{effectiveDate}","{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",context);
+[then][]set effective date to "{effectiveDate}" on manifests with id "{internalChargeId}" = context.getFmService().setManifestEffectiveDate("{effectiveDate}","{internalChargeId}",context);
+[then][]set recognition date to "{recognitionDate}" on manifests with rates "{rateCodes}", types "{rateTypeCodes}", catalogs "{rateCatalogCodes}" = context.getFmService().setManifestRecognitionDate("{recognitionDate}","{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",context);
+[then][]set recognition date to "{recognitionDate}" on manifests with id "{internalChargeId}" = context.getFmService().setManifestRecognitionDate("{recognitionDate}","{internalChargeId}",context);
+[then][]set amount to ${amount} on manifests with rates "{rateCodes}", types "{rateTypeCodes}", catalogs "{rateCatalogCodes}" = context.getFmService().setManifestAmount(new BigDecimal({amount},"{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",context);
+[then][]set amount to ${amount} on manifests with id "{internalChargeId}" = context.getFmService().setManifestAmount(new BigDecimal({amount},"{internalChargeId}",context);
+
 
 ########################################################################################################################
 
