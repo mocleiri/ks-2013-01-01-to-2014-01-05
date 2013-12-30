@@ -13,15 +13,8 @@
     <context:annotation-config/>
 
     <context:component-scan base-package="org.kuali.rice.krad"/>
-    <context:component-scan base-package="org.kuali.student.myplan.course"/>
-    <context:component-scan base-package="org.kuali.student.myplan.audit"/>
-    <context:component-scan base-package="org.kuali.student.myplan.adviser"/>
-    <context:component-scan base-package="org.kuali.student.myplan.plan"/>
-    <context:component-scan base-package="org.kuali.student.myplan.comment"/>
-    <context:component-scan base-package="edu.uw.kuali.student.myplan"/>
-    <context:component-scan base-package="org.kuali.student.myplan.plan"/>
-    <context:component-scan base-package="org.kuali.student.myplan.adviser"/>
-    <context:component-scan base-package="org.kuali.student.myplan.comment"/>
+
+    <context:component-scan base-package="org.kuali.student.myplan.sampleplan"/>
     <context:component-scan base-package="edu.uw.kuali.student.myplan"/>
 
     <!-- Custom UW ATP Comparator bean -->
@@ -38,9 +31,6 @@
 
     <!-- UW's Implementation of User Session Helper -->
     <bean id="userSessionHelper" class="edu.uw.kuali.student.myplan.util.UserSessionHelperImpl"/>
-
-    <!-- Search Strategy -->
-    <bean id="courseSearchStrategy" class="org.kuali.student.myplan.course.controller.CourseSearchStrategy"/>
 
     <!--<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">-->
     <!--<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />-->
@@ -70,79 +60,17 @@
             <list>
                 <ref bean="uifControllerHandlerInterceptor"/>
                 <ref bean="moduleLockingHandlerInterceptor"/>
-                <ref bean="myplanInterceptor"/>
+                <ref bean="samplePlanInterceptor"/>
             </list>
         </property>
     </bean>
 
-    <bean id="myplanInterceptor" class="edu.uw.kuali.student.myplan.util.MyplanInterceptor">
-        <property name="viewSwsResourceMapping">
-            <map>
-                <entry key="CourseSearch-FormView">
-                    <list>
-                        <value>/v4/public/section</value>
-                        <value>/v4/public/term/current</value>
-                    </list>
-                </entry>
-                <entry key="CourseDetails-InquiryView">
-                    <list>
-                        <value>/v4/public/section</value>
-                        <value>/v4/public/term/current</value>
-                        <value>/v4/enrollment</value>
-                        <value>/v4/registration/</value>
-                    </list>
-                </entry>
-                <entry key="PlannedCourses-FormView">
-                    <list>
-                        <value>/v4/public/section</value>
-                        <value>/v4/public/term/current</value>
-                        <value>/v4/enrollment</value>
-                        <value>/v4/registration/</value>
-                    </list>
-                </entry>
-                <entry key="SavedCoursesDetail-LookupView">
-                    <list>
-                        <value>/v4/public/section</value>
-                        <value>/v4/public/term/current</value>
-                        <value>/v4/enrollment</value>
-                        <value>/v4/registration/</value>
-                    </list>
-                </entry>
-                <entry key="DegreeAudit-FormView">
-                    <list>
-                        <value>/v5/degreeaudit</value>
-                        <value>/v4/public/section</value>
-                        <value>/v4/public/term/current</value>
-                        <value>/v4/enrollment</value>
-                        <value>/v4/registration/</value>
-                    </list>
-                </entry>
-                <entry key="PlanAudit-FormView">
-                    <list>
-                        <value>/v5/degreeaudit</value>
-                        <value>/v4/public/section</value>
-                        <value>/v4/public/term/current</value>
-                        <value>/v4/enrollment</value>
-                        <value>/v4/registration/</value>
-                    </list>
-                </entry>
-                <entry key="SingleTerm-InquiryView">
-                    <list>
-                        <value>/v4/public/section</value>
-                        <value>/v4/public/term/current</value>
-                        <value>/v4/enrollment</value>
-                        <value>/v4/registration/</value>
-                    </list>
-                </entry>
-            </map>
-        </property>
-        <property name="studentServiceClient" ref="StudentService"/>
-    </bean>
+    <bean id="samplePlanInterceptor" class="edu.uw.kuali.student.myplan.util.SamplePlanInterceptor"/>
 
-    <bean id="StudentService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+    <bean id="StudentService"
+          class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="{MyPlan}StudentServiceClient"/>
     </bean>
-
 
     <bean id="uifControllerHandlerInterceptor"
           class="org.kuali.rice.krad.web.controller.UifControllerHandlerInterceptor"/>
@@ -153,7 +81,8 @@
         <property name="kualiModuleService" ref="kualiModuleService"/>
     </bean>
 
-    <bean id="kualiModuleService" class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
+    <bean id="kualiModuleService"
+          class="org.kuali.rice.core.framework.resourceloader.GlobalResourceLoaderServiceFactoryBean">
         <property name="serviceName" value="kualiModuleService"/>
     </bean>
 
