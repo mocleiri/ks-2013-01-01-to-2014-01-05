@@ -1350,7 +1350,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
         String subCode = "_1";
         String atpId = "19871";
 
-        rateService.createRateType("RT_2013", "RateType_2013", "2013 Rate type description");
+        rateService.createRateType("RT_2013", "RateType_2013", "2013 Rate type description", false, RateAmountType.FLAT);
         _createRateCatalog(rateCatalogCode, atpId);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);

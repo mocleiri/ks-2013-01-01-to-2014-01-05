@@ -46,7 +46,7 @@ public class RateServiceTest extends AbstractServiceTest {
 
     private RateType _createRateType(String code, String name, String description) {
 
-        RateType rateType = rateService.createRateType(code, name, description);
+        RateType rateType = rateService.createRateType(code, name, description, false, RateAmountType.FLAT);
 
         Assert.notNull(rateType);
         Assert.notNull(rateType.getId());
@@ -1222,19 +1222,13 @@ public class RateServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void testGetEffectiveDateFromRateNoRateCatalogAtp() throws Exception {
-
-        // According to today's data schema design, Rate must have a RateCatalogAtp
-        // so this test succeeds by design:
-    }
-
-    @Test
     public void testGetEffectiveDateFromRateNoRateCatalog() throws Exception {
 
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().setRateCatalog(null);
@@ -1252,7 +1246,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the Transaction date type:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(null);
@@ -1270,7 +1265,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.ALWAYS);
@@ -1289,7 +1285,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.ALWAYS);
@@ -1307,7 +1304,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
@@ -1326,7 +1324,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
@@ -1344,7 +1343,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
@@ -1363,7 +1363,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
@@ -1381,7 +1382,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
@@ -1402,7 +1404,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.UNTIL);
@@ -1420,7 +1423,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
@@ -1439,7 +1443,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
@@ -1457,7 +1462,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
@@ -1477,7 +1483,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
@@ -1496,7 +1503,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
@@ -1517,7 +1525,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateCatalogAtp().getRateCatalog().setTransactionDateType(TransactionDateType.AFTER);
@@ -1679,7 +1688,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.setRecognitionDate(null);
@@ -1701,7 +1711,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         Date recognitionDate = new Date();
 
@@ -1769,7 +1780,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         // Based on the design, Rates require RateType, so a Rate won't be found in the service method:
@@ -1798,7 +1810,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         BigDecimal defaultAmount = new BigDecimal(27);
 
@@ -1815,18 +1828,13 @@ public class RateServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void testGetAmountFromRateFLATRateRateTypeCodeContainsFLATNullDefaultRateAmount() throws Exception {
-
-        // By design, Default RateAmount must exist, so this test succeeds just as the previous one:
-    }
-
-    @Test
     public void testGetAmountFromRateFLATRateRateTypeCodeContainsFLATNullDefaultRateAmountAmount() throws Exception {
 
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         BigDecimal defaultAmount = null;
 
@@ -1847,7 +1855,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateType().setCode("flexible");
@@ -1874,11 +1883,13 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         BigDecimal defaultAmount = new BigDecimal(10);
 
         rate.getRateType().setCode("345345FLExIBLE3000DSAF");
+        rate.getRateType().setRateAmountType(RateAmountType.FLEXIBLE);
         rate.getDefaultRateAmount().setAmount(defaultAmount);
 
         // Make sure that none of the RateAmounts match the number of units:
@@ -1898,76 +1909,13 @@ public class RateServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void testGetAmountFromRateFLEXIBLERateRateAmountMatchNullAmount() throws Exception {
-
-        // Create Rate and remove the RateCatalog:
-        String rateCatalogCode = "RC_2013";
-        String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
-        Rate rate = _createRate(rateCode, rateCatalogCode);
-
-        rate.getRateType().setCode("Flexible");
-
-        // Make sure that only the first of the RateAmounts match the number of units:
-        int numUnits = 4;
-
-        for (RateAmount rateAmount : rate.getRateAmounts()) {
-            // Set the RateAmount number of units to a value of numUnits and expected amount:
-            rateAmount.setUnits(numUnits);
-            rateAmount.setAmount(null);
-            break;
-        }
-
-        // Call the service method:
-        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
-
-        // Validate the result:
-        Assert.isNull(amountFromRate, "Amount from Rate should be null.");
-    }
-
-    @Test
-    public void testGetAmountFromRateFLEXIBLERateRateAmountMatchValidAmount() throws Exception {
-
-        // Create Rate and remove the RateCatalog:
-        String rateCatalogCode = "RC_2013";
-        String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
-        Rate rate = _createRate(rateCode, rateCatalogCode);
-
-        rate.getRateType().setCode("fLEXible");
-
-        // Make sure that only the first of the RateAmounts match the number of units:
-        int numUnits = 4;
-        BigDecimal expectedAmount = new BigDecimal(10L);
-
-        for (RateAmount rateAmount : rate.getRateAmounts()) {
-            // Set the RateAmount number of units to a value of numUnits and expected amount:
-            rateAmount.setUnits(numUnits);
-            rateAmount.setAmount(expectedAmount);
-            break;
-        }
-
-        // Call the service method:
-        BigDecimal amountFromRate = rateService.getAmountFromRate(rate.getId(), numUnits);
-
-        // Validate the result:
-        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
-        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be as default amount.");
-    }
-
-    @Test
-    public void testGetAmountFromRateFIXEDRateNullDefaultRateAmount() throws Exception {
-
-        // By design, Rate must have a Default RateAmount, so this test must succeed.
-    }
-
-    @Test
     public void testGetAmountFromRateFIXEDRateNullDefaultRateAmountAmount() throws Exception {
 
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
 
         rate.getRateType().setCode("54980--.fIxEdsdf809sdfklj3");
@@ -1987,11 +1935,13 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         BigDecimal defaultAmount = new BigDecimal(24);
 
         rate.getRateType().setCode("fixed");
+        rate.getRateType().setRateAmountType(RateAmountType.FIXED);
         rate.getDefaultRateAmount().setAmount(defaultAmount);
         rate.setLimitAmount(false);
 
@@ -2002,7 +1952,7 @@ public class RateServiceTest extends AbstractServiceTest {
         // Validate:
         BigDecimal expectedAmount = defaultAmount.multiply(new BigDecimal(numUnits));
         Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
-        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be as default amount.");
+        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be the default amount.");
     }
 
     @Test
@@ -2011,11 +1961,13 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         BigDecimal limitAmount = new BigDecimal(24);
 
         rate.getRateType().setCode("fixed");
+        rate.getRateType().setRateAmountType(RateAmountType.FIXED);
         rate.setMinLimitUnits(null);
         rate.setMaxLimitUnits(null);
         rate.setLimitAmountValue(limitAmount);
@@ -2036,7 +1988,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         BigDecimal defaultAmount = new BigDecimal(24);
         int numUnits = 10;
@@ -2044,6 +1997,7 @@ public class RateServiceTest extends AbstractServiceTest {
         int maxUnits = (numUnits - 3);
 
         rate.getRateType().setCode("fixed");
+        rate.getRateType().setRateAmountType(RateAmountType.FIXED);
         rate.getDefaultRateAmount().setAmount(defaultAmount);
         rate.setMinLimitUnits(minUnits);
         rate.setMaxLimitUnits(maxUnits);
@@ -2065,7 +2019,8 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         BigDecimal defaultAmount = new BigDecimal(24);
         BigDecimal limitAmount = new BigDecimal(24);
@@ -2074,6 +2029,7 @@ public class RateServiceTest extends AbstractServiceTest {
         int maxUnits = (numUnits - 3);
 
         rate.getRateType().setCode("fixed");
+        rate.getRateType().setRateAmountType(RateAmountType.FIXED);
         rate.getDefaultRateAmount().setAmount(defaultAmount);
         rate.setMinLimitUnits(minUnits);
         rate.setMaxLimitUnits(maxUnits);
@@ -2095,14 +2051,17 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         BigDecimal defaultAmount = new BigDecimal(24);
+
         int numUnits = 10;
         int minUnits = (numUnits - 7);
         int maxUnits = (numUnits + 3);
 
         rate.getRateType().setCode("fixed");
+        rate.getRateType().setRateAmountType(RateAmountType.FIXED);
         rate.getDefaultRateAmount().setAmount(defaultAmount);
         rate.setMinLimitUnits(minUnits);
         rate.setMaxLimitUnits(maxUnits);
@@ -2124,15 +2083,18 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         BigDecimal defaultAmount = new BigDecimal(24);
         BigDecimal limitAmount = new BigDecimal(24);
+
         int numUnits = 10;
         int minUnits = (numUnits - 7);
         int maxUnits = (numUnits + 3);
 
         rate.getRateType().setCode("fixed");
+        rate.getRateType().setRateAmountType(RateAmountType.FIXED);
         rate.getDefaultRateAmount().setAmount(defaultAmount);
         rate.setMinLimitUnits(minUnits);
         rate.setMaxLimitUnits(maxUnits);
@@ -2144,7 +2106,7 @@ public class RateServiceTest extends AbstractServiceTest {
 
         // Validate:
         Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
-        Assert.isTrue(amountFromRate.compareTo(limitAmount) == 0, "Amount from Rate should be as expected amount.");
+        Assert.isTrue(amountFromRate.compareTo(limitAmount) == 0, "Amount from Rate should be the expected amount.");
     }
 
     @Test
@@ -2153,12 +2115,14 @@ public class RateServiceTest extends AbstractServiceTest {
         // Create Rate and remove the RateCatalog:
         String rateCatalogCode = "RC_2013";
         String rateCode = "R_2013";
-        RateCatalog rateCatalog  = _createRateCatalog(rateCatalogCode);
+
+        _createRateCatalog(rateCatalogCode);
         Rate rate = _createRate(rateCode, rateCatalogCode);
         BigDecimal defaultAmount = new BigDecimal(24);
         int numUnits = 4;
 
         rate.getRateType().setCode("fixed");
+        rate.getRateType().setRateAmountType(RateAmountType.FIXED);
         rate.getDefaultRateAmount().setAmount(defaultAmount);
         rate.setMinLimitUnits(numUnits + 10);
         rate.setMaxLimitUnits(numUnits + 1000);
@@ -2169,8 +2133,12 @@ public class RateServiceTest extends AbstractServiceTest {
 
         // Validate:
         BigDecimal expectedAmount = defaultAmount.multiply(new BigDecimal(numUnits));
-        Assert.notNull(amountFromRate, "Amount from Rate should not be null.");
-        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be as default amount.");
+        Assert.notNull(amountFromRate, "Amount from Rate should not be null");
+
+        logger.debug("Expected amount = " + expectedAmount);
+        logger.debug("Rate amount = " + amountFromRate);
+
+        Assert.isTrue(amountFromRate.compareTo(expectedAmount) == 0, "Amount from Rate should be the default amount.");
     }
 
     /******************************************************************************************
@@ -2186,7 +2154,7 @@ public class RateServiceTest extends AbstractServiceTest {
 
         // Call the service method with a null Rate ID:
         try {
-            rateService.getTransactionTypeFromRate(null, 0);
+            rateService.getTransactionTypeIdFromRate(null, 0);
             Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
         } catch (IllegalArgumentException e) {
             String expectedErrorMsg = String.format("Invalid Rate ID %d in getTransactionTypeFromRate. Rate cannot be found.", null);
@@ -2206,7 +2174,7 @@ public class RateServiceTest extends AbstractServiceTest {
 
         // Call the service method with a null Rate ID:
         try {
-            rateService.getTransactionTypeFromRate(rateId, 0);
+            rateService.getTransactionTypeIdFromRate(rateId, 0);
             Assert.isTrue(false, "We should not be here. An exception has not been thrown.");
         } catch (IllegalArgumentException e) {
             String expectedErrorMsg = String.format("Invalid Rate ID %d in getTransactionTypeFromRate. Rate cannot be found.", rateId);
@@ -2231,7 +2199,7 @@ public class RateServiceTest extends AbstractServiceTest {
         rate.getDefaultRateAmount().setTransactionTypeId(null);
 
         // Call the service method:
-        String transactionTypeIdFromRate = rateService.getTransactionTypeFromRate(rate.getId(), numUnits);
+        String transactionTypeIdFromRate = rateService.getTransactionTypeIdFromRate(rate.getId(), numUnits);
 
         // Validate:
         Assert.isNull(transactionTypeIdFromRate, "Transaction Type from Rate should be null.");
@@ -2251,7 +2219,7 @@ public class RateServiceTest extends AbstractServiceTest {
         rate.getDefaultRateAmount().setTransactionTypeId(transactionTypeId);
 
         // Call the service method:
-        String transactionTypeIdFromRate = rateService.getTransactionTypeFromRate(rate.getId(), numUnits);
+        String transactionTypeIdFromRate = rateService.getTransactionTypeIdFromRate(rate.getId(), numUnits);
 
         // Validate:
         Assert.notNull(transactionTypeIdFromRate, "Transaction Type from Rate should not be null.");

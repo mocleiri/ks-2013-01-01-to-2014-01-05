@@ -71,20 +71,25 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
     /**
      * Creates a new RateType instance and persists it in the database.
      *
-     * @param code        RateType code
-     * @param name        RateType name
-     * @param description RateType description
+     * @param code           RateType code
+     * @param name           RateType name
+     * @param description    RateType description
+     * @param isGrouping     Indicates whether the rates of this type should be grouped or not
+     * @param rateAmountType Rate amount type enum value
      * @return a new RateType instance
      */
     @Override
     @Transactional(readOnly = false)
     @PermissionsAllowed(Permission.CREATE_RATE_TYPE)
-    public RateType createRateType(String code, String name, String description) {
+    public RateType createRateType(String code, String name, String description, boolean isGrouping, RateAmountType rateAmountType) {
 
         RateType rateType = new RateType();
         rateType.setCode(code);
         rateType.setName(name);
         rateType.setDescription(description);
+
+        rateType.setGrouping(isGrouping);
+        rateType.setRateAmountType(rateAmountType);
 
         validateRateType(rateType);
 
@@ -1890,8 +1895,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
                     return isAfter(baseDate, rate.getTransactionDate()) ? baseDate : rate.getTransactionDate();
                 case AFTER:
                     return isAfter(baseDate, rate.getTransactionDate()) ? rate.getTransactionDate() : baseDate;
-                default:
-                    break;
             }
         }
 
@@ -1960,34 +1963,25 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         // Check the rate type and determine how to get the amount:
         RateType rateType = rate.getRateType();
-        BigDecimal result = null;
 
-        if (rateType != null) {
+        if (rateType != null && numUnits > 0) {
 
-            if (StringUtils.containsIgnoreCase(rateType.getCode(), "flexible")) {
+            switch (rateType.getRateAmountType()) {
 
-                // Flexible rate:
-                RateAmount rateAmount = getRateAmount(rate, numUnits);
+                case FLEXIBLE:
+                    RateAmount rateAmount = getRateAmount(rate, numUnits);
+                    return (rateAmount != null) ? rateAmount.getAmount() : BigDecimal.ZERO;
 
-                if (rateAmount != null) {
-                    result = rateAmount.getAmount();
-                }
-            } else if (StringUtils.containsIgnoreCase(rateType.getCode(), "fixed")) {
-
-                // Fixed rate:
-                result = calculateFixedRateAmount(rate, numUnits);
-            } else {
-
-                // Flat rate:
-                result = (rate.getDefaultRateAmount() != null) ? rate.getDefaultRateAmount().getAmount() : null;
+                case FIXED:
+                    return calculateFixedRateAmount(rate, numUnits);
             }
         }
 
-        return result;
+        return (rate.getDefaultRateAmount() != null) ? rate.getDefaultRateAmount().getAmount() : BigDecimal.ZERO;
     }
 
     /**
-     * Finds out the transaction type from RateAmount associated with a Rate
+     * Finds out the transaction type ID from RateAmount associated with a Rate
      * with the given ID and the number of units.
      *
      * @param rateId   ID of a Rate which associated amount's transaction type is to be found.
@@ -1996,7 +1990,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      */
     @Override
     @PermissionsAllowed(Permission.READ_RATE)
-    public String getTransactionTypeFromRate(Long rateId, int numUnits) {
+    public String getTransactionTypeIdFromRate(Long rateId, int numUnits) {
 
         // Get the Rate:
         Rate rate = getRate(rateId);
@@ -2008,7 +2002,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
         }
 
         // Get the matching RateAmount:
-        RateAmount rateAmount = getRateAmount(rate, numUnits);
+        RateAmount rateAmount = (numUnits > 0) ? getRateAmount(rate, numUnits) : rate.getDefaultRateAmount();
 
         return (rateAmount != null) ? rateAmount.getTransactionTypeId() : null;
     }
@@ -2018,8 +2012,8 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
      * Returns the Rate's default amount if none can be matched by the number of units.
      * Returns <code>null</code> if no such Rate is found.
      *
-     * @param rate      Rate which Rate Amount is to be found if any.
-     * @param numUnits  Number of units to match.
+     * @param rate     Rate which Rate Amount is to be found if any.
+     * @param numUnits Number of units to match.
      * @return RateAmount instance
      */
     private RateAmount getRateAmount(Rate rate, int numUnits) {
@@ -2053,6 +2047,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
 
         // Get the default amount:
         RateAmount rateAmount = rate.getDefaultRateAmount();
+
         BigDecimal fixedRateAmount = null;
 
         if ((rateAmount != null) && (rateAmount.getAmount() != null)) {
@@ -2084,6 +2079,6 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             }
         }
 
-        return fixedRateAmount;
+        return (fixedRateAmount != null) ? fixedRateAmount : BigDecimal.ZERO;
     }
 }

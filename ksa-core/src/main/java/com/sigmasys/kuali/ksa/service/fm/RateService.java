@@ -36,12 +36,14 @@ public interface RateService {
     /**
      * Creates a new RateType instance and persists it in the database.
      *
-     * @param code        RateType code
-     * @param name        RateType name
-     * @param description RateType description
+     * @param code           RateType code
+     * @param name           RateType name
+     * @param description    RateType description
+     * @param isGrouping     Indicates whether the rates of this type should be grouped or not
+     * @param rateAmountType Rate amount type enum value
      * @return a new RateType instance
      */
-    RateType createRateType(String code, String name, String description);
+    RateType createRateType(String code, String name, String description, boolean isGrouping, RateAmountType rateAmountType);
 
     /**
      * Persists RateType in the database.
@@ -550,12 +552,12 @@ public interface RateService {
     BigDecimal getAmountFromRate(Long rateId, int numUnits);
 
     /**
-     * Finds out the transaction type from RateAmount associated with a Rate
+     * Finds out the transaction type ID from RateAmount associated with a Rate
      * with the given ID and the number of units.
      *
      * @param rateId   ID of a Rate which associated amount's transaction type is to be found.
      * @param numUnits Number of units.
      * @return Transaction Type from the RateAmount.
      */
-    String getTransactionTypeFromRate(Long rateId, int numUnits);
+    String getTransactionTypeIdFromRate(Long rateId, int numUnits);
 }

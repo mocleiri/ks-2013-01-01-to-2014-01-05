@@ -1786,67 +1786,117 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     }
 
     /**
-     * Charges rates on the manifests from FeeManagementSession.
+     * Charges rates on the signups from FeeManagementSession.
      *
      * @param rateCodes        List of rate codes separated by ","
      * @param rateSubCodes     List of rate sub-codes separated by ","
      * @param rateTypeCodes    List of rate type codes separated by ","
      * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    @Override
+    public void chargeSignupRates(String rateCodes,
+                                  String rateSubCodes,
+                                  String rateTypeCodes,
+                                  String rateCatalogCodes,
+                                  BrmContext context) {
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementSignup> signups =
+                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, rateCatalogCodes, null, null);
+
+        for (FeeManagementSignup signup : signups) {
+
+            if (signup.isComplete()) {
+                continue;
+            }
+
+            Set<FeeManagementSignupRate> signupRates = signup.getSignupRates();
+
+            if (CollectionUtils.isNotEmpty(signupRates)) {
+
+                for (FeeManagementSignupRate signupRate : new HashSet<FeeManagementSignupRate>(signupRates)) {
+
+                    if (signupRate.isComplete()) {
+                        continue;
+                    }
+
+                    Rate rate = signupRate.getRate();
+                    RateType rateType = rate.getRateType();
+                    RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+                    // TODO
+
+                }
+            }
+        }
+    }
+
+    /**
+     * Charges the incidental rate on the FeeManagementSession.
+     *
+     * @param rateCode         List of rate codes separated by ","
+     * @param rateSubCode      List of rate sub-codes separated by ","
      * @param internalChargeId Manifest internal charge ID
      * @param numberOfUnits    Number of units
      * @param amount           Manifest amount
      * @param context          BRM context
      */
     @Override
-    public void chargeManifestRates(String rateCodes,
-                                    String rateSubCodes,
-                                    String rateTypeCodes,
-                                    String rateCatalogCodes,
-                                    String internalChargeId,
-                                    int numberOfUnits,
-                                    BigDecimal amount,
-                                    BrmContext context) {
-
-        // TODO: How to check if the signup rates are complete or not
+    public void chargeIncidentalRate(String rateCode,
+                                     String rateSubCode,
+                                     String internalChargeId,
+                                     int numberOfUnits,
+                                     BigDecimal amount,
+                                     BrmContext context) {
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
+        Rate rate = rateService.getRate(rateCode, rateSubCode, session.getAtpId());
+
+        if (rate == null) {
+            String errMsg = "Cannot find a rate for rateCode = " + rateCode + ", rateSubCode = " + rateSubCode +
+                    ", ATP ID = " + session.getAtpId();
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        if (amount == null) {
+            amount = rateService.getAmountFromRate(rate.getId(), numberOfUnits);
+        }
+
+        Date currentDate = new Date();
+
+        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), currentDate);
+        Date recognitionDate = rateService.getRecognitionDateFromRate(rate.getId(), currentDate);
+
+        String transactionTypeId = rateService.getTransactionTypeIdFromRate(rate.getId(), numberOfUnits);
+
+        FeeManagementManifest manifest = fmService.createFeeManagementManifest(FeeManagementManifestType.CHARGE,
+                FeeManagementManifestStatus.PENDING,
+                transactionTypeId,
+                rate.getId(),
+                internalChargeId,
+                null,
+                null,
+                effectiveDate,
+                recognitionDate,
+                amount,
+                true);
+
+        manifest.setSession(session);
+
         Set<FeeManagementManifest> manifests = session.getManifests();
 
-        if (CollectionUtils.isNotEmpty(manifests)) {
-
-            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
-            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
-            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
-
-            for (FeeManagementManifest manifest : manifests) {
-
-                Rate rate = manifest.getRate();
-                RateType rateType = rate.getRateType();
-                RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
-
-                boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
-                        matchesPatterns(rate.getCode(), rateCodeValues);
-
-                boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
-                        matchesPatterns(rateType.getCode(), rateTypeCodeValues);
-
-                boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
-                        matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
-
-                if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
-
-                    RateAmount rateAmount = rate.getDefaultRateAmount();
-
-                    // TODO: Create a new charge in the right way
-                    transactionService.createCharge(rateAmount.getTransactionTypeId(),
-                            context.getAccount().getId(),
-                            new Date(),
-                            rateAmount.getAmount());
-
-                }
-            }
+        if (manifests == null) {
+            manifests = new HashSet<FeeManagementManifest>();
+            session.setManifests(manifests);
         }
+
+        manifests.add(manifest);
+
+        persistEntity(session);
     }
 
 

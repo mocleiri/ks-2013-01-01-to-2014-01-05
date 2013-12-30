@@ -423,25 +423,36 @@ public interface BrmFeeManagementService {
     void replaceRateOnSignup(String rateCode, String rateSubCode, String newRateCode, String newRateSubCode, BrmContext context);
 
     /**
-     * Charges rates on the manifests from FeeManagementSession.
+     * Charges rates on the signups from FeeManagementSession.
      *
      * @param rateCodes        List of rate codes separated by ","
      * @param rateSubCodes     List of rate sub-codes separated by ","
      * @param rateTypeCodes    List of rate type codes separated by ","
      * @param rateCatalogCodes List of rate catalog codes separated by ","
+     * @param context          BRM context
+     */
+    void chargeSignupRates(String rateCodes,
+                           String rateSubCodes,
+                           String rateTypeCodes,
+                           String rateCatalogCodes,
+                           BrmContext context);
+
+    /**
+     * Charges the incidental rate on the FeeManagementSession.
+     *
+     * @param rateCode         List of rate codes separated by ","
+     * @param rateSubCode      List of rate sub-codes separated by ","
      * @param internalChargeId Manifest internal charge ID
      * @param numberOfUnits    Number of units
      * @param amount           Manifest amount
      * @param context          BRM context
      */
-    void chargeManifestRates(String rateCodes,
-                             String rateSubCodes,
-                             String rateTypeCodes,
-                             String rateCatalogCodes,
-                             String internalChargeId,
-                             int numberOfUnits,
-                             BigDecimal amount,
-                             BrmContext context);
+    void chargeIncidentalRate(String rateCode,
+                              String rateSubCode,
+                              String internalChargeId,
+                              int numberOfUnits,
+                              BigDecimal amount,
+                              BrmContext context);
 
     /**
      * Adds tags to FM manifests filtering them by rate, rate type and catalog codes.
