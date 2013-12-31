@@ -424,12 +424,7 @@ public class DefaultPlannerForm extends AbstractPlanItemForm implements
             String firstTermId = termIds.first();
             Term firstTerm;
             if(tempTerms.size()>0){
-                Collections.sort(tempTerms, new Comparator<Term>() {
-                    @Override
-                    public int compare(Term o1, Term o2) {
-                        return o1.getStartDate().compareTo(o2.getStartDate());
-                    }
-                });
+                tempTerms = termHelper.sortTermsByStartDate(tempTerms,true);
                 firstTerm = tempTerms.get(0);
                 firstTermId = tempTerms.get(0).getId();
             }else{
@@ -437,21 +432,11 @@ public class DefaultPlannerForm extends AbstractPlanItemForm implements
             }
 			termHelper.frontLoadForPlanner(firstTermId);
 
-			List<Term> calendarTerms = termHelper.getCalendarTerms(firstTerm);
-			String focusTermId = termHelper.getTermsInAcademicYear().get(0).getId();
+			List<Term> calendarTerms = KsapFrameworkServiceLocator.getPlanHelper().getCalendarTerms(firstTerm);
+			String focusTermId = KsapFrameworkServiceLocator.getPlanHelper().getStartTermId();
 
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(firstTerm.getStartDate());
-
-			// TODO: convert to configuration
-			if (cal.get(Calendar.YEAR) < 2008) {
-				cal.set(Calendar.YEAR, 2008);
-			}
-
-			for (Term term : termHelper.getTermsByDateRange(cal.getTime(),
-					calendarTerms.get(0).getEndDate())) {
-				termIds.add(term.getId());
-			}
 
 			CommentService commentService = KsapFrameworkServiceLocator
 					.getCommentService();

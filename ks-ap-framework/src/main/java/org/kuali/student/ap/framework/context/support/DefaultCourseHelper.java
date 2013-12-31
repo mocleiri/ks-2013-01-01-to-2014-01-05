@@ -399,7 +399,7 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
         List<String> scheduledTerms = new java.util.LinkedList<String>();
 		try {
             List<CourseOfferingInfo> offerings = KsapFrameworkServiceLocator.getCourseOfferingService().getCourseOfferingsByCourse(course.getId(),ctx);
-            List<Term> terms = KsapFrameworkServiceLocator.getTermHelper().getPublishedTerms();
+            List<Term> terms = KsapFrameworkServiceLocator.getTermHelper().getOfficialTerms();
             for(CourseOfferingInfo offering : offerings){
                 for(Term t : terms) {
                     if(offering.getTermId().equals(t.getId())){
@@ -409,21 +409,6 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
                     }
                 }
             }
-            // Not Supported
-			/*List<String> courseIds = KsapFrameworkServiceLocator.getCourseService().searchForCourseIds(
-					QueryByCriteria.Builder.fromPredicates(PredicateFactory.equal("officialIdentifier.code",
-							course.getCode())), ctx);
-			List<String> scheduledTerms = new java.util.LinkedList<String>();
-			for (Term t : KsapFrameworkServiceLocator.getTermHelper().getPublishedTerms()) {
-				String termId = t.getId();
-				QueryByCriteria crit = QueryByCriteria.Builder.fromPredicates(PredicateFactory.and(
-						PredicateFactory.in("cluId", courseIds.toArray(new String[courseIds.size()])),
-						PredicateFactory.equal("atpId", termId)));
-				if (!KsapFrameworkServiceLocator.getCourseOfferingService()
-						.searchForCourseOfferingIds(crit, KsapFrameworkServiceLocator.getContext().getContextInfo())
-						.isEmpty())
-					scheduledTerms.add(t.getId());
-			}*/
 			return scheduledTerms;
 		} catch (InvalidParameterException e) {
 			throw new IllegalArgumentException("CO lookup failure", e);
@@ -759,4 +744,23 @@ public class DefaultCourseHelper implements CourseHelper, Serializable {
 		}
 	}
 
+    @Override
+    public boolean isCourseOffered(Term term, Course course) {
+        try {
+            List<CourseOfferingInfo> cos = KsapFrameworkServiceLocator.getCourseOfferingService()
+                    .getCourseOfferingsByCourseAndTerm(course.getId(), term.getId(),
+                            KsapFrameworkServiceLocator.getContext().getContextInfo());
+            return cos != null && !cos.isEmpty();
+        } catch (DoesNotExistException e) {
+            return false;
+        } catch (InvalidParameterException e) {
+            throw new IllegalArgumentException("CO lookup failure", e);
+        } catch (MissingParameterException e) {
+            throw new IllegalArgumentException("CO lookup failure", e);
+        } catch (OperationFailedException e) {
+            throw new IllegalStateException("CO lookup failure", e);
+        } catch (PermissionDeniedException e) {
+            throw new IllegalStateException("CO lookup failure", e);
+        }
+    }
 }

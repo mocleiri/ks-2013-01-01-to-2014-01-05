@@ -50,7 +50,6 @@ import org.kuali.student.r2.core.scheduling.infc.ScheduleComponentDisplay;
 import org.kuali.student.r2.core.scheduling.infc.TimeSlot;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 
-@SuppressWarnings("deprecation")
 public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
 	private static final long serialVersionUID = 4933435913745621395L;
@@ -457,7 +456,7 @@ public class CourseDetailsInquiryHelperImpl extends KualiInquirableImpl {
 
 		TermHelper th = KsapFrameworkServiceLocator.getTermHelper();
 		boolean published = false;
-		for (Term t : th.getPublishedTerms())
+		for (Term t : th.getOfficialTerms())
 			published = published || t.getId().equals(termId);
 		if (published) {
 			boolean openForPlanning = th.isPlanning(termId);

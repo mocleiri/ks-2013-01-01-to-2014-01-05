@@ -97,14 +97,6 @@ a:focus {
     /*color: #0066cc;*/
 }
 
-.fl-text-gray {
-    color: #777 !important;
-}
-
-.fl-text-silver {
-    color: #b4b4b4 !important;
-}
-
 .uif-pageContentWrapper,
 .uif-viewHeader,
 .uif-header {
@@ -2742,3 +2734,23 @@ div.jGrowl div.jGrowl-notification div.jGrowl-close {
 #academicYearCollection .uif-gridLayout th[scope="row"] {
     background-color: rgb(255, 255, 255);
 }
+
+/* Refactoring styles from XML bean files*/
+
+/* CourseSearchUI.xml styles*/
+#course_search_results_facets {
+    width:146px;
+    margin-right: 10px;
+}
+
+/* UIFKSAPDefinitions.xml styles */
+.ksap-section {
+    width: 230px;
+}
+.ks-plan-Widgets .ksap-widget {
+    margin-bottom: 10px;
+}
+
+/* Common Utility Styles */
+.ksap-no-margin {margin: 0;}
+.ksap-hide {display:none;}

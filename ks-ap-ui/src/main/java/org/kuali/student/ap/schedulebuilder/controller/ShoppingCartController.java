@@ -68,7 +68,7 @@ public class ShoppingCartController extends UifControllerBase {
 			return null;
 
 		Term term = form.getTerm();
-		if (!form.isPublished() || !form.isPlanning()) {
+		if (!form.isOfficial() || !form.isPlanning()) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Term "
 					+ form.getTerm() + " not found");
 			return null;
@@ -108,7 +108,7 @@ public class ShoppingCartController extends UifControllerBase {
 			return null;
 
 		Term term = form.getTerm();
-		if (!form.isPublished() || !form.isPlanning()) {
+		if (!form.isOfficial() || !form.isPlanning()) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Term "
 					+ form.getTermId() + " not found");
 			return null;

@@ -171,7 +171,7 @@ public class TermHelperMockTest implements TermHelper {
      *         if not.
      */
     @Override
-    public boolean isPublished(String termId) {
+    public boolean isOfficial(String termId) {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -188,24 +188,12 @@ public class TermHelperMockTest implements TermHelper {
     }
 
     /**
-     * Determines whether a course is in a specific term.
-     *
-     * @param term
-     * @param course
-     * @return
-     */
-    @Override
-    public boolean isCourseOffered(Term term, Course course) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    /**
      * Gets a list of published terms.
      *
      * @return
      */
     @Override
-    public List<Term> getPublishedTerms() {
+    public List<Term> getOfficialTerms() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -252,11 +240,6 @@ public class TermHelperMockTest implements TermHelper {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
-    public List<Term> getCalendarTerms(Term startTerm) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     /**
      * Gets the current term based on the current date.
      *
@@ -278,12 +261,26 @@ public class TermHelperMockTest implements TermHelper {
     }
 
     /**
-     * Gets the id of the term that the planner should display first.
+     * Sort a list by its start date
      *
-     * @return Term Id
+     * @param terms     - List of Terms to be sorted
+     * @param ascending - If True sort ascending, else sort descending
+     * @return - A list of sorted terms
      */
     @Override
-    public String getStartTermId() {
+    public List<Term> sortTermsByStartDate(List<Term> terms, boolean ascending) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Sort a list by its end date
+     *
+     * @param terms     - List of Terms to be sorted
+     * @param ascending - If True sort ascending, else sort descending
+     * @return - A list of sorted terms
+     */
+    @Override
+    public List<Term> sortTermsByEndDate(List<Term> terms, boolean ascending) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

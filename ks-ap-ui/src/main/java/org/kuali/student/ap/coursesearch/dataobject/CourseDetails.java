@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.kuali.student.ap.coursesearch.util.ScheduledTermsPropertyEditor;
 
 /**
  * This data object records all instances where the course has been planned,
@@ -92,5 +93,17 @@ public class CourseDetails {
 	public List<CourseOfferingInstitution> getInstitutionsList() {
 		return getCourseOfferingInstitutionList();
 	}
+
+    /**
+     * get CourseSummaryDetails as an edited String using a propertyEditor setup to support KRAD rendering
+     * @return
+     */
+    @JsonIgnore
+    public String  getCourseSummaryDetailsEdited() {
+        ScheduledTermsPropertyEditor editor = new ScheduledTermsPropertyEditor();
+        editor.setValue((Object) this.courseSummaryDetails);
+        return editor.getAsText();
+    }
+
 
 }

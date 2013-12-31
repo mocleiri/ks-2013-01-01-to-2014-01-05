@@ -73,6 +73,7 @@ public class PlannerController extends KsapControllerBase {
 	private static final String COPY_PLAN_ITEM_PAGE = "planner_copy_plan_item_page";
 	private static final String MOVE_PLAN_ITEM_PAGE = "planner_move_plan_item_page";
 	private static final String DELETE_PLAN_ITEM_PAGE = "planner_delete_plan_item_page";
+    private static final String ADD_BOOKMARK_PAGE = "bookmark_add_course_page";
 
 	@Override
 	protected UifFormBase createInitialForm(HttpServletRequest request) {
@@ -353,6 +354,50 @@ public class PlannerController extends KsapControllerBase {
 		finishAddCourse(plan, form, course, termId, response);
 		return null;
 	}
+
+
+    /**
+     * Handles submissions from the bookmark add dialog.
+     * Validates the course and adds it to the students plan.
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "view.currentPageId=" + ADD_BOOKMARK_PAGE)
+    public ModelAndView addBookmark(@ModelAttribute("KualiForm") PlannerForm form, BindingResult result,
+                                    HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+        // Retrieve student's plan
+        LearningPlan plan = PlanItemControllerHelper.getAuthorizedLearningPlan(form, request, response);
+        JsonObjectBuilder eventList = Json.createObjectBuilder();
+        if (plan == null)
+            return null;
+
+        String termId = form.getTermId();
+
+        String courseId = form.getCourseId();
+        if (!StringUtils.hasText(courseId)) {
+            PlanEventUtils.sendJsonEvents(false, "Course id required", response, eventList);
+            return null;
+        }
+
+        // Retrieve course information using the course code entered by the user
+        Course course;
+        try {
+            course = KsapFrameworkServiceLocator.getCourseService().getCourse(courseId, KsapFrameworkServiceLocator.getContext().getContextInfo());
+        } catch (PermissionDeniedException e) {
+            throw new IllegalArgumentException("Course service failure", e);
+        } catch (MissingParameterException e) {
+            throw new IllegalArgumentException("Course service failure", e);
+        } catch (InvalidParameterException e) {
+            throw new IllegalArgumentException("Course service failure", e);
+        } catch (OperationFailedException e) {
+            throw new IllegalArgumentException("Course service failure", e);
+        } catch (DoesNotExistException e) {
+            throw new IllegalArgumentException("Course service failure", e);
+        }
+
+        // Add the course to the plan
+        finishAddCourse(plan, form, course, termId, response);
+        return null;
+    }
 
     /**
      * Handles the submissions from the copy course dialog (when copying from a completed plan item).
@@ -733,6 +778,7 @@ public class PlannerController extends KsapControllerBase {
                     + wishlistPlanItem.getLearningPlanId();
             eventList = PlanEventUtils.makeRemoveEvent(form.getUniqueId(), wishlistPlanItem, eventList);
             planItemInfo = new PlanItemInfo(wishlistPlanItem);
+            planItemInfo.setCategory(category);
         }
 
         // Fill in course information

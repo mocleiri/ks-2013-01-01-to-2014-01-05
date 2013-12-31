@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.kuali.student.r2.core.acal.infc.AcademicCalendar;
 import org.kuali.student.r2.core.acal.infc.Term;
-import org.kuali.student.r2.lum.course.infc.Course;
-
 /**
  * Provides access to common ATP functionality.
  */
@@ -55,7 +53,7 @@ public interface TermHelper {
 
 	/**
 	 * Query the Academic Calendar Service for terms that have offerings
-	 * published, determine the last ATP, and return its ID.
+	 * official, determine the last ATP, and return its ID.
 	 * 
 	 * @return The ID of the last scheduled ATP.
 	 * @throws RuntimeException
@@ -113,6 +111,7 @@ public interface TermHelper {
 	 * @param index
 	 * @return
 	 */
+    @Deprecated
 	public String getTermNameInAcadmicYear(int index);
 
 	/**
@@ -125,39 +124,32 @@ public interface TermHelper {
 	boolean isPlanning(String termId);
 
 	/**
-	 * Returns true if a term published on the schedule of classes.
+	 * Returns true if a term official on the schedule of classes.
 	 * 
 	 * @param termId
 	 *            The term ID.
-	 * @return True if the term is published on the schedule of classes, false
+	 * @return True if the term is official on the schedule of classes, false
 	 *         if not.
 	 */
-	boolean isPublished(String termId);
+	boolean isOfficial(String termId);
 
 	/**
 	 * Returns true if an ATP is considered present or greater in the context of
 	 * the current term's term. Otherwise, false.
 	 * 
-	 * @param termId
+	 * @param atpId
 	 * @return
 	 */
 	boolean isCompleted(String atpId);
 
-	/**
-	 * Determines whether a course is in a specific term.
-	 * 
-	 * @param term
-	 * @param course
-	 * @return
-	 */
-	boolean isCourseOffered(Term term, Course course);
+
 
 	/**
-	 * Gets a list of published terms.
+	 * Gets a list of official terms.
 	 * 
 	 * @return
 	 */
-	List<Term> getPublishedTerms();
+	List<Term> getOfficialTerms();
 
 	/**
 	 * Gets a list of planning terms.
@@ -171,6 +163,7 @@ public interface TermHelper {
 	 *
 	 * @return A list of terms, by date range.
 	 */
+    @Deprecated
 	List<Term> getTermsByDateRange(Date startDate, Date endDate);
 
 	/**
@@ -183,8 +176,7 @@ public interface TermHelper {
 
 	/**
 	 * 
-	 * @param termId
-	 *            - Id of a term
+	 * @param term - term obj
 	 * @return YearTerm holding information for the term
 	 */
 	YearTerm getYearTerm(Term term);
@@ -193,18 +185,11 @@ public interface TermHelper {
             (Date termBeginDate, Date termEndDate, String termName);
 
     /**
-     * Gets the list of Terms to use in the Planner Calendar using a Start Term.
-     *
-     * @param startTerm - Term that the calendar starts around
-     * @return A full List of terms to display in the calendar.
-     */
-    public List<Term> getCalendarTerms(Term startTerm);
-
-    /**
      * Gets the current term based on the current date.
      *
      * @return Current Term
      */
+    @Deprecated
     public Term getCurrentTerm();
 
     /**
@@ -212,12 +197,22 @@ public interface TermHelper {
      *
      * @return Current academic calendar
      */
+    @Deprecated
     public AcademicCalendar getCurrentAcademicCalendar();
 
     /**
-     * Gets the id of the term that the planner should display first.
-     *
-     * @return Term Id
+     * Sort a list by its start date
+     * @param terms - List of Terms to be sorted
+     * @param ascending - If True sort ascending, else sort descending
+     * @return - A list of sorted terms
      */
-    public String getStartTermId();
+    public List<Term> sortTermsByStartDate(List<Term> terms, boolean ascending);
+
+    /**
+     * Sort a list by its end date
+     * @param terms - List of Terms to be sorted
+     * @param ascending - If True sort ascending, else sort descending
+     * @return - A list of sorted terms
+     */
+    public List<Term> sortTermsByEndDate(List<Term> terms, boolean ascending);
 }
