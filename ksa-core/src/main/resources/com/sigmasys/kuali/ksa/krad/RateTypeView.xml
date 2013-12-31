@@ -69,23 +69,35 @@
 
                     <property name="items">
                         <list>
-                            <bean parent="Uif-InputField" p:label="Code" p:propertyName="code" p:readOnly="@{#line.id != null}" p:width="20%">
+                            <bean parent="Uif-InputField" p:label="Code" p:propertyName="code" p:readOnly="@{#line.id != null}">
 								<property name="control">
 									<bean parent="Uif-TextControl" p:style="width: 90%"/>
 								</property>
 							</bean>
-                            <bean parent="Uif-InputField" p:label="Name" p:propertyName="name" p:width="30%">
+                            <bean parent="Uif-InputField" p:label="Name" p:propertyName="name">
 								<property name="control">
 									<bean parent="Uif-TextControl" p:style="width: 90%"/>
 								</property>
 							</bean>
-                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="description" p:width="40%">
+                            <bean parent="Uif-InputField" p:label="Description" p:propertyName="description">
 								<property name="control">
 									<bean parent="Uif-TextControl" p:textExpand="true" p:style="width: 90%"/>
 								</property>
 							</bean>
+                            <bean parent="Uif-InputField" p:label="Grouping" p:propertyName="grouping">
+                                <property name="control">
+                                    <bean parent="Uif-CheckboxControl"/>
+                                </property>
+                            </bean>
+                            <bean parent="Uif-InputField" p:label="Amount Type" p:propertyName="rateAmountType">
+                                <property name="control">
+                                    <bean parent="Uif-DropdownControl" p:width="100%"/>
+                                </property>
+                                <property name="optionsFinder" value="@{getRateAmountTypeFinder()}"/>
+                            </bean>
 
-                            <bean parent="Uif-HorizontalFieldGroup" p:label="Actions" p:readOnly="true" p:width="10%">
+
+                            <bean parent="Uif-HorizontalFieldGroup" p:label="Actions" p:readOnly="true">
                                 <property name="items">
                                     <list>
 										<!-- "Save" image action -->

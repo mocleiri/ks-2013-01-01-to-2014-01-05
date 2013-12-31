@@ -66,6 +66,8 @@ public class RateType extends AuditableEntity<Long> {
 
     public void setRateAmountType(RateAmountType rateAmountType) {
         this.rateAmountType = rateAmountType;
-        rateAmountTypeCode = rateAmountType.getId();
+        if(rateAmountType != null) {
+            rateAmountTypeCode = rateAmountType.getId();
+        }
     }
 }

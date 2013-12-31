@@ -1,6 +1,8 @@
 package com.sigmasys.kuali.ksa.krad.model;
 
+import com.sigmasys.kuali.ksa.model.fm.RateAmountType;
 import com.sigmasys.kuali.ksa.model.fm.RateType;
+import com.sigmasys.kuali.ksa.util.EnumUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +42,11 @@ public class RateTypeModel {
     private String description;
 
 
+    private boolean grouping;
+
+    private RateAmountType rateAmountType;
+
+
     /**
      * Creates a new RateTypeModel without an underlying RateType.
      */
@@ -65,6 +72,8 @@ public class RateTypeModel {
             this.code = rateType.getCode();
             this.name = rateType.getName();
             this.description = rateType.getDescription();
+            this.grouping = rateType.isGrouping();
+            this.rateAmountType = rateType.getRateAmountType();
         }
     }
 
@@ -113,5 +122,29 @@ public class RateTypeModel {
                     StringUtils.defaultString(rateType.getEditorId()),
                     (rateType.getLastUpdate() != null) ? DATE_FORMAT.format(rateType.getLastUpdate()) : "")
                 : "";
+    }
+
+    public boolean isGrouping() {
+        return grouping;
+    }
+
+    public boolean getGrouping() {
+        return isGrouping();
+    }
+
+    public void setGrouping(boolean grouping) {
+        this.grouping = grouping;
+    }
+
+    public String getRateAmountType() {
+        return (rateAmountType != null) ? rateAmountType.getId().toString() : "";
+    }
+
+    public void setRateAmountType(String rateAmountType) {
+        this.rateAmountType = EnumUtils.findById(RateAmountType.class, rateAmountType);
+    }
+
+    public RateAmountType getRateAmountTypeType() {
+        return rateAmountType;
     }
 }

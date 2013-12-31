@@ -1,7 +1,9 @@
 package com.sigmasys.kuali.ksa.krad.form;
 
 import com.sigmasys.kuali.ksa.krad.model.RateTypeModel;
-import com.sigmasys.kuali.ksa.model.fm.RateType;
+import com.sigmasys.kuali.ksa.krad.util.IdentifiableKeyValuesFinder;
+import com.sigmasys.kuali.ksa.model.fm.RateAmountType;
+import org.kuali.rice.krad.keyvalues.KeyValuesFinder;
 
 import java.util.List;
 
@@ -13,6 +15,7 @@ import java.util.List;
  * Time: 10:40 PM
  */
 public class RateTypeForm extends AbstractViewModel {
+
 
     /**
      * A List of all RateType objects.
@@ -53,4 +56,9 @@ public class RateTypeForm extends AbstractViewModel {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+
+    public KeyValuesFinder getRateAmountTypeFinder() {
+        return new IdentifiableKeyValuesFinder<RateAmountType>(RateAmountType.class);
+    }
+
 }

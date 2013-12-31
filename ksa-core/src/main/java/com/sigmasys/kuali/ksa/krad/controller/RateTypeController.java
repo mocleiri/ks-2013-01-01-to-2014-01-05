@@ -2,7 +2,6 @@ package com.sigmasys.kuali.ksa.krad.controller;
 
 import com.sigmasys.kuali.ksa.krad.form.RateTypeForm;
 import com.sigmasys.kuali.ksa.krad.model.RateTypeModel;
-import com.sigmasys.kuali.ksa.model.fm.RateAmountType;
 import com.sigmasys.kuali.ksa.model.fm.RateType;
 import com.sigmasys.kuali.ksa.service.fm.RateService;
 import com.sigmasys.kuali.ksa.util.CommonUtils;
@@ -123,9 +122,8 @@ public class RateTypeController extends GenericSearchController {
 
                 try {
                     // Create a new RateType:
-                    // TODO : provide values for "isGrouping" and "rateAmountType" properties
                     RateType newRateType = rateService.createRateType(rateTypeModel.getCode(),
-                            rateTypeModel.getName(), rateTypeModel.getDescription(), false, RateAmountType.FLAT);
+                            rateTypeModel.getName(), rateTypeModel.getDescription(), rateTypeModel.isGrouping(), rateTypeModel.getRateAmountTypeType());
 
                     // Set the new RateType object:
                     rateTypeModel.setRateType(newRateType);
@@ -146,6 +144,8 @@ public class RateTypeController extends GenericSearchController {
 
                 rateType.setName(rateTypeModel.getName());
                 rateType.setDescription(rateTypeModel.getDescription());
+                rateType.setGrouping(rateTypeModel.isGrouping());
+                rateType.setRateAmountType(rateTypeModel.getRateAmountTypeType());
 
                 try {
                     // Persist the RateType object:
