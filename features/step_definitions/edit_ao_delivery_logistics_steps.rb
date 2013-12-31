@@ -140,3 +140,93 @@ When /^I add (standard|ad hoc) RDLs for an AO$/ do |tsType|
   end
   @activity_offering.save
 end
+
+When /^I add ADLs for an AO$/ do
+  @activity_offering.edit
+
+  # add 2 more DLs
+  dl_obj = create DeliveryLogistics, :tba => false, :days => "MWF", :start_time => "09:00", :start_time_ampm => "am", :end_time => "10:00", :end_time_ampm => "am",
+                  :facility => nil, :facility_long_name => nil, :room => nil
+  @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
+
+  dl_obj = create DeliveryLogistics, :tba => false, :days => "SU", :start_time => "01:00", :start_time_ampm => "pm", :end_time => "02:00", :end_time_ampm => "pm",
+                  :facility => nil, :facility_long_name => nil, :room => nil
+  @activity_offering.requested_delivery_logistics_list[dl_obj.dl_key] = dl_obj
+
+  # schedule the DLs into ADLs
+  @activity_offering.edit :edit_already_started => true, :send_to_scheduler => true
+  @activity_offering.save
+
+  # update the underlying data
+  course_offering = @activity_offering.parent_course_offering
+  course_offering.manage_and_init
+  @activity_offering = course_offering.get_ao_obj_by_code("A")
+end
+
+And /^I delete (all ADLs|all but one ADL)$/ do |quantity_adls_to_delete|
+  @activity_offering.edit
+
+  target_adls_to_delete = @activity_offering.actual_delivery_logistics_list.clone
+
+  # remove the 1st ADL from the delete-list
+  if quantity_adls_to_delete == 'all but one ADL'
+    target_adls_to_delete.delete target_adls_to_delete.values[0].dl_key
+  end
+
+  target_adls_to_delete.each do |index, target_adl|
+    target_adl.delete_rdl
+    @activity_offering.actual_delivery_logistics_list.delete target_adl.dl_key
+  end
+
+end
+
+Then /^I (see|don't see) a scheduling warning when saving the revised schedule$/ do |should_see_scheduling_warning|
+  @activity_offering.edit :edit_already_started => true, :send_to_scheduler => true
+
+  if should_see_scheduling_warning == 'see'
+    on(ActivityOfferingMaintenance).confirm_remove_all_DLs_from_scheduler
+  end
+
+  @activity_offering.save
+end
+
+And /^there are no DLs for the AO$/ do
+  # update the underlying data
+  course_offering = @activity_offering.parent_course_offering
+  course_offering.manage_and_init
+  @activity_offering = course_offering.get_ao_obj_by_code("A")
+
+  @activity_offering.requested_delivery_logistics_list == {}
+  @activity_offering.actual_delivery_logistics_list == {}
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## SCRATCHPAD
+
+
+When /^I test some stuff$/ do
+
+  puts 'DONE'
+  sleep 60
+
+
+end

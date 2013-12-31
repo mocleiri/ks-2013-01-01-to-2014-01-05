@@ -41,4 +41,19 @@ Feature: WC.Edit AO delivery logistics
     And I delete the original RDLs
     Then the AO's delivery logistics shows the new schedule
 
+  Scenario: Delete ADLs for an "Offered" AO
+    When I add ADLs for an AO
+    When I delete all but one ADL
+    Then I don't see a scheduling warning when saving the revised schedule
+    But I delete all ADLs
+    Then I see a scheduling warning when saving the revised schedule
+    And there are no DLs for the AO
+
+
+
+
+
+
+
+
 

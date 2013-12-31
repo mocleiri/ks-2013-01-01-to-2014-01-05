@@ -18,16 +18,25 @@ class ActivityOfferingMaintenance < BasePage
   element(:save_cancel_div) { |b| b.frm.div(id: "ActivityOfferingEdit_SubmitCancel") }
   element(:save_button) { |b| b.save_cancel_div.button(text: "Save Progress") }
   action(:save) { |b| sleep 2; b.loading.wait_while_present; sleep 2; b.save_button.click; b.loading.wait_while_present(120) }
+
+  # Send to scheduler
   action(:send_to_scheduler_checkbox) { |b| b.frm.checkbox(id: "send_RDLs_to_scheduler_control") }
   value(:send_RDLs_to_scheduler_msg) { |b| b.label(id: "send_RDLs_to_scheduler_label").text }
   action(:send_to_scheduler) { |b| b.send_to_scheduler_checkbox.set }
+  element(:send_revised_delivery_logistics_checkbox) { |b| b.sticky_footer_div.checkbox(name: "document.newMaintainableObject.dataObject.sendRDLsToSchedulerAfterMSE") }
+  action(:send_revised_delivery_logistics) { |b| b.send_revised_delivery_logistics_checkbox.click }
+
+  # Removing all DLs from scheduler
+  element(:removing_all_DLs_from_scheduler_dialog) { |b| b.frm.div(id: "ActivityOfferingEdit-RemoveAllOfferingsFromSchedulerConfirmation") }
+  element(:removing_all_DLs_from_scheduler_confirmButton) { |b| b.removing_all_DLs_from_scheduler_dialog.button(id: "edit_ao_removeAllOfferingsFromScheduler") }
+  element(:removing_all_DLs_from_scheduler_cancelLink) { |b| b.removing_all_DLs_from_scheduler_dialog.link(id: "edit_ao_removeAllOfferingsFromScheduler_cancel") }
+  action(:confirm_remove_all_DLs_from_scheduler) { |b| b.removing_all_DLs_from_scheduler_dialog.wait_until_present; b.removing_all_DLs_from_scheduler_confirmButton.click }
+  action(:cancel_remove_all_DLs_from_scheduler) { |b| b.removing_all_DLs_from_scheduler_dialog.wait_until_present; b.removing_all_DLs_from_scheduler_cancelLink.click }
 
   element(:submit_button) { |b| b.save_cancel_div.button(text: "Update") }
   action(:submit) { |b| sleep 2; b.loading.wait_while_present; sleep 2; b.submit_button.click; b.loading.wait_while_present(120) }
   action(:cancel) { |b| b.save_cancel_div.link(text: "Cancel").click; b.loading.wait_while_present }
   element(:sticky_footer_div) { |b| b.frm.div(class: "ks-uif-footer uif-stickyFooter uif-stickyButtonFooter", index: 1) }
-  element(:send_revised_delivery_logistics_checkbox) { |b| b.sticky_footer_div.checkbox(name: "document.newMaintainableObject.dataObject.sendRDLsToSchedulerAfterMSE") }
-  action(:send_revised_delivery_logistics) { |b| b.send_revised_delivery_logistics_checkbox.click }
 
   #unsaved changes dialog - appears when navigating between AOs
   element(:save_continue_alert_div) { |b| b.frm.div(id: "ActivityOfferingEdit-NavigationConfirmation") }
