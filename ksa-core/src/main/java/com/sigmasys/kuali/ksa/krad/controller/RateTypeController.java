@@ -145,7 +145,10 @@ public class RateTypeController extends GenericSearchController {
                 rateType.setName(rateTypeModel.getName());
                 rateType.setDescription(rateTypeModel.getDescription());
                 rateType.setGrouping(rateTypeModel.isGrouping());
-                rateType.setRateAmountType(rateTypeModel.getRateAmountTypeType());
+
+                if (rateTypeModel.getRateAmountTypeType() != null) {
+                    rateType.setRateAmountType(rateTypeModel.getRateAmountTypeType());
+                }
 
                 try {
                     // Persist the RateType object:
