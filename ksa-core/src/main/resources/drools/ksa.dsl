@@ -133,8 +133,14 @@
 [then][]set effective date to "{effectiveDate}" on manifests with id "{internalChargeId}" = context.getFmService().setManifestEffectiveDate("{effectiveDate}","{internalChargeId}",context);
 [then][]set recognition date to "{recognitionDate}" on manifests with rates "{rateCodes}", types "{rateTypeCodes}", catalogs "{rateCatalogCodes}" = context.getFmService().setManifestRecognitionDate("{recognitionDate}","{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",context);
 [then][]set recognition date to "{recognitionDate}" on manifests with id "{internalChargeId}" = context.getFmService().setManifestRecognitionDate("{recognitionDate}","{internalChargeId}",context);
-[then][]set amount to ${amount} on manifests with rates "{rateCodes}", types "{rateTypeCodes}", catalogs "{rateCatalogCodes}" = context.getFmService().setManifestAmount(new BigDecimal({amount},"{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",context);
-[then][]set amount to ${amount} on manifests with id "{internalChargeId}" = context.getFmService().setManifestAmount(new BigDecimal({amount},"{internalChargeId}",context);
+[then][]set amount to ${amount} on manifests with rates "{rateCodes}", types "{rateTypeCodes}", catalogs "{rateCatalogCodes}" = context.getFmService().setManifestAmount(new BigDecimal({amount}),"{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",context);
+[then][]set amount to ${amount} on manifests with id "{internalChargeId}" = context.getFmService().setManifestAmount(new BigDecimal({amount}),"{internalChargeId}",context);
+[then][]set gl account to "{glAccountId}" on manifests with rates "{rateCodes}", types "{rateTypeCodes}", catalogs "{rateCatalogCodes}" = context.getFmService().setManifestGlAccount("{glAccountId}","{rateCodes}","{rateTypeCodes}","{rateCatalogCodes}",context);
+[then][]set gl account to "{glAccountId}" on manifests with id "{internalChargeId}" = context.getFmService().setManifestGlAccount("{glAccountId}","{internalChargeId}",context);
+[then][]charge rates "{rateCodes}", "{rateSubCodes}" with types "{rateTypeCodes}", catalogs "{rateCatalogCodes}" = context.getFmService().chargeSignupRates("{rateCodes}","{rateSubCodes}","{rateTypeCodes}","{rateCatalogCodes}",context);
+[then][]charge incidental rate "{rateCode}", "{rateSubCode}" with {units} units in amount of ${amount} using id "{internalChargeId}" = context.getFmService().chargeIncidentalRate("{rateCode}","{rateSubCode}","{internalChargeId}",{units},new BigDecimal({amount}),context);
+[then][]charge incidental rate "{rateCode}", "{rateSubCode}" with {units} units using id "{internalChargeId}" = context.getFmService().chargeIncidentalRate("{rateCode}","{rateSubCode}","{internalChargeId}",{units},null,context);
+[then][]charge incidental rate "{rateCode}", "{rateSubCode}" using id "{internalChargeId}" = context.getFmService().chargeIncidentalRate("{rateCode}","{rateSubCode}","{internalChargeId}",0,null,context);
 
 
 ########################################################################################################################

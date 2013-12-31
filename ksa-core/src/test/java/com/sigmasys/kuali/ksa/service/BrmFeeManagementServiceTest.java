@@ -5,6 +5,8 @@ import com.sigmasys.kuali.ksa.model.*;
 import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmService;
+import com.sigmasys.kuali.ksa.service.fm.RateService;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -45,6 +48,9 @@ public class BrmFeeManagementServiceTest extends AbstractServiceTest {
 
     @Autowired
     private BrmService brmService;
+
+    @Autowired
+    private RateService rateService;
 
 
     @Test
@@ -103,7 +109,11 @@ public class BrmFeeManagementServiceTest extends AbstractServiceTest {
      * @return An <code>FmSession</code> with new objects.
      */
     private FeeManagementSession createFmSession(int numManifests, boolean addPrimaryTransactions, boolean addLinkedManifests,
-                                                 boolean addImplicatedTransaction, boolean addLockedAllocation, FeeManagementManifestType... manifestTypes) {
+                                                 boolean addImplicatedTransaction,
+                                                 boolean addLockedAllocation,
+                                                 FeeManagementManifestType... manifestTypes) throws Exception {
+
+        Rate rate = _createRate("late.registration", "1", "late.fee");
 
         // Create Session:
         Account account = accountService.getOrCreateAccount(ACCOUNT_ID);
@@ -123,10 +133,22 @@ public class BrmFeeManagementServiceTest extends AbstractServiceTest {
         signup.setAtpId("19871");
         signup.setOfferingType(OfferingType.ACTIVITY_OFFERING);
         signup.setSession(session);
-        signup.setOperation(FeeManagementSignupOperation. ADD_WITHOUT_PENALTY);
+        signup.setOperation(FeeManagementSignupOperation.ADD_WITHOUT_PENALTY);
         signup.setUnits(5);
 
         persistenceService.persistEntity(signup);
+
+        FeeManagementSignupRate signupRate = new FeeManagementSignupRate();
+        signupRate.setSignup(signup);
+        signupRate.setRate(rate);
+        signupRate.setComplete(false);
+
+        persistenceService.persistEntity(signupRate);
+
+        HashSet<FeeManagementSignupRate> signupRates = new HashSet<FeeManagementSignupRate>();
+        signupRates.add(signupRate);
+
+        signup.setSignupRates(signupRates);
 
         Set<FeeManagementSignup> signups = new HashSet<FeeManagementSignup>();
         signups.add(signup);
@@ -212,6 +234,132 @@ public class BrmFeeManagementServiceTest extends AbstractServiceTest {
             // Create a locked allocation:
             transactionService.createAllocation(transaction, implicatedTransaction, allocationAmount, true, true, false);
         }
+    }
+
+    private Rate _createRate(String rateCode, String subCode, String rateCatalogCode) throws Exception {
+
+        String atpId = "19871";
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_US);
+
+        Date transactionDate = dateFormat.parse("05/23/2012");
+        Date recognitionDate = null;
+
+        String transactionTypeId = "cash";
+
+        String rateName = rateCode + " name";
+
+        int minLimitUnits = 0;
+        int maxLimitUnits = 10;
+
+        TransactionDateType dateType = TransactionDateType.ALWAYS;
+        BigDecimal limitAmount = new BigDecimal(7776000.1111);
+        BigDecimal rateAmount = new BigDecimal(200.88);
+
+        RateCatalog rateCatalog = _createRateCatalog(rateCatalogCode);
+
+        Rate rate = rateService.createRate(rateCode, subCode, rateName, rateCatalogCode, transactionTypeId, dateType,
+                rateAmount, limitAmount, minLimitUnits, maxLimitUnits, transactionDate, recognitionDate, atpId, false);
+
+        Assert.notNull(rate);
+        Assert.notNull(rate.getId());
+        Assert.notNull(rate.getAtpId());
+        Assert.notNull(rate.getCode());
+        Assert.notNull(rate.getSubCode());
+        Assert.notNull(rate.getRateCatalogAtp());
+
+        rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+        Assert.notNull(rateCatalog);
+        Assert.notNull(rate.getRateCatalogAtp().getId());
+        Assert.isTrue(rateCatalogCode.equals(rateCatalog.getCode()));
+        Assert.isTrue(rateCatalogCode.equals(rate.getRateCatalogAtp().getId().getCode()));
+        Assert.notNull(rate.getDefaultRateAmount());
+        Assert.notNull(rate.getDefaultRateAmount().getAmount());
+        Assert.isTrue(rate.getDefaultRateAmount().getAmount().compareTo(rateAmount) == 0);
+        Assert.notNull(rate.getKeyPairs());
+        Assert.notEmpty(rate.getKeyPairs());
+        Assert.notNull(rate.getTransactionDateType());
+
+        if (!rateCatalog.isRecognitionDateDefinable()) {
+            Assert.isNull(rate.getRecognitionDate());
+        }
+
+        if (rateCatalog.isTransactionDateTypeFinal()) {
+            Assert.isTrue(rate.getTransactionDateType() == rateCatalog.getTransactionDateType());
+        }
+
+        if (rateCatalog.isTransactionTypeFinal()) {
+            Assert.isTrue(rate.getDefaultRateAmount().getTransactionTypeId().equals(rateCatalog.getTransactionTypeId()));
+        }
+
+        if (rateCatalog.getKeyPairs() != null && rateCatalog.isKeyPairFinal()) {
+            Assert.isTrue(CollectionUtils.isEqualCollection(rate.getKeyPairs(), rateCatalog.getKeyPairs()));
+        }
+
+        Assert.isTrue(!rateCatalog.isLimitAmountFinal() || rateCatalog.isLimitAmount() == rate.isLimitAmount());
+
+        return rate;
+    }
+
+    private RateType _createRateType(String code, String name, String description) {
+
+        RateType rateType = rateService.createRateType(code, name, description, false, RateAmountType.FLAT);
+
+        Assert.notNull(rateType);
+        Assert.notNull(rateType.getId());
+        Assert.notNull(rateType.getCode());
+        Assert.notNull(rateType.getName());
+        Assert.notNull(rateType.getDescription());
+        Assert.notNull(rateType.getCreatorId());
+        Assert.notNull(rateType.getCreationDate());
+
+        return rateType;
+    }
+
+    private RateCatalog _createRateCatalog(String rateCatalogCode) {
+
+        String rateTypeCode = "RT_2013";
+        String transactionTypeId = "cash";
+        TransactionDateType dateType = TransactionDateType.ALWAYS;
+
+        BigDecimal minAmount = new BigDecimal(10.99);
+        BigDecimal maxAmount = new BigDecimal(300000.67);
+
+        BigDecimal minLimitAmount = new BigDecimal(2.01);
+        BigDecimal maxLimitAmount = new BigDecimal(200033.01);
+
+        //BigDecimal limitAmount = new BigDecimal(200.88);
+
+        int minLimitUnits = 0;
+        int maxLimitUnits = 10;
+
+        List<KeyPair> keyPairs = Arrays.asList(new KeyPair("key1", "value1"));
+
+        _createRateType(rateTypeCode, rateTypeCode + "_name", rateTypeCode + "_desc");
+
+        RateCatalog rateCatalog = rateService.createRateCatalog(rateCatalogCode, rateTypeCode, transactionTypeId,
+                dateType, minAmount, maxAmount, minLimitAmount, maxLimitAmount, minLimitUnits, maxLimitUnits,
+                Arrays.asList("19871", "19872", "19873", "19874"), keyPairs, false, false, false, false, false, false);
+
+        Assert.notNull(rateCatalog);
+        Assert.notNull(rateCatalog.getId());
+        Assert.notNull(rateCatalog.getCode());
+        Assert.isTrue(rateCatalog.getCode().equals(rateCatalogCode));
+        Assert.notNull(rateCatalog.getMinAmount());
+        Assert.notNull(rateCatalog.getMaxAmount());
+        Assert.notNull(rateCatalog.getMinLimitAmount());
+        Assert.notNull(rateCatalog.getMaxLimitAmount());
+        Assert.notNull(rateCatalog.getKeyPairs());
+        Assert.notEmpty(rateCatalog.getKeyPairs());
+        Assert.notNull(rateCatalog.getTransactionDateType());
+
+        Set<String> atpIdsSet = rateService.getAtpsForRateCatalog(rateCatalog.getId());
+
+        Assert.notNull(atpIdsSet);
+        Assert.notEmpty(atpIdsSet);
+
+        return rateCatalog;
     }
 
 }

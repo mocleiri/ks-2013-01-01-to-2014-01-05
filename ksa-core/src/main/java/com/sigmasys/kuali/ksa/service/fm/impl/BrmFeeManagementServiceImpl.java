@@ -325,10 +325,10 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                     matchesPatterns(rate.getCode(), rateCodeValues);
 
             boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
-                    matchesPatterns(rateType.getCode(), rateTypeCodeValues);
+                    (rateType != null && matchesPatterns(rateType.getCode(), rateTypeCodeValues));
 
             boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
-                    matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
+                    (rateCatalog != null && matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues));
 
             if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
                 filteredManifests.add(manifest);
@@ -370,7 +370,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 for (String rateTypeCode : rateTypeCodeValues) {
                     for (FeeManagementSignupRate signupRate : signupRates) {
                         RateType rateType = signupRate.getRate().getRateType();
-                        if (Pattern.compile(rateTypeCode).matcher(rateType.getCode()).matches()) {
+                        if (rateType != null && Pattern.compile(rateTypeCode).matcher(rateType.getCode()).matches()) {
                             rateTypeCodeSignups.add(signup);
                             signupAdded = true;
                             break;
@@ -403,7 +403,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                     for (FeeManagementSignupRate signupRate : signupRates) {
                         Rate rate = signupRate.getRate();
                         RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
-                        if (Pattern.compile(catalogCode).matcher(rateCatalog.getCode()).matches()) {
+                        if (rateCatalog != null && Pattern.compile(catalogCode).matcher(rateCatalog.getCode()).matches()) {
                             rateCatalogCodeSignups.add(signup);
                             signupAdded = true;
                             break;
@@ -1671,13 +1671,11 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        Collection<FeeManagementSignup> signups = !removeFromSignupOnly ? session.getIncompleteSignups() : Arrays.asList(signup);
+        Set<FeeManagementSignup> signups =
+                filterSignups(!removeFromSignupOnly ? session.getIncompleteSignups() : Arrays.asList(signup),
+                        rateCodes, rateTypeCodes, rateCatalogCodes, null, signup.getOfferingId());
 
         if (CollectionUtils.isNotEmpty(signups)) {
-
-            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
-            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
-            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
 
             for (FeeManagementSignup fmSignup : signups) {
 
@@ -1687,22 +1685,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
                     for (FeeManagementSignupRate signupRate : new HashSet<FeeManagementSignupRate>(signupRates)) {
 
-                        Rate rate = signupRate.getRate();
-                        RateType rateType = rate.getRateType();
-                        RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
-
-                        boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
-                                matchesPatterns(rate.getCode(), rateCodeValues);
-
-                        boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
-                                matchesPatterns(rateType.getCode(), rateTypeCodeValues);
-
-                        boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
-                                matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
-
-                        if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply &&
-                                fmSignup.getOfferingId().equals(signup.getOfferingId()) &&
-                                fmSignup.getEffectiveDate().compareTo(signup.getEffectiveDate()) <= 0) {
+                        if (fmSignup.getEffectiveDate().compareTo(signup.getEffectiveDate()) <= 0) {
 
                             signupRates.remove(signupRate);
 
@@ -1836,9 +1819,11 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         // Map of [Rate ID, [Rate code, number of units]]
         Map<Long, Pair<String, Integer>> rateUnitsMap = new HashMap<Long, Pair<String, Integer>>();
 
+        List<String> rateSubCodeValues = CommonUtils.split(rateSubCodes, MULTI_VALUE_DELIMITER);
+
         for (FeeManagementSignup signup : signups) {
 
-            Set<FeeManagementSignupRate> signupRates = signup.getSignupRates();
+            Set<FeeManagementSignupRate> signupRates = signup.getIncompleteSignupRates();
 
             if (CollectionUtils.isNotEmpty(signupRates)) {
 
@@ -1846,60 +1831,67 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
                     Rate rate = signupRate.getRate();
 
-                    Date baseDate = rateBaseDateMap.get(rate.getId());
+                    boolean rateSubCodesComply = StringUtils.isEmpty(rateSubCodes) ||
+                            matchesPatterns(rate.getSubCode(), rateSubCodeValues);
 
-                    if (baseDate == null) {
-                        baseDate = new Date(System.currentTimeMillis() * 1000000);
-                    }
+                    if (rateSubCodesComply) {
 
-                    if (signup.getEffectiveDate().before(baseDate)) {
-                        rateBaseDateMap.put(rate.getId(), signup.getEffectiveDate());
-                    }
+                        Date baseDate = rateBaseDateMap.get(rate.getId());
 
-                    RateType rateType = rate.getRateType();
-
-                    if (rateType != null && rateType.isGrouping()) {
-
-                        Pair<String, Integer> rateCodeUnits = rateUnitsMap.get(rate.getId());
-
-                        if (rateCodeUnits == null) {
-                            rateCodeUnits = new Pair<String, Integer>(rate.getCode(), 0);
-                            rateUnitsMap.put(rate.getId(), rateCodeUnits);
+                        if (baseDate == null) {
+                            baseDate = new Date(System.currentTimeMillis() * 1000000);
                         }
 
-                        rateCodeUnits.setB(rateCodeUnits.getB() + signup.getUnits());
+                        if (signup.getEffectiveDate().before(baseDate)) {
+                            rateBaseDateMap.put(rate.getId(), signup.getEffectiveDate());
+                        }
 
-                    } else {
+                        RateType rateType = rate.getRateType();
 
-                        BigDecimal amount = rateService.getAmountFromRate(rate.getId(), signup.getUnits());
+                        if (rateType != null && rateType.isGrouping()) {
 
-                        String transactionTypeId = rateService.getTransactionTypeIdFromRate(rate.getId(), signup.getUnits());
+                            Pair<String, Integer> rateCodeUnits = rateUnitsMap.get(rate.getId());
 
-                        FeeManagementManifest manifest = fmService.createFeeManagementManifest(
-                                FeeManagementManifestType.CHARGE,
-                                FeeManagementManifestStatus.PENDING,
-                                transactionTypeId,
-                                rate.getId(),
-                                null,
-                                signup.getRegistrationId(),
-                                signup.getOfferingId(),
-                                null,
-                                null,
-                                amount,
-                                true);
+                            if (rateCodeUnits == null) {
+                                rateCodeUnits = new Pair<String, Integer>(rate.getCode(), 0);
+                                rateUnitsMap.put(rate.getId(), rateCodeUnits);
+                            }
 
-                        nonGroupingManifests.add(manifest);
+                            rateCodeUnits.setB(rateCodeUnits.getB() + signup.getUnits());
+
+                        } else {
+
+                            BigDecimal amount = rateService.getAmountFromRate(rate.getId(), signup.getUnits());
+
+                            String transactionTypeId = rateService.getTransactionTypeIdFromRate(rate.getId(), signup.getUnits());
+
+                            FeeManagementManifest manifest = fmService.createFeeManagementManifest(
+                                    FeeManagementManifestType.CHARGE,
+                                    FeeManagementManifestStatus.PENDING,
+                                    transactionTypeId,
+                                    rate.getId(),
+                                    null,
+                                    signup.getRegistrationId(),
+                                    signup.getOfferingId(),
+                                    null,
+                                    null,
+                                    amount,
+                                    true);
+
+                            nonGroupingManifests.add(manifest);
+                        }
+
+                        signupRate.setComplete(true);
+
+                        persistEntity(signupRate);
                     }
-
-                    signupRate.setComplete(true);
-
-                    persistEntity(signupRate);
                 }
             }
 
-            signup.setComplete(true);
-
-            persistEntity(signup);
+            if (CollectionUtils.isEmpty(signup.getIncompleteSignupRates())) {
+                signup.setComplete(true);
+                persistEntity(signup);
+            }
         }
 
         // Updating and adding Non-grouping Manifests

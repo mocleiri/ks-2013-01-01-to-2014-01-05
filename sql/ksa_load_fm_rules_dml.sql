@@ -26,7 +26,8 @@ global FeeManagementSignup fmSignup;
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (5001, 'FM Rule 1', 3, 10, null,
 '(signup date is on or before atp milestone "kuali.atp.milestone.lateRegistration" and signup operation is "ADD")',
-'mark signup as taken
+'charge incidental rate "late.registration", "1" using id "late.registration"
+ mark signup as taken
 ')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (5002, 'FM Rule 2', 3, 10, null,
@@ -44,6 +45,7 @@ Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) va
 'mark preceding offerings as not taken
  mark signup as not taken
  on signup remove rates ".*fee.*"
+ charge incidental rate "late.registration", "1" using id "late.registration"
 ')!
 
 Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (5005, 'FM Rule 5', 3, 10, null,
@@ -66,6 +68,17 @@ Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) va
  set session key "taken.credits" to number of units where signup is taken
 ')!
 
+Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) values (5008, 'FM Rule TEST', 3, 8, null,
+'(Context is initialized)',
+'set session key "chargeable.credits" to number of units where signup operation is "ADD,ADD_WITHOUT_PENALTY,TRANSFER_IN" minus "DROP,DROP_WITHOUT_PENALTY,TRANSFER_OUT"
+ set session key "taken.credits" to number of units where signup is taken
+ mark preceding offerings as not taken
+ mark signup as not taken
+ mark signup as not complete
+ on signup including preceding offerings remove rates ".*fee.*"
+ charge incidental rate "late.registration", "1" using id "late.registration"
+')!
+
 -- FM rule associations
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (101, 5001)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (101, 5002)!
@@ -74,6 +87,7 @@ Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (101, 5004)
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (101, 5005)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (101, 5006)!
 Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (101, 5007)!
+Insert into KSSA_RULE_SET_RULE ( RULE_SET_ID_FK, RULE_ID_FK ) values (101, 5008)!
 
 
 -----------------------------------------------------------------------------------------------------------------------
