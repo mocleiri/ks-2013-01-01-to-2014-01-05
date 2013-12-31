@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -225,5 +226,17 @@ public class FeeManagementSession implements Identifiable, KeyPairAware {
         statusCode = status.getId();
     }
 
+    @Transient
+    public Set<FeeManagementSignup> getIncompleteSignups() {
+        Set<FeeManagementSignup> incompleteSignups = new HashSet<FeeManagementSignup>();
+        if (signups != null) {
+            for (FeeManagementSignup signup : signups) {
+                if (!signup.isComplete()) {
+                    incompleteSignups.add(signup);
+                }
+            }
+        }
+        return incompleteSignups;
+    }
 
 }

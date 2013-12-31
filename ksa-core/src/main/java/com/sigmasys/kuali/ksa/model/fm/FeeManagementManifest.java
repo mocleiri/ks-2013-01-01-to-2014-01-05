@@ -51,6 +51,8 @@ public class FeeManagementManifest implements Identifiable, KeyPairAware {
 
     private Set<Tag> tags;
 
+    private Set<ManifestGlBreakdownOverride> glBreakdownOverrides;
+
     private FeeManagementManifestStatus status;
 
     private String statusCode;
@@ -236,6 +238,16 @@ public class FeeManagementManifest implements Identifiable, KeyPairAware {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "FM_MANIFEST_ID_FK")
+    public Set<ManifestGlBreakdownOverride> getGlBreakdownOverrides() {
+        return glBreakdownOverrides;
+    }
+
+    public void setGlBreakdownOverrides(Set<ManifestGlBreakdownOverride> glBreakdownOverrides) {
+        this.glBreakdownOverrides = glBreakdownOverrides;
     }
 
     @Column(name = "STATUS", length = 1)

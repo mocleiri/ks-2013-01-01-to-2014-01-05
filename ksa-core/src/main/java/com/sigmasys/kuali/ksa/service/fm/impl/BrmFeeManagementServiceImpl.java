@@ -304,12 +304,46 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         return signupAmount;
     }
 
-    private Set<FeeManagementSignup> filterSessionSignups(Collection<FeeManagementSignup> signups,
-                                                          String rateCodes,
-                                                          String rateTypeCodes,
-                                                          String rateCatalogCodes,
-                                                          String signupOperations,
-                                                          String offeringIds) {
+    private Set<FeeManagementManifest> filterManifests(Collection<FeeManagementManifest> manifests,
+                                                       String rateCodes,
+                                                       String rateTypeCodes,
+                                                       String rateCatalogCodes) {
+
+        Set<FeeManagementManifest> filteredManifests = new HashSet<FeeManagementManifest>();
+
+        List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
+        List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
+        List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+
+        for (FeeManagementManifest manifest : manifests) {
+
+            Rate rate = manifest.getRate();
+            RateType rateType = rate.getRateType();
+            RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
+
+            boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
+                    matchesPatterns(rate.getCode(), rateCodeValues);
+
+            boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
+                    matchesPatterns(rateType.getCode(), rateTypeCodeValues);
+
+            boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
+                    matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
+
+            if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
+                filteredManifests.add(manifest);
+            }
+        }
+
+        return filteredManifests;
+    }
+
+    private Set<FeeManagementSignup> filterSignups(Collection<FeeManagementSignup> signups,
+                                                   String rateCodes,
+                                                   String rateTypeCodes,
+                                                   String rateCatalogCodes,
+                                                   String signupOperations,
+                                                   String offeringIds) {
 
         Set<FeeManagementSignup> filteredSignups = new HashSet<FeeManagementSignup>();
 
@@ -328,10 +362,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             Set<FeeManagementSignup> offeringIdSignups = new HashSet<FeeManagementSignup>();
 
             for (FeeManagementSignup signup : signups) {
-
-                if (signup.isComplete()) {
-                    continue;
-                }
 
                 Set<FeeManagementSignupRate> signupRates = signup.getSignupRates();
 
@@ -469,16 +499,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         persistEntity(manifest);
     }
 
-    private Set<FeeManagementSignup> getIncompleteSignups(Collection<FeeManagementSignup> signups) {
-        Set<FeeManagementSignup> incompleteSignups = new HashSet<FeeManagementSignup>();
-        for (FeeManagementSignup signup : signups) {
-            if (!signup.isComplete()) {
-                incompleteSignups.add(signup);
-            }
-        }
-        return incompleteSignups;
-    }
-
     @SuppressWarnings("unchecked")
     private List<Tag> getTagsByCodes(List<String> tagCodes) {
         Query query = em.createQuery("select t from Tag t where t.code in (:tagCodes)");
@@ -492,6 +512,16 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         query.setParameter("rollupCode", rollupCode);
         List<Rollup> rollups = query.getResultList();
         return CollectionUtils.isNotEmpty(rollups) ? rollups.get(0) : null;
+    }
+
+    private void addManifestToSession(FeeManagementManifest manifest, FeeManagementSession session) {
+        manifest.setSession(session);
+        Set<FeeManagementManifest> manifests = session.getManifests();
+        if (manifests == null) {
+            manifests = new HashSet<FeeManagementManifest>();
+            session.setManifests(manifests);
+        }
+        manifests.add(manifest);
     }
 
     /**
@@ -957,7 +987,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups =
-                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
+                filterSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
 
         return compareObjects(signups.size(), numberOfSignups, operator);
     }
@@ -987,7 +1017,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups =
-                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
+                filterSignups(session.getSignups(), rateCodes, rateTypeCodes, null, signupOperations, null);
 
         for (FeeManagementSignup fmSignup : signups) {
             if (fmSignup.getUnits() != null) {
@@ -1015,7 +1045,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        Set<FeeManagementSignup> signups = filterSessionSignups(session.getSignups(), rateCodes, null, null, null, null);
+        Set<FeeManagementSignup> signups = filterSignups(session.getSignups(), rateCodes, null, null, null, null);
 
         for (FeeManagementSignup signup : signups) {
 
@@ -1024,7 +1054,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             }
         }
 
-        signups = filterSessionSignups(session.getSignups(), takenRateCodes, null, null, null, null);
+        signups = filterSignups(session.getSignups(), takenRateCodes, null, null, null, null);
 
         for (FeeManagementSignup signup : signups) {
 
@@ -1053,13 +1083,13 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        Set<FeeManagementSignup> signups = filterSessionSignups(session.getSignups(), rateCodes, null, null, null, null);
+        Set<FeeManagementSignup> signups = filterSignups(session.getSignups(), rateCodes, null, null, null, null);
 
         for (FeeManagementSignup signup : signups) {
             sessionAmount = sessionAmount.add(getSignupAmount(signup));
         }
 
-        signups = filterSessionSignups(session.getSignups(), takenRateCodes, null, null, null, null);
+        signups = filterSignups(session.getSignups(), takenRateCodes, null, null, null, null);
 
         for (FeeManagementSignup signup : signups) {
             if (signup.isTaken()) {
@@ -1145,12 +1175,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
         if (signup != null) {
-            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), rateCodes, null, null, null, null));
+            return CollectionUtils.isNotEmpty(filterSignups(Arrays.asList(signup), rateCodes, null, null, null, null));
         }
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), rateCodes, null, null, null, null));
+        return CollectionUtils.isNotEmpty(filterSignups(session.getSignups(), rateCodes, null, null, null, null));
     }
 
     /**
@@ -1166,12 +1196,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
         if (signup != null) {
-            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, rateTypeCodes, null, null, null));
+            return CollectionUtils.isNotEmpty(filterSignups(Arrays.asList(signup), null, rateTypeCodes, null, null, null));
         }
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, rateTypeCodes, null, null, null));
+        return CollectionUtils.isNotEmpty(filterSignups(session.getSignups(), null, rateTypeCodes, null, null, null));
     }
 
     /**
@@ -1187,12 +1217,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
         if (signup != null) {
-            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, null, rateCatalogCodes, null, null));
+            return CollectionUtils.isNotEmpty(filterSignups(Arrays.asList(signup), null, null, rateCatalogCodes, null, null));
         }
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, null, rateCatalogCodes, null, null));
+        return CollectionUtils.isNotEmpty(filterSignups(session.getSignups(), null, null, rateCatalogCodes, null, null));
     }
 
     /**
@@ -1208,12 +1238,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSignup signup = getGlobalVariable(context, FM_SIGNUP_VAR_NAME);
 
         if (signup != null) {
-            return CollectionUtils.isNotEmpty(filterSessionSignups(Arrays.asList(signup), null, null, null, null, offeringIds));
+            return CollectionUtils.isNotEmpty(filterSignups(Arrays.asList(signup), null, null, null, null, offeringIds));
         }
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        return CollectionUtils.isNotEmpty(filterSessionSignups(session.getSignups(), null, null, null, null, offeringIds));
+        return CollectionUtils.isNotEmpty(filterSignups(session.getSignups(), null, null, null, null, offeringIds));
     }
 
     /**
@@ -1641,7 +1671,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
-        Collection<FeeManagementSignup> signups = !removeFromSignupOnly ? session.getSignups() : Arrays.asList(signup);
+        Collection<FeeManagementSignup> signups = !removeFromSignupOnly ? session.getIncompleteSignups() : Arrays.asList(signup);
 
         if (CollectionUtils.isNotEmpty(signups)) {
 
@@ -1651,19 +1681,11 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
             for (FeeManagementSignup fmSignup : signups) {
 
-                if (signup.isComplete()) {
-                    continue;
-                }
-
-                Set<FeeManagementSignupRate> signupRates = fmSignup.getSignupRates();
+                Set<FeeManagementSignupRate> signupRates = fmSignup.getIncompleteSignupRates();
 
                 if (CollectionUtils.isNotEmpty(signupRates)) {
 
                     for (FeeManagementSignupRate signupRate : new HashSet<FeeManagementSignupRate>(signupRates)) {
-
-                        if (signupRate.isComplete()) {
-                            continue;
-                        }
 
                         Rate rate = signupRate.getRate();
                         RateType rateType = rate.getRateType();
@@ -1724,16 +1746,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         } else {
 
-            Set<FeeManagementSignup> signups = session.getSignups();
+            Set<FeeManagementSignup> signups = session.getIncompleteSignups();
 
             if (CollectionUtils.isNotEmpty(signups)) {
 
                 for (FeeManagementSignup fmSignup : signups) {
-
-                    if (!fmSignup.isComplete()) {
-                        addRateToSignup(rate, fmSignup);
-                    }
-
+                    addRateToSignup(rate, fmSignup);
                 }
             }
         }
@@ -1778,15 +1796,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         } else {
 
-            Set<FeeManagementSignup> signups = session.getSignups();
+            Set<FeeManagementSignup> signups = session.getIncompleteSignups();
 
             if (CollectionUtils.isNotEmpty(signups)) {
 
                 for (FeeManagementSignup fmSignup : signups) {
-
-                    if (!fmSignup.isComplete()) {
-                        replaceRateOnSignup(rate.getId(), newRate, fmSignup);
-                    }
+                    replaceRateOnSignup(rate.getId(), newRate, fmSignup);
                 }
             }
         }
@@ -1811,16 +1826,14 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups =
-                filterSessionSignups(getIncompleteSignups(session.getSignups()), rateCodes, rateTypeCodes, rateCatalogCodes, null, null);
+                filterSignups(session.getIncompleteSignups(), rateCodes, rateTypeCodes, rateCatalogCodes, null, null);
 
-        Date effectiveBaseDate = new Date(System.currentTimeMillis() * 1000000);
+        List<FeeManagementManifest> nonGroupingManifests = new LinkedList<FeeManagementManifest>();
 
-        for (FeeManagementSignup signup : signups) {
-            if (signup.getEffectiveDate().before(effectiveBaseDate)) {
-                effectiveBaseDate = signup.getEffectiveDate();
-            }
-        }
+        // Map of [Rate ID, Date]
+        Map<Long, Date> rateBaseDateMap = new HashMap<Long, Date>();
 
+        // Map of [Rate ID, [Rate code, number of units]]
         Map<Long, Pair<String, Integer>> rateUnitsMap = new HashMap<Long, Pair<String, Integer>>();
 
         for (FeeManagementSignup signup : signups) {
@@ -1832,26 +1845,33 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 for (FeeManagementSignupRate signupRate : new HashSet<FeeManagementSignupRate>(signupRates)) {
 
                     Rate rate = signupRate.getRate();
+
+                    Date baseDate = rateBaseDateMap.get(rate.getId());
+
+                    if (baseDate == null) {
+                        baseDate = new Date(System.currentTimeMillis() * 1000000);
+                    }
+
+                    if (signup.getEffectiveDate().before(baseDate)) {
+                        rateBaseDateMap.put(rate.getId(), signup.getEffectiveDate());
+                    }
+
                     RateType rateType = rate.getRateType();
 
-                    if (rateType.isGrouping()) {
+                    if (rateType != null && rateType.isGrouping()) {
 
                         Pair<String, Integer> rateCodeUnits = rateUnitsMap.get(rate.getId());
 
                         if (rateCodeUnits == null) {
                             rateCodeUnits = new Pair<String, Integer>(rate.getCode(), 0);
+                            rateUnitsMap.put(rate.getId(), rateCodeUnits);
                         }
 
                         rateCodeUnits.setB(rateCodeUnits.getB() + signup.getUnits());
 
-                        rateUnitsMap.put(rate.getId(), rateCodeUnits);
-
                     } else {
 
                         BigDecimal amount = rateService.getAmountFromRate(rate.getId(), signup.getUnits());
-
-                        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), effectiveBaseDate);
-                        Date recognitionDate = rateService.getRecognitionDateFromRate(rate.getId(), effectiveBaseDate);
 
                         String transactionTypeId = rateService.getTransactionTypeIdFromRate(rate.getId(), signup.getUnits());
 
@@ -1863,26 +1883,40 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                                 null,
                                 signup.getRegistrationId(),
                                 signup.getOfferingId(),
-                                effectiveDate,
-                                recognitionDate,
+                                null,
+                                null,
                                 amount,
                                 true);
 
-                        manifest.setSession(session);
-
-                        Set<FeeManagementManifest> manifests = session.getManifests();
-
-                        if (manifests == null) {
-                            manifests = new HashSet<FeeManagementManifest>();
-                            session.setManifests(manifests);
-                        }
-
-                        manifests.add(manifest);
+                        nonGroupingManifests.add(manifest);
                     }
+
+                    signupRate.setComplete(true);
+
+                    persistEntity(signupRate);
                 }
             }
+
+            signup.setComplete(true);
+
+            persistEntity(signup);
         }
 
+        // Updating and adding Non-grouping Manifests
+        for (FeeManagementManifest manifest : nonGroupingManifests) {
+
+            Long rateId = manifest.getRate().getId();
+
+            Date effectiveDate = rateService.getEffectiveDateFromRate(rateId, rateBaseDateMap.get(rateId));
+            Date recognitionDate = rateService.getRecognitionDateFromRate(rateId, rateBaseDateMap.get(rateId));
+
+            manifest.setEffectiveDate(effectiveDate);
+            manifest.setRecognitionDate(recognitionDate);
+
+            addManifestToSession(manifest, session);
+        }
+
+        // Creating Grouping Manifests
         for (Map.Entry<Long, Pair<String, Integer>> entry : rateUnitsMap.entrySet()) {
 
             Long rateId = entry.getKey();
@@ -1893,8 +1927,8 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
             BigDecimal amount = rateService.getAmountFromRate(rateId, numberOfUnits);
 
-            Date effectiveDate = rateService.getEffectiveDateFromRate(rateId, effectiveBaseDate);
-            Date recognitionDate = rateService.getRecognitionDateFromRate(rateId, effectiveBaseDate);
+            Date effectiveDate = rateService.getEffectiveDateFromRate(rateId, rateBaseDateMap.get(rateId));
+            Date recognitionDate = rateService.getRecognitionDateFromRate(rateId, rateBaseDateMap.get(rateId));
 
             String transactionTypeId = rateService.getTransactionTypeIdFromRate(rateId, numberOfUnits);
 
@@ -1911,16 +1945,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                     amount,
                     true);
 
-            manifest.setSession(session);
-
-            Set<FeeManagementManifest> manifests = session.getManifests();
-
-            if (manifests == null) {
-                manifests = new HashSet<FeeManagementManifest>();
-                session.setManifests(manifests);
-            }
-
-            manifests.add(manifest);
+            addManifestToSession(manifest, session);
         }
 
         persistEntity(session);
@@ -1978,16 +2003,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 amount,
                 true);
 
-        manifest.setSession(session);
-
-        Set<FeeManagementManifest> manifests = session.getManifests();
-
-        if (manifests == null) {
-            manifests = new HashSet<FeeManagementManifest>();
-            session.setManifests(manifests);
-        }
-
-        manifests.add(manifest);
+        addManifestToSession(manifest, session);
 
         persistEntity(session);
     }
@@ -2020,28 +2036,10 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 throw new IllegalArgumentException(errMsg);
             }
 
-            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
-            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
-            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+            Set<FeeManagementManifest> filteredManifests = filterManifests(manifests, rateCodes, rateTypeCodes, rateCatalogCodes);
 
-            for (FeeManagementManifest manifest : manifests) {
-
-                Rate rate = manifest.getRate();
-                RateType rateType = rate.getRateType();
-                RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
-
-                boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
-                        matchesPatterns(rate.getCode(), rateCodeValues);
-
-                boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
-                        matchesPatterns(rateType.getCode(), rateTypeCodeValues);
-
-                boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
-                        matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
-
-                if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
-                    addTagsToManifest(tags, manifest);
-                }
+            for (FeeManagementManifest manifest : filteredManifests) {
+                addTagsToManifest(tags, manifest);
             }
         }
 
@@ -2079,7 +2077,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             }
 
             for (FeeManagementManifest manifest : manifests) {
-
                 if (internalChargeId.equals(manifest.getInternalChargeId())) {
                     addTagsToManifest(tags, manifest);
                 }
@@ -2113,29 +2110,11 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 throw new IllegalArgumentException(errMsg);
             }
 
-            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
-            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
-            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+            Set<FeeManagementManifest> filteredManifests = filterManifests(manifests, rateCodes, rateTypeCodes, rateCatalogCodes);
 
-            for (FeeManagementManifest manifest : manifests) {
-
-                Rate rate = manifest.getRate();
-                RateType rateType = rate.getRateType();
-                RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
-
-                boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
-                        matchesPatterns(rate.getCode(), rateCodeValues);
-
-                boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
-                        matchesPatterns(rateType.getCode(), rateTypeCodeValues);
-
-                boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
-                        matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
-
-                if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
-                    manifest.setRollup(rollup);
-                    persistEntity(manifest);
-                }
+            for (FeeManagementManifest manifest : filteredManifests) {
+                manifest.setRollup(rollup);
+                persistEntity(manifest);
             }
         }
     }
@@ -2171,7 +2150,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
             }
 
             for (FeeManagementManifest manifest : manifests) {
-
                 if (internalChargeId.equals(manifest.getInternalChargeId())) {
                     manifest.setRollup(rollup);
                     persistEntity(manifest);
@@ -2202,29 +2180,11 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
                 Date date = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse(effectiveDate);
 
-                List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
-                List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
-                List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+                Set<FeeManagementManifest> filteredManifests = filterManifests(manifests, rateCodes, rateTypeCodes, rateCatalogCodes);
 
-                for (FeeManagementManifest manifest : manifests) {
-
-                    Rate rate = manifest.getRate();
-                    RateType rateType = rate.getRateType();
-                    RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
-
-                    boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
-                            matchesPatterns(rate.getCode(), rateCodeValues);
-
-                    boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
-                            matchesPatterns(rateType.getCode(), rateTypeCodeValues);
-
-                    boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
-                            matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
-
-                    if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
-                        manifest.setEffectiveDate(date);
-                        persistEntity(manifest);
-                    }
+                for (FeeManagementManifest manifest : filteredManifests) {
+                    manifest.setEffectiveDate(date);
+                    persistEntity(manifest);
                 }
 
             } catch (ParseException pe) {
@@ -2261,7 +2221,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 Date date = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse(effectiveDate);
 
                 for (FeeManagementManifest manifest : manifests) {
-
                     if (internalChargeId.equals(manifest.getInternalChargeId())) {
                         manifest.setEffectiveDate(date);
                         persistEntity(manifest);
@@ -2297,29 +2256,11 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
                 Date date = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse(recognitionDate);
 
-                List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
-                List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
-                List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+                Set<FeeManagementManifest> filteredManifests = filterManifests(manifests, rateCodes, rateTypeCodes, rateCatalogCodes);
 
-                for (FeeManagementManifest manifest : manifests) {
-
-                    Rate rate = manifest.getRate();
-                    RateType rateType = rate.getRateType();
-                    RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
-
-                    boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
-                            matchesPatterns(rate.getCode(), rateCodeValues);
-
-                    boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
-                            matchesPatterns(rateType.getCode(), rateTypeCodeValues);
-
-                    boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
-                            matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
-
-                    if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
-                        manifest.setRecognitionDate(date);
-                        persistEntity(manifest);
-                    }
+                for (FeeManagementManifest manifest : filteredManifests) {
+                    manifest.setRecognitionDate(date);
+                    persistEntity(manifest);
                 }
 
             } catch (ParseException pe) {
@@ -2356,7 +2297,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 Date date = new SimpleDateFormat(Constants.DATE_FORMAT_US).parse(recognitionDate);
 
                 for (FeeManagementManifest manifest : manifests) {
-
                     if (internalChargeId.equals(manifest.getInternalChargeId())) {
                         manifest.setRecognitionDate(date);
                         persistEntity(manifest);
@@ -2381,7 +2321,27 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public void setManifestGlAccount(String glAccountId, String rateCodes, String rateTypeCodes, String rateCatalogCodes, BrmContext context) {
-        // TODO
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            Set<FeeManagementManifest> filteredManifests = filterManifests(manifests, rateCodes, rateTypeCodes, rateCatalogCodes);
+
+            for (FeeManagementManifest manifest : filteredManifests) {
+
+                Set<ManifestGlBreakdownOverride> glBreakdownOverrides = manifest.getGlBreakdownOverrides();
+
+                if (CollectionUtils.isNotEmpty(glBreakdownOverrides)) {
+                    for (ManifestGlBreakdownOverride glBreakdownOverride : glBreakdownOverrides) {
+                        glBreakdownOverride.setGlAccount(glAccountId);
+                        persistEntity(glBreakdownOverride);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -2393,7 +2353,34 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
      */
     @Override
     public void setManifestGlAccount(String glAccountId, String internalChargeId, BrmContext context) {
-        // TODO
+
+        if (StringUtils.isBlank(internalChargeId)) {
+            String errMsg = "Internal charge ID must not be blank";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            for (FeeManagementManifest manifest : manifests) {
+
+                if (internalChargeId.equals(manifest.getInternalChargeId())) {
+
+                    Set<ManifestGlBreakdownOverride> glBreakdownOverrides = manifest.getGlBreakdownOverrides();
+
+                    if (CollectionUtils.isNotEmpty(glBreakdownOverrides)) {
+                        for (ManifestGlBreakdownOverride glBreakdownOverride : glBreakdownOverrides) {
+                            glBreakdownOverride.setGlAccount(glAccountId);
+                            persistEntity(glBreakdownOverride);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -2414,29 +2401,11 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
         if (CollectionUtils.isNotEmpty(manifests)) {
 
-            List<String> rateCodeValues = CommonUtils.split(rateCodes, MULTI_VALUE_DELIMITER);
-            List<String> rateTypeCodeValues = CommonUtils.split(rateTypeCodes, MULTI_VALUE_DELIMITER);
-            List<String> rateCatalogCodeValues = CommonUtils.split(rateCatalogCodes, MULTI_VALUE_DELIMITER);
+            Set<FeeManagementManifest> filteredManifests = filterManifests(manifests, rateCodes, rateTypeCodes, rateCatalogCodes);
 
-            for (FeeManagementManifest manifest : manifests) {
-
-                Rate rate = manifest.getRate();
-                RateType rateType = rate.getRateType();
-                RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
-
-                boolean rateCodesComply = StringUtils.isEmpty(rateCodes) ||
-                        matchesPatterns(rate.getCode(), rateCodeValues);
-
-                boolean rateTypeCodesComply = StringUtils.isEmpty(rateTypeCodes) ||
-                        matchesPatterns(rateType.getCode(), rateTypeCodeValues);
-
-                boolean rateCatalogCodesComply = StringUtils.isEmpty(rateCatalogCodes) ||
-                        matchesPatterns(rateCatalog.getCode(), rateCatalogCodeValues);
-
-                if (rateCodesComply && rateTypeCodesComply && rateCatalogCodesComply) {
-                    manifest.setAmount(amount);
-                    persistEntity(manifest);
-                }
+            for (FeeManagementManifest manifest : filteredManifests) {
+                manifest.setAmount(amount);
+                persistEntity(manifest);
             }
         }
     }
@@ -2464,7 +2433,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         if (CollectionUtils.isNotEmpty(manifests)) {
 
             for (FeeManagementManifest manifest : manifests) {
-
                 if (internalChargeId.equals(manifest.getInternalChargeId())) {
                     manifest.setAmount(amount);
                     persistEntity(manifest);

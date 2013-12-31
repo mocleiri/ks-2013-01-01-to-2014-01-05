@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -224,5 +225,18 @@ public class FeeManagementSignup implements Identifiable, KeyPairAware {
     public void setOfferingType(OfferingType offeringType) {
         this.offeringType = offeringType;
         offeringTypeCode = offeringType.getId();
+    }
+
+    @Transient
+    public Set<FeeManagementSignupRate> getIncompleteSignupRates() {
+        Set<FeeManagementSignupRate> incompleteSignupRates = new HashSet<FeeManagementSignupRate>();
+        if (signupRates != null) {
+            for (FeeManagementSignupRate signupRate : signupRates) {
+                if (!signupRate.isComplete()) {
+                    incompleteSignupRates.add(signupRate);
+                }
+            }
+        }
+        return incompleteSignupRates;
     }
 }

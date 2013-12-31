@@ -1898,7 +1898,7 @@ public class RateServiceImpl extends GenericPersistenceService implements RateSe
             }
         }
 
-        return null;
+        return baseDate;
     }
 
     /**
