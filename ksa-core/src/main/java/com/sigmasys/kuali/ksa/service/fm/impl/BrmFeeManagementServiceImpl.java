@@ -1348,7 +1348,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
                 FeeManagementSignupOperation signupOperation = signup.getOperation();
 
-                if (signupOperation != null) {
+                if (signupOperation != null && signup.getUnits() != null) {
                     if (includedOperations.contains(signupOperation.name())) {
                         includedUnits += signup.getUnits();
                     } else if (excludedOperations.contains(signupOperation.name())) {
@@ -1395,7 +1395,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 }
 
                 for (FeeManagementSignup signup : signups) {
-                    if ((Boolean) method.invoke(signup)) {
+                    if (signup.getUnits() != null && (Boolean) method.invoke(signup)) {
                         units += signup.getUnits();
                     }
                 }
@@ -1811,8 +1811,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         Set<FeeManagementSignup> signups =
                 filterSignups(session.getIncompleteSignups(), rateCodes, rateTypeCodes, rateCatalogCodes, null, null);
 
-        List<FeeManagementManifest> nonGroupingManifests = new LinkedList<FeeManagementManifest>();
-
         // Map of [Rate ID, Date]
         Map<Long, Date> rateBaseDateMap = new HashMap<Long, Date>();
 
@@ -1857,13 +1855,20 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                                 rateUnitsMap.put(rate.getId(), rateCodeUnits);
                             }
 
-                            rateCodeUnits.setB(rateCodeUnits.getB() + signup.getUnits());
+                            if (signup.getUnits() != null) {
+                                rateCodeUnits.setB(rateCodeUnits.getB() + signup.getUnits());
+                            }
 
                         } else {
 
-                            BigDecimal amount = rateService.getAmountFromRate(rate.getId(), signup.getUnits());
+                            int numberOfUnits = (signup.getUnits() != null) ? signup.getUnits() : 0;
 
-                            String transactionTypeId = rateService.getTransactionTypeIdFromRate(rate.getId(), signup.getUnits());
+                            BigDecimal amount = rateService.getAmountFromRate(rate.getId(), numberOfUnits);
+
+                            Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), signup.getEffectiveDate());
+                            Date recognitionDate = rateService.getRecognitionDateFromRate(rate.getId(), signup.getEffectiveDate());
+
+                            String transactionTypeId = rateService.getTransactionTypeIdFromRate(rate.getId(), numberOfUnits);
 
                             FeeManagementManifest manifest = fmService.createFeeManagementManifest(
                                     FeeManagementManifestType.CHARGE,
@@ -1873,12 +1878,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                                     null,
                                     signup.getRegistrationId(),
                                     signup.getOfferingId(),
-                                    null,
-                                    null,
+                                    effectiveDate,
+                                    recognitionDate,
                                     amount,
                                     true);
 
-                            nonGroupingManifests.add(manifest);
+                            addManifestToSession(manifest, session);
                         }
 
                         signupRate.setComplete(true);
@@ -1892,20 +1897,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 signup.setComplete(true);
                 persistEntity(signup);
             }
-        }
-
-        // Updating and adding Non-grouping Manifests
-        for (FeeManagementManifest manifest : nonGroupingManifests) {
-
-            Long rateId = manifest.getRate().getId();
-
-            Date effectiveDate = rateService.getEffectiveDateFromRate(rateId, rateBaseDateMap.get(rateId));
-            Date recognitionDate = rateService.getRecognitionDateFromRate(rateId, rateBaseDateMap.get(rateId));
-
-            manifest.setEffectiveDate(effectiveDate);
-            manifest.setRecognitionDate(recognitionDate);
-
-            addManifestToSession(manifest, session);
         }
 
         // Creating Grouping Manifests
