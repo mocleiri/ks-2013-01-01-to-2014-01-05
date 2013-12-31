@@ -455,6 +455,25 @@ public interface BrmFeeManagementService {
                               BrmContext context);
 
     /**
+     * Creates a discount against a rate that has already been charged to the manifest.
+     *
+     * @param rateCode1    Charge Rate code
+     * @param rateSubCode1 Charge Rate sub-code
+     * @param rateCode2    Discount Rate code
+     * @param rateSubCode2 Discount Rate sub-code
+     * @param amount       Rate amount
+     * @param isPercentage Indicates whether the "amount" is a percentage or not
+     * @param context      BRM context
+     */
+    void discountManifestRate(String rateCode1,
+                              String rateSubCode1,
+                              String rateCode2,
+                              String rateSubCode2,
+                              BigDecimal amount,
+                              boolean isPercentage,
+                              BrmContext context);
+
+    /**
      * Adds tags to FM manifests filtering them by rate, rate type and catalog codes.
      *
      * @param tagCodes         List of tag codes separated by ","

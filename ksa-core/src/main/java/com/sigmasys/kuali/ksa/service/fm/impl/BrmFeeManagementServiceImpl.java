@@ -1957,7 +1957,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         Rate rate = rateService.getRate(rateCode, rateSubCode, session.getAtpId());
 
         if (rate == null) {
-            String errMsg = "Cannot find a rate for rateCode = " + rateCode + ", rateSubCode = " + rateSubCode +
+            String errMsg = "Cannot find Rate for rateCode = " + rateCode + ", rateSubCode = " + rateSubCode +
                     ", ATP ID = " + session.getAtpId();
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
@@ -1991,6 +1991,79 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         persistEntity(session);
     }
 
+    /**
+     * Creates a discount against a rate that has already been charged to the manifest.
+     *
+     * @param rateCode1    Charge Rate code
+     * @param rateSubCode1 Charge Rate sub-code
+     * @param rateCode2    Discount Rate code
+     * @param rateSubCode2 Discount Rate sub-code
+     * @param amount       Rate amount
+     * @param isPercentage Indicates whether the "amount" is a percentage or not
+     * @param context      BRM context
+     */
+    @Override
+    public void discountManifestRate(String rateCode1,
+                                     String rateSubCode1,
+                                     String rateCode2,
+                                     String rateSubCode2,
+                                     BigDecimal amount,
+                                     boolean isPercentage,
+                                     BrmContext context) {
+
+
+        FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
+
+        Set<FeeManagementManifest> manifests = session.getManifests();
+
+        Set<FeeManagementManifest> newManifests = new HashSet<FeeManagementManifest>();
+
+        if (CollectionUtils.isNotEmpty(manifests)) {
+
+            if (StringUtils.isBlank(rateCode2)) {
+                rateCode2 = rateCode1;
+            }
+
+            if (StringUtils.isBlank(rateSubCode2)) {
+                rateSubCode2 = rateSubCode1;
+            }
+
+            Rate discountRate = rateService.getRate(rateCode2, rateSubCode2, session.getAtpId());
+
+            if (discountRate == null) {
+                String errMsg = "Cannot find Rate for rateCode = " + rateCode2 +
+                        ", rateSubCode = " + rateSubCode2 + ", ATP ID = " + session.getAtpId();
+                logger.error(errMsg);
+                throw new IllegalArgumentException(errMsg);
+            }
+
+            for (FeeManagementManifest manifest : manifests) {
+
+                Rate chargeRate = manifest.getRate();
+
+                if (chargeRate != null && rateCode1.equals(chargeRate.getCode()) && rateSubCode1.equals(rateSubCode1)) {
+
+                    FeeManagementManifest newManifest =
+                            fmService.createFeeManagementManifest(FeeManagementManifestType.DISCOUNT,
+                                    FeeManagementManifestStatus.PENDING,
+                                    manifest.getTransactionTypeId(),
+                                    discountRate.getId(),
+                                    manifest.getInternalChargeId(),
+                                    manifest.getRegistrationId(),
+                                    manifest.getOfferingId(),
+                                    manifest.getEffectiveDate(),
+                                    manifest.getRecognitionDate(),
+                                    BigDecimal.ZERO,
+                                    true);
+
+                    newManifests.add(newManifest);
+
+                    // TODO
+
+                }
+            }
+        }
+    }
 
     /**
      * Adds tags to FM manifests filtering them by rate, rate type and catalog codes.

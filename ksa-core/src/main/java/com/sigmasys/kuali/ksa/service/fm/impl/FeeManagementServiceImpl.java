@@ -478,8 +478,8 @@ public class FeeManagementServiceImpl extends GenericPersistenceService implemen
             throw new IllegalArgumentException(errMsg);
         }
 
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            String errMsg = "Amount must be greater than 0";
+        if (amount == null) {
+            String errMsg = "Amount must not be null";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
