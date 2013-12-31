@@ -6,7 +6,6 @@ import com.sigmasys.kuali.ksa.model.fm.*;
 import com.sigmasys.kuali.ksa.service.AccountService;
 import com.sigmasys.kuali.ksa.service.InformationService;
 import com.sigmasys.kuali.ksa.service.KeyPairService;
-import com.sigmasys.kuali.ksa.service.TransactionService;
 import com.sigmasys.kuali.ksa.service.atp.AtpService;
 import com.sigmasys.kuali.ksa.service.brm.BrmContext;
 import com.sigmasys.kuali.ksa.service.brm.BrmMethodInterceptor;
@@ -82,8 +81,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
     @Autowired
     private RateService rateService;
 
-    @Autowired
-    private TransactionService transactionService;
 
     @Autowired
     private FeeManagementService fmService;
@@ -470,6 +467,16 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         }
 
         persistEntity(manifest);
+    }
+
+    private Set<FeeManagementSignup> getIncompleteSignups(Collection<FeeManagementSignup> signups) {
+        Set<FeeManagementSignup> incompleteSignups = new HashSet<FeeManagementSignup>();
+        for (FeeManagementSignup signup : signups) {
+            if (!signup.isComplete()) {
+                incompleteSignups.add(signup);
+            }
+        }
+        return incompleteSignups;
     }
 
     @SuppressWarnings("unchecked")
@@ -1804,13 +1811,19 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
         Set<FeeManagementSignup> signups =
-                filterSessionSignups(session.getSignups(), rateCodes, rateTypeCodes, rateCatalogCodes, null, null);
+                filterSessionSignups(getIncompleteSignups(session.getSignups()), rateCodes, rateTypeCodes, rateCatalogCodes, null, null);
+
+        Date effectiveBaseDate = new Date(System.currentTimeMillis() * 1000000);
 
         for (FeeManagementSignup signup : signups) {
-
-            if (signup.isComplete()) {
-                continue;
+            if (signup.getEffectiveDate().before(effectiveBaseDate)) {
+                effectiveBaseDate = signup.getEffectiveDate();
             }
+        }
+
+        Map<Long, Pair<String, Integer>> rateUnitsMap = new HashMap<Long, Pair<String, Integer>>();
+
+        for (FeeManagementSignup signup : signups) {
 
             Set<FeeManagementSignupRate> signupRates = signup.getSignupRates();
 
@@ -1818,19 +1831,99 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
 
                 for (FeeManagementSignupRate signupRate : new HashSet<FeeManagementSignupRate>(signupRates)) {
 
-                    if (signupRate.isComplete()) {
-                        continue;
-                    }
-
                     Rate rate = signupRate.getRate();
                     RateType rateType = rate.getRateType();
-                    RateCatalog rateCatalog = rate.getRateCatalogAtp().getRateCatalog();
 
-                    // TODO
+                    if (rateType.isGrouping()) {
 
+                        Pair<String, Integer> rateCodeUnits = rateUnitsMap.get(rate.getId());
+
+                        if (rateCodeUnits == null) {
+                            rateCodeUnits = new Pair<String, Integer>(rate.getCode(), 0);
+                        }
+
+                        rateCodeUnits.setB(rateCodeUnits.getB() + signup.getUnits());
+
+                        rateUnitsMap.put(rate.getId(), rateCodeUnits);
+
+                    } else {
+
+                        BigDecimal amount = rateService.getAmountFromRate(rate.getId(), signup.getUnits());
+
+                        Date effectiveDate = rateService.getEffectiveDateFromRate(rate.getId(), effectiveBaseDate);
+                        Date recognitionDate = rateService.getRecognitionDateFromRate(rate.getId(), effectiveBaseDate);
+
+                        String transactionTypeId = rateService.getTransactionTypeIdFromRate(rate.getId(), signup.getUnits());
+
+                        FeeManagementManifest manifest = fmService.createFeeManagementManifest(
+                                FeeManagementManifestType.CHARGE,
+                                FeeManagementManifestStatus.PENDING,
+                                transactionTypeId,
+                                rate.getId(),
+                                null,
+                                signup.getRegistrationId(),
+                                signup.getOfferingId(),
+                                effectiveDate,
+                                recognitionDate,
+                                amount,
+                                true);
+
+                        manifest.setSession(session);
+
+                        Set<FeeManagementManifest> manifests = session.getManifests();
+
+                        if (manifests == null) {
+                            manifests = new HashSet<FeeManagementManifest>();
+                            session.setManifests(manifests);
+                        }
+
+                        manifests.add(manifest);
+                    }
                 }
             }
         }
+
+        for (Map.Entry<Long, Pair<String, Integer>> entry : rateUnitsMap.entrySet()) {
+
+            Long rateId = entry.getKey();
+
+            String rateCode = entry.getValue().getA();
+
+            Integer numberOfUnits = entry.getValue().getB();
+
+            BigDecimal amount = rateService.getAmountFromRate(rateId, numberOfUnits);
+
+            Date effectiveDate = rateService.getEffectiveDateFromRate(rateId, effectiveBaseDate);
+            Date recognitionDate = rateService.getRecognitionDateFromRate(rateId, effectiveBaseDate);
+
+            String transactionTypeId = rateService.getTransactionTypeIdFromRate(rateId, numberOfUnits);
+
+            FeeManagementManifest manifest = fmService.createFeeManagementManifest(
+                    FeeManagementManifestType.CHARGE,
+                    FeeManagementManifestStatus.PENDING,
+                    transactionTypeId,
+                    rateId,
+                    rateCode,
+                    null,
+                    null,
+                    effectiveDate,
+                    recognitionDate,
+                    amount,
+                    true);
+
+            manifest.setSession(session);
+
+            Set<FeeManagementManifest> manifests = session.getManifests();
+
+            if (manifests == null) {
+                manifests = new HashSet<FeeManagementManifest>();
+                session.setManifests(manifests);
+            }
+
+            manifests.add(manifest);
+        }
+
+        persistEntity(session);
     }
 
     /**

@@ -41,7 +41,7 @@ public class RateType extends AuditableEntity<Long> {
 
     @org.hibernate.annotations.Type(type = "yes_no")
     @Column(name = "IS_GROUPING")
-    public Boolean getGrouping() {
+    public Boolean isGrouping() {
         return isGrouping != null ? isGrouping : false;
     }
 
