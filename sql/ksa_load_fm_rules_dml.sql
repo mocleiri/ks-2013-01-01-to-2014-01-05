@@ -77,6 +77,8 @@ Insert into KSSA_RULE (ID, NAME, RULE_TYPE_ID_FK, PRIORITY, HEADER, LHS, RHS) va
  mark signup as not complete
  on signup including preceding offerings remove rates ".*fee.*"
  charge incidental rate "late.registration", "1" using id "late.registration"
+ discount rate "late.registration", "1" by $10.67
+ discount rate "late.registration", "1" by 99.91%
 ')!
 
 -- FM rule associations

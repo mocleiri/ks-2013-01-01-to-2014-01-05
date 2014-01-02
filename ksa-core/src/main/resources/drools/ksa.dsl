@@ -141,6 +141,11 @@
 [then][]charge incidental rate "{rateCode}", "{rateSubCode}" with {units} units in amount of ${amount} using id "{internalChargeId}" = context.getFmService().chargeIncidentalRate("{rateCode}","{rateSubCode}","{internalChargeId}",{units},new BigDecimal({amount}),context);
 [then][]charge incidental rate "{rateCode}", "{rateSubCode}" with {units} units using id "{internalChargeId}" = context.getFmService().chargeIncidentalRate("{rateCode}","{rateSubCode}","{internalChargeId}",{units},null,context);
 [then][]charge incidental rate "{rateCode}", "{rateSubCode}" using id "{internalChargeId}" = context.getFmService().chargeIncidentalRate("{rateCode}","{rateSubCode}","{internalChargeId}",0,null,context);
+[then][]discount rate "{rateCode1}", "{rateSubCode1}" by ${amount} using "{rateCode2}", "{rateSubCode2}" = context.getFmService().discountManifestRate("{rateCode1}","{rateSubCode1}","{rateCode2}","{rateSubCode2}",new BigDecimal({amount}),false,context);
+[then][]discount rate "{rateCode1}", "{rateSubCode1}" by ${amount} = context.getFmService().discountManifestRate("{rateCode1}","{rateSubCode1}","{rateCode1}","{rateSubCode1}",new BigDecimal({amount}),false,context);
+[then][]discount rate "{rateCode1}", "{rateSubCode1}" by {percentage}% using "{rateCode2}", "{rateSubCode2}" = context.getFmService().discountManifestRate("{rateCode1}","{rateSubCode1}","{rateCode2}","{rateSubCode2}",new BigDecimal({amount}),true,context);
+[then][]discount rate "{rateCode1}", "{rateSubCode1}" by {percentage}% = context.getFmService().discountManifestRate("{rateCode1}","{rateSubCode1}","{rateCode1}","{rateSubCode1}",new BigDecimal({amount}),true,context);
+
 
 
 ########################################################################################################################
