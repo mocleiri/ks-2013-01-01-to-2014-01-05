@@ -1,5 +1,7 @@
 package com.sigmasys.kuali.ksa.model;
 
+import java.math.BigDecimal;
+
 /**
  * KSA commonly used constants.
  *
@@ -13,6 +15,8 @@ public interface Constants {
     // Persistence units
     String KS_PERSISTENCE_UNIT = "ks";
     String KSA_PERSISTENCE_UNIT = "ksa";
+
+    BigDecimal BIG_DECIMAL_HUNDRED = new BigDecimal(100);
 
     // ID Generator constants
     String ID_GENERATOR_CLASS = "com.sigmasys.kuali.ksa.util.LongIdGenerator";

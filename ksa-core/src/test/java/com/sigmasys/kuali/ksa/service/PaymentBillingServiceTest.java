@@ -167,7 +167,7 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
                 paymentBillingPlanId,
                 ".*",
                 new BigDecimal(1450),
-                new BigDecimal(100),
+                Constants.BIG_DECIMAL_HUNDRED,
                 1);
 
         Assert.notNull(allowableCharge);
@@ -176,7 +176,7 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
 
         Assert.isTrue(".*".equals(allowableCharge.getTransactionTypeMask()));
         Assert.isTrue(new BigDecimal(1450).compareTo(allowableCharge.getMaxAmount()) == 0);
-        Assert.isTrue(new BigDecimal(100).compareTo(allowableCharge.getMaxPercentage()) == 0);
+        Assert.isTrue(Constants.BIG_DECIMAL_HUNDRED.compareTo(allowableCharge.getMaxPercentage()) == 0);
         Assert.isTrue(1 == allowableCharge.getPriority());
 
         return allowableCharge;
@@ -334,7 +334,7 @@ public class PaymentBillingServiceTest extends AbstractServiceTest {
         PaymentBillingPlan plan = _createPaymentBillingPlan();
 
         PaymentBillingTransferDetail transfer =
-                billingService.generatePaymentBillingTransfer(plan.getId(), TEST_USER_ID, new BigDecimal(100), new Date());
+                billingService.generatePaymentBillingTransfer(plan.getId(), TEST_USER_ID, Constants.BIG_DECIMAL_HUNDRED, new Date());
 
         Assert.notNull(transfer);
         Assert.notNull(transfer.getId());

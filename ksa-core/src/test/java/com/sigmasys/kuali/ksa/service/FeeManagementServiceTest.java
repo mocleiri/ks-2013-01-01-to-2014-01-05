@@ -1714,7 +1714,7 @@ public class FeeManagementServiceTest extends AbstractServiceTest {
                 plan.getId(),
                 ".*",
                 new BigDecimal(1450),
-                new BigDecimal(100),
+                Constants.BIG_DECIMAL_HUNDRED,
                 1);
 
         return plan;

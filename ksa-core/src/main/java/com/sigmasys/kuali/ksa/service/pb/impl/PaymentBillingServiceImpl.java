@@ -651,7 +651,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
         if (!billingSchedules.isEmpty()) {
 
             BigDecimal percentageCoeff = (totalPercentage.compareTo(BigDecimal.ZERO) > 0) ?
-                    new BigDecimal(100).divide(totalPercentage, RoundingMode.HALF_DOWN) : BigDecimal.ZERO;
+                    Constants.BIG_DECIMAL_HUNDRED.divide(totalPercentage, RoundingMode.HALF_DOWN) : BigDecimal.ZERO;
 
             boolean offsetPercentage = (skipEarlier && totalPercentage.compareTo(BigDecimal.ZERO) > 0);
 
@@ -770,7 +770,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             throw new IllegalArgumentException(errMsg);
         }
 
-        BigDecimal paymentAmount = totalAmount.multiply(percentage).divide(new BigDecimal(100), RoundingMode.HALF_UP);
+        BigDecimal paymentAmount = totalAmount.multiply(percentage).divide(Constants.BIG_DECIMAL_HUNDRED, RoundingMode.HALF_UP);
 
         if (roundingFactor == 0) {
             return paymentAmount.setScale(2, RoundingMode.HALF_UP);
@@ -854,15 +854,15 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
 
                     if (isChargeAllowed(billingTransaction.getCharge(), Arrays.asList(allowableCharge))) {
 
-                        final BigDecimal hundredPercent = new BigDecimal(100);
-
                         BigDecimal maxPercentage = allowableCharge.getMaxPercentage();
+
                         if (maxPercentage == null) {
-                            maxPercentage = hundredPercent;
+                            maxPercentage = Constants.BIG_DECIMAL_HUNDRED;
                         }
 
                         BigDecimal amountToFinance =
-                                billingTransaction.getOriginalAmount().multiply(maxPercentage).divide(hundredPercent).setScale(2, RoundingMode.HALF_DOWN);
+                                billingTransaction.getOriginalAmount().multiply(maxPercentage).
+                                        divide(Constants.BIG_DECIMAL_HUNDRED).setScale(2, RoundingMode.HALF_DOWN);
 
                         if (amountToFinance.compareTo(billingTransaction.getRemainingAmount()) > 0) {
                             amountToFinance = billingTransaction.getRemainingAmount();
@@ -1183,7 +1183,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             throw new IllegalArgumentException(errMsg);
         }
 
-        if (maxPercentage.compareTo(BigDecimal.ZERO) < 0 || maxPercentage.compareTo(new BigDecimal(100)) > 0) {
+        if (maxPercentage.compareTo(BigDecimal.ZERO) < 0 || maxPercentage.compareTo(Constants.BIG_DECIMAL_HUNDRED) > 0) {
             String errMsg = "Maximum percentage should be in the range [0, 100]";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
@@ -1266,7 +1266,7 @@ public class PaymentBillingServiceImpl extends GenericPersistenceService impleme
             throw new IllegalArgumentException(errMsg);
         }
 
-        if (percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(new BigDecimal(100)) > 0) {
+        if (percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(Constants.BIG_DECIMAL_HUNDRED) > 0) {
             String errMsg = "Percentage should be in the range [0, 100]";
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);

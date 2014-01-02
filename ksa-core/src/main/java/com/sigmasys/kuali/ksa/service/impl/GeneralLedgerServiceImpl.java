@@ -729,7 +729,8 @@ public class GeneralLedgerServiceImpl extends GenericPersistenceService implemen
             return false;
         }
 
-        if (totalBreakdownAmount.compareTo(BigDecimal.ZERO) < 0 || totalBreakdownAmount.compareTo(new BigDecimal(100)) >= 0) {
+        if (totalBreakdownAmount.compareTo(BigDecimal.ZERO) < 0 ||
+                totalBreakdownAmount.compareTo(Constants.BIG_DECIMAL_HUNDRED) >= 0) {
             logger.warn("Total breakdown amount should be greater than or equal to 0 and less than 100");
             return false;
         }

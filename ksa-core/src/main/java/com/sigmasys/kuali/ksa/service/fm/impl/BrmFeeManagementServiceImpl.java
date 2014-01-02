@@ -34,6 +34,7 @@ import javax.persistence.Query;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -2011,6 +2012,11 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                                      boolean isPercentage,
                                      BrmContext context) {
 
+        if (amount == null) {
+            String errMsg = "Amount cannot be null";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
 
         FeeManagementSession session = getRequiredGlobalVariable(context, FM_SESSION_VAR_NAME);
 
@@ -2037,6 +2043,7 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                 throw new IllegalArgumentException(errMsg);
             }
 
+
             for (FeeManagementManifest manifest : manifests) {
 
                 Rate chargeRate = manifest.getRate();
@@ -2053,13 +2060,22 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                                     manifest.getOfferingId(),
                                     manifest.getEffectiveDate(),
                                     manifest.getRecognitionDate(),
-                                    BigDecimal.ZERO,
+                                    (isPercentage && manifest.getAmount() != null) ?
+                                            manifest.getAmount().divide(Constants.BIG_DECIMAL_HUNDRED).multiply(amount).setScale(2, RoundingMode.HALF_DOWN) :
+                                            BigDecimal.ZERO,
                                     true);
 
                     newManifests.add(newManifest);
+                }
+            }
 
-                    // TODO
-
+            if (!isPercentage) {
+                if (CollectionUtils.isNotEmpty(newManifests)) {
+                    BigDecimal newAmount = amount.divide(new BigDecimal(newManifests.size()), RoundingMode.HALF_DOWN);
+                    for (FeeManagementManifest manifest : manifests) {
+                        manifest.setAmount(newAmount);
+                        persistEntity(manifest);
+                    }
                 }
             }
         }

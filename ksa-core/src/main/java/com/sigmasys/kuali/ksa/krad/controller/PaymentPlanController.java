@@ -87,7 +87,7 @@ public class PaymentPlanController extends GenericSearchController {
 
     @RequestMapping(method = RequestMethod.GET, params = "methodToCall=get")
     public ModelAndView get(@ModelAttribute("KualiForm") PaymentPlanForm form, BindingResult result,
-                                 HttpServletRequest request, HttpServletResponse response) {
+                            HttpServletRequest request, HttpServletResponse response) {
         String pageId = request.getParameter("pageId");
         form.setRollupOptionsFinder(this.getRollupOptionsFinder());
 
@@ -97,7 +97,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         if ("ManageThirdPartyPage".equals(pageId)) {
             populateThirdPartyForm(form);
-        } else if("ManagePaymentPlanPage".equals(pageId)) {
+        } else if ("ManagePaymentPlanPage".equals(pageId)) {
             populatePaymentBillingForm(form);
         }
 
@@ -152,7 +152,7 @@ public class PaymentPlanController extends GenericSearchController {
         try {
             thirdPartyTransferService.generateThirdPartyTransfer(planId, memberIdString, new Date());
             GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, memberIdString + " enrolled.");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
         }
 
@@ -172,10 +172,10 @@ public class PaymentPlanController extends GenericSearchController {
 
         PaymentBillingPlan plan = paymentBillingService.getPaymentBillingPlan(planId);
 
-        try{
+        try {
             paymentBillingService.generatePaymentBillingTransfer(planId, memberIdString, plan.getMaxAmount(), new Date());
             GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, memberIdString + " enrolled.");
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
         }
 
@@ -196,7 +196,7 @@ public class PaymentPlanController extends GenericSearchController {
         boolean result = thirdPartyTransferService.deleteThirdPartyPlanMember(planId, memberIdString);
 
         String message = "";
-        if(result){
+        if (result) {
             message = memberIdString + " removed from the plan";
         } else {
             message = memberIdString + " not removed from the plan";
@@ -221,7 +221,7 @@ public class PaymentPlanController extends GenericSearchController {
         boolean result = paymentBillingService.deletePaymentBillingQueue(planId, memberIdString);
 
         String message = "";
-        if(result){
+        if (result) {
             message = memberIdString + " removed from the plan";
         } else {
             message = memberIdString + " not removed from the plan";
@@ -264,13 +264,13 @@ public class PaymentPlanController extends GenericSearchController {
         Long planId;
         try {
             planId = Long.parseLong(planString);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             String errorMessage = planString + " is not a valid Third Party Plan Id";
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
         }
 
-        if(planId == 0L) {
+        if (planId == 0L) {
             String errorMessage = planString + " is not a valid Third Party Plan Id";
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
@@ -282,18 +282,17 @@ public class PaymentPlanController extends GenericSearchController {
 
         try {
             transferDetailId = Long.parseLong(transferDetailIdString);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             String errorMessage = transferDetailIdString + " is not a valid Third Party Transfer Detail Id";
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
         }
 
-        if(transferDetailId == 0L) {
+        if (transferDetailId == 0L) {
             String errorMessage = transferDetailIdString + " is not a valid Third Party Transfer Detail Id";
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
         }
-
 
 
         List<ThirdPartyPlanModel> planModels = form.getThirdPartyPlans();
@@ -302,14 +301,14 @@ public class PaymentPlanController extends GenericSearchController {
 
         ThirdPartyPlanModel planModel = null;
 
-        for(ThirdPartyPlanModel plan : planModels) {
-            if(planId.equals(plan.getParent().getId())){
+        for (ThirdPartyPlanModel plan : planModels) {
+            if (planId.equals(plan.getParent().getId())) {
                 planModel = plan;
                 break;
             }
         }
 
-        if(planModel == null) {
+        if (planModel == null) {
             String errorMessage = planString + " is not found in the list of Third Party Plans";
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
@@ -317,14 +316,14 @@ public class PaymentPlanController extends GenericSearchController {
 
         List<ThirdPartyMemberModel> memberModels = planModel.getPlanMembers();
         // Need to loop through and find the right one to get the memo text
-        for(ThirdPartyMemberModel model : memberModels) {
-            if(model.getTransferDetail() != null && transferDetailId.equals(model.getTransferDetail().getId())) {
+        for (ThirdPartyMemberModel model : memberModels) {
+            if (model.getTransferDetail() != null && transferDetailId.equals(model.getTransferDetail().getId())) {
                 memoText = model.getMemo().getText();
                 break;
             }
         }
 
-        if(memoText == null || "".equals(memoText)) {
+        if (memoText == null || "".equals(memoText)) {
             String errorMessage = "Memo description is required when reversing a Third Party Payment Plan.  Plan not reversed.";
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
@@ -378,7 +377,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlansByNamePattern(planString);
 
-        if(plans != null && plans.size() > 0) {
+        if (plans != null && plans.size() > 0) {
             form.setPaymentBillingPlan(plans.get(0));
         }
 
@@ -391,7 +390,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlanByNamePattern(planString);
 
-        if(plans != null && plans.size() > 0) {
+        if (plans != null && plans.size() > 0) {
             form.setBatchThirdPartyPlan(plans.get(0));
         } else {
             form.setBatchThirdPartyPlan(null);
@@ -404,18 +403,18 @@ public class PaymentPlanController extends GenericSearchController {
     public ModelAndView batchPaymentBilling(@ModelAttribute("KualiForm") PaymentPlanForm form) {
         PaymentBillingPlan plan = form.getPaymentBillingPlan();
 
-        if(plan == null) {
+        if (plan == null) {
             String planString = form.getPlanName();
 
             List<PaymentBillingPlan> plans = paymentBillingService.getPaymentBillingPlansByNamePattern(planString);
 
-            if(plans != null && plans.size() > 0) {
+            if (plans != null && plans.size() > 0) {
                 plan = plans.get(0);
             }
 
         }
 
-        if(plan == null) {
+        if (plan == null) {
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "No plan selected");
             return getUIFModelAndView(form);
         }
@@ -428,14 +427,14 @@ public class PaymentPlanController extends GenericSearchController {
         List<String> invalidAccounts = new ArrayList<String>();
 
 
-        for(String account : accountList) {
+        for (String account : accountList) {
             boolean exists = accountService.accountExists(account);
-            if(! exists) {
+            if (!exists) {
                 invalidAccounts.add(account);
             }
         }
 
-        if(invalidAccounts.size() > 0) {
+        if (invalidAccounts.size() > 0) {
             // one or more are invalid.
             String invalid = StringUtils.collectionToCommaDelimitedString(invalidAccounts);
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "The following accounts are not valid: " + invalid);
@@ -445,11 +444,11 @@ public class PaymentPlanController extends GenericSearchController {
         Date today = new Date();
         int addedCount = 0;
         int errorCount = 0;
-        for(String account : accountList) {
+        for (String account : accountList) {
             try {
                 paymentBillingService.createPaymentBillingQueue(plan.getId(), account, plan.getMaxAmount(), today, false);
                 addedCount++;
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
                 errorCount++;
             }
@@ -464,32 +463,32 @@ public class PaymentPlanController extends GenericSearchController {
     public ModelAndView batchThirdParty(@ModelAttribute("KualiForm") PaymentPlanForm form, HttpServletRequest request) {
         String action = request.getParameter("actionParameters[action]");
         boolean enroll = false;
-        if("enroll".equals(action)) {
+        if ("enroll".equals(action)) {
             enroll = true;
         }
 
         String forceReversalString = form.getForceReversal();
         Boolean forceReversal = false;
-        if("on".equalsIgnoreCase(forceReversalString)) {
+        if ("on".equalsIgnoreCase(forceReversalString)) {
             forceReversal = true;
         }
 
         ThirdPartyPlan plan = form.getBatchThirdPartyPlan();
 
-        if(plan == null || plan.getId() == null) {
+        if (plan == null || plan.getId() == null) {
             String planString = form.getPlanName();
 
             List<ThirdPartyPlan> plans = thirdPartyTransferService.getThirdPartyPlanByNamePattern(planString);
 
-            if(plans != null && plans.size() > 1) {
+            if (plans != null && plans.size() > 1) {
                 GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Multiple Third Party plans match name: " + planString);
                 return getUIFModelAndView(form);
-            } else if(plans != null && plans.size() == 1) {
+            } else if (plans != null && plans.size() == 1) {
                 plan = plans.get(0);
             }
         }
 
-        if(plan == null || plan.getId() == null) {
+        if (plan == null || plan.getId() == null) {
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "No valid plan selected");
             return getUIFModelAndView(form);
         }
@@ -502,14 +501,14 @@ public class PaymentPlanController extends GenericSearchController {
         List<String> invalidAccounts = new ArrayList<String>();
 
 
-        for(String account : accountList) {
+        for (String account : accountList) {
             boolean exists = accountService.accountExists(account);
-            if(! exists) {
+            if (!exists) {
                 invalidAccounts.add(account);
             }
         }
 
-        if(invalidAccounts.size() > 0) {
+        if (invalidAccounts.size() > 0) {
             // one or more are invalid.
             String invalid = StringUtils.collectionToCommaDelimitedString(invalidAccounts);
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "The following accounts are not valid: " + invalid);
@@ -521,21 +520,21 @@ public class PaymentPlanController extends GenericSearchController {
         int enrollCount = 0;
         int reversalCount = 0;
 
-        for(String account : accountList) {
+        for (String account : accountList) {
             ThirdPartyPlanMember member = thirdPartyTransferService.getThirdPartyPlanMember(plan.getId(), account);
 
-            if(member == null) {
+            if (member == null) {
                 thirdPartyTransferService.createThirdPartyPlanMember(account, plan.getId(), 1);
                 newCount++;
             }
 
-            if(enroll) {
+            if (enroll) {
                 ThirdPartyTransferDetail transferDetail = thirdPartyTransferService.getThirdPartyTransferDetail(plan.getId(), account);
 
-                if(transferDetail == null) {
+                if (transferDetail == null) {
                     thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), account, new Date());
                     enrollCount++;
-                } else if(forceReversal){
+                } else if (forceReversal) {
                     thirdPartyTransferService.reverseThirdPartyTransfer(transferDetail.getId(), account);
 
                     thirdPartyTransferService.generateThirdPartyTransfer(plan.getId(), account, new Date());
@@ -548,12 +547,12 @@ public class PaymentPlanController extends GenericSearchController {
         StringBuilder message = new StringBuilder();
         message.append(newCount);
         message.append(" accounts added");
-        if(enrollCount > 0) {
+        if (enrollCount > 0) {
             message.append(", ");
             message.append(enrollCount);
             message.append(" accounts enrolled");
         }
-        if(reversalCount > 0) {
+        if (reversalCount > 0) {
             message.append(", ");
             message.append(reversalCount);
             message.append(" accounts reversed");
@@ -623,14 +622,14 @@ public class PaymentPlanController extends GenericSearchController {
 
         List<ThirdPartyPlanModel> plans = form.getThirdPartyPlans();
         ThirdPartyPlanModel currentPlan = null;
-        for(ThirdPartyPlanModel plan : plans) {
-            if(planId.equals(plan.getParent().getId())) {
+        for (ThirdPartyPlanModel plan : plans) {
+            if (planId.equals(plan.getParent().getId())) {
                 currentPlan = plan;
                 break;
             }
         }
 
-        if(currentPlan == null){
+        if (currentPlan == null) {
             ThirdPartyPlan plan = thirdPartyTransferService.getThirdPartyPlan(planId);
             currentPlan = new ThirdPartyPlanModel();
             currentPlan.setParent(plan);
@@ -642,7 +641,7 @@ public class PaymentPlanController extends GenericSearchController {
         transferDetail.getDirectChargeAccount().getCompositeDefaultPersonName();
 
         // check that the member id passed in matches what's really in the database
-        if( ! memberIdString.equals(transferDetail.getDirectChargeAccount().getId())) {
+        if (!memberIdString.equals(transferDetail.getDirectChargeAccount().getId())) {
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Transfer Detail doesn't match selected user.");
             return getUIFModelAndView(form);
         }
@@ -669,7 +668,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         try {
             planId = Long.parseLong(planIdString);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             String errorMessage = planIdString + " is not a valid Third Party Plan";
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
@@ -677,7 +676,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         String userId = request.getParameter("actionParameters[accountId]");
 
-        thirdPartyTransferService.generateThirdPartyTransfer (planId, userId, new Date());
+        thirdPartyTransferService.generateThirdPartyTransfer(planId, userId, new Date());
         GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan re-executed for user " + userId);
 
 
@@ -693,7 +692,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         try {
             planId = Long.parseLong(planIdString);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             String errorMessage = planIdString + " is not a valid Payment Billing Plan";
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, errorMessage);
             return getUIFModelAndView(form);
@@ -703,10 +702,10 @@ public class PaymentPlanController extends GenericSearchController {
 
         String userId = request.getParameter("actionParameters[accountId]");
 
-        try{
+        try {
             paymentBillingService.generatePaymentBillingTransfer(planId, userId, plan.getMaxAmount(), new Date());
             GlobalVariables.getMessageMap().putInfo(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Plan re-executed for user " + userId);
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, e.getMessage());
             return getUIFModelAndView(form);
         }
@@ -725,7 +724,7 @@ public class PaymentPlanController extends GenericSearchController {
     private void populatePaymentBillingForm(PaymentPlanForm form) {
         List<PaymentBillingPlan> allPlans = new ArrayList<PaymentBillingPlan>();
 
-        if(form.getFilterPaymentBillingPlans().size() == 0) {
+        if (form.getFilterPaymentBillingPlans().size() == 0) {
             allPlans = paymentBillingService.getPaymentBillingPlans();
         } else {
             allPlans.addAll(form.getFilterPaymentBillingPlans());
@@ -740,18 +739,17 @@ public class PaymentPlanController extends GenericSearchController {
 
             List<PaymentBillingQueue> paymentBillingQueues = paymentBillingService.getPaymentBillingQueuesByPlanId(plan.getId());
 
-            for(PaymentBillingQueue paymentBillingQueue : paymentBillingQueues) {
+            for (PaymentBillingQueue paymentBillingQueue : paymentBillingQueues) {
                 paymentBillingQueue.getDirectChargeAccount().getCompositeDefaultPersonName();
                 PaymentBillingTransferDetail transferDetail = paymentBillingQueue.getTransferDetail();
-                if(transferDetail == null) {
+                if (transferDetail == null) {
                     model.getQueuedMembers().add(paymentBillingQueue);
-                } else if(PaymentBillingChargeStatus.ACTIVE.equals(transferDetail.getChargeStatus())){
+                } else if (PaymentBillingChargeStatus.ACTIVE.equals(transferDetail.getChargeStatus())) {
                     model.getPlanMembers().add(paymentBillingQueue);
-                } else if(PaymentBillingChargeStatus.REVERSED.equals(transferDetail.getChargeStatus())) {
+                } else if (PaymentBillingChargeStatus.REVERSED.equals(transferDetail.getChargeStatus())) {
                     model.getReversedMembers().add(paymentBillingQueue);
                 }
             }
-
 
 
             models.add(model);
@@ -813,14 +811,15 @@ public class PaymentPlanController extends GenericSearchController {
 
             List<ThirdPartyAllowableCharge> allowableCharges = thirdPartyTransferService.getThirdPartyAllowableCharges(plan.getId());
             List<ThirdPartyAllowableChargeModel> allowableChargeModels = model.getThirdPartyAllowableCharges();
-            for(ThirdPartyAllowableCharge charge : allowableCharges) {
+            for (ThirdPartyAllowableCharge charge : allowableCharges) {
                 ThirdPartyAllowableChargeModel thirdPartyAllowableChargeModel = new ThirdPartyAllowableChargeModel();
-                try{
+                try {
                     BeanUtils.copyProperties(thirdPartyAllowableChargeModel, charge);
-                }catch (Throwable t) {
+                } catch (Throwable t) {
                     throw new RuntimeException(t);
                 }
-                thirdPartyAllowableChargeModel.setMaxPercentage(thirdPartyAllowableChargeModel.getMaxPercentage().divide(new BigDecimal(100)));
+                BigDecimal percentage = thirdPartyAllowableChargeModel.getMaxPercentage().divide(Constants.BIG_DECIMAL_HUNDRED);
+                thirdPartyAllowableChargeModel.setMaxPercentage(percentage);
                 allowableChargeModels.add(thirdPartyAllowableChargeModel);
             }
 
@@ -828,17 +827,17 @@ public class PaymentPlanController extends GenericSearchController {
 
             List<ThirdPartyTransferDetail> transferDetails = thirdPartyTransferService.getThirdPartyTransfersByPlanId(plan.getId());
 
-            for(ThirdPartyTransferDetail transferDetail : transferDetails) {
+            for (ThirdPartyTransferDetail transferDetail : transferDetails) {
                 ThirdPartyChargeStatus status = transferDetail.getChargeStatus();
                 transferDetail.getDirectChargeAccount().getCompositeDefaultPersonName();
 
-                if(ThirdPartyChargeStatus.ACTIVE.equals(status)){
+                if (ThirdPartyChargeStatus.ACTIVE.equals(status)) {
                     ThirdPartyMemberModel memberModel = new ThirdPartyMemberModel();
                     memberModel.setTransferDetail(transferDetail);
                     memberModel.setPlan(plan);
 
                     model.getPlanMembers().add(memberModel);
-                } else if(ThirdPartyChargeStatus.REVERSED.equals(status)) {
+                } else if (ThirdPartyChargeStatus.REVERSED.equals(status)) {
                     model.getReversedMembers().add(transferDetail);
                 }
 
@@ -846,8 +845,8 @@ public class PaymentPlanController extends GenericSearchController {
 
             List<ThirdPartyPlanMember> members = thirdPartyTransferService.getThirdPartyPlanMembers(plan.getId());
 
-            for(ThirdPartyPlanMember member : members) {
-                if(! member.isExecuted()) {
+            for (ThirdPartyPlanMember member : members) {
+                if (!member.isExecuted()) {
                     model.getQueuedMembers().add(member);
                     // Make sure it is loaded from the database
                     member.getDirectChargeAccount().getCompositeDefaultPersonName();
@@ -873,7 +872,7 @@ public class PaymentPlanController extends GenericSearchController {
 
         TransferType transferType = auditableEntityService.getAuditableEntity("PB", TransferType.class);
 
-        if(plan == null) {
+        if (plan == null) {
             plan = new PaymentBillingPlan();
         }
         if (plan.getCode() == null) {
@@ -913,7 +912,7 @@ public class PaymentPlanController extends GenericSearchController {
         plan.setPaymentRoundingType(roundingType);
 
         ScheduleType scheduleType = EnumUtils.findById(ScheduleType.class, form.getLateMembership());
-        if(scheduleType == null){
+        if (scheduleType == null) {
             GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Late Membership is a required field");
             errors = true;
         }
@@ -924,7 +923,7 @@ public class PaymentPlanController extends GenericSearchController {
         plan.setFlatFeeDebitTypeId(form.getFlatFeeTransactionType());
         plan.setVariableFeeDebitTypeId(form.getVariableFeeTransactionType());
 
-        if(errors) {
+        if (errors) {
             return getUIFModelAndView(form);
         }
 
@@ -933,22 +932,24 @@ public class PaymentPlanController extends GenericSearchController {
 
 
         List<PaymentBillingAllowableChargeModel> allowableCharges = form.getPaymentBillingAllowableCharges();
-        for(PaymentBillingAllowableCharge charge : allowableCharges) {
-            PaymentBillingAllowableCharge newCharge = paymentBillingService.createPaymentBillingAllowableCharge(planId, charge.getTransactionTypeMask(), charge.getMaxAmount(), charge.getMaxPercentage().multiply(new BigDecimal(100)), charge.getPriority());
+        for (PaymentBillingAllowableCharge charge : allowableCharges) {
+            paymentBillingService.createPaymentBillingAllowableCharge(planId, charge.getTransactionTypeMask(),
+                    charge.getMaxAmount(), charge.getMaxPercentage().multiply(Constants.BIG_DECIMAL_HUNDRED),
+                    charge.getPriority());
         }
 
 
         List<PaymentBillingDateModel> billingModels = form.getPaymentBillingDates();
-        for(PaymentBillingDateModel model : billingModels) {
+        for (PaymentBillingDateModel model : billingModels) {
             String rollupIdString = model.getRollupId();
             Long rollupId = null;
             try {
-               rollupId = Long.parseLong(rollupIdString);
-            } catch(NumberFormatException e) {
-               GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Rollup is required.  '" + rollupIdString + "' is not a valid rollup");
-               errors = true;
+                rollupId = Long.parseLong(rollupIdString);
+            } catch (NumberFormatException e) {
+                GlobalVariables.getMessageMap().putError(form.getViewId(), RiceKeyConstants.ERROR_CUSTOM, "Rollup is required.  '" + rollupIdString + "' is not a valid rollup");
+                errors = true;
             }
-            if(! errors ) {
+            if (!errors) {
                 PaymentBillingDate newBillingDate = paymentBillingService.createPaymentBillingDate(planId, rollupId, model.getPercentage(), model.getEffectiveDate());
             }
         }
@@ -1002,7 +1003,7 @@ public class PaymentPlanController extends GenericSearchController {
             plan.setEffectiveDate(form.getEffectiveDate());
         }
 
-        if(plan.getRecognitionDate() == null) {
+        if (plan.getRecognitionDate() == null) {
             plan.setRecognitionDate(form.getRecognitionDate());
         }
 
@@ -1040,8 +1041,8 @@ public class PaymentPlanController extends GenericSearchController {
 
         for (ThirdPartyAllowableCharge charge : form.getThirdPartyAllowableCharges()) {
             thirdPartyTransferService.createThirdPartyAllowableCharge(plan.getId(), charge.getTransactionTypeMask(),
-                    charge.getMaxAmount(), charge.getMaxPercentage().multiply(new BigDecimal(100)), charge.getPriority(),
-                    charge.getDistributionPlan());
+                    charge.getMaxAmount(), charge.getMaxPercentage().multiply(Constants.BIG_DECIMAL_HUNDRED),
+                    charge.getPriority(), charge.getDistributionPlan());
         }
 
         String message = "Third Party Payment Plan saved";
@@ -1057,10 +1058,10 @@ public class PaymentPlanController extends GenericSearchController {
         Long planId = Long.parseLong(planString);
 
         List<ThirdPartyPlanModel> plans = form.getThirdPartyPlans();
-        for(ThirdPartyPlanModel model : plans) {
+        for (ThirdPartyPlanModel model : plans) {
             ThirdPartyPlan plan = model.getParent();
-            if(plan != null && planId.equals(plan.getId())) {
-                if(plan.getCode().length() > 20) {
+            if (plan != null && planId.equals(plan.getId())) {
+                if (plan.getCode().length() > 20) {
                     plan.setCode(plan.getCode().substring(0, 20));
                 }
 

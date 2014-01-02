@@ -632,14 +632,14 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
 
             final String statementPrefix = "(Third Party Plan : " + thirdPartyPlan.getName() + "):";
 
-            final BigDecimal hundredPercent = new BigDecimal(100);
-
             BigDecimal maxPercentage = allowableCharge.getMaxPercentage();
-            if (maxPercentage == null || maxPercentage.compareTo(hundredPercent) > 0) {
-                maxPercentage = hundredPercent;
+
+            if (maxPercentage == null || maxPercentage.compareTo(Constants.BIG_DECIMAL_HUNDRED) > 0) {
+                maxPercentage = Constants.BIG_DECIMAL_HUNDRED;
             }
 
-            BigDecimal financeChargeAmount = totalUnallocatedAmount.multiply(maxPercentage).divide(hundredPercent).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal financeChargeAmount = totalUnallocatedAmount.multiply(maxPercentage).
+                    divide(Constants.BIG_DECIMAL_HUNDRED).setScale(2, RoundingMode.HALF_DOWN);
 
             if ((chargeRemainingFund == null || financeChargeAmount.compareTo(chargeRemainingFund) <= 0) &&
                     (remainingFund == null || financeChargeAmount.compareTo(remainingFund) <= 0)) {
@@ -659,7 +659,8 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                     }
 
                     // Calculating the transfer amount as unallocated amount multiplied by maxPercentage
-                    BigDecimal transferAmount = charge.getUnallocatedAmount().multiply(maxPercentage).divide(hundredPercent).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal transferAmount = charge.getUnallocatedAmount().multiply(maxPercentage).
+                            divide(Constants.BIG_DECIMAL_HUNDRED).setScale(2, RoundingMode.HALF_DOWN);
 
                     if (transferAmount.compareTo(BigDecimal.ZERO) > 0) {
 
@@ -704,7 +705,7 @@ public class ThirdPartyTransferServiceImpl extends GenericPersistenceService imp
                 // Calculating the transfer amount percentage based on the distribution plan
                 switch (allowableCharge.getDistributionPlan()) {
                     case FULL:
-                        divideCoefficient = maxPercentage.divide(hundredPercent);
+                        divideCoefficient = maxPercentage.divide(Constants.BIG_DECIMAL_HUNDRED);
                         break;
                     case DIVIDED:
                         divideCoefficient = maxDividedFund.divide(financeChargeAmount);

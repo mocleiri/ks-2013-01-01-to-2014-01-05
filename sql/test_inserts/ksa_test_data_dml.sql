@@ -994,6 +994,7 @@ INSERT INTO KSSA_ACNT_ELECTRONIC_CONTACT (ACNT_ID_FK, ELECTRONIC_CONTACT_ID_FK) 
 Insert into KSSA_GL_RECOGNITION_PERIOD (ID, CODE, FISCAL_YEAR, START_DATE, END_DATE, CREATION_DATE, CREATOR_ID) values (1, '11', 2011, to_date('01/01/2011', 'MM/dd/yyyy'), to_date('12/31/2011', 'MM/dd/yyyy'), to_date('11/11/2011', 'MM/dd/yyyy'), 'admin');
 Insert into KSSA_GL_RECOGNITION_PERIOD (ID, CODE, FISCAL_YEAR, START_DATE, END_DATE, CREATION_DATE, CREATOR_ID) values (2, '12', 2012, to_date('01/01/2012', 'MM/dd/yyyy'), to_date('12/31/2012', 'MM/dd/yyyy'), to_date('12/22/2012', 'MM/dd/yyyy'), 'admin');
 Insert into KSSA_GL_RECOGNITION_PERIOD (ID, CODE, FISCAL_YEAR, START_DATE, END_DATE, CREATION_DATE, CREATOR_ID) values (3, '13', 2013, to_date('01/01/2013', 'MM/dd/yyyy'), to_date('12/31/2013', 'MM/dd/yyyy'), to_date('01/22/2013', 'MM/dd/yyyy'), 'admin');
+Insert into KSSA_GL_RECOGNITION_PERIOD (ID, CODE, FISCAL_YEAR, START_DATE, END_DATE, CREATION_DATE, CREATOR_ID) values (4, '14', 2014, to_date('01/01/2014', 'MM/dd/yyyy'), to_date('12/31/2014', 'MM/dd/yyyy'), to_date('01/22/2014', 'MM/dd/yyyy'), 'admin');
 ---------------------------------------------------
 --   DATA FOR TABLE KSSA_GL__TYPE
 --   This data was problematic and as we can generate it in the system now, we no longer need it to test other screens.

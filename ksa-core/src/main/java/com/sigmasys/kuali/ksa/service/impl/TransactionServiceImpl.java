@@ -2027,7 +2027,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
 
                 if (percentage.compareTo(BigDecimal.ZERO) > 0) {
 
-                    BigDecimal amount = initialAmount.divide(new BigDecimal(100)).multiply(percentage).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal amount = initialAmount.divide(Constants.BIG_DECIMAL_HUNDRED).multiply(percentage).setScale(2, RoundingMode.HALF_DOWN);
 
                     glService.createGlTransaction(transactionId, glBreakdown.getGlAccount(), amount, operationType, statement, true);
 
@@ -3479,7 +3479,7 @@ public class TransactionServiceImpl extends GenericPersistenceService implements
                     case AMOUNT:
                         totalAmount = totalAmount.add(rule.getB());
                     case PERCENTAGE:
-                        BigDecimal amountPerPercent = chargeAmount.divide(new BigDecimal(100));
+                        BigDecimal amountPerPercent = chargeAmount.divide(Constants.BIG_DECIMAL_HUNDRED);
                         totalAmount = totalAmount.add(amountPerPercent.multiply(rule.getB()));
                 }
             }
