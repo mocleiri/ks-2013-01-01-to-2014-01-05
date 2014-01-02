@@ -1,0 +1,110 @@
+Index: trunk/umd-cm-ui/src/main/java/edu/umd/ks/cm/ui/common/client/widgets/search/SearchResultsTableUMD.java
+===================================================================
+diff -u -N -r874 -r883
+--- trunk/umd-cm-ui/src/main/java/edu/umd/ks/cm/ui/common/client/widgets/search/SearchResultsTableUMD.java	(.../SearchResultsTableUMD.java)	(revision 874)
++++ trunk/umd-cm-ui/src/main/java/edu/umd/ks/cm/ui/common/client/widgets/search/SearchResultsTableUMD.java	(.../SearchResultsTableUMD.java)	(revision 883)
+@@ -2,6 +2,7 @@
+ 
+ import java.util.ArrayList;
+ import java.util.Collections;
++import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+@@ -15,17 +16,21 @@
+ import org.kuali.student.common.search.dto.SortDirection;
+ import org.kuali.student.common.ui.client.application.Application;
+ import org.kuali.student.common.ui.client.application.KSAsyncCallback;
++import org.kuali.student.common.ui.client.mvc.Callback;
+ import org.kuali.student.common.ui.client.util.DebugIdUtils;
+ import org.kuali.student.common.ui.client.widgets.KSLabel;
+ import org.kuali.student.common.ui.client.widgets.layout.VerticalFlowPanel;
+ import org.kuali.student.common.ui.client.widgets.search.SearchResultsTable;
++import org.kuali.student.common.ui.client.widgets.search.SelectedResults;
+ import org.kuali.student.common.ui.client.widgets.searchtable.ResultRow;
+ 
+ import com.google.gwt.cell.client.CheckboxCell;
+ import com.google.gwt.cell.client.FieldUpdater;
+ import com.google.gwt.cell.client.TextCell;
+ import com.google.gwt.cell.client.ValueUpdater;
+ import com.google.gwt.core.client.GWT;
++import com.google.gwt.dom.client.Element;
++import com.google.gwt.dom.client.NativeEvent;
+ import com.google.gwt.safehtml.shared.SafeHtml;
+ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+@@ -60,11 +65,12 @@
+     }
+ 
+     @Override
+-    public void initializeTable(List<LookupResultMetadata> listResultMetadata, String resultIdKey) {
++    public void initializeTable(List<LookupResultMetadata> listResultMetadata, String resultIdKey, String resultDisplayKey) {
+         table = new CellTable<Map<String, String>>();
+ 
+         this.resultIdColumnKey = resultIdKey;
+-
++        this.resultDisplayKey = resultDisplayKey;
++                
+         createTableColumns(listResultMetadata);
+         configureSelectionModel();
+         configurePager();
+@@ -447,12 +453,12 @@
+         pager.setDisplay(table);
+         pager.setPageSize(PAGE_SIZE);
+     }
+-
++    
+     class IndexedTextCellColumn extends Column<Map<String, String>, String> {
+         private final String keyId;
+ 
+         public IndexedTextCellColumn(String keyId) {
+-            super(new TextCell());
++            super(new DoubleClickTextCell());
+             this.keyId = keyId;
+         }
+ 
+@@ -465,5 +471,44 @@
+             return keyId;
+         }
+     }
++    
++    class DoubleClickTextCell extends TextCell {
+ 
++        @Override
++        public Set<String> getConsumedEvents() {
++             Set<String> consumedEvents = super.getConsumedEvents();
++             if (consumedEvents == null) {
++                 consumedEvents = new HashSet<String>();
++             } 
++             consumedEvents.add("dblclick");
++             return consumedEvents;
++        }
++
++        @Override
++        public void onBrowserEvent(Context context, Element parent, String value, NativeEvent event,
++                ValueUpdater<String> valueUpdater) {
++            super.onBrowserEvent(context, parent, value, event, valueUpdater);
++            String eventType = event.getType();
++            if ("dblclick".equals(eventType) && !isMultiSelect) {
++                onDoubleClick(context, parent, value, event, valueUpdater);
++            }
++        }
++        
++        @SuppressWarnings("unchecked")
++        private void onDoubleClick(Context context, Element parent, String value, NativeEvent event,
++                ValueUpdater<String> valueUpdater) {
++            selectionModel.setSelected((Map<String, String>)context.getKey(), true);
++            for(Callback<List<SelectedResults>> callback: selectedCompleteCallbacks){
++                List<SelectedResults> selectedResultList = new ArrayList<SelectedResults>();
++                for (ResultRow row : getSingleSelectedItem()) {
++                    String displayKey = row.getValue(resultDisplayKey);
++                    String returnKey = row.getValue(resultIdColumnKey);
++                    selectedResultList.add(new SelectedResults(displayKey, returnKey, row));
++                }
++                callback.exec(selectedResultList);
++            }  
++            return;
++        }
++    }
++
+ }
