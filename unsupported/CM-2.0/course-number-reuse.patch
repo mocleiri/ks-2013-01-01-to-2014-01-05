@@ -1,0 +1,973 @@
+Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java
+===================================================================
+diff -u -N -r2050 -r2051
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java	(.../CourseCodeValidatorUMD.java)	(revision 2050)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java	(.../CourseCodeValidatorUMD.java)	(revision 2051)
+@@ -17,10 +17,165 @@
+ import org.kuali.student.common.validator.DefaultValidatorImpl;
+ import org.kuali.student.lum.course.dto.CourseInfo;
+ 
++/**
++ * This class provides custom validation on three fields:
++ * courseInfo.subjectArea
++ * courseInfo.courseNumberSuffix
++ * courseInfo.startTerm
++ * 
++ * It uses two different searches. One is for just subject Area and Course Number
++ * the other searches using all 3 of the above fields as params (if we send a null into the JPQL it breaks it).
++ * There are 3 cases which can fail validation which all require different user messages.
++ * These are defined in this design spec:
++ * https://confluence.umd.edu/display/KSCM/DS+-+Prevent+Course+Number+Re-Use
++ * 
++ * 1 - Prevent re-use when approved course exists
++ * 2 - Prevent re-use when proposed course exists. 
++ * 3 - Prevent re-use when retired course exists, and timing of re-use would overlap between courses 
++ *   
++ * @author mike
++ *
++ */
+ public class CourseCodeValidatorUMD extends DefaultValidatorImpl {
+ 
+ 	private SearchDispatcher searchDispatcher;
+ 	
++	/**    This helper method searches for existing Draft, Active or Suspended courses with the course code
++	 *     which is currently being proposed this method ignores Retired State Courses (the other search will handle that).
++	 * 	   Uses lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindId which is defined in
++	 *     umd-cm-lu-search-config.xml.  The lu-search takes course code and verIndId as params and returns
++	 *     c.version.versionIndId and c.state 
++	 * 
++	 * @param course - The course which is being proposed. 
++	 * @param elementStack - elementStack
++	 * @param field - The field which is being validated (all fields on form are validated upon save).
++	 * @return This method will return the results of the search, in a List of ValidationResultInfo objects.
++	 * Or an empty list, if no conflicts are found.
++	 */	
++	private List<ValidationResultInfo> searchForDraftActiveSuspendedConflicts(CourseInfo course, Stack<String> elementStack, FieldDefinition field){
++		
++		List<ValidationResultInfo> validationResults = new ArrayList<ValidationResultInfo>();
++		
++		// Setup the search
++		SearchResult result = null;
++		SearchRequest searchRequest = null;
++		searchRequest = new SearchRequest("lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindId");					
++		searchRequest.addParam("lu.queryParam.cluCode", course.getCode());
++		searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());
++		
++		// Perform the search and obtain results where the course code already exists.
++		result = searchDispatcher.dispatchSearch(searchRequest);							
++		
++		// if there is a result, and there is at least one row we have a conflict, so parse it
++		if ((result!=null) && (!result.getRows().isEmpty()))
++		{
++			// Parse the search results, set the user message
++			for (SearchResultRow row:result.getRows()) {
++		       for (SearchResultCell cell:row.getCells()) {  
++		    	    // If the state is Draft - give one user message.
++					if (("lu.resultColumn.cluState".equals(cell.getKey()) && 
++							(cell.getValue().equals("Draft"))))
++					  {
++						ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
++						validationResult.setWarning(getMessage("validation.course.preventCourseCodeReuse.draft"));	
++						validationResults.add(validationResult);
++						return validationResults;
++					  }  
++					else // If the state is Active or Suspended - give a different user message. 
++					if (("lu.resultColumn.cluState".equals(cell.getKey()) && 
++							  ((cell.getValue().equals("Active") || (cell.getValue().equals("Suspended"))))))
++					  {
++						ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
++						validationResult.setWarning(getMessage("validation.course.preventCourseCodeReuse.activeSuspended"));
++						validationResults.add(validationResult);
++						return validationResults;							
++					  } 
++				}
++			}
++		}					
++		// empty list indicates the case of no results 
++		return validationResults;
++	}
++	
++	/**    This helper method searches for existing Retired courses with a course code and End date which 
++	 *     conflict with the course code and start date currently being proposed.  
++	 *     This method ignores Active, Draft or Suspended State Courses (the other search will handle that first).
++	 * 	   Uses lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm which is defined in
++	 *     umd-cm-lu-search-config.xml.  The lu-search takes courseCodem verIndId and StartTerm as params and returns
++	 *     c.version.versionIndId and c.state and c.expirationDate
++	 * 
++	 * @param course - The course which is being proposed. 
++	 * @param elementStack - elementStack
++	 * @param field - The field which is being validated (all fields on form are validated upon save).
++	 * @return This method will return the results of the search, in a List of ValidationResultInfo objects.
++	 * Or an empty list, if no conflicts are found.
++	 */	
++	private List<ValidationResultInfo> searchForRetiredConflicts(CourseInfo course, Stack<String> elementStack, FieldDefinition field){
++		
++		List<ValidationResultInfo> validationResults = new ArrayList<ValidationResultInfo>();
++		
++		// Setup the search
++		SearchResult result = null;
++		SearchRequest searchRequest = null;
++		
++		// lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm
++		searchRequest = new SearchRequest("lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm");
++		searchRequest.addParam("lu.queryParam.cluCode", course.getCode());				
++		searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());	
++		searchRequest.addParam("lu.queryParam.luAtpStartTerm", course.getStartTerm());
++
++		// Perform the search and obtain results where the course code already exists.
++		// that is being used by a retired course, with an end date greater than the 
++		// proposed start date.
++		
++		result = searchDispatcher.dispatchSearch(searchRequest);
++		
++		// if there is a result, take the first result.  In this case there should only be one result maximum
++		// and if there are more results, someone is trying to create a course in the past 
++		if ((result!=null) && (!result.getRows().isEmpty()))
++		{
++			ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
++			// Parse the search results, set the user message
++			for (SearchResultRow row:result.getRows()) {
++		       for (SearchResultCell cell:row.getCells()) {
++		      		// Extract first End Date we find to build user message. 
++						if ("lu.resultColumn.luVersionEndTerm".equals(cell.getKey())){
++							// get end term for message, trim off kuali.atp.
++							String endTerm = cell.getValue().substring(10);
++							validationResult.setWarning("Another course is using this course number until " +
++							        endTerm + ".  " +
++									"Consult <a href=\"http://www.testudo.umd.edu/ks/documents.html\" target=\"_blank\">User Guide</a> for information and " +
++									"instructions regarding changes to retired and Pilot courses.");							 
++							validationResults.add(validationResult);
++							return validationResults;
++						}												
++		       }
++			}
++		 }
++		
++		// empty list indicates the case of no results 
++		return validationResults;
++	}
++	
++	/**
++	 * This method is the main method for this class.  It is overridden to provide custom validation 
++	 * of certain UMD fields for the class (see above for further details on what this class does).
++	 * 
++	 * @param o - The course which is being proposed.
++	 * @param objectStructure - objectStructure 
++	 * @param elementStack - elementStack
++	 * @param field - The field which is being validated (all fields on form are validated upon save).
++	 * @return This method will return the results of two searches, in a List of ValidationResultInfo 
++	 * objects. Or an empty list, if no conflicts are found.
++	 * The priority order of conflicts (which user error will be displayed in the case of multiple 
++	 * conflicts) will be:	 * 
++	 * Draft
++	 * Active, Suspended
++	 * Retired
++	 * 
++	 * Really, in a system with good clean data, we should not be getting multiple results anyway.
++	 * 
++	 */
+ 	@Override
+ 	public List<ValidationResultInfo> validateObject(FieldDefinition field,
+ 			Object o, ObjectStructureDefinition objStructure,
+@@ -30,64 +185,30 @@
+ 	
+ 		if (o instanceof CourseInfo) {
+ 			CourseInfo course = (CourseInfo) o;
++			
+ 			// Only Search If the code has been filled out, and a Ver Ind ID exists			
+-			if(course.getCode()!=null && course.getVersionInfo()!=null){
+-				SearchResult result = null;
+-				SearchRequest searchRequest = null;
++			if(course.getCode()!=null && course.getVersionInfo()!=null){		
+ 				
+ 				// Draft, Active, or Suspended Search - do this first. Ignore Retired State Courses.
+ 				// lu.search.countNumberOfConflictingClusActiveSuspended
+-				
+-				searchRequest = new SearchRequest("lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindId");					
+-				searchRequest.addParam("lu.queryParam.cluCode", course.getCode());
+-				searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());	
+-				result = searchDispatcher.dispatchSearch(searchRequest);
+-				
+-				// if there is a result, and there is at least one row we have a conflict, so parse it
+-				if ((result!=null) && (!result.getRows().isEmpty()))
+-				{
+-					// needs result parsing to differentiate draft from active, suspended
+-					ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
+-					validationResult.setWarning("Another course has already been proposed using this course number. Please choose " +
+-							"a different course number. Consult <link to:User Guide http://www.testudo.umd.edu/ks/documents.html> " +
+-							"for additional options and information.");
+-					
+-//					This course number is already in use. Please choose a different course number. Consult <link to: User Guide http://www.testudo.umd.edu/ks/documents.html> for additional options and information.
+-					validationResults.add(validationResult);
++				validationResults = searchForDraftActiveSuspendedConflicts(course, elementStack, field);
++				if (!validationResults.isEmpty()) {
+ 					return validationResults;
+-				}										
++				}
+ 
+ 				// Retired Check - 2nd Search, if Start term is filled out, include Start Term
+-				
++				// and make sure we don't have a retired course which overlaps the new course.
+ 				if (course.getStartTerm()!=null){
+-					// lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm
+-					searchRequest = new SearchRequest("lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm");
+-					searchRequest.addParam("lu.queryParam.cluCode", course.getCode());				
+-					searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());	
+-					searchRequest.addParam("lu.queryParam.luAtpStartTerm", course.getStartTerm());
+-					result = searchDispatcher.dispatchSearch(searchRequest);
+-					
+-					// if there is a result, and there is at least one row we have a conflict, so parse it
+-					if ((result!=null) && (!result.getRows().isEmpty()))
+-					{
+-						ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
+-						validationResult.setWarning("Another course is using this course number until <existingCourseEndTerm>.  " +
+-								"Consult <link to: User Guide http://www.testudo.umd.edu/ks/documents.html> for information and " +
+-								"instructions regarding changes to retired and Pilot courses.");
+-						validationResults.add(validationResult);
++					validationResults = searchForRetiredConflicts(course, elementStack, field);
++					if (!validationResults.isEmpty()) {
+ 						return validationResults;
+-					}		
++					}				
+ 				}
+-
+-				
+-				
+-
+-			}
+-			
+-		}				
+-			
+-	
+-		return validationResults;
++			}	
++		}
++		
++	  // Empty list indicates the case of no results (passes validation)
++	  return validationResults;
+ 	}
+ 
+ 	public void setSearchDispatcher(SearchDispatcher searchDispatcher) {
+Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/sql/1.2.0/umd-cm-msg.sql
+===================================================================
+diff -u -N -r2032 -r2051
+
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/sql/1.2.0/umd-cm-msg.sql	(.../umd-cm-msg.sql)	(revision 2032)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/sql/1.2.0/umd-cm-msg.sql	(.../umd-cm-msg.sql)	(revision 2051)
+@@ -28,4 +28,17 @@
+ /
+ delete from KSMG_MESSAGE where ID = '8fc0746b-60c0-4840-872a-c47226ed7ed8'
+ /
+-INSERT INTO KSMG_MESSAGE (ID, MSG_ID, LOCALE, GRP_NAME, MSG_VALUE, OBJ_ID, VER_NBR) VALUES ('8fc0746b-60c0-4840-872a-c47226ed7ed8','courseExperientialCredits', 'en', 'course', 'Experiential Learning Credits', '8fc0746b-60c0-4840-872a-c47226ed7ed8', 1)
+\ No newline at end of file
++INSERT INTO KSMG_MESSAGE (ID, MSG_ID, LOCALE, GRP_NAME, MSG_VALUE, OBJ_ID, VER_NBR) VALUES ('8fc0746b-60c0-4840-872a-c47226ed7ed8','courseExperientialCredits', 'en', 'course', 'Experiential Learning Credits', '8fc0746b-60c0-4840-872a-c47226ed7ed8', 1)
++/
++--KSCM-1799
++--Messages for user labels upon coursecode validation errors
++--The retired active date overlapping error had to be built in java code since it uses a dynamic start date
++--In CourseCodeValidatorUMD.java
++delete from KSMG_MESSAGE where ID = '4a16c5c5-d057-4039-9d49-08b0facb6c49'
++/
++INSERT INTO KSMG_MESSAGE (ID, MSG_ID, LOCALE, GRP_NAME, MSG_VALUE, OBJ_ID, VER_NBR) VALUES ('4a16c5c5-d057-4039-9d49-08b0facb6c49', 'validation.course.preventCourseCodeReuse.draft', 'en', 'validation', 'Another course has already been proposed using this course number. Please choose a different course number. Consult <a href="http://www.testudo.umd.edu/ks/documents.html" target="_blank">User Guide</a> for additional options and information.', '90a29441-ca57-4d02-bec3-dca3cabca906', 1)
++/
++delete from KSMG_MESSAGE where ID = '9b2a95d3-3717-47c0-af8e-a4b3906a156c'
++/
++INSERT INTO KSMG_MESSAGE (ID, MSG_ID, LOCALE, GRP_NAME, MSG_VALUE, OBJ_ID, VER_NBR) VALUES ('9b2a95d3-3717-47c0-af8e-a4b3906a156c', 'validation.course.preventCourseCodeReuse.activeSuspended', 'en', 'validation', 'This course number is already in use. Please choose a different course number.  Consult <a href="http://www.testudo.umd.edu/ks/documents.html" target="_blank">User Guide</a> for additional options and information.', '9cf455c7-a412-4af1-b467-a41bb403269c', 1)
++/
+Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-courseInfo-dictionary-context.xml
+===================================================================
+diff -u -N -r2050 -r2051
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-courseInfo-dictionary-context.xml	(.../umd-cm-courseInfo-dictionary-context.xml)	(revision 2050)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-courseInfo-dictionary-context.xml	(.../umd-cm-courseInfo-dictionary-context.xml)	(revision 2051)
+@@ -751,15 +751,15 @@
+ 	<bean id="courseInfo.unitsContentOwner" parent="courseInfo.unitsContentOwner-parent" >
+ 		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.SubjectAreaUnitOwnerValidatorUMD"/>
+  	</bean>
+- 		<!-- Override validator class for Course Code Conflict Checking -->
++ 		<!-- KSCM-1799 Override validator class for Course Code Conflict Checking -->
+ 	<bean id="courseInfo.subjectArea" parent="courseInfo.subjectArea-parent" >
+ 		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.CourseCodeValidatorUMD"/>
+  	</bean>
+- 	 		<!-- Override validator class for Course Code Conflict Checking-->
++ 	 		<!-- KSCM-1799 Override validator class for Course Code Conflict Checking-->
+ 	<bean id="courseInfo.courseNumberSuffix" parent="courseInfo.courseNumberSuffix-parent" >
+ 		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.CourseCodeValidatorUMD"/>
+  	</bean>
+- 	 		<!-- Override validator class for Course Code Conflict Checking-->
++ 	 		<!-- KSCM-1799 Override validator class for Course Code Conflict Checking-->
+ 	<bean id="courseInfo.startTerm" parent="courseInfo.startTerm-parent" >
+ 		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.CourseCodeValidatorUMD"/>
+  	</bean>
+Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml
+===================================================================
+diff -u -N -r2050 -r2051
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml	(.../umd-cm-lu-search-config.xml)	(revision 2050)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml	(.../umd-cm-lu-search-config.xml)	(revision 2051)
+@@ -226,7 +226,7 @@
+ 		<search:resultColumns>
+     		<ref bean="lu.resultColumn.luVersionIndId"/>
+ 			<ref bean="lu.resultColumn.cluState"/> <!-- inherited from lu-search-config.xml -->
+-			<ref bean="lu.resultColumn.luVersionEndDate"/>			
++			<ref bean="lu.resultColumn.luVersionEndTerm"/>			
+ 		</search:resultColumns>
+ 	</search:searchResultTypeInfo>
+ 	
+@@ -254,11 +254,11 @@
+ 	</search:resultColumn>
+ 
+     <!-- Clu Version End Date -->	
+-	<search:resultColumn id="lu.resultColumn.luVersionEndDate" parent="lu.resultColumn.luVersionEndDate-parent"/>
+-	<search:resultColumn id="lu.resultColumn.luVersionEndDate-parent"  abstract="true">
++	<search:resultColumn id="lu.resultColumn.luVersionEndTerm" parent="lu.resultColumn.luVersionEndTerm-parent"/>
++	<search:resultColumn id="lu.resultColumn.luVersionEndTerm-parent"  abstract="true">
+ 		<search:name>VersionEndDate</search:name>
+ 		<search:desc>Version End Date</search:desc>
+-		<search:dataType>date</search:dataType>
++		<search:dataType>string</search:dataType>
+ 	</search:resultColumn>
+ 	<!--  End 1799 result columns -->
+ 	
+@@ -336,20 +336,24 @@
+ 				<entry key="lu.search.cluSetsWithSisCodes">
+ 		       		<value>SELECT cs.id, cs.name, attribute.value FROM CluSet cs, IN(cs.attributes) attribute WHERE attribute.name='sisCode' AND attribute.value IS NOT NULL</value>
+ 		       	</entry>
++		       	<!--  KSCM-1799 Search looks for retired courses where the end term is AFTER
++		       	      a newly proposed courses start term, and the course code is the same. -->
+ 		  		<entry key="lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm">
+ 		       		<value>
+-		       		SELECT c.version.versionIndId, c.state, c.expirationDate FROM Clu c
++		       		SELECT c.version.versionIndId, c.state, c.lastAtp FROM Clu c
+ 		       		WHERE c.officialIdentifier.code = :lu_queryParam_cluCode 
+-					AND (((c.version.versionIndId != :lu_queryParam_cluVersionIndId) 
+-					AND (c.state IN ('Active','Suspended','Superseded', 'Draft')))
+-					OR ((c.state = 'Retired') AND (c.lastAtp >= :lu_queryParam_luAtpStartTerm)))</value>
++					AND (c.version.versionIndId != :lu_queryParam_cluVersionIndId) 
++					AND (c.state = 'Retired') 
++					AND (c.lastAtp &gt;= :lu_queryParam_luAtpStartTerm)</value>
+                 </entry>
++                <!--  KSCM-1799 Search looks for active, draft or suspended courses 
++                      which use the same course code as a newly proposed course.  -->                
+           		<entry key="lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindId">
+ 		       		<value>
+ 		       		SELECT c.version.versionIndId, c.state FROM Clu c
+ 		       		WHERE c.officialIdentifier.code = :lu_queryParam_cluCode 
+ 					AND (((c.version.versionIndId != :lu_queryParam_cluVersionIndId) 
+-					AND (c.state IN ('Active','Suspended','Superseded', 'Draft'))))</value>
++					AND (c.state IN ('Active','Suspended','Draft'))))</value>
+                 </entry>
+                 
+             </map>
+Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java
+===================================================================
+diff -u -N -r2042 -r2050
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java	(.../CourseCodeValidatorUMD.java)	(revision 2042)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java	(.../CourseCodeValidatorUMD.java)	(revision 2050)
+@@ -32,26 +32,56 @@
+ 			CourseInfo course = (CourseInfo) o;
+ 			// Only Search If the code has been filled out, and a Ver Ind ID exists			
+ 			if(course.getCode()!=null && course.getVersionInfo()!=null){
++				SearchResult result = null;
++				SearchRequest searchRequest = null;
+ 				
+-				SearchRequest searchRequest = new SearchRequest("lu.search.countNumberOfConflictingClusBasedOnCourseCode");
++				// Draft, Active, or Suspended Search - do this first. Ignore Retired State Courses.
++				// lu.search.countNumberOfConflictingClusActiveSuspended
++				
++				searchRequest = new SearchRequest("lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindId");					
+ 				searchRequest.addParam("lu.queryParam.cluCode", course.getCode());
+-				searchRequest.addParam("lu.queryParam.luAtpStartTerm", course.getStartTerm());
+-				searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());
++				searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());	
++				result = searchDispatcher.dispatchSearch(searchRequest);
+ 				
+-				SearchResult result = searchDispatcher.dispatchSearch(searchRequest);
+-				
+-				// Parse results here and take appropriate action.
+-				// Adding any validation Result to results makes it fail.
+-
+-				// Any result means there is a conflict.
+-				// Further parsing of the result should be done to provide more specific info on the conflict				
+-				if (result!=null)
++				// if there is a result, and there is at least one row we have a conflict, so parse it
++				if ((result!=null) && (!result.getRows().isEmpty()))
+ 				{
++					// needs result parsing to differentiate draft from active, suspended
+ 					ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
+-					validationResult.setWarning("Course Code Validation failed, an Active, Draft, Suspended or Superceded course already exists with this course code.");
++					validationResult.setWarning("Another course has already been proposed using this course number. Please choose " +
++							"a different course number. Consult <link to:User Guide http://www.testudo.umd.edu/ks/documents.html> " +
++							"for additional options and information.");
++					
++//					This course number is already in use. Please choose a different course number. Consult <link to: User Guide http://www.testudo.umd.edu/ks/documents.html> for additional options and information.
+ 					validationResults.add(validationResult);
++					return validationResults;
++				}										
++
++				// Retired Check - 2nd Search, if Start term is filled out, include Start Term
++				
++				if (course.getStartTerm()!=null){
++					// lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm
++					searchRequest = new SearchRequest("lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm");
++					searchRequest.addParam("lu.queryParam.cluCode", course.getCode());				
++					searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());	
++					searchRequest.addParam("lu.queryParam.luAtpStartTerm", course.getStartTerm());
++					result = searchDispatcher.dispatchSearch(searchRequest);
++					
++					// if there is a result, and there is at least one row we have a conflict, so parse it
++					if ((result!=null) && (!result.getRows().isEmpty()))
++					{
++						ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
++						validationResult.setWarning("Another course is using this course number until <existingCourseEndTerm>.  " +
++								"Consult <link to: User Guide http://www.testudo.umd.edu/ks/documents.html> for information and " +
++								"instructions regarding changes to retired and Pilot courses.");
++						validationResults.add(validationResult);
++						return validationResults;
++					}		
+ 				}
+ 
++				
++				
++
+ 			}
+ 			
+ 		}				
+Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-courseInfo-dictionary-context.xml
+===================================================================
+diff -u -N -r2037 -r2050
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-courseInfo-dictionary-context.xml	(.../umd-cm-courseInfo-dictionary-context.xml)	(revision 2037)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-courseInfo-dictionary-context.xml	(.../umd-cm-courseInfo-dictionary-context.xml)	(revision 2050)
+@@ -751,9 +751,17 @@
+ 	<bean id="courseInfo.unitsContentOwner" parent="courseInfo.unitsContentOwner-parent" >
+ 		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.SubjectAreaUnitOwnerValidatorUMD"/>
+  	</bean>
+- 		<!-- Override validator class for Course Code -->
++ 		<!-- Override validator class for Course Code Conflict Checking -->
+ 	<bean id="courseInfo.subjectArea" parent="courseInfo.subjectArea-parent" >
+ 		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.CourseCodeValidatorUMD"/>
+  	</bean>
++ 	 		<!-- Override validator class for Course Code Conflict Checking-->
++	<bean id="courseInfo.courseNumberSuffix" parent="courseInfo.courseNumberSuffix-parent" >
++		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.CourseCodeValidatorUMD"/>
++ 	</bean>
++ 	 		<!-- Override validator class for Course Code Conflict Checking-->
++	<bean id="courseInfo.startTerm" parent="courseInfo.startTerm-parent" >
++		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.CourseCodeValidatorUMD"/>
++ 	</bean>
+ 
+ </beans>
+\ No newline at end of file
+Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml
+===================================================================
+diff -u -N -r2039 -r2050
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml	(.../umd-cm-lu-search-config.xml)	(revision 2039)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml	(.../umd-cm-lu-search-config.xml)	(revision 2050)
+@@ -206,43 +206,99 @@
+         <search:dataType>string</search:dataType>
+     </search:resultColumn>
+     
+-  <search:searchType id="lu.search.countNumberOfConflictingClusBasedOnCourseCode">
++  <!-- KSCM-1799 Prevent Course Code Reuse -->  
++  <!-- One search for all three criteria, code VindId and Start Term -->
++  <search:searchType id="lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm">
+         <search:name>Search for conflicting Clu with code</search:name>
+         <search:desc>Returns amount of any prexisting Clu codes</search:desc>
+         <search:searchResultTypeInfo>
+-			<ref bean="lu.result.countNumberOfConflictingClusBasedOnCourseCode"/>
++			<ref bean="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm"/>
+ 		</search:searchResultTypeInfo>
+ 		<search:searchCriteriaTypeInfo>
+-			<ref bean="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode"/>
++			<ref bean="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm"/>
+ 		</search:searchCriteriaTypeInfo>
+ 	</search:searchType>
+ 	
+-	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCode" parent="lu.result.countNumberOfConflictingClusBasedOnCourseCode-parent"/>
+-	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCode-parent" abstract="true">
+-		<search:name>Conflicting Clu from Code Results</search:name>
+-		<search:desc>Returns the existing clu that conflicts with the parameter</search:desc>
++	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm" parent="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm-parent"/>
++	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm-parent" abstract="true">
++		<search:name>Conflicting Clu Results three Params </search:name>
++		<search:desc>Returns the state, VindId and expiration Date of the clus which conflicts with the CourseCode</search:desc>
+ 		<search:resultColumns>
+-			<ref bean="lu.resultColumn.countNumberOfConflictingClus"/>
++    		<ref bean="lu.resultColumn.luVersionIndId"/>
++			<ref bean="lu.resultColumn.cluState"/> <!-- inherited from lu-search-config.xml -->
++			<ref bean="lu.resultColumn.luVersionEndDate"/>			
+ 		</search:resultColumns>
+ 	</search:searchResultTypeInfo>
+ 	
+-	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode" parent="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode-parent"/>
+-	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode-parent" abstract="true">
+-        <search:name>Conflicting Clu Code</search:name>
+-        <search:desc>Returns latest version independent id for clu with code</search:desc>
++	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm" parent="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm-parent"/>
++	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm-parent" abstract="true">
++        <search:name>Conflicting Clu Criteria three Params</search:name>
++        <search:desc>Searches on code, startTerm and cluVersionIndId</search:desc>
+ 		<search:queryParams>
+ 			<ref bean="lu.queryParam.cluCode"/>
+ 			<ref bean="lu.queryParam.luAtpStartTerm"/>		
+ 			<ref bean="lu.queryParam.cluVersionIndId"/>
+ 		</search:queryParams>
+ 	</search:searchCriteriaTypeInfo>
++	<!-- End 1799 Search #1 -->
+ 	
+-	<search:resultColumn id="lu.resultColumn.countNumberOfConflictingClus">
+-        <search:name>Count of Conflicting Clus</search:name>
+-        <search:desc>Number of Clus who's code conflicts with the search param</search:desc>
+-        <search:dataType>int</search:dataType>
+-    </search:resultColumn>
++	<!--  1799 Result Column Configs -->
++	<!--  lu.resultColumn.cluState taken from lu-search-config.xml -->
++    
++    <!--  Clu Version Independant Id -->
++   	<search:resultColumn id="lu.resultColumn.luVersionIndId" parent="lu.resultColumn.luVersionIndId-parent"/>
++	<search:resultColumn id="lu.resultColumn.luVersionIndId-parent"  abstract="true">
++		<search:name>VersionIndId</search:name>
++		<search:desc>Version Independent Id</search:desc>
++		<search:dataType>string</search:dataType>
++	</search:resultColumn>
++
++    <!-- Clu Version End Date -->	
++	<search:resultColumn id="lu.resultColumn.luVersionEndDate" parent="lu.resultColumn.luVersionEndDate-parent"/>
++	<search:resultColumn id="lu.resultColumn.luVersionEndDate-parent"  abstract="true">
++		<search:name>VersionEndDate</search:name>
++		<search:desc>Version End Date</search:desc>
++		<search:dataType>date</search:dataType>
++	</search:resultColumn>
++	<!--  End 1799 result columns -->
+ 	
++	
++  <!-- KSCM-1799 Prevent Course Code Reuse -->  
++  <!-- Search #2 - for just two criteria, code VindId for when Start Term isn't filled out yet -->
++  <search:searchType id="lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindId">
++        <search:name>Search for conflicting Clu with code</search:name>
++        <search:desc>Returns amount of any prexisting Clu codes</search:desc>
++        <search:searchResultTypeInfo>
++			<ref bean="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindId"/>
++		</search:searchResultTypeInfo>
++		<search:searchCriteriaTypeInfo>
++			<ref bean="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindId"/>
++		</search:searchCriteriaTypeInfo>
++	</search:searchType>
++	
++	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindId" parent="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindId-parent"/>
++	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindId-parent" abstract="true">
++		<search:name>Conflicting Clu Results three Params </search:name>
++		<search:desc>Returns the state, VindId and expiration Date of the clus which conflicts with the CourseCode</search:desc>
++		<search:resultColumns>
++			<ref bean="lu.resultColumn.luVersionIndId"/>
++			<ref bean="lu.resultColumn.cluState"/> <!-- inherited from lu-search-config.xml -->			
++		</search:resultColumns>
++	</search:searchResultTypeInfo>
++	
++	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindId" parent="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindId-parent"/>
++	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindId-parent" abstract="true">
++        <search:name>Conflicting Clu Criteria two Params</search:name>
++        <search:desc>Searches on code, and cluVersionIndId</search:desc>
++		<search:queryParams>
++			<ref bean="lu.queryParam.cluCode"/>	
++			<ref bean="lu.queryParam.cluVersionIndId"/>
++		</search:queryParams>
++	</search:searchCriteriaTypeInfo>
++	<!-- Emd 1799 search #2  -->
++	<!-- End both 1799 Search Configs -->
++	
++	
+ 	<bean id="queryMap" parent="queryMap-parent">
+ 		<property name="sourceMap">
+ 			<map merge="true">
+@@ -280,14 +336,22 @@
+ 				<entry key="lu.search.cluSetsWithSisCodes">
+ 		       		<value>SELECT cs.id, cs.name, attribute.value FROM CluSet cs, IN(cs.attributes) attribute WHERE attribute.name='sisCode' AND attribute.value IS NOT NULL</value>
+ 		       	</entry>
+-		  		<entry key="lu.search.countNumberOfConflictingClusBasedOnCourseCode">
++		  		<entry key="lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm">
+ 		       		<value>
+-		       		SELECT count(*)FROM Clu c
++		       		SELECT c.version.versionIndId, c.state, c.expirationDate FROM Clu c
+ 		       		WHERE c.officialIdentifier.code = :lu_queryParam_cluCode 
+ 					AND (((c.version.versionIndId != :lu_queryParam_cluVersionIndId) 
+ 					AND (c.state IN ('Active','Suspended','Superseded', 'Draft')))
+-					OR ((c.state = 'Retired') AND (:lu_queryParam_luAtpStartTerm IS NOT NULL AND c.lastAtp >= :lu_queryParam_luAtpStartTerm)))</value>
++					OR ((c.state = 'Retired') AND (c.lastAtp >= :lu_queryParam_luAtpStartTerm)))</value>
+                 </entry>
++          		<entry key="lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindId">
++		       		<value>
++		       		SELECT c.version.versionIndId, c.state FROM Clu c
++		       		WHERE c.officialIdentifier.code = :lu_queryParam_cluCode 
++					AND (((c.version.versionIndId != :lu_queryParam_cluVersionIndId) 
++					AND (c.state IN ('Active','Suspended','Superseded', 'Draft'))))</value>
++                </entry>
++                
+             </map>
+ 		</property>
+ 	</bean>
+Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml
+===================================================================
+diff -u -N -r2021 -r2039
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml	(.../umd-cm-lu-search-config.xml)	(revision 2021)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml	(.../umd-cm-lu-search-config.xml)	(revision 2039)
+@@ -205,7 +205,44 @@
+         <search:desc>Value of a cluset attribute</search:desc>
+         <search:dataType>string</search:dataType>
+     </search:resultColumn>
++    
++  <search:searchType id="lu.search.countNumberOfConflictingClusBasedOnCourseCode">
++        <search:name>Search for conflicting Clu with code</search:name>
++        <search:desc>Returns amount of any prexisting Clu codes</search:desc>
++        <search:searchResultTypeInfo>
++			<ref bean="lu.result.countNumberOfConflictingClusBasedOnCourseCode"/>
++		</search:searchResultTypeInfo>
++		<search:searchCriteriaTypeInfo>
++			<ref bean="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode"/>
++		</search:searchCriteriaTypeInfo>
++	</search:searchType>
+ 	
++	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCode" parent="lu.result.countNumberOfConflictingClusBasedOnCourseCode-parent"/>
++	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCode-parent" abstract="true">
++		<search:name>Conflicting Clu from Code Results</search:name>
++		<search:desc>Returns the existing clu that conflicts with the parameter</search:desc>
++		<search:resultColumns>
++			<ref bean="lu.resultColumn.countNumberOfConflictingClus"/>
++		</search:resultColumns>
++	</search:searchResultTypeInfo>
++	
++	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode" parent="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode-parent"/>
++	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode-parent" abstract="true">
++        <search:name>Conflicting Clu Code</search:name>
++        <search:desc>Returns latest version independent id for clu with code</search:desc>
++		<search:queryParams>
++			<ref bean="lu.queryParam.cluCode"/>
++			<ref bean="lu.queryParam.luAtpStartTerm"/>		
++			<ref bean="lu.queryParam.cluVersionIndId"/>
++		</search:queryParams>
++	</search:searchCriteriaTypeInfo>
++	
++	<search:resultColumn id="lu.resultColumn.countNumberOfConflictingClus">
++        <search:name>Count of Conflicting Clus</search:name>
++        <search:desc>Number of Clus who's code conflicts with the search param</search:desc>
++        <search:dataType>int</search:dataType>
++    </search:resultColumn>
++	
+ 	<bean id="queryMap" parent="queryMap-parent">
+ 		<property name="sourceMap">
+ 			<map merge="true">
+@@ -243,6 +280,14 @@
+ 				<entry key="lu.search.cluSetsWithSisCodes">
+ 		       		<value>SELECT cs.id, cs.name, attribute.value FROM CluSet cs, IN(cs.attributes) attribute WHERE attribute.name='sisCode' AND attribute.value IS NOT NULL</value>
+ 		       	</entry>
++		  		<entry key="lu.search.countNumberOfConflictingClusBasedOnCourseCode">
++		       		<value>
++		       		SELECT count(*)FROM Clu c
++		       		WHERE c.officialIdentifier.code = :lu_queryParam_cluCode 
++					AND (((c.version.versionIndId != :lu_queryParam_cluVersionIndId) 
++					AND (c.state IN ('Active','Suspended','Superseded', 'Draft')))
++					OR ((c.state = 'Retired') AND (:lu_queryParam_luAtpStartTerm IS NOT NULL AND c.lastAtp >= :lu_queryParam_luAtpStartTerm)))</value>
++                </entry>
+             </map>
+ 		</property>
+ 	</bean>
+
+
+
+ 	Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java
+===================================================================
+diff -u -N -r2037 -r2038
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java	(.../CourseCodeValidatorUMD.java)	(revision 2037)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java	(.../CourseCodeValidatorUMD.java)	(revision 2038)
+@@ -27,20 +27,35 @@
+ 			Stack<String> elementStack) {
+ 		
+ 		List<ValidationResultInfo> validationResults = new ArrayList<ValidationResultInfo>();
++	
++		if (o instanceof CourseInfo) {
++			CourseInfo course = (CourseInfo) o;
++			// Only Search If the code has been filled out, and a Ver Ind ID exists			
++			if(course.getCode()!=null && course.getVersionInfo()!=null){
++				
++				SearchRequest searchRequest = new SearchRequest("lu.search.getConflictingCluFromCluCode");
++				searchRequest.addParam("lu.queryParam.cluCode", course.getCode());
++				searchRequest.addParam("lu.queryParam.luAtpStartTerm", course.getStartTerm());
++				searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());
++				
++				SearchResult result = searchDispatcher.dispatchSearch(searchRequest);
++				
++				// Parse results here and take appropriate action.
++				// Adding any validation Result to results makes it fail.
+ 
++				// Any result means there is a conflict.
++				// Further parsing of the result should be done to provide more specific info on the conflict				
++				if (result!=null)
++				{
++					ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
++					validationResult.setWarning("Course Code Validation failed, an Active, Draft, Suspended or Superceded course already exists with this course code.");
++					validationResults.add(validationResult);
++				}
+ 
+-			// Perform logic here (including call your search)
+-			// To determine if the CourseCode is valid to use.
+-			// i.e. not an unaccetpable repeat.
++			}
+ 			
++		}				
+ 			
+-			
+-			// Just for testing display - 
+-			// Adding any validation Result to results makes it fail.
+-		    // So, If you uncomment this, it will fail.
+-	//		ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
+-	//		validationResult.setWarning("Course Code Validation failed, insert better message here.");
+-	//		validationResults.add(validationResult);
+ 	
+ 		return validationResults;
+ 	}
+
+ 	Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java
+===================================================================
+diff -u -N -r2042 -r2050
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java	(.../CourseCodeValidatorUMD.java)	(revision 2042)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/java/edu/umd/ks/cm/course/service/utils/CourseCodeValidatorUMD.java	(.../CourseCodeValidatorUMD.java)	(revision 2050)
+@@ -32,26 +32,56 @@
+ 			CourseInfo course = (CourseInfo) o;
+ 			// Only Search If the code has been filled out, and a Ver Ind ID exists			
+ 			if(course.getCode()!=null && course.getVersionInfo()!=null){
++				SearchResult result = null;
++				SearchRequest searchRequest = null;
+ 				
+-				SearchRequest searchRequest = new SearchRequest("lu.search.countNumberOfConflictingClusBasedOnCourseCode");
++				// Draft, Active, or Suspended Search - do this first. Ignore Retired State Courses.
++				// lu.search.countNumberOfConflictingClusActiveSuspended
++				
++				searchRequest = new SearchRequest("lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindId");					
+ 				searchRequest.addParam("lu.queryParam.cluCode", course.getCode());
+-				searchRequest.addParam("lu.queryParam.luAtpStartTerm", course.getStartTerm());
+-				searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());
++				searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());	
++				result = searchDispatcher.dispatchSearch(searchRequest);
+ 				
+-				SearchResult result = searchDispatcher.dispatchSearch(searchRequest);
+-				
+-				// Parse results here and take appropriate action.
+-				// Adding any validation Result to results makes it fail.
+-
+-				// Any result means there is a conflict.
+-				// Further parsing of the result should be done to provide more specific info on the conflict				
+-				if (result!=null)
++				// if there is a result, and there is at least one row we have a conflict, so parse it
++				if ((result!=null) && (!result.getRows().isEmpty()))
+ 				{
++					// needs result parsing to differentiate draft from active, suspended
+ 					ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
+-					validationResult.setWarning("Course Code Validation failed, an Active, Draft, Suspended or Superceded course already exists with this course code.");
++					validationResult.setWarning("Another course has already been proposed using this course number. Please choose " +
++							"a different course number. Consult <link to:User Guide http://www.testudo.umd.edu/ks/documents.html> " +
++							"for additional options and information.");
++					
++//					This course number is already in use. Please choose a different course number. Consult <link to: User Guide http://www.testudo.umd.edu/ks/documents.html> for additional options and information.
+ 					validationResults.add(validationResult);
++					return validationResults;
++				}										
++
++				// Retired Check - 2nd Search, if Start term is filled out, include Start Term
++				
++				if (course.getStartTerm()!=null){
++					// lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm
++					searchRequest = new SearchRequest("lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm");
++					searchRequest.addParam("lu.queryParam.cluCode", course.getCode());				
++					searchRequest.addParam("lu.queryParam.cluVersionIndId", course.getVersionInfo().getVersionIndId());	
++					searchRequest.addParam("lu.queryParam.luAtpStartTerm", course.getStartTerm());
++					result = searchDispatcher.dispatchSearch(searchRequest);
++					
++					// if there is a result, and there is at least one row we have a conflict, so parse it
++					if ((result!=null) && (!result.getRows().isEmpty()))
++					{
++						ValidationResultInfo validationResult = new ValidationResultInfo(getElementXpath(elementStack) + "/" + field.getName());
++						validationResult.setWarning("Another course is using this course number until <existingCourseEndTerm>.  " +
++								"Consult <link to: User Guide http://www.testudo.umd.edu/ks/documents.html> for information and " +
++								"instructions regarding changes to retired and Pilot courses.");
++						validationResults.add(validationResult);
++						return validationResults;
++					}		
+ 				}
+ 
++				
++				
++
+ 			}
+ 			
+ 		}				
+Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-courseInfo-dictionary-context.xml
+===================================================================
+diff -u -N -r2037 -r2050
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-courseInfo-dictionary-context.xml	(.../umd-cm-courseInfo-dictionary-context.xml)	(revision 2037)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-courseInfo-dictionary-context.xml	(.../umd-cm-courseInfo-dictionary-context.xml)	(revision 2050)
+@@ -751,9 +751,17 @@
+ 	<bean id="courseInfo.unitsContentOwner" parent="courseInfo.unitsContentOwner-parent" >
+ 		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.SubjectAreaUnitOwnerValidatorUMD"/>
+  	</bean>
+- 		<!-- Override validator class for Course Code -->
++ 		<!-- Override validator class for Course Code Conflict Checking -->
+ 	<bean id="courseInfo.subjectArea" parent="courseInfo.subjectArea-parent" >
+ 		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.CourseCodeValidatorUMD"/>
+  	</bean>
++ 	 		<!-- Override validator class for Course Code Conflict Checking-->
++	<bean id="courseInfo.courseNumberSuffix" parent="courseInfo.courseNumberSuffix-parent" >
++		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.CourseCodeValidatorUMD"/>
++ 	</bean>
++ 	 		<!-- Override validator class for Course Code Conflict Checking-->
++	<bean id="courseInfo.startTerm" parent="courseInfo.startTerm-parent" >
++		  <property name="customValidatorClass" value="edu.umd.ks.cm.course.service.utils.CourseCodeValidatorUMD"/>
++ 	</bean>
+ 
+ </beans>
+\ No newline at end of file
+Index: branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml
+===================================================================
+diff -u -N -r2039 -r2050
+--- branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml	(.../umd-cm-lu-search-config.xml)	(revision 2039)
++++ branches/umd-cm-1.2-sprint4/umd-cm-impl/src/main/resources/umd-cm-lu-search-config.xml	(.../umd-cm-lu-search-config.xml)	(revision 2050)
+@@ -206,43 +206,99 @@
+         <search:dataType>string</search:dataType>
+     </search:resultColumn>
+     
+-  <search:searchType id="lu.search.countNumberOfConflictingClusBasedOnCourseCode">
++  <!-- KSCM-1799 Prevent Course Code Reuse -->  
++  <!-- One search for all three criteria, code VindId and Start Term -->
++  <search:searchType id="lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm">
+         <search:name>Search for conflicting Clu with code</search:name>
+         <search:desc>Returns amount of any prexisting Clu codes</search:desc>
+         <search:searchResultTypeInfo>
+-			<ref bean="lu.result.countNumberOfConflictingClusBasedOnCourseCode"/>
++			<ref bean="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm"/>
+ 		</search:searchResultTypeInfo>
+ 		<search:searchCriteriaTypeInfo>
+-			<ref bean="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode"/>
++			<ref bean="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm"/>
+ 		</search:searchCriteriaTypeInfo>
+ 	</search:searchType>
+ 	
+-	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCode" parent="lu.result.countNumberOfConflictingClusBasedOnCourseCode-parent"/>
+-	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCode-parent" abstract="true">
+-		<search:name>Conflicting Clu from Code Results</search:name>
+-		<search:desc>Returns the existing clu that conflicts with the parameter</search:desc>
++	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm" parent="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm-parent"/>
++	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm-parent" abstract="true">
++		<search:name>Conflicting Clu Results three Params </search:name>
++		<search:desc>Returns the state, VindId and expiration Date of the clus which conflicts with the CourseCode</search:desc>
+ 		<search:resultColumns>
+-			<ref bean="lu.resultColumn.countNumberOfConflictingClus"/>
++    		<ref bean="lu.resultColumn.luVersionIndId"/>
++			<ref bean="lu.resultColumn.cluState"/> <!-- inherited from lu-search-config.xml -->
++			<ref bean="lu.resultColumn.luVersionEndDate"/>			
+ 		</search:resultColumns>
+ 	</search:searchResultTypeInfo>
+ 	
+-	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode" parent="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode-parent"/>
+-	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCode-parent" abstract="true">
+-        <search:name>Conflicting Clu Code</search:name>
+-        <search:desc>Returns latest version independent id for clu with code</search:desc>
++	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm" parent="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm-parent"/>
++	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm-parent" abstract="true">
++        <search:name>Conflicting Clu Criteria three Params</search:name>
++        <search:desc>Searches on code, startTerm and cluVersionIndId</search:desc>
+ 		<search:queryParams>
+ 			<ref bean="lu.queryParam.cluCode"/>
+ 			<ref bean="lu.queryParam.luAtpStartTerm"/>		
+ 			<ref bean="lu.queryParam.cluVersionIndId"/>
+ 		</search:queryParams>
+ 	</search:searchCriteriaTypeInfo>
++	<!-- End 1799 Search #1 -->
+ 	
+-	<search:resultColumn id="lu.resultColumn.countNumberOfConflictingClus">
+-        <search:name>Count of Conflicting Clus</search:name>
+-        <search:desc>Number of Clus who's code conflicts with the search param</search:desc>
+-        <search:dataType>int</search:dataType>
+-    </search:resultColumn>
++	<!--  1799 Result Column Configs -->
++	<!--  lu.resultColumn.cluState taken from lu-search-config.xml -->
++    
++    <!--  Clu Version Independant Id -->
++   	<search:resultColumn id="lu.resultColumn.luVersionIndId" parent="lu.resultColumn.luVersionIndId-parent"/>
++	<search:resultColumn id="lu.resultColumn.luVersionIndId-parent"  abstract="true">
++		<search:name>VersionIndId</search:name>
++		<search:desc>Version Independent Id</search:desc>
++		<search:dataType>string</search:dataType>
++	</search:resultColumn>
++
++    <!-- Clu Version End Date -->	
++	<search:resultColumn id="lu.resultColumn.luVersionEndDate" parent="lu.resultColumn.luVersionEndDate-parent"/>
++	<search:resultColumn id="lu.resultColumn.luVersionEndDate-parent"  abstract="true">
++		<search:name>VersionEndDate</search:name>
++		<search:desc>Version End Date</search:desc>
++		<search:dataType>date</search:dataType>
++	</search:resultColumn>
++	<!--  End 1799 result columns -->
+ 	
++	
++  <!-- KSCM-1799 Prevent Course Code Reuse -->  
++  <!-- Search #2 - for just two criteria, code VindId for when Start Term isn't filled out yet -->
++  <search:searchType id="lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindId">
++        <search:name>Search for conflicting Clu with code</search:name>
++        <search:desc>Returns amount of any prexisting Clu codes</search:desc>
++        <search:searchResultTypeInfo>
++			<ref bean="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindId"/>
++		</search:searchResultTypeInfo>
++		<search:searchCriteriaTypeInfo>
++			<ref bean="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindId"/>
++		</search:searchCriteriaTypeInfo>
++	</search:searchType>
++	
++	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindId" parent="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindId-parent"/>
++	<search:searchResultTypeInfo id="lu.result.countNumberOfConflictingClusBasedOnCourseCodeVindId-parent" abstract="true">
++		<search:name>Conflicting Clu Results three Params </search:name>
++		<search:desc>Returns the state, VindId and expiration Date of the clus which conflicts with the CourseCode</search:desc>
++		<search:resultColumns>
++			<ref bean="lu.resultColumn.luVersionIndId"/>
++			<ref bean="lu.resultColumn.cluState"/> <!-- inherited from lu-search-config.xml -->			
++		</search:resultColumns>
++	</search:searchResultTypeInfo>
++	
++	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindId" parent="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindId-parent"/>
++	<search:searchCriteriaTypeInfo id="lu.criteria.countNumberOfConflictingClusBasedOnCourseCodeVindId-parent" abstract="true">
++        <search:name>Conflicting Clu Criteria two Params</search:name>
++        <search:desc>Searches on code, and cluVersionIndId</search:desc>
++		<search:queryParams>
++			<ref bean="lu.queryParam.cluCode"/>	
++			<ref bean="lu.queryParam.cluVersionIndId"/>
++		</search:queryParams>
++	</search:searchCriteriaTypeInfo>
++	<!-- Emd 1799 search #2  -->
++	<!-- End both 1799 Search Configs -->
++	
++	
+ 	<bean id="queryMap" parent="queryMap-parent">
+ 		<property name="sourceMap">
+ 			<map merge="true">
+@@ -280,14 +336,22 @@
+ 				<entry key="lu.search.cluSetsWithSisCodes">
+ 		       		<value>SELECT cs.id, cs.name, attribute.value FROM CluSet cs, IN(cs.attributes) attribute WHERE attribute.name='sisCode' AND attribute.value IS NOT NULL</value>
+ 		       	</entry>
+-		  		<entry key="lu.search.countNumberOfConflictingClusBasedOnCourseCode">
++		  		<entry key="lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindIdStartTerm">
+ 		       		<value>
+-		       		SELECT count(*)FROM Clu c
++		       		SELECT c.version.versionIndId, c.state, c.expirationDate FROM Clu c
+ 		       		WHERE c.officialIdentifier.code = :lu_queryParam_cluCode 
+ 					AND (((c.version.versionIndId != :lu_queryParam_cluVersionIndId) 
+ 					AND (c.state IN ('Active','Suspended','Superseded', 'Draft')))
+-					OR ((c.state = 'Retired') AND (:lu_queryParam_luAtpStartTerm IS NOT NULL AND c.lastAtp >= :lu_queryParam_luAtpStartTerm)))</value>
++					OR ((c.state = 'Retired') AND (c.lastAtp >= :lu_queryParam_luAtpStartTerm)))</value>
+                 </entry>
++          		<entry key="lu.search.countNumberOfConflictingClusBasedOnCourseCodeVindId">
++		       		<value>
++		       		SELECT c.version.versionIndId, c.state FROM Clu c
++		       		WHERE c.officialIdentifier.code = :lu_queryParam_cluCode 
++					AND (((c.version.versionIndId != :lu_queryParam_cluVersionIndId) 
++					AND (c.state IN ('Active','Suspended','Superseded', 'Draft'))))</value>
++                </entry>
++                
+             </map>
+ 		</property>
+ 	</bean>
