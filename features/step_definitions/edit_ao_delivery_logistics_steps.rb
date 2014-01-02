@@ -201,32 +201,3 @@ And /^there are no DLs for the AO$/ do
 end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## SCRATCHPAD
-
-
-When /^I test some stuff$/ do
-
-  puts 'DONE'
-  sleep 60
-
-
-end
