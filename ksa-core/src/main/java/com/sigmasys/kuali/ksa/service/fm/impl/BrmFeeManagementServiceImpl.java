@@ -2059,9 +2059,12 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                                             BigDecimal.ZERO,
                                     true);
 
-                    newManifests.add(newManifest);
+                    newManifest.setLinkedManifest(manifest);
+                    manifest.setLinkedManifest(newManifest);
 
                     addManifestToSession(newManifest, session);
+
+                    newManifests.add(newManifest);
                 }
             }
 
@@ -2070,7 +2073,6 @@ public class BrmFeeManagementServiceImpl extends GenericPersistenceService imple
                     BigDecimal newAmount = amount.divide(new BigDecimal(newManifests.size()), RoundingMode.HALF_DOWN);
                     for (FeeManagementManifest newManifest : newManifests) {
                         newManifest.setAmount(newAmount);
-                        persistEntity(newManifest);
                     }
                 }
             }
