@@ -413,14 +413,14 @@ public interface BrmFeeManagementService {
     void addRateToSignup(String rateCode, String rateSubCode, BrmContext context);
 
     /**
-     * Replaces a rate on FeeManagementSignup object with the new rate specified by code and sub-code.
+     * Replaces rates on FeeManagementSignup object with the new rate specified by code and sub-code.
      *
-     * @param rateCode       Code of the rate to be replaced
-     * @param rateSubCode    Sub-code of the rate to be replaced
+     * @param rateCodes      List of rate codes separated by ","
+     * @param rateSubCodes   List of rate sub-codes separated by ","
      * @param newRateCode    Code of the new rate
      * @param newRateSubCode Sub-code of the new rate
      */
-    void replaceRateOnSignup(String rateCode, String rateSubCode, String newRateCode, String newRateSubCode, BrmContext context);
+    void replaceRatesOnSignup(String rateCodes, String rateSubCodes, String newRateCode, String newRateSubCode, BrmContext context);
 
     /**
      * Charges rates on the signups from FeeManagementSession.
