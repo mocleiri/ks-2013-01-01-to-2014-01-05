@@ -149,7 +149,7 @@
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
 								p:propertyName="proposalInfo.effectiveDate" p:label="Requested Effective Date" p:readOnly="true"/>							
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="proposalInfo.descr.plain" p:label="Notes" p:readOnly="true">
+								p:propertyName="formattedDescription" p:label="Notes" p:readOnly="true">
 								<property name="control">
             						<bean parent="Uif-LargeTextAreaControl" />
           						</property>	
@@ -157,7 +157,7 @@
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
 								p:propertyName="proposalInfo.meta.createTime" p:label="Date Submitted" p:readOnly="true"/>
 							<bean parent="Uif-InputField" p:labelPlacement="LEFT" p:fieldLabel.renderColon="true" p:style="align: right;"
-								p:propertyName="proposalInfo.rationale.plain" p:label="Approver Notes" p:readOnly="true">
+								p:propertyName="formattedRationale" p:label="Approver Notes" p:readOnly="true">
 								<property name="control">
             						<bean parent="Uif-LargeTextAreaControl" />
           						</property>	

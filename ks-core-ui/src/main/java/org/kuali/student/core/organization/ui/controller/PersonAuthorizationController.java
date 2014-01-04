@@ -14,6 +14,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.criteria.Predicate;
@@ -23,10 +24,12 @@ import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.kew.actionitem.ActionItemActionListExtension;
 import org.kuali.rice.kew.actiontaken.ActionTakenValue;
 import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kew.api.WorkflowDocumentFactory;
+import org.kuali.rice.kew.api.action.ActionTaken;
 import org.kuali.rice.kew.api.action.DocumentActionParameters;
 import org.kuali.rice.kew.api.action.ReturnPoint;
 import org.kuali.rice.kew.api.action.WorkflowDocumentActionsService;
-import org.kuali.rice.kew.api.document.Document;
 import org.kuali.rice.kew.api.document.DocumentDetail;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.document.DocumentUpdate;
@@ -107,17 +110,28 @@ public class PersonAuthorizationController extends UifControllerBase {
 		// Checking if document is present or not, if present user should be able to view/create request
 		// and approver should be able to see approval screen.
 		if(StringUtils.isNotBlank(documentId)){
-			Document document = getWorkflowDocumentService().getDocument(documentId);
+			WorkflowDocument document = WorkflowDocumentFactory.loadDocument(person.getPrincipalId(), documentId);
+			List<ActionTaken> actionsTaken = document.getActionsTaken();
 			Collection<ActionItemActionListExtension> actionList = KEWServiceLocator.getActionListService().getActionListForSingleDocument(documentId);
 			String lastActionTakenCode = null;
+			
+			for(ActionTaken action : actionsTaken){
+				lastActionTakenCode = action.getActionTaken().getCode();
+				LOG.info("Action taken : " + lastActionTakenCode);
+			}
+			LOG.info("Last action for this document : " + lastActionTakenCode);
+			
 			LOG.info("Action list size is : " + actionList.size());
+			String docuementActionTakenCode = null;
 			for(ActionItemActionListExtension action : actionList){
-				List<ActionTakenValue> actionsTaken = action.getRouteHeader().getActionsTaken();
-				if(!actionsTaken.isEmpty()){
-					lastActionTakenCode = actionsTaken.get(actionsTaken.size()-1).getActionTaken();
-					LOG.info("Last action for this document : " + lastActionTakenCode);
+				List<ActionTakenValue> documentActionsTaken = action.getRouteHeader().getActionsTaken();
+				if(!documentActionsTaken.isEmpty()){
+					docuementActionTakenCode = documentActionsTaken.get(documentActionsTaken.size()-1).getActionTaken();
+					LOG.info("Document last action for this document : " + docuementActionTakenCode);
 				}				 
 			}
+			LOG.info("document action code : " + docuementActionTakenCode);
+			
 			LOG.info("Document status : " + document.getStatus());
 			ProposalInfo proposalInfo = null;
 			PersonAuthorizationForm viewForm = (PersonAuthorizationForm)form;
@@ -134,20 +148,29 @@ public class PersonAuthorizationController extends UifControllerBase {
 				viewForm.setForOrganizationId(proposalInfo.getProposerOrg().get(0));
 				viewForm.setStateName(getStateService().getState(proposalInfo.getStateKey(), getContextInfo()).getName());
 				viewForm.setTypeName("Kuali Student CM User");
+				if(proposalInfo.getDescr() != null){
+					String description = StringEscapeUtils.unescapeHtml(proposalInfo.getDescr().getPlain());
+					viewForm.setFormattedDescription(description);
+				}
+				
+				if(proposalInfo.getRationale() != null){
+					String rationale = StringEscapeUtils.unescapeHtml(proposalInfo.getRationale().getPlain());
+					viewForm.setFormattedRationale(rationale);
+				}
 				
 				if(ObjectUtils.isNotNull(document) && ObjectUtils.isNotNull(proposalInfo)){
 					if(document.getStatus().equals(DocumentStatus.ENROUTE)){
 						// Checking if logged in user is normal user or approver
 						// User comes here only if cliking on ActionList or Document Search
 						
-						if(!StringUtils.equals(KewApiConstants.ACTION_TAKEN_RETURNED_TO_PREVIOUS_CD, lastActionTakenCode)){
+						if(!StringUtils.equals(KewApiConstants.ACTION_TAKEN_RETURNED_TO_PREVIOUS_CD, docuementActionTakenCode)){
 							if(hasAuthorizationApprovalRole(person.getPrincipalId())){
 								return getUIFModelAndView(viewForm, "KS-Person-Auth-Response-View");
 							}else {
 								return getUIFModelAndView(viewForm, "KS-Person-Auth-Detail-View");
 							}
 						} else {
-							if(StringUtils.equals(KewApiConstants.ACTION_TAKEN_RETURNED_TO_PREVIOUS_CD, lastActionTakenCode)){
+							if(StringUtils.equals(KewApiConstants.ACTION_TAKEN_RETURNED_TO_PREVIOUS_CD, docuementActionTakenCode)){
 								viewForm.setClarificationRequired(true);								
 								GlobalVariables.getMessageMap().putInfo("KS-Person-Auth-Request-Section", "clarifictionRequired");
 								return getUIFModelAndView(viewForm, "KS-Person-Auth-Request-View");
@@ -155,10 +178,14 @@ public class PersonAuthorizationController extends UifControllerBase {
 								return getUIFModelAndView(viewForm, "KS-Person-Auth-Detail-View");
 							}
 						}
-					} else if(document.getStatus().equals(DocumentStatus.FINAL) || document.getStatus().equals(DocumentStatus.DISAPPROVED) ||
-							document.getStatus().equals(DocumentStatus.PROCESSED) || document.getStatus().equals(DocumentStatus.CANCELED)){
+					} else if(document.getStatus().equals(DocumentStatus.FINAL) || document.getStatus().equals(DocumentStatus.PROCESSED) || document.getStatus().equals(DocumentStatus.CANCELED)){
 						return getUIFModelAndView(viewForm, "KS-Person-Auth-Detail-View");
-					} else {
+					} else if(document.getStatus().equals(DocumentStatus.DISAPPROVED)){
+						if(!KewApiConstants.ACTION_TAKEN_ACKNOWLEDGED_CD.equals(lastActionTakenCode)){
+							viewForm.setRenderAck(true);
+						}
+						return getUIFModelAndView(viewForm, "KS-Person-Auth-Detail-View");
+					}else {
 						LOG.info("Found status in else : " + document.getStatus());
 					}
 				}
@@ -252,6 +279,15 @@ public class PersonAuthorizationController extends UifControllerBase {
 				viewForm.setForOrganizationName(proposal.getOrganizationName());
 				viewForm.setStateName(proposal.getStateName());
 				viewForm.setTypeName("Kuali Student CM User");
+				if(proposal.getDescr() != null){
+					String description = StringEscapeUtils.unescapeHtml(proposal.getDescr().getPlain());
+					viewForm.setFormattedDescription(description);
+				}
+				
+				if(proposal.getRationale() != null){
+					String rationale = StringEscapeUtils.unescapeHtml(proposal.getRationale().getPlain());
+					viewForm.setFormattedRationale(rationale);
+				}
 				break;
 			}
 		}
@@ -278,6 +314,20 @@ public class PersonAuthorizationController extends UifControllerBase {
 		return getUIFModelAndView(submitForm, "KS-Person-Auth-Detail-View"); 
 	}
 	
+	@RequestMapping(params = "methodToCall=acknowledge")
+	public ModelAndView acknowledge(@ModelAttribute("KualiForm") PersonAuthorizationForm submitForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) {
+		ProposalInfo proposalInfo = submitForm.getProposalInfo();
+		try {
+			proposalInfo = submitForApproval(proposalInfo, "acknowledge");
+			submitForm.setRenderAck(false);
+			submitForm.setProposalInfo(proposalInfo);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return getUIFModelAndView(submitForm, "KS-Person-Auth-Detail-View"); 
+	}
+	
 	@RequestMapping(params = "methodToCall=performApproval")
 	public ModelAndView performApproval(@ModelAttribute("KualiForm") PersonAuthorizationForm submitForm, BindingResult result, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String action = submitForm.getActionParamaterValue("action");
@@ -291,11 +341,37 @@ public class PersonAuthorizationController extends UifControllerBase {
         	if(action.equalsIgnoreCase("clarification") && StringUtils.isBlank(proposalInfo.getRationale().getPlain())){
         		GlobalVariables.getMessageMap().putError("KS-Person-Auth-Response-View-Section", "unknownError","Please insert approval notes");
         		return getUIFModelAndView(submitForm, null);
+        	} else {
+        		RichTextInfo rationale = proposalInfo.getRationale();
+        		if(rationale == null){
+        			rationale = new RichTextInfo();
+        		}
+        		rationale.setPlain(StringEscapeUtils.escapeHtml(proposalInfo.getRationale().getPlain()));
+        		proposalInfo.setRationale(rationale);
+        	}
+        	
+        	if(!StringUtils.isBlank(proposalInfo.getDescr().getPlain())){
+        		RichTextInfo description = proposalInfo.getDescr();
+        		if(description == null){
+        			description = new RichTextInfo();
+        		}
+        		description.setPlain(StringEscapeUtils.escapeHtml(proposalInfo.getDescr().getPlain()));
+        		proposalInfo.setDescr(description);
         	}
         	        	
         	proposalInfo = submitForApproval(proposalInfo, action);
         	
         	submitForm.setProposalInfo(proposalInfo);
+        	
+        	if(proposalInfo.getDescr() != null){
+				String description = StringEscapeUtils.unescapeHtml(proposalInfo.getDescr().getPlain());
+				submitForm.setFormattedDescription(description);
+			}
+			
+			if(proposalInfo.getRationale() != null){
+				String rationale = StringEscapeUtils.unescapeHtml(proposalInfo.getRationale().getPlain());
+				submitForm.setFormattedRationale(rationale);
+			}
         	        	        	
         	GlobalVariables.getMessageMap().putInfo("KS-Person-Auth-Detail-View", "databaseChnageSuccess");
         	
@@ -333,11 +409,41 @@ public class PersonAuthorizationController extends UifControllerBase {
         	proposalInfo.setProposerPerson(personIds);
             proposalInfo.setProposerOrg(organizationIds);
         	proposalInfo.setTypeKey(ProposalServiceConstants.PROPOSAL_TYPE_CURRICULUM_MANAGEMENT_USER_AUTHORIZATION_ADD_REQUEST);
+        	
+        	
+        	if(!StringUtils.isBlank(proposalInfo.getId())){        		
+        		RichTextInfo rationale = proposalInfo.getRationale();
+        		if(rationale == null){
+        			rationale = new RichTextInfo();
+        		}
+        		LOG.info("Updating Rationale");
+        		rationale.setPlain(StringEscapeUtils.escapeHtml(proposalInfo.getRationale().getPlain()));
+        		proposalInfo.setRationale(rationale);
+        	}
+        	
+        	if(!StringUtils.isBlank(proposalInfo.getDescr().getPlain())){
+        		RichTextInfo description = proposalInfo.getDescr();
+        		if(description == null){
+        			description = new RichTextInfo();
+        		}
+        		LOG.info("Updating Notes");
+        		description.setPlain(StringEscapeUtils.escapeHtml(proposalInfo.getDescr().getPlain()));
+        		proposalInfo.setDescr(description);
+        	}
 
         	proposalInfo = submitForApproval(proposalInfo,null);
 
         	submitForm.setProposalInfo(proposalInfo);
         	submitForm.setForOrganizationName(getOrgName(submitForm.getForOrganizationId()));
+        	if(proposalInfo.getDescr() != null){
+				String description = StringEscapeUtils.unescapeHtml(proposalInfo.getDescr().getPlain());
+				submitForm.setFormattedDescription(description);
+			}
+			
+			if(proposalInfo.getRationale() != null){
+				String rationale = StringEscapeUtils.unescapeHtml(proposalInfo.getRationale().getPlain());
+				submitForm.setFormattedRationale(rationale);
+			}
         	
         	GlobalVariables.getMessageMap().putInfo("KS-Person-Auth-Request-Confirm-View", "databaseChnageSuccess");
         	
@@ -350,7 +456,7 @@ public class PersonAuthorizationController extends UifControllerBase {
                     
         //Get the workflow id
         String workflowId = proposalInfo.getWorkflowId();
-        String proposer = proposalInfo.getMeta().getCreateId();
+        String proposer = GlobalVariables.getUserSession().getPerson().getPrincipalId();
         
         //Get the workflow document or create one if workflow document doesn't exist
         DocumentDetail docDetail;
@@ -362,21 +468,31 @@ public class PersonAuthorizationController extends UifControllerBase {
             DocumentActionParameters docActionParams = dapBuilder.build();
 
             ProposalInfo latestProposal = getProposalService().getProposal(proposalInfo.getId(),getContextInfo());
-            latestProposal.setRationale(new RichTextInfo());
-    		latestProposal.getRationale().setPlain(proposalInfo.getRationale().getPlain());
+            if(proposalInfo.getRationale() != null){
+            	latestProposal.setRationale(new RichTextInfo());
+            	latestProposal.getRationale().setPlain(proposalInfo.getRationale().getPlain());
+            }
     		
             if("approved".equalsIgnoreCase(state)){
+            	LOG.info("Going for Approval process");
             	proposalInfo = getProposalService().updateProposal(latestProposal.getId(), latestProposal, getContextInfo());
         		getWorkflowDocumentActionsService().approve(docActionParams);        		
         	}else if("denied".equalsIgnoreCase(state)){
+        		LOG.info("Going for Denied process");
         		proposalInfo = getProposalService().updateProposal(latestProposal.getId(), latestProposal, getContextInfo());
-        		getWorkflowDocumentActionsService().disapprove(docActionParams);
+        		getWorkflowDocumentActionsService().disapprove(docActionParams);        		
         	}else if("clarification".equalsIgnoreCase(state)){
+        		LOG.info("Going for Clarification process");
                 proposalInfo = getProposalService().updateProposal(latestProposal.getId(), latestProposal, getContextInfo());
         		getWorkflowDocumentActionsService().returnToPreviousNode(docActionParams, ReturnPoint.create("PreRoute"));        		
         	} else if("widthdraw".equalsIgnoreCase(state)){
+        		LOG.info("Going for Widthdraw process");
         		getWorkflowDocumentActionsService().cancel(docActionParams);
+        	}else if("acknowledge".equalsIgnoreCase(state)){
+        		LOG.info("Going for Acknowledge process");
+        		getWorkflowDocumentActionsService().acknowledge(docActionParams);
         	}else {
+        		LOG.info("Going for Updating Notes for clarification");
         		latestProposal.getDescr().setPlain(proposalInfo.getDescr().getPlain());
         		proposalInfo = getProposalService().updateProposal(latestProposal.getId(), latestProposal, getContextInfo());
         		getWorkflowDocumentActionsService().approve(docActionParams);

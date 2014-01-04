@@ -24,10 +24,13 @@ public class PersonAuthorizationForm extends UifFormBase {
 	private String requestedSince;
 	private String stateName;
 	private String typeName;
+	private String formattedDescription;
+	private String formattedRationale;
 		
 	private List<ProposalInfoModel> proposals;
 	
 	private boolean clarificationRequired;
+	private boolean renderAck;
 	
 	public ProposalInfo getProposalInfo() {
 		return proposalInfo;
@@ -81,21 +84,38 @@ public class PersonAuthorizationForm extends UifFormBase {
 		return stateName;
 	}
 	public void setStateName(String stateName) {
-		this.stateName = stateName;
+		this.stateName = stateName;		
 	}
 	public String getTypeName() {
 		return typeName;
 	}
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
-	}
+	}	
 	public boolean getClarificationRequired() {
 		return clarificationRequired;
 	}
 	public void setClarificationRequired(boolean clarificationRequired) {
 		this.clarificationRequired = clarificationRequired;
 	}
-	
+	public boolean getRenderAck() {
+		return renderAck;
+	}
+	public void setRenderAck(boolean renderAck) {
+		this.renderAck = renderAck;
+	}	
+	public String getFormattedDescription() {
+		return formattedDescription;
+	}
+	public void setFormattedDescription(String formattedDescription) {
+		this.formattedDescription = formattedDescription;
+	}
+	public String getFormattedRationale() {
+		return formattedRationale;
+	}
+	public void setFormattedRationale(String formattedRationale) {
+		this.formattedRationale = formattedRationale;
+	}
 	public String getEffectiveDateString(){
 		SimpleDateFormat stringFormat = new SimpleDateFormat("mm/dd/yyyy");
 		String strDate = new String();
@@ -104,5 +124,5 @@ public class PersonAuthorizationForm extends UifFormBase {
 		}
 		return strDate; 
 	}
-
+	
 }
